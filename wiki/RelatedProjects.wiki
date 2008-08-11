@@ -1,0 +1,15 @@
+#summary Survey of related works
+#labels Featured
+
+= Similar Projects =
+   
+  * [http://www.geo-spirit.org/ Spatially-Aware Information Retrieval on the Internet]
+  * [http://xldb.fc.ul.pt/wiki/Grease Geographic Reasoning for Search Engines]
+
+= Open Source Software =
+
+  * GeoServer
+  * JGeoCoder
+  * Apache UIMA
+
+= Other Relevant Initiatives =

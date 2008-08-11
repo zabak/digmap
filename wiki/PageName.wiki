@@ -1,9 +1,10 @@
 #summary Related projects.
+#labels Featured
 
 = Similar Projects =
    
-  * [Spatially-Aware Information Retrieval on the Internet|http://www.geo-spirit.org/]
-  * [Geographic Reasoning for Search Engines|http://xldb.fc.ul.pt/wiki/Grease]
+  * [http://www.geo-spirit.org/ Spatially-Aware Information Retrieval on the Internet]
+  * [http://xldb.fc.ul.pt/wiki/Grease Geographic Reasoning for Search Engines]
 
 = Open Source Software =
 

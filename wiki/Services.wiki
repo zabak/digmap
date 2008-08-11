@@ -1,10 +1,10 @@
 #summary List of available DIGMAP services.
 #labels Featured,Phase-Deploy
 
-* GeoParser
-* Gazetteer
-* Thumbnails
-* Transformations Service
-* Mitra
-* Repox
-* Cat.On.Map
+  * GeoParser
+  * Gazetteer
+  * Thumbnails
+  * Transformations Service
+  * Mitra
+  * Repox
+  * Cat.On.Map

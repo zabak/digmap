@@ -1,10 +1,10 @@
 #summary List of available DIGMAP services.
 #labels Featured,Phase-Deploy
 
-= The wiki pages bellow provide instructions for downloading and deploying DIGMAP services =
-
-  * GeoParser
-  * Gazetteer
-  * Thumbnails
-  * Transformations Service
-  * Mitra
+* GeoParser
+* Gazetteer
+* Thumbnails
+* Transformations Service
+* Mitra
+* Repox
+* Cat.On.Map

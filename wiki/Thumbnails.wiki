@@ -26,7 +26,7 @@ If installing in a remote machine, you will additionally require Ant 1.3 or late
   * unexplode the WAR file with the application.
   * find the Ant build script in the WEB-INF directory.
   * edit the 'build.xml' file and change the required parameters:
-  ** the location of the application server
-  ** other application specific parameters (i.e. Google Maps keys)
+    ** the location of the application server
+    ** other application specific parameters (i.e. Google Maps keys)
   * also edit WEB-INF/classes/htmlthumbnail.properties in a text editor
   * execute 'ant all' to compile the application and deploy it to the application server.

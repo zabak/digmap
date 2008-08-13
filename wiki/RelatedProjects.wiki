@@ -7,6 +7,7 @@
   * [http://xldb.fc.ul.pt/wiki/Grease Geographic Reasoning for Search Engines]
   * [http://alexandria.sdc.ucsb.edu/ Alexandria Digital Library]
   * [http://www.geoxwalk.ac.uk/ GeoCrossWalk]
+  * [http://code.google.com/p/oldmapsonline/ Old Maps Online]
 
 = Open Source Software =
 

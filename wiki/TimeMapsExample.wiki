@@ -10,14 +10,7 @@ This page illustrates the use of the Google Maps and SIMILE Timeline Javascript 
   * One [http://code.google.com/support/bin/answer.py?answer=65620&topic=11364 tutorial from Google] describes how to build a [http://code.google.com/articles/support/ezdigitizer.htm simple digitizer] that allows users to point and click over the map, or draw around a particular region and store the geographical coordinates in KML.
   * Another [http://code.google.com/support/bin/answer.py?answer=87134&topic=11364&ctx=sibling tutorial from Google] shows how to create a store locator with PHP, MySQL & Google Maps 
 
-{{{
-def fib(n):
-  if n == 0 or n == 1:
-    return n
-  else:
-    # This recursion is not good for large numbers.
-    return fib(n-1) + fib(n-2)
-}}}
+http://g.codesite.articles.googlepages.com/cschalk-ezdigitizer.jpg
 
 = SIMILE TimeLine =
 

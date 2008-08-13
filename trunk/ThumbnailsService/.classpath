@@ -23,5 +23,6 @@
 	<classpathentry kind="lib" path="WEB-INF/lib/dvi.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/log4j.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/multivalent.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/lib/cos.jar"/>
 	<classpathentry kind="output" path="WEB-INF/classes"/>
 </classpath>

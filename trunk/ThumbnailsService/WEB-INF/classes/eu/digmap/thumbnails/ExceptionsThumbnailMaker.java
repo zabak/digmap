@@ -27,6 +27,10 @@ public class ExceptionsThumbnailMaker extends AbstractThumbnailMaker {
 		super(uri, connection, w, h, t, rotation);
 	}
 	
+	public ExceptionsThumbnailMaker(String uri, InputStream connection, int width, int height, byte t,  float transparencyWidth1, float transparencyWidth2, float transparencyHeight1, float transparencyHeight2, float rotation) {
+		super(uri, connection, width, height, t, transparencyWidth1, transparencyWidth2, transparencyHeight1, transparencyHeight2, rotation);
+	}
+	
 	protected BufferedImage getImage() throws Exception {
 		BufferedImage img = null;
 		if ((img = handleNLAException()) != null) return img;

@@ -44,11 +44,23 @@ public abstract class AbstractThumbnailMaker {
 	
 	protected byte transparency = 0;
 	
+	protected float transparencyWidth1 = 101;
+	
+	protected float transparencyWidth2 = 101;
+	
+	protected float transparencyHeight1 = 101;
+	
+	protected float transparencyHeight2 = 101;
+	
 	public AbstractThumbnailMaker(String uri, InputStream connection, int w, int h, byte t) {
 		this(uri,connection,w,h,t,0);
 	}
 	
 	public AbstractThumbnailMaker(String uri, InputStream connection, int w, int h, byte t, float rotation) {
+		this(uri,connection,w,h,t,101,101,101,101,0);
+	}
+	
+	public AbstractThumbnailMaker(String uri, InputStream connection, int w, int h, byte t, float transparencyWidth1, float transparencyWidth2, float transparencyHeight1, float transparencyHeight2, float rotation) {
 		init();
 		this.uri = uri;
 		this.connection = connection;
@@ -56,6 +68,10 @@ public abstract class AbstractThumbnailMaker {
 		this.height = h;
 		this.transparency = t;
 		this.rotation = rotation;
+		this.transparencyWidth1 = transparencyWidth1;
+		this.transparencyWidth2 = transparencyWidth2;
+		this.transparencyHeight1 = transparencyHeight1;
+		this.transparencyHeight2 = transparencyHeight2;
 		if (transparency==0) transparency = (byte)255;
 		if (width==0) width = 255;
 	}
@@ -165,13 +181,31 @@ public abstract class AbstractThumbnailMaker {
 	
 	protected BufferedImage addTransparency (BufferedImage img ) {
 		if (transparency==255) return img;
-		int w = img.getWidth();
-		int h = img.getHeight();
-		int [] rgb = new int[w * h];
-		img.getRGB(0, 0, w, h, rgb, 0, w);
-		int _alpha = (transparency & 0xFF) << 24;
-		for(int i = 0; i < rgb.length; i++) rgb[i] = (rgb[i] & 0xFFFFFF) | _alpha;
-		img.setRGB(0,0,w, h, rgb, 0, w);
+		if(transparencyWidth1 <= transparencyWidth2 && 
+		   transparencyHeight1 <= transparencyHeight2 &&
+		   transparencyWidth1 <= 100 &&
+		   transparencyWidth2 <= 100 &&
+		   transparencyHeight1 <=100 &&
+		   transparencyHeight2 <=100) {
+			int x1 = (int)(img.getWidth() * transparencyWidth1 / 100.0);
+			int x2 = (int)(img.getWidth() * transparencyWidth2 / 100.0);
+			int y1 = (int)(img.getWidth() * transparencyHeight1 / 100.0);
+			int y2 = (int)(img.getWidth() * transparencyHeight2 / 100.0);
+			int rgb[] = new int[img.getWidth() * img.getHeight()];
+			img.getRGB(0, 0, img.getWidth(), img.getHeight(), rgb, 0, img.getWidth());
+			int _alpha = (transparency & 0xFF) << 24;
+			for(int i = 0; i < rgb.length; i++) rgb[i] = (rgb[i] & 0xFFFFFF) | _alpha;
+			img.setRGB(0,0,img.getWidth(),img.getHeight(), rgb, 0, img.getWidth());
+			img.getRGB(x1, y1, x2, y2, rgb, 0, x2-x1);
+			for(int i = 0; i < (x2-x1)*(y2-y1); i++) rgb[i] = (rgb[i] & 0xFFFFFF) | (0xFF << 24);
+			img.setRGB(x1,y1,x2,y2, rgb, 0, x2-x1);
+		} else {
+			int rgb[] = new int[img.getWidth() * img.getHeight()];
+			img.getRGB(0, 0, img.getWidth(), img.getHeight(), rgb, 0, img.getWidth());
+			int _alpha = (transparency & 0xFF) << 24;
+			for(int i = 0; i < rgb.length; i++) rgb[i] = (rgb[i] & 0xFFFFFF) | _alpha;
+			img.setRGB(0,0,img.getWidth(),img.getHeight(), rgb, 0, img.getWidth());
+		}
 		return img;
 	}
 	

@@ -11,7 +11,7 @@ One [http://code.google.com/support/bin/answer.py?answer=65620&topic=11364 tutor
 
 http://g.codesite.articles.googlepages.com/cschalk-ezdigitizer.jpg
 
-= SIMILE TimeLine =
+= SIMILE Timeline =
 
 The [http://simile.mit.edu/timeline/docs/create-timelines.html tutorial at the project's website] shows how to create simple Timelines.
 

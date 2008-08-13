@@ -1,15 +1,25 @@
-#summary Survey of related works
+#summary Survey of Related Works
 #labels Featured
 
-= Similar Projects =
+= Similar Projects and Relevant Initiatives =
    
   * [http://www.geo-spirit.org/ Spatially-Aware Information Retrieval on the Internet]
   * [http://xldb.fc.ul.pt/wiki/Grease Geographic Reasoning for Search Engines]
+  * [http://alexandria.sdc.ucsb.edu/ Alexandria Digital Library]
+  * [http://www.geoxwalk.ac.uk/ GeoCrossWalk]
 
 = Open Source Software =
 
-  * GeoServer
-  * JGeoCoder
-  * Apache UIMA
+  * [http://geoserver.org/ GeoServer]
+  * [http://www.deegree.org/ Deegree]
+  * [http://www.alexandria.ucsb.edu/downloads/ Alexandria Digital Library Gazetteer]
+  * [http://geonetwork-opensource.org/ GeoNetwork]
+  * [http://sourceforge.net/projects/jgeocoder JGeoCoder]
+  * [http://incubator.apache.org/uima/ Apache UIMA]
+  * [http://simile.mit.edu MIT Semantic Interoperability of Metadata and Information in unLike Environments]
 
-= Other Relevant Initiatives =
+= Data Sources =
+
+  * [http://www.geonames.org/export/ GeoNames]
+  * [http://poloxldb.linguateca.pt/index.php?l=geonetpt GeoNetPT]
+  * [http://www.ordnancesurvey.co.uk/oswebsite/ontology/ Ordenance Survey Ontologies]

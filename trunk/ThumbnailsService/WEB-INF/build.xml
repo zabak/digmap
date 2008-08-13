@@ -1,0 +1,90 @@
+<?xml version="1.0"?>
+<project name="Web Thumbnails" default="compile" basedir=".">
+
+	<property file="deployer.properties" />
+
+	<!-- Configure the root folder for this application, relative to the location of the build.xml file -->
+	<property name="webapp" value=".." />
+
+	<!-- Configure the context path for this application -->
+	<property name="path" value="/nail.map" />
+
+	<!-- Configure deployment properties and access the application server manager application -->
+	<property name="url" value="http://localhost:8080/manager" />
+	<property name="username" value="admin" />
+	<property name="password" value="admin" />
+	<property name="googlemapsapi" value="ABQIAAAAcbu3y-a3nZ_Sm9U7mWE6rRSxnlM8x71FZtoaV2b1lrSUnqCwEhR6bLxgwCCbCtuIEh5CFf8NNQ6rQA" />
+	<!--<property name="googlemapsapi" value="ABQIAAAA3_B3jzfBOFzZ9eqYX4eBUxT4_u3FPbh69IbNOx9uBNZq0PMG4xT5lixYDxeBx2WsxxN6GbCXD8LgVw" />-->
+	<!--<property name="googlemapsapi" value="ABQIAAAA3_B3jzfBOFzZ9eqYX4eBUxS-6Av_lwNHzz8bcRqsQfvnUPZ3lxSeaO3l05B-iJeg4ucqd8aXhgVSlQ" />-->
+
+	<!-- Configure the directory into which the web application is built -->
+	<property name="build" value="${basedir}/build" />
+	<property name="webapp.path" value="${build}/webapp${path}" />
+	
+	<path id="deployer.classpath">
+		<fileset dir="${basedir}/lib"><include name="*.jar" /></fileset>
+	</path>
+
+	<!-- Configure the custom Ant tasks for the Manager application -->
+	<taskdef resource="org/apache/catalina/ant/catalina.tasks" classpathref="deployer.classpath" />
+
+	<!-- Executable Targets -->
+	<target name="clean" description="Removes build directory">
+		<delete dir="${build}" />
+	</target>
+
+	<target name="compile" description="Compile web application" depends="clean">
+		<copy todir="${webapp.path}">
+			<fileset dir="${webapp}">
+				<exclude name="${basedir}/lib/servlet-api.jar" />
+				<exclude name="${basedir}/lib/jsp-api.jar" />
+			</fileset>
+		</copy>
+		<replace file="${webapp.path}/index.jsp" token="%%REPLACE-WITH-GOOGLE-MAPS-KEY%%" value="${googlemapsapi}" />
+		<jasper2 validateXml="false" uriroot="${webapp.path}" webXmlFragment="${webapp.path}/WEB-INF/generated_web.xml" addWebXmlMappings="true" outputDir="${webapp.path}/WEB-INF/classes" />
+		<mkdir dir="${webapp.path}/WEB-INF/classes" />
+		<mkdir dir="${webapp.path}/WEB-INF/lib" />
+		<javac destdir="${webapp.path}/WEB-INF/classes" optimize="off" debug="${compile.debug}" deprecation="${compile.deprecation}" failonerror="false" srcdir="${webapp.path}/WEB-INF/classes" encoding="UTF-8" excludes="**/*.smap">
+			<classpath>
+				<fileset dir="${webapp.path}/WEB-INF/lib">
+					<include name="**.jar" />
+					<exclude name="servlet-api.jar" />
+					<exclude name="jsp-api.jar" />
+				</fileset>
+				<fileset dir="${basedir}/lib">
+					<include name="*.jar" />
+				</fileset>
+			</classpath>
+			<include name="**" />
+			<exclude name="tags/**" />
+		</javac>
+		<delete file="${webapp.path}/WEB-INF/lib/servlet-api.jar" />
+		<delete file="${webapp.path}/WEB-INF/lib/jsp-api.jar" />
+		<jar destfile="${webapp.path}.war" basedir="${webapp.path}" />
+	</target>
+
+	<target name="deploy" description="Deploy web application">
+		<deploy url="${url}" username="${username}" password="${password}" path="${path}" war="${webapp.path}.war" update="true" />
+	</target>
+
+	<target name="undeploy" description="Undeploy web application">
+		<undeploy url="${url}" username="${username}" password="${password}" path="${path}" />
+	</target>
+
+	<target name="all" description="Build and deploy">
+		<antcall target="compile"></antcall>
+		<antcall target="deploy"></antcall>
+	</target>
+
+	<!-- Webapp lifecycle control -->
+	<target name="start" description="Start web application">
+		<start url="${url}" username="${username}" password="${password}" path="${path}" />
+	</target>
+	<target name="reload" description="Reload web application">
+		<reload url="${url}" username="${username}" password="${password}" path="${path}" />
+	</target>
+	<target name="stop" description="Stop web application">
+		<stop url="${url}" username="${username}" password="${password}" path="${path}" />
+	</target>
+
+</project>

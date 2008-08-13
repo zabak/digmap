@@ -24,6 +24,10 @@ public class PDFThumbnailMaker extends AbstractThumbnailMaker {
 	public PDFThumbnailMaker(String uri, InputStream connection, int width, int height, byte t, float rotation) {
 		super(uri, connection, width, height, t, rotation);
 	}
+	
+	public PDFThumbnailMaker(String uri, InputStream connection, int width, int height, byte t,  float transparencyWidth1, float transparencyWidth2, float transparencyHeight1, float transparencyHeight2, float rotation) {
+		super(uri, connection, width, height, t, transparencyWidth1, transparencyWidth2, transparencyHeight1, transparencyHeight2, rotation);
+	}
 		
 	protected BufferedImage getImage() throws Exception {
 		InputStream in = connection;

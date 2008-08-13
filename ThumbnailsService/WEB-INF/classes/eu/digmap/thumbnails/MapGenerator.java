@@ -48,8 +48,7 @@ import javax.swing.ImageIcon;
  * The MapGenerator code is loosely based on the GeoPlot tool developed by Ram
  * Periakaruppan at the University of California, San Diego
  */
-public class MapGenerator extends Applet implements MouseMotionListener,
-		MouseListener, Runnable {
+public class MapGenerator extends Applet implements MouseMotionListener, MouseListener, Runnable {
 
 	BufferedImage map = null;
 

@@ -26,8 +26,12 @@ public class HTMLThumbnailMaker extends AbstractThumbnailMaker {
 	}
 	
 	public HTMLThumbnailMaker(String uri, InputStream connection, int w, int h, byte t, float rotation) {
-		super(uri, connection, w, h, t, rotation);
-		exceptions = new ExceptionsThumbnailMaker(uri,connection,w,h,t,rotation);
+		this(uri, connection, w, h, t, 101,101,101,101, rotation);
+	}
+	
+	public HTMLThumbnailMaker(String uri, InputStream connection, int width, int height, byte t,  float transparencyWidth1, float transparencyWidth2, float transparencyHeight1, float transparencyHeight2, float rotation) {
+		super(uri, connection, width, height, t, transparencyWidth1, transparencyWidth2, transparencyHeight1, transparencyHeight2, rotation);
+		exceptions = new ExceptionsThumbnailMaker(uri,connection,width,height,t,rotation);
 		Logger.getLogger("org.lobobrowser").setLevel(Level.OFF);
 	}
 	

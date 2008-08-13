@@ -23,6 +23,10 @@
 	float lon7 = Float.MAX_VALUE;
 	float cradius = Float.MIN_VALUE;
 	float rotation = Float.MAX_VALUE;
+	float transparencyWidth1 = 101;
+	float transparencyWidth2 = 101;
+	float transparencyHeight1 = 101;
+	float transparencyHeight2 = 101;
 	byte transparency = (byte) 255;
 	int radius = 30;
 	if (url != null && url.equals("heatmap")) {
@@ -191,7 +195,7 @@
 			response.setContentType("image/png");
 			OutputStream os = response.getOutputStream();
 			ThumbnailMakerFactory.getThumbnailMaker(url, width, height,
-					transparency, rotation).make(true, os);
+					transparency, transparencyWidth1, transparencyWidth2, transparencyHeight1, transparencyHeight2, rotation).make(true, os);
 			os.close();
 		} else {
 			if (replaceurl.indexOf("://") == -1)
@@ -199,7 +203,7 @@
 			response.setContentType("image/png");
 			OutputStream os = response.getOutputStream();
 			ThumbnailMakerFactory.getThumbnailMaker(url, width, height,
-					transparency, rotation).makeAndUpdate(os,
+					transparency, transparencyWidth1, transparencyWidth2, transparencyHeight1, transparencyHeight2, rotation).makeAndUpdate(os,
 					replaceurl);
 			os.close();
 		}
@@ -241,7 +245,7 @@
 						OutputStream os = response.getOutputStream();
 						new ImageThumbnailMaker(file.getFileName(),
 								file.getInpuStream(), width, height,
-								transparency, rotation).make(true, os);
+								transparency, transparencyWidth1, transparencyWidth2, transparencyHeight1, transparencyHeight2, rotation).make(true, os);
 						os.close();
 					} else {
 						if (replaceurl.indexOf("://") == -1)
@@ -250,7 +254,7 @@
 						OutputStream os = response.getOutputStream();
 						new ImageThumbnailMaker(file.getFileName(),
 								file.getInpuStream(), width, height,
-								transparency, rotation).makeAndUpdate(
+								transparency, transparencyWidth1, transparencyWidth2, transparencyHeight1, transparencyHeight2, rotation).makeAndUpdate(
 								os, replaceurl);
 						os.close();
 					}

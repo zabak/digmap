@@ -8,7 +8,7 @@
   * [http://alexandria.sdc.ucsb.edu/ Alexandria Digital Library]
   * [http://www.geoxwalk.ac.uk/ GeoCrossWalk]
   * [http://code.google.com/p/oldmapsonline/ Old Maps Online]
-  * [http://ecai.org/ Electronic Cultural Atlas Initiative}
+  * [http://ecai.org/ Electronic Cultural Atlas Initiative]
 
 = Open Source Software =
 

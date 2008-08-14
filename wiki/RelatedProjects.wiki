@@ -19,7 +19,7 @@
   * [http://sourceforge.net/projects/jgeocoder JGeoCoder]
   * [http://incubator.apache.org/uima/ Apache UIMA]
   * [http://simile.mit.edu MIT Semantic Interoperability of Metadata and Information in unLike Environments]
-  * [http://code.google.com/p/timemap/ Javascript library to facilitate using Google Maps with a SIMILE timeline}
+  * [http://code.google.com/p/timemap/ Javascript library to facilitate using Google Maps with a SIMILE timeline]
 
 = Data Sources =
 

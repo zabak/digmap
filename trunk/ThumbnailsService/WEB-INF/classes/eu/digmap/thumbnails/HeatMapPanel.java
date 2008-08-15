@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Paint;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.text.DecimalFormat;
@@ -365,7 +366,7 @@ public class HeatMapPanel extends JPanel {
 			}
 		}
 	}
-
+	
 	/**
 	 * Creates an array of Color objects for use as a gradient, using a linear
 	 * interpolation between the two specified colors.

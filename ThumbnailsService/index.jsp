@@ -2,262 +2,197 @@
 <%@ page import="java.util.*"%>
 <%@ page import="eu.digmap.thumbnails.*"%>
 <%@ page import="javazoom.upload.*"%>
+<%@ page import="java.awt.*"%>
+<%@ page import="org.jCharts.chartData.*"%>
+<%@ page import="org.jCharts.properties.*"%>
+<%@ page import="org.jCharts.types.ChartType"%>
+<%@ page import="org.jCharts.axisChart.*"%>
+<%@ page import="org.jCharts.nonAxisChart.*"%>
+<%@ page import="org.jCharts.properties.util.ChartFont"%>
+<%@ page import="org.jCharts.encoders.ServletEncoderHelper"%>
 <%
 	String url = request.getParameter("url");
-	int width  = 0, height = 0;
-	float lat  = Float.MAX_VALUE;
-	float lon  = Float.MAX_VALUE;
-	float lat1 = Float.MAX_VALUE;
-	float lon1 = Float.MAX_VALUE;
-	float lat2 = Float.MAX_VALUE;
-	float lon2 = Float.MAX_VALUE;
-	float lat3 = Float.MAX_VALUE;
-	float lon3 = Float.MAX_VALUE;
-	float lat4 = Float.MAX_VALUE;
-	float lon4 = Float.MAX_VALUE;
-	float lat5 = Float.MAX_VALUE;
-	float lon5 = Float.MAX_VALUE;
-	float lat6 = Float.MAX_VALUE;
-	float lon6 = Float.MAX_VALUE;
-	float lat7 = Float.MAX_VALUE;
-	float lon7 = Float.MAX_VALUE;
-	float cradius = Float.MIN_VALUE;
-	float rotation = Float.MAX_VALUE;
-	float transparencyWidth1 = 101;
-	float transparencyWidth2 = 101;
-	float transparencyHeight1 = 101;
-	float transparencyHeight2 = 101;
-	byte transparency = (byte) 255;
-	int radius = 30;
-	if (url != null && url.equals("heatmap")) {
+	if (url != null && url.equals("chart")) {
 		try {
-			width = (new Integer(request.getParameter("width")))
-					.intValue();
-		} catch (Exception e) {
+			int width = request.getParameter("width")!=null ? (new Integer(request.getParameter("width"))).intValue() : 600;
+			int height = request.getParameter("height")!=null ? (new Integer(request.getParameter("height"))).intValue() : 400;
+			int series = request.getParameter("series")!=null ? (new Integer(request.getParameter("series"))).intValue() : 1;
+			int classes = request.getParameter("classes")!=null ? (new Integer(request.getParameter("classes"))).intValue() : 1;
+			String colorscheme = request.getParameter("colorscheme")!=null ? request.getParameter("colorscheme") : "default";
+			String type = request.getParameter("type")!=null ? request.getParameter("type") : "line";
+			String[] xAxisLabels= request.getParameter("classlabel")!=null ? request.getParameter("classlabel").split(";") : new String[classes]; 
+			String xAxisTitle= request.getParameter("xtitle")!=null ? request.getParameter("xtitle") : "";
+			String yAxisTitle= request.getParameter("ytitle")!=null ? request.getParameter("ytitle") : "";
+			String title=request.getParameter("title")!=null ? request.getParameter("title") : "";
+			String[] legendLabels = request.getParameter("legendlabel")!=null ? request.getParameter("legendlabel").split(";") : new String[series]; 
+			String[] dataAux = request.getParameter("data").split(";");
+			double[][] data = new double[series][classes];
+			Stroke[] strokes = new Stroke[series];
+			Shape[] shapes = new Shape[series];
+			boolean[] fillPointFlags = new boolean[series];
+			for(int i=0, k=0; i<series; i++) for(int j=0; j<classes; j++) data[i][j] = (new Double(dataAux[k++])).doubleValue();
+			for (int i=0; i<legendLabels.length; i++) legendLabels[i] = legendLabels[i] == null ? "" : legendLabels[i].trim();
+			for (int i=0; i<xAxisLabels.length; i++) xAxisLabels[i] = xAxisLabels[i] == null ? "" : xAxisLabels[i].trim();
+			for (int i=0; i<strokes.length; i++) strokes[i] = LineChartProperties.DEFAULT_LINE_STROKE;
+			for (int i=0; i<fillPointFlags.length; i++) fillPointFlags[i] = true; 
+			for (int i=0; i<shapes.length; i++) {
+				if((i % 4) == 0) shapes[i] = PointChartProperties.SHAPE_CIRCLE;
+				if((i % 4) == 1) shapes[i] = PointChartProperties.SHAPE_DIAMOND;
+				if((i % 4) == 2) shapes[i] = PointChartProperties.SHAPE_SQUARE;
+				else shapes[i] = PointChartProperties.SHAPE_TRIANGLE;
+			}
+			Paint[] paints = new Paint[series];
+			if (colorscheme.equals("default")) paints = HeatMapPanel.createGradient(Color.YELLOW,Color.BLUE,series);
+			else if (colorscheme.equals("reds")) paints = HeatMapPanel.createGradient(Color.RED,Color.GRAY,series);
+			else paints = HeatMapPanel.createGradient(Color.YELLOW,Color.BLUE,series);	
+			ChartTypeProperties lineChartProperties;
+			ChartType ctype;
+			if(type.equals("line")) {
+				lineChartProperties = new LineChartProperties(strokes,shapes);
+				ctype = ChartType.LINE;
+			} else if(type.equals("point")) {
+				lineChartProperties = new PointChartProperties(shapes,fillPointFlags,paints);
+				ctype = ChartType.POINT;
+			} else if(type.equals("stackedarea")) {
+				lineChartProperties = new StackedAreaChartProperties();
+				ctype = ChartType.AREA_STACKED;
+			} else if(type.equals("scatter")) {
+				lineChartProperties = new ScatterPlotProperties(strokes,shapes);
+				ctype = ChartType.SCATTER_PLOT;
+			} else if(type.equals("area")) {
+				lineChartProperties = new AreaChartProperties();
+				ctype = ChartType.AREA;
+			} else if(type.equals("clusteredbar")) {
+				lineChartProperties = new ClusteredBarChartProperties();
+				ctype = ChartType.BAR_CLUSTERED;
+			} else if(type.equals("stackedbar")) {
+				lineChartProperties = new StackedBarChartProperties();
+				ctype = ChartType.BAR_STACKED;
+			} else {
+				lineChartProperties = new LineChartProperties(strokes,shapes);
+				ctype = ChartType.LINE;
+			}
+			LegendProperties legendProperties = new LegendProperties();
+			ChartProperties chartProperties = new ChartProperties();
+			AxisProperties axisProperties = new AxisProperties( false );
+			ChartFont axisScaleFont = new ChartFont( new Font( "Georgia Negreta cursiva", Font.PLAIN, 13 ), Color.black );
+			axisProperties.getXAxisProperties().setScaleChartFont( axisScaleFont );
+			axisProperties.getYAxisProperties().setScaleChartFont( axisScaleFont );
+			ChartFont axisTitleFont = new ChartFont( new Font( "Arial Narrow", Font.PLAIN, 14 ), Color.black );
+			axisProperties.getXAxisProperties().setTitleChartFont( axisTitleFont );
+			axisProperties.getYAxisProperties().setTitleChartFont( axisTitleFont );		
+			DataSeries dataSeries = new DataSeries( xAxisLabels, xAxisTitle, yAxisTitle, title );
+			response.setContentType("image/png");
+			if(type.equals("pie")) {
+				if(classes>1) throw new Exception("Pie charts do not support multiple data classes.");
+				double data2[] = new double[series];
+				for (int i=0; i<series; i++) data2[i] = data[i][0]; 
+				PieChart2DProperties pieChart2DProperties= new PieChart2DProperties();
+				PieChartDataSet pieChartDataSet= new PieChartDataSet( title, data2, legendLabels, paints, pieChart2DProperties );
+				PieChart2D chart = new PieChart2D( pieChartDataSet, new LegendProperties(), new ChartProperties(), width, height );
+				ServletEncoderHelper.encodePNG(chart, response);
+			} else {
+				AxisChartDataSet acds = new AxisChartDataSet(data, legendLabels, paints, ctype, lineChartProperties );
+				dataSeries.addIAxisPlotDataSet(acds);
+				AxisChart chart = new AxisChart(dataSeries, chartProperties, axisProperties,legendProperties, width, height);	
+				ServletEncoderHelper.encodePNG(chart, response);
+			}
+		} catch(Exception e) {
+			response.sendError(500,"Service error: "+e.toString());
 		}
-		try {
-			height = (new Integer(request.getParameter("height")))
-					.intValue();
-		} catch (Exception e) {
-		}
+	} if (url != null && url.equals("heatmap")) {		
+		int width = request.getParameter("width")==null ?  0 : (new Integer(request.getParameter("width"))).intValue();
+		int height = request.getParameter("width")==null ? 0 : (new Integer(request.getParameter("height"))).intValue();
 		String data = request.getParameter("data");
 		response.setContentType("image/png");
 		OutputStream os = response.getOutputStream();
-		new HeatMapThumbnailMaker(url, width, height, (byte) 125, data)
-				.make(false, os);
+		new HeatMapThumbnailMaker(url, width, height, (byte) 125, data).make(false, os);
 		os.close();
-	} else if (url != null
-			&& (url.equals("simplemap") || url.equals("reliefmap")
-					|| url.equals("oldmap")
-					|| url.equals("satellitemap") || url
-					.equals("lightmap"))) {
-		try {
-			radius = (new Integer(request.getParameter("radius")))
-					.intValue() * 2;
-		} catch (Exception e) {
+	} else if (url != null && (url.equals("simplemap") || url.equals("reliefmap") || url.equals("oldmap") || url.equals("satellitemap") || url.equals("lightmap"))) {
+		int width = request.getParameter("width")==null ?  0 : (new Integer(request.getParameter("width"))).intValue();
+		int height = request.getParameter("height")==null ?  0 : (new Integer(request.getParameter("height"))).intValue();
+		byte transparency = (byte)0;
+		if(request.getParameter("transparency")!=null) {
+			if (request.getParameter("transparency").equals("true")) transparency = 125;
+			else if (request.getParameter("transparency").equals("false")) transparency = 0;
+			else transparency = (new Byte(request.getParameter("transparency"))).byteValue();
 		}
-		try {
-			cradius = (new Float(request.getParameter("cradius")))
-					.floatValue();
-		} catch (Exception e) {
-		}
-		try {
-			lat = (new Float(request.getParameter("lat"))).floatValue();
-		} catch (Exception e) {
-		}
-		try {
-			lon = (new Float(request.getParameter("lon"))).floatValue();
-		} catch (Exception e) {
-		}
-		try {
-			lat1 = (new Float(request.getParameter("lat1")))
-					.floatValue();
-		} catch (Exception e) {
-		}
-		try {
-			lon1 = (new Float(request.getParameter("lon1")))
-					.floatValue();
-		} catch (Exception e) {
-		}
-		try {
-			lat2 = (new Float(request.getParameter("lat2")))
-					.floatValue();
-		} catch (Exception e) {
-		}
-		try {
-			lon2 = (new Float(request.getParameter("lon2")))
-					.floatValue();
-		} catch (Exception e) {
-		}
-		try {
-			lat3 = (new Float(request.getParameter("lat3")))
-					.floatValue();
-		} catch (Exception e) {
-		}
-		try {
-			lon3 = (new Float(request.getParameter("lon3")))
-					.floatValue();
-		} catch (Exception e) {
-		}
-		try {
-			lat4 = (new Float(request.getParameter("lat4")))
-					.floatValue();
-		} catch (Exception e) {
-		}
-		try {
-			lon4 = (new Float(request.getParameter("lon4")))
-					.floatValue();
-		} catch (Exception e) {
-		}
-		try {
-			lat5 = (new Float(request.getParameter("lat5")))
-					.floatValue();
-		} catch (Exception e) {
-		}
-		try {
-			lon5 = (new Float(request.getParameter("lon5")))
-					.floatValue();
-		} catch (Exception e) {
-		}
-		try {
-			lat6 = (new Float(request.getParameter("lat6")))
-					.floatValue();
-		} catch (Exception e) {
-		}
-		try {
-			lon6 = (new Float(request.getParameter("lon6")))
-					.floatValue();
-		} catch (Exception e) {
-		}
-		try {
-			lat7 = (new Float(request.getParameter("lat7")))
-					.floatValue();
-		} catch (Exception e) {
-		}
-		try {
-			lon7 = (new Float(request.getParameter("lon7")))
-					.floatValue();
-		} catch (Exception e) {
-		}
-		try {
-			width = (new Integer(request.getParameter("width")))
-					.intValue();
-		} catch (Exception e) {
-		}
-		try {
-			height = (new Integer(request.getParameter("height")))
-					.intValue();
-		} catch (Exception e) {
-		}
-		try {
-			if (request.getParameter("transparency").equals("true"))
-				transparency = 125;
-			else
-				transparency = (new Byte(request
-						.getParameter("transparency"))).byteValue();
-		} catch (Exception e) {
-		}
+		int radius = request.getParameter("radius") ==null ? 30 : (new Integer(request.getParameter("radius"))).intValue() * 2;
+		float cradius = request.getParameter("cradius")==null ? Float.MAX_VALUE : (new Float(request.getParameter("cradius"))).floatValue();
+		float lat  = request.getParameter("lat")==null  ? Float.MAX_VALUE : (new Float(request.getParameter("lat"))).floatValue();
+		float lon  = request.getParameter("lon")==null  ? Float.MAX_VALUE : (new Float(request.getParameter("lon"))).floatValue();
+		float lat1 = request.getParameter("lat1")==null ? Float.MAX_VALUE : (new Float(request.getParameter("lat1"))).floatValue();
+		float lon1 = request.getParameter("lon1")==null ? Float.MAX_VALUE : (new Float(request.getParameter("lon1"))).floatValue();
+		float lat2 = request.getParameter("lat2")==null ? Float.MAX_VALUE : (new Float(request.getParameter("lat2"))).floatValue();
+		float lon2 = request.getParameter("lon2")==null ? Float.MAX_VALUE : (new Float(request.getParameter("lon2"))).floatValue();
+		float lat3 = request.getParameter("lat3")==null ? Float.MAX_VALUE : (new Float(request.getParameter("lat3"))).floatValue();
+		float lon3 = request.getParameter("lon3")==null ? Float.MAX_VALUE : (new Float(request.getParameter("lon3"))).floatValue();
+		float lat4 = request.getParameter("lat4")==null ? Float.MAX_VALUE : (new Float(request.getParameter("lat4"))).floatValue();
+		float lon4 = request.getParameter("lon4")==null ? Float.MAX_VALUE : (new Float(request.getParameter("lon4"))).floatValue();
+		float lat5 = request.getParameter("lat5")==null ? Float.MAX_VALUE : (new Float(request.getParameter("lat5"))).floatValue();
+		float lon5 = request.getParameter("lon5")==null ? Float.MAX_VALUE : (new Float(request.getParameter("lon5"))).floatValue();
+		float lat6 = request.getParameter("lat6")==null ? Float.MAX_VALUE : (new Float(request.getParameter("lat6"))).floatValue();
+		float lon6 = request.getParameter("lon6")==null ? Float.MAX_VALUE : (new Float(request.getParameter("lon6"))).floatValue();
+		float lat7 = request.getParameter("lat7")==null ? Float.MAX_VALUE : (new Float(request.getParameter("lat7"))).floatValue();
+		float lon7 = request.getParameter("lon7")==null ? Float.MAX_VALUE : (new Float(request.getParameter("lon7"))).floatValue();
 		response.setContentType("image/png");
 		OutputStream os = response.getOutputStream();
-		new MapThumbnailMaker(url, width, height, transparency, lat,
-				lon, lat1, lon1, lat2, lon2, lat3, lon3, cradius, lat4,
-				lon4, lat5, lon5, lat6, lon6, lat7, lon7, radius).make(
-				false, os);
+		new MapThumbnailMaker(url, width, height, transparency, lat, lon, lat1, lon1, lat2, lon2, lat3, lon3, cradius, lat4, lon4, lat5, lon5, lat6, lon6, lat7, lon7, radius).make(false, os);
 		os.close();
 	} else if (url != null && url.length() != 0) {
-		try {
-			width = (new Integer(request.getParameter("width")))
-					.intValue();
-		} catch (Exception e) {
+		int width = request.getParameter("width")==null ?  0 : (new Integer(request.getParameter("width"))).intValue();
+		int height = request.getParameter("height")==null ?  0 : (new Integer(request.getParameter("height"))).intValue();
+		float rotation = request.getParameter("rotation")==null ?  0 : (new Float(request.getParameter("rotation"))).floatValue();
+		byte transparency = (byte)0;
+		if(request.getParameter("transparency")!=null) {
+			if (request.getParameter("transparency").equals("true")) transparency = 125;
+			else if (request.getParameter("transparency").equals("false")) transparency = 0;
+			else transparency = (new Byte(request.getParameter("transparency"))).byteValue();
 		}
-		try {
-			height = (new Integer(request.getParameter("height")))
-					.intValue();
-		} catch (Exception e) {
-		}
-		try {
-			rotation = (new Float(request.getParameter("rotation")))
-					.floatValue();
-		} catch (Exception e) {
-		}
-		try {
-			if (request.getParameter("transparency").equals("true"))
-				transparency = 125;
-			else
-				transparency = (new Byte(request
-						.getParameter("transparency"))).byteValue();
-		} catch (Exception e) {
-		}
-		if (url.indexOf("://") == -1)
-			url = "http://" + url;
+		float transparencyWidth1 = request.getParameter("twidth1")==null ?  101 : (new Float(request.getParameter("twidth1"))).floatValue();
+		float transparencyWidth2 = request.getParameter("twidth2")==null ?  101 : (new Float(request.getParameter("twidth2"))).floatValue();
+		float transparencyHeight1 = request.getParameter("theight1")==null ?  101 : (new Float(request.getParameter("theight1"))).floatValue();
+		float transparencyHeight2 = request.getParameter("theight2")==null ?  101 : (new Float(request.getParameter("theight2"))).floatValue();
+		if (url.indexOf("://") == -1) url = "http://" + url;
 		String replaceurl = request.getParameter("replaceurl");
+		response.setContentType("image/png");
+		OutputStream os = response.getOutputStream();
 		if (replaceurl == null || replaceurl.length() == 0) {
-			response.setContentType("image/png");
-			OutputStream os = response.getOutputStream();
-			ThumbnailMakerFactory.getThumbnailMaker(url, width, height,
-					transparency, transparencyWidth1, transparencyWidth2, transparencyHeight1, transparencyHeight2, rotation).make(true, os);
-			os.close();
+			ThumbnailMakerFactory.getThumbnailMaker(url, width, height, transparency, transparencyWidth1, transparencyWidth2, transparencyHeight1, transparencyHeight2, rotation).make(true, os);
 		} else {
-			if (replaceurl.indexOf("://") == -1)
-				replaceurl = "http://" + replaceurl;
-			response.setContentType("image/png");
-			OutputStream os = response.getOutputStream();
-			ThumbnailMakerFactory.getThumbnailMaker(url, width, height,
-					transparency, transparencyWidth1, transparencyWidth2, transparencyHeight1, transparencyHeight2, rotation).makeAndUpdate(os,
-					replaceurl);
-			os.close();
+			if (replaceurl.indexOf("://") == -1) replaceurl = "http://" + replaceurl;
+			ThumbnailMakerFactory.getThumbnailMaker(url, width, height, transparency, transparencyWidth1, transparencyWidth2, transparencyHeight1, transparencyHeight2, rotation).makeAndUpdate(os, replaceurl);
 		}
+		os.close();
 	} else if (MultipartFormDataRequest.isMultipartFormData(request)) {
-			MultipartFormDataRequest mrequest = new MultipartFormDataRequest(
-					request);
-			try {
-				width = (new Integer(mrequest.getParameter("width")))
-						.intValue();
-			} catch (Exception e) {
+			MultipartFormDataRequest mrequest = new MultipartFormDataRequest(request);
+			int width = mrequest.getParameter("width")==null ?  0 : (new Integer(mrequest.getParameter("width"))).intValue();
+			int height = mrequest.getParameter("height")==null ?  0 : (new Integer(mrequest.getParameter("height"))).intValue();
+			float rotation = mrequest.getParameter("rotation")==null ?  0 : (new Float(mrequest.getParameter("rotation"))).floatValue();
+			byte transparency = (byte)0;
+			if(mrequest.getParameter("transparency")!=null) {
+				if (mrequest.getParameter("transparency").equals("true")) transparency = 125;
+				else if (mrequest.getParameter("transparency").equals("false")) transparency = 0;
+				else transparency = (new Byte(mrequest.getParameter("transparency"))).byteValue();
 			}
-			try {
-				height = (new Integer(mrequest.getParameter("height")))
-						.intValue();
-			} catch (Exception e) {
-			}
-			try {
-				rotation = (new Float(request.getParameter("rotation")))
-						.floatValue();
-			} catch (Exception e) {
-			}
-			try {
-				if (mrequest.getParameter("transparency")
-						.equals("true"))
-					transparency = 125;
-				else
-					transparency = (new Byte(mrequest
-							.getParameter("transparency"))).byteValue();
-			} catch (Exception e) {
-			}
+			float transparencyWidth1 = mrequest.getParameter("twidth1")==null ?  101 : (new Float(mrequest.getParameter("twidth1"))).floatValue();
+			float transparencyWidth2 = mrequest.getParameter("twidth2")==null ?  101 : (new Float(mrequest.getParameter("twidth2"))).floatValue();
+			float transparencyHeight1 = mrequest.getParameter("theight1")==null ?  101 : (new Float(mrequest.getParameter("theight1"))).floatValue();
+			float transparencyHeight2 = mrequest.getParameter("theight2")==null ?  101 : (new Float(mrequest.getParameter("theight2"))).floatValue();
 			Hashtable files = mrequest.getFiles();
 			if ((files != null) && (!files.isEmpty())) {
 				UploadFile file = (UploadFile) files.get("file");
 				if (file != null) {
-					String replaceurl = mrequest
-							.getParameter("replaceurl");
+					String replaceurl = mrequest.getParameter("replaceurl");
+					response.setContentType("image/png");
+					OutputStream os = response.getOutputStream();
 					if (replaceurl == null || replaceurl.length() == 0) {
-						response.setContentType("image/png");
-						OutputStream os = response.getOutputStream();
-						new ImageThumbnailMaker(file.getFileName(),
-								file.getInpuStream(), width, height,
-								transparency, transparencyWidth1, transparencyWidth2, transparencyHeight1, transparencyHeight2, rotation).make(true, os);
-						os.close();
+						new ImageThumbnailMaker(file.getFileName(),file.getInpuStream(), width, height, transparency, transparencyWidth1, transparencyWidth2, transparencyHeight1, transparencyHeight2, rotation).make(true, os);
 					} else {
-						if (replaceurl.indexOf("://") == -1)
-							replaceurl = "http://" + replaceurl;
-						response.setContentType("image/png");
-						OutputStream os = response.getOutputStream();
-						new ImageThumbnailMaker(file.getFileName(),
-								file.getInpuStream(), width, height,
-								transparency, transparencyWidth1, transparencyWidth2, transparencyHeight1, transparencyHeight2, rotation).makeAndUpdate(
-								os, replaceurl);
-						os.close();
+						if (replaceurl.indexOf("://") == -1) replaceurl = "http://" + replaceurl;
+						new ImageThumbnailMaker(file.getFileName(),file.getInpuStream(), width, height, transparency, transparencyWidth1, transparencyWidth2, transparencyHeight1, transparencyHeight2, rotation).makeAndUpdate(os, replaceurl);
 					}
+					os.close();
 				}
 			}
 	} else {
@@ -304,7 +239,7 @@
 	</tr>
 </table>
 
-<form name="thumbForm" method="get" action="index.jsp">
+<form name="form1" method="get" action="index.jsp">
 <table>
 	<tr>
 		<td width="33%">&nbsp;</td>
@@ -366,7 +301,7 @@
 </table>
 </form>
 
-<form name="thumbImgForm" method="post" enctype="multipart/form-data" action="index.jsp">
+<form name="form2" method="post" enctype="multipart/form-data" action="index.jsp">
 <table>
 	<tr>
 		<td width="33%">&nbsp;</td>
@@ -428,7 +363,7 @@
 </table>
 </form>
 
-<form name="thumbMapForm" method="get" action="index.jsp">
+<form name="form3" method="get" action="index.jsp">
 <table>
 	<tr>
 		<td width="33%">&nbsp;</td>
@@ -505,7 +440,7 @@
 </table>
 </form>
 
-<form name="thumbMapForm2" method="get" action="index.jsp">
+<form name="form4" method="get" action="index.jsp">
 <table>
 	<tr>
 		<td width="33%">&nbsp;</td>
@@ -584,7 +519,7 @@
 </table>
 </form>
 
-<form name="thumbMapForm3" method="get" action="index.jsp">
+<form name="form5" method="get" action="index.jsp">
 <table>
 	<tr>
 		<td width="33%">&nbsp;</td>
@@ -666,59 +601,7 @@
 </table>
 </form>
 
-<form name="thumbHeatMapForm" method="get" action="index.jsp">
-<table>
-	<tr>
-		<td width="33%">&nbsp;</td>
-		<td width="33%">
-		<table width="600">
-			<tr>
-				<td>
-				<table class="tablemain">
-					<tr>
-						<td class="tableheader" colspan="2">Generate PNG thumbnail
-						with a heat map</td>
-					</tr>
-					<tr>
-						<td class="tablekey">Width</td>
-						<td class="infobody"><input type="text" size="10"
-							maxlength="10" name="width" value="360" /></td>
-					</tr>
-					<tr>
-						<td class="tablekey">Height</td>
-						<td class="infobody"><input type="text" size="10"
-							maxlength="10" name="height" value="180" /></td>
-					</tr>
-					<tr>
-						<td class="tablekey">Data points</td>
-						<td class="infobody"><input type="text" size="51" name="data"
-							value="0,0,1 ; -20,20,1" /></td>
-					</tr>
-				</table>
-				<table width="100%" border="0" cellspacing="0" cellpadding="0">
-					<tr>
-						<td height="8"></td>
-					</tr>
-				</table>
-				<table class="tablemain">
-					<tr>
-						<td class="tablebody">
-						<center><input type="hidden" name="url" value="heatmap" />
-						<input type="submit" name="button" value="Generate" /> <input
-							type="reset" name="reset" value="Reset" /></center>
-						</td>
-					</tr>
-				</table>
-				</td>
-			</tr>
-		</table>
-		</td>
-		<td width="33%">&nbsp;</td>
-	</tr>
-</table>
-</form>
-
-<form name="thumbUpdateForm" method="get" action="index.jsp">
+<form name="form6" method="get" action="index.jsp">
 <table>
 	<tr>
 		<td width="33%">&nbsp;</td>
@@ -788,7 +671,7 @@
 </table>
 </form>
 
-<form name="thumbUpdateImgForm" method="post" enctype="multipart/form-data" action="index.jsp">
+<form name="form7" method="post" enctype="multipart/form-data" action="index.jsp">
 <table>
 	<tr>
 		<td width="33%">&nbsp;</td>
@@ -845,6 +728,165 @@
 						<center><input type="submit" name="button"
 							value="Generate" /> <input type="reset" name="reset"
 							value="Reset" /></center>
+						</td>
+					</tr>
+				</table>
+				</td>
+			</tr>
+		</table>
+		</td>
+		<td width="33%">&nbsp;</td>
+	</tr>
+</table>
+</form>
+
+<form name="form8" method="get" action="index.jsp">
+<table>
+	<tr>
+		<td width="33%">&nbsp;</td>
+		<td width="33%">
+		<table width="600">
+			<tr>
+				<td>
+				<table class="tablemain">
+					<tr>
+						<td class="tableheader" colspan="2">Generate PNG thumbnail
+						with a heat map</td>
+					</tr>
+					<tr>
+						<td class="tablekey">Width</td>
+						<td class="infobody"><input type="text" size="10"
+							maxlength="10" name="width" value="360" /></td>
+					</tr>
+					<tr>
+						<td class="tablekey">Height</td>
+						<td class="infobody"><input type="text" size="10"
+							maxlength="10" name="height" value="180" /></td>
+					</tr>
+					<tr>
+						<td class="tablekey">Data points</td>
+						<td class="infobody"><input type="text" size="51" name="data"
+							value="0,0,1 ; -20,20,1" /></td>
+					</tr>
+				</table>
+				<table width="100%" border="0" cellspacing="0" cellpadding="0">
+					<tr>
+						<td height="8"></td>
+					</tr>
+				</table>
+				<table class="tablemain">
+					<tr>
+						<td class="tablebody">
+						<center><input type="hidden" name="url" value="heatmap" />
+						<input type="submit" name="button" value="Generate" /> <input
+							type="reset" name="reset" value="Reset" /></center>
+						</td>
+					</tr>
+				</table>
+				</td>
+			</tr>
+		</table>
+		</td>
+		<td width="33%">&nbsp;</td>
+	</tr>
+</table>
+</form>
+
+<form name="form9" method="get" action="index.jsp">
+<table>
+	<tr>
+		<td width="33%">&nbsp;</td>
+		<td width="33%">
+		<table width="600">
+			<tr>
+				<td>
+				<table class="tablemain">
+					<tr>
+						<td class="tableheader" colspan="2">Generate PNG thumbnail
+						with a chart image</td>
+					</tr>
+					<tr>
+						<td class="tablekey">Width</td>
+						<td class="infobody"><input type="text" size="10"
+							maxlength="10" name="width" value="600" /></td>
+					</tr>
+					<tr>
+						<td class="tablekey">Height</td>
+						<td class="infobody"><input type="text" size="10"
+							maxlength="10" name="height" value="400" /></td>
+					</tr>
+					<tr>
+						<td class="tablekey">Chart Type</td>
+						<td class="infobody"><select name="type">
+							<option value="line">Line Chart</option>
+							<option value="point">Point Chart</option>
+							<option value="clusteredbar">Bar Chart</option>
+							<option value="stackedbar">Stacked Bar Chart</option>
+							<option value="area">Area Chart</option>
+							<option value="stackedarea">Stacked Area Chart</option>
+							<option value="pie">Pie Chart</option>
+							<option value="scatter">Scatter Plot</option>
+						</select></td>
+					</tr>
+					<tr>
+						<td class="tablekey">Color Scheme</td>
+						<td class="infobody"><select name="colorscheme">
+							<option value="default">Default</option>
+							<option value="reds">Red Tones</option>
+						</select></td>
+					</tr>
+					<tr>
+						<td class="tablekey">Number of Classes</td>
+						<td class="infobody"><input type="text" size="10"
+							maxlength="10" name="classes" value="4" /></td>
+					</tr>
+					<tr>
+						<td class="tablekey">Number of Series</td>
+						<td class="infobody"><input type="text" size="10"
+							maxlength="10" name="series" value="3" /></td>
+					</tr>
+					<tr>
+						<td class="tablekey">Title</td>
+						<td class="infobody"><input type="text" size="51"
+							name="title" value="Test chart" /></td>
+					</tr>
+					<tr>
+						<td class="tablekey">X Title</td>
+						<td class="infobody"><input type="text" size="51"
+							name="xtitle" value="X Values" /></td>
+					</tr>
+					<tr>
+						<td class="tablekey">Y Title</td>
+						<td class="infobody"><input type="text" size="51"
+							name="ytitle" value="Y Values" /></td>
+					</tr>
+					<tr>
+						<td class="tablekey">Class Labels</td>
+						<td class="infobody"><input type="text" size="51"
+							name="classlabel" value="Year 1 ; Year 2 ; Year 3 ; Year 4" /></td>
+					</tr>
+					<tr>
+						<td class="tablekey">Legend Labels</td>
+						<td class="infobody"><input type="text" size="51"
+							name="legendlabel" value="Series 1 ; Series 2 ; Series 3" /></td>
+					</tr>
+					<tr>
+						<td class="tablekey">Data points</td>
+						<td class="infobody"><input type="text" size="51" name="data"
+							value="100 ; 200 ; 300 ; 250 ; 150 ; 100 ; 250 ; 280; 50 ; 150 ; 300; 50" /></td>
+					</tr>
+				</table>
+				<table width="100%" border="0" cellspacing="0" cellpadding="0">
+					<tr>
+						<td height="8"></td>
+					</tr>
+				</table>
+				<table class="tablemain">
+					<tr>
+						<td class="tablebody">
+						<center><input type="hidden" name="url" value="chart" />
+						<input type="submit" name="button" value="Generate" /> <input
+							type="reset" name="reset" value="Reset" /></center>
 						</td>
 					</tr>
 				</table>

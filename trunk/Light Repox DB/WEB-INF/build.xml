@@ -1,0 +1,89 @@
+<?xml version="1.0"?>
+<project name="Light Repox DB" default="compile" basedir=".">
+
+	<property file="deployer.properties" />
+
+	<!-- Configure the directory into which the web application is built -->
+	<property name="build" value="${basedir}/build" />
+
+	<!-- Configure the folder and context path for this application -->
+	<property name="webapp" value=".." />
+	<property name="path" value="/lightrepoxdb" />
+
+	<!-- Configure deployment properties and access the Manager application -->
+	<property name="url" value="http://localhost:8080/manager" />
+	<property name="username" value="admin" />
+	<property name="password" value="admin" />
+	
+	<property name="webapp.path" value="${build}/webapp${path}" />
+
+	<path id="deployer.classpath">
+		<fileset dir="${basedir}/lib">
+			<include name="*.jar" />
+		</fileset>
+	</path>
+
+	<!-- Configure the custom Ant tasks for the Manager application -->
+	<taskdef resource="org/apache/catalina/ant/catalina.tasks" classpathref="deployer.classpath" />
+
+	<!-- Executable Targets -->
+	<target name="clean" description="Removes build directory">
+		<delete dir="${build}" />
+	</target>
+
+	<target name="compile" description="Compile web application" depends="clean">
+		<copy todir="${webapp.path}">
+			<fileset dir="${webapp}">
+				<exclude name="${basedir}/lib/servlet-api.jar" />
+				<exclude name="${basedir}/lib/jsp-api.jar" />
+			</fileset>
+		</copy>
+		<jasper2 validateXml="false" uriroot="${webapp.path}" webXmlFragment="${webapp.path}/WEB-INF/generated_web.xml" addWebXmlMappings="true" outputDir="${webapp.path}/WEB-INF/classes" />
+		<mkdir dir="${webapp.path}/WEB-INF/classes" />
+		<mkdir dir="${webapp.path}/WEB-INF/lib" />
+		<javac destdir="${webapp.path}/WEB-INF/classes" optimize="off" nowarn="true" debug="${compile.debug}" deprecation="${compile.deprecation}" failonerror="false" srcdir="${webapp.path}/WEB-INF/classes" encoding="UTF-8" excludes="**/*.smap">
+			<classpath>
+				<fileset dir="${webapp.path}/WEB-INF/lib">
+					<include name="**.jar" />
+					<exclude name="servlet-api.jar" />
+					<exclude name="jsp-api.jar" />
+				</fileset>
+				<fileset dir="${basedir}/lib">
+					<include name="*.jar" />
+				</fileset>
+			</classpath>
+			<include name="**" />
+			<exclude name="tags/**" />
+		</javac>
+		<delete file="${webapp.path}/WEB-INF/lib/servlet-api.jar" />
+		<delete file="${webapp.path}/WEB-INF/lib/jsp-api.jar" />
+		<jar destfile="${webapp.path}.war" basedir="${webapp.path}" />
+	</target>
+
+	<target name="deploy" description="Deploy web application">
+		<deploy url="${url}" username="${username}" password="${password}" path="${path}" war="${webapp.path}.war" update="true" />
+	</target>
+
+	<target name="undeploy" description="Undeploy web application">
+		<undeploy url="${url}" username="${username}" password="${password}" path="${path}" />
+	</target>
+
+	<target name="all" description="Build and deploy">
+		<antcall target="compile">
+		</antcall>
+		<antcall target="deploy">
+		</antcall>
+	</target>
+
+	<!-- Webapp lifecycle control -->
+	<target name="start" description="Start web application">
+		<start url="${url}" username="${username}" password="${password}" path="${path}" />
+	</target>
+	<target name="reload" description="Reload web application">
+		<reload url="${url}" username="${username}" password="${password}" path="${path}" />
+	</target>
+	<target name="stop" description="Stop web application">
+		<stop url="${url}" username="${username}" password="${password}" path="${path}" />
+	</target>
+	
+</project>

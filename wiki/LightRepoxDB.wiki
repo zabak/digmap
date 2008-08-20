@@ -2,9 +2,9 @@
 
 = Introduction =
 
-This is a simple Web-based repository build on top of [http://www.fourspaces.com/blog/2008/4/11/FeatherDB_Java_JSON_Document_database FeatherDB], is a Java based document database. It has an all HTTP/REST interface and supports querying by JavaScript (uses Java6's JavaScript support). In theory you could also search by any language that is on the JVM and implements the correct interface.
+This is a simple Web-based repository build on top of the [http://www.fourspaces.com/blog/2008/4/11/FeatherDB_Java_JSON_Document_database FeatherDB] Java document database. It has an all HTTP/REST interface and supports querying by JavaScript (uses Java6's JavaScript support). In theory you could also search by any language that is on the JVM and implements the correct interface.
 
-FeatherDB allows for flexibility in the backend storage, and we've added support for a distributed file system that provides fail-safe through replications of files across multiple machines and fast recovery from crashes (http://freshmeat.net/projects/weta-dfs/)
+FeatherDB allows for flexibility in the backend storage and we've added support for a distributed file system that provides fail-safety through replications of files across multiple machines, as well as fast recovery from crashes (http://freshmeat.net/projects/weta-dfs/)
 
 = Details =
 

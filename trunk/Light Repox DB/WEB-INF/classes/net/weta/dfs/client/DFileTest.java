@@ -52,12 +52,14 @@ public class DFileTest extends TestCase {
      * @see junit.framework.TestCase#setUp()
      */
     protected void setUp() throws Exception {
-		FeatherDB app = new FeatherDB();
-		System.setProperty(Configuration.DFS_CONFIG_PATH,FeatherDBProperties.propsFile.getCanonicalPath());
-		this.fMds = new MetaDataServer(Configuration.getInstance());
-        this.fMds.startServer();
-		this.fDns = new DataNodeServer(Configuration.getInstance());
-        this.fDns.startServer();
+		try {
+			this.fMds = new MetaDataServer(Configuration.getInstance());
+			this.fMds.startServer();
+		} catch ( Exception e ) { this.fMds = null; }
+        try {
+        	this.fDns = new DataNodeServer(Configuration.getInstance());
+        	this.fDns.startServer();
+        } catch ( Exception e ) { this.fDns = null; }
         this.mdsAddress = this.fMds.getIpAddress();
         this.mdsPort = this.fMds.getPort();
         super.setUp();
@@ -69,8 +71,8 @@ public class DFileTest extends TestCase {
      * @see junit.framework.TestCase#tearDown()
      */
     protected void tearDown() throws Exception {
-        this.fMds.stopServer();
-        this.fDns.stopServer();
+        try { this.fMds.stopServer(); } catch ( Exception e ) { }
+        try { this.fDns.stopServer(); } catch ( Exception e ) { }
         super.tearDown();
     }
 

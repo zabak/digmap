@@ -27,6 +27,8 @@ import java.util.Properties;
 import java.util.StringTokenizer;
 import org.apache.log4j.PropertyConfigurator;
 
+import com.fourspaces.featherdb.FeatherDBProperties;
+
 /**
  * A Configuration that hold parsed configurrations in a singleton.
  * 
@@ -103,8 +105,7 @@ public class Configuration {
      * @throws IOException
      */
     public static Configuration getInstance() throws IOException {
-        if (fInstance == null)
-            fInstance = new Configuration();
+        if (fInstance == null) fInstance = new Configuration();
         return fInstance;
     }
 
@@ -157,7 +158,9 @@ public class Configuration {
      */
     private void readPropertiesFromFile() throws IOException {
 
-        String dfsConf = System.getProperty(DFS_CONFIG_PATH);
+    	this.fProperties = 	FeatherDBProperties.getProperties();
+    	
+        String dfsConf = System.getProperty(DFS_CONFIG_PATH);        
         String configPath = null;
 
         InputStream inputStream;
@@ -173,17 +176,14 @@ public class Configuration {
             inputStream = Configuration.class.getResourceAsStream(configPath);
         }
 
-        if (inputStream == null || inputStream.available() <= 0)
-            throw new IOException("could not read property file from "
-                    + configPath);
-
-        this.fProperties.load(inputStream);
-        inputStream.close();
-
+        if (inputStream != null && inputStream.available() > 0) {
+        	this.fProperties.load(inputStream);
+        	inputStream.close();
+        }
+        
         // put PATHES to properties
         this.fProperties.put(DFS_CONFIG_PATH, configPath);
         String homeDir = System.getProperty(DFS_HOME_DIR);
-        if (homeDir != null)
-            this.fProperties.put(DFS_HOME_DIR, homeDir);
+        if (homeDir != null) this.fProperties.put(DFS_HOME_DIR, homeDir);
     }
 }

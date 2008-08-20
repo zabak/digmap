@@ -43,7 +43,7 @@ import org.apache.log4j.Logger;
  */
 public class DFileOutputStream extends OutputStream {
 
-    static Category fLogger = Logger.getLogger(DFileOutputStream.class);
+	static Category fLogger = Logger.getLogger(DFileOutputStream.class);
 
     private DFile fFile;
 
@@ -121,8 +121,7 @@ public class DFileOutputStream extends OutputStream {
      * @throws IOException
      *             if file could not be created
      */
-    public DFileOutputStream(String filePath, String ipAddress, int port,
-            long chunkSizeInMb) throws IOException {
+    public DFileOutputStream(String filePath, String ipAddress, int port, long chunkSizeInMb) throws IOException {
         this(new DFile(filePath, ipAddress, port), chunkSizeInMb);
     }
 
@@ -133,10 +132,7 @@ public class DFileOutputStream extends OutputStream {
     public void write(int data) throws IOException {
         this.fBuffer[this.fBufferPos] = (byte) data;
         this.fBufferPos++;
-
-        if (this.fBufferPos >= this.fBuffer.length) {
-            flush();
-        }
+        if (this.fBufferPos >= this.fBuffer.length) { flush(); }
     }
 
     /**
@@ -155,9 +151,7 @@ public class DFileOutputStream extends OutputStream {
      */
     public void write(byte[] bytes, int off, int length) throws IOException {
         // TODO implement this in a more performand way
-        for (int i = off; i < length; i++) {
-            write(FileUtil.toInt(bytes[i]));
-        }
+        for (int i = off; i < length; i++) { write(FileUtil.toInt(bytes[i])); }
     }
 
     /**
@@ -196,8 +190,7 @@ public class DFileOutputStream extends OutputStream {
      */
     public void close() throws IOException {
         flush();
-        if (this.fDnsConnection != null && this.fDnsConnection.isConnected())
-            closeNodeConnection();
+        if (this.fDnsConnection != null && this.fDnsConnection.isConnected()) closeNodeConnection();
         this.fFile.getMDSConnection().close();
         super.close();
     }

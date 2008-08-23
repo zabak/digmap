@@ -1,4 +1,5 @@
-#summary Lucene with Geo-Temporal Extensions (LGTE)
+#summary Lucene with GeoTemporal Extensions (LGTE)
+#labels Featured
 
 = Introduction =
 

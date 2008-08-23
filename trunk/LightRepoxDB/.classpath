@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="WEB-INF/classes"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="WEB-INF/lib/commons-codec.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/lib/catalina-ant.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/lib/catalina-deployer.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/lib/commons-el.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/lib/commons-logging.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/lib/jasper-compiler.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/lib/jasper-runtime.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/lib/jsp-api.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/lib/servlet-api.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/lib/js.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/lib/script.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/lib/asm.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/lib/groovy.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/lib/httpProxyPackage.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/lib/jetty.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/lib/jetty-util.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/lib/junit.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/lib/log4j.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/lib/colloquial_arithcode.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/lib/commons-beanutils.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/lib/commons-collections.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/lib/commons-httpclient.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/lib/commons-lang.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/lib/easymock.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/lib/ezmorph.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/lib/json-lib.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/lib/oaicat.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/lib/oaicatnewton.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/lib/oaiharvester.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/lib/bsf.jar"/>
+	<classpathentry kind="output" path="WEB-INF/classes"/>
+</classpath>

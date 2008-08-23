@@ -1,0 +1,63 @@
+package pt.utl.ist.lucene.forms;
+
+import com.pjaol.search.geo.utils.DistanceUtils;
+import pt.utl.ist.lucene.utils.GeoUtils;
+
+/**
+ * @author Jorge Machado
+ * @date 18/Ago/2008
+ * @see pt.utl.ist.lucene.forms
+ */
+public class RectangleForm implements UnknownForm
+{
+    private double north;
+    private double south;
+    private double east;
+    private double west;
+    private GeoPoint centroide;
+    private double diagonal;
+
+
+    public RectangleForm(double north, double west, double south, double east)
+    {
+        this.north = north;
+        this.west = west;
+        this.south = south;
+        this.east = east;
+        diagonal = DistanceUtils.getDistanceMi(south, west, north, east);
+        double middleLatitude = GeoUtils.calcMiddleLatitude(north, south);
+        double middleLongitude = GeoUtils.calcMiddleLongitude(west, east);
+        centroide = new GeoPoint(middleLatitude,middleLongitude);
+    }
+
+
+    public double getNorth()
+    {
+        return north;
+    }
+
+    public double getSouth()
+    {
+        return south;
+    }
+
+    public double getEast()
+    {
+        return east;
+    }
+
+    public double getWest()
+    {
+        return west;
+    }
+
+    public GeoPoint getCentroide()
+    {
+        return centroide;
+    }
+
+    public double getWidth()
+    {
+        return diagonal;
+    }
+}

@@ -16,6 +16,7 @@ public class Globals {
 	
 	private Globals() {
   		    String aux = Globals.class.getProtectionDomain().getCodeSource().getLocation().toString();
+  		    if(aux.endsWith("Globals.class")) aux = aux.substring(0,aux.lastIndexOf("/")) + "/../../../../";
 		    ConfigProperties = new Properties();
 		    TMP_DIR = ConfigProperties.getProperty("tmp.dir");
 		    DATA_DIR = ConfigProperties.getProperty("data.dir");

@@ -1,6 +1,7 @@
 package pt.utl.ist.lucene;
 
 import java.io.File;
+import java.net.URLDecoder;
 import java.util.Properties;
 
 /**
@@ -15,7 +16,7 @@ public class Globals {
 	private static Globals instance = new Globals();
 	
 	private Globals() {
-  		    String aux = Globals.class.getProtectionDomain().getCodeSource().getLocation().toString();
+  		    String aux = Globals.class.getProtectionDomain().getCodeSource().getLocation().toString().replace("%20"," ");
   		    if(aux.endsWith("Globals.class")) aux = aux.substring(0,aux.lastIndexOf("/")) + "/../../../../";
 		    ConfigProperties = new Properties();
 		    TMP_DIR = ConfigProperties.getProperty("tmp.dir");

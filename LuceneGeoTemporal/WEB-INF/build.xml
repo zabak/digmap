@@ -111,7 +111,7 @@
 
 	<target name="test" depends="compile" description="Unit Tests and Examples">
 		<junit showoutput="true" haltonerror="true" printsummary="true">
-			<classpath>
+			<classpath path="${webapp.path}/WEB-INF/classes">
 				<fileset dir="${webapp.path}/WEB-INF/lib">
 					<include name="**.jar" />
 					<exclude name="servlet-api.jar" />
@@ -121,7 +121,7 @@
 					<include name="*.jar" />
 				</fileset>
 			</classpath>
-
+			
 			<test name="pt.utl.ist.lucene.test.TestTimeDistanceWithLgteSIMPLE" />
 			<test name="pt.utl.ist.lucene.test.TestSpatialDistanceWithLgteSIMPLE" />
 			<test name="pt.utl.ist.lucene.test.TestTimeDistanceWithLgte" />

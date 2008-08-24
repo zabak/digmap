@@ -10,10 +10,6 @@
  </servlet>
  <servlet-mapping>
    <servlet-name>SearchNGramsServlet</servlet-name>
-   <url-pattern>/</url-pattern>
- </servlet-mapping>
- <servlet-mapping>
-   <servlet-name>OAIHandler</servlet-name>
-   <url-pattern>/ngram</url-pattern>
+   <url-pattern>/*</url-pattern>
  </servlet-mapping>
 </web-app>

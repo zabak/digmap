@@ -61,7 +61,7 @@ public class TermQueryDFR extends TermQueryLanguageModel {
     public Scorer scorer(IndexReader reader) throws IOException {
       TermDocs termDocs = reader.termDocs(term);
       if (termDocs == null) return null;
-      return new TermScorerBM25(this, termDocs, getSimilarity(searcher), reader.norms(term.field()), reader);
+      return new TermScorerDFR(this, termDocs, getSimilarity(searcher), reader.norms(term.field()), reader);
     }
 
     public Explanation explain(IndexReader reader, int doc) throws IOException {

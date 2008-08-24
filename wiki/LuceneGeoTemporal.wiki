@@ -1,6 +1,8 @@
 #summary Lucene with GeoTemporal Extensions (LGTE)
 #labels Featured
 
+http://code.google.com/p/digmap/source/browse/trunk/ThumbnailsService/DIGMAP_logo.png
+
 = Introduction =
 
  * Provides a very simple and efective Abstraction Top Layer on Lucene

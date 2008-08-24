@@ -24,8 +24,8 @@ LGTE essentially assembles the following open-source libraries, patching them wh
  * Lucene http://lucene.apache.org
  * Local search extension for lucene http://sourceforge.net/projects/locallucene
  * LucQE http://lucene-qe.sourceforge.net/
- * Misc. Projects from Lucene SandBox http://lucene.apache.org/java/docs/lucene-sandbox/
- * IPLS Lucene with Language Modeling http://ilps.science.uva.nl/resources/lm-lucene
+ * Misc. Projects from Lucene sandbox http://lucene.apache.org/java/docs/lucene-sandbox/
+ * IPLS Lucene with language modeling (LM-Lucene) http://ilps.science.uva.nl/resources/lm-lucene
 
 = Using LGTE =
 

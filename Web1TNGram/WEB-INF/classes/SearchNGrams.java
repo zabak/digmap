@@ -68,7 +68,7 @@ public class SearchNGrams implements TransactionWorker {
 		}
     }
 
-    private void close() throws Exception {
+    private void closedb() throws Exception {
         for (int i=0; i<6; i++) {
         if (db[i] != null) {
             db[i].close();
@@ -79,6 +79,18 @@ public class SearchNGrams implements TransactionWorker {
             env.close();
             env = null;
         }
+    }
+    
+    private void closeenv() throws Exception {
+        if (env != null) {
+            env.close();
+            env = null;
+        }
+    }
+    
+    public void finalize () throws Throwable {
+    	closeenv();
+    	super.finalize();
     }
 
 	private static final String CONFIG_FILE = "ngramindex.properties";
@@ -129,7 +141,7 @@ public class SearchNGrams implements TransactionWorker {
 			SearchNGrams worker = new SearchNGrams(env);
 			TransactionRunner runner = new TransactionRunner(env);
 			worker.data = data;
-			try { runner.run(worker); } finally { worker.close(); }
+			try { runner.run(worker); } finally { worker.closedb(); }
 			if("json".equals(output)) return "{\"query\":\""+ data + "\",\"frequency\":" + worker.data + "}";
 			if("xml".equals(output)) return "<ngram-frequency><query><[!CDATA["+ data + "]]></query><frequency>" + worker.data + "</frequency></ngram-frequency>";
 			else return worker.data;

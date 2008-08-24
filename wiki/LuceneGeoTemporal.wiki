@@ -5,22 +5,29 @@ http://digmap.googlecode.com/svn/trunk/LuceneGeoTemporal/lgte.png
 
 = Introduction =
 
- * Provides a very simple and efective Abstraction Top Layer on Lucene
- * Provide a collection of Extensions and Wrappers to main classes like IndexWriter, IndexSearcher, Document, Query
- * Provide integrated geographical, time and textual search services using local lucene and Sorting in two diferente models (Vector Space Model and Language Model)
- * Provide QE expansion using LucQE
- * Provide a framework to process collections in search topics returning output in TRECEVAL tool format
+LGTE is the IR system behind DIGMAP. It is generally built around the Lucene library for full-text search, introducing some extensions for dealing with geographical and temporal information. The package also includes useful utilities for IR evaluation experiments, such as methods for handling CLEF/TREC topics and document collections, different text retrieval models (e.g. language modeling) and query expansion mechanisms.
+
+In a glance, the main features of LGTE are:
+
+ * Provides a simple and efective abstraction layer on top of Lucene
+ * Supports integrated retrieval and ranking with basis on thematic, temporal and geographical aspects.
+ * Supports the Lucene standard retrieval model, as well as a more advanced language modelling approach.
+ * Supports Rochio Query Expansion
+ * Provides a framework for IR evaluation experiments (e.g. handling CLEF/TREC topics)
+ * Includes a Java alternative to the trec_eval tool, capable of performing significance tests over pairs of runs
+ * Includes a simple test application for searching over the [Braun Corpus http://ilps.science.uva.nl/datafiles/braun-corpus.zip]
+
  * Provide an example using Braun Corpus and 7 runs with the configuration submited to TEL@CLEF 2008 Mono-language Adhoc task
 
 = Libraries =
 
-Patching and gluing together the following libraries:
+LGTE essentially assembles the following open-source libraries, patching them when necessary to work with our specific extensions:
 
  * Lucene http://lucene.apache.org
- * Local lucene http://sourceforge.net/projects/locallucene
- * LucQE
- * Lucene SandBox
- * IPLS Lucene with Language Modeling
+ * Local search extension for lucene http://sourceforge.net/projects/locallucene
+ * LucQE http://lucene-qe.sourceforge.net/
+ * Misc. Projects from Lucene SandBox http://lucene.apache.org/java/docs/lucene-sandbox/
+ * IPLS Lucene with Language Modeling http://ilps.science.uva.nl/resources/lm-lucene
 
 = Using LGTE =
 

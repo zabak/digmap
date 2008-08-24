@@ -5,7 +5,7 @@ http://digmap.googlecode.com/svn/trunk/LuceneGeoTemporal/lgte.png
 
 = Introduction =
 
-LGTE is the IR system behind DIGMAP. It is generally built around the Lucene library for full-text search, introducing some extensions for dealing with geographical and temporal information. The package also includes useful utilities for IR evaluation experiments, such as methods for handling CLEF/TREC topics and document collections, different text retrieval models (e.g. BM25, language modeling, divergence from randomness) and query expansion mechanisms.
+LGTE is the IR system behind DIGMAP. It is generally built around the Lucene library for full-text search, introducing some extensions for dealing with geographical and temporal information. The package also includes useful utilities for IR evaluation experiments, such as methods for handling CLEF/TREC topics and document collections, many different text retrieval models (i.e. Okapi BM25, language modeling, divergence from randomness models) and query expansion mechanisms.
 
 In a glance, the main features of LGTE are:
 

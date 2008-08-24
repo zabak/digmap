@@ -1,6 +1,8 @@
 package com.fourspaces.featherdb.repox;
 
 import java.util.Iterator;
+
+import junit.framework.Assert;
 import junit.framework.TestCase;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -28,7 +30,8 @@ public class TestLocalRepositoryAccess extends TestCase {
 			db.init(fdb);
 		}
 		// Create a database
-		if (!db.doesDatabaseExist("foodb")) fdb.addDatabase("foodb");
+		if (db.doesDatabaseExist("foodb")) fdb.deleteDatabase("foodb");
+		fdb.addDatabase("foodb");
 	}
 	
     protected void tearDown() throws Exception {
@@ -71,13 +74,16 @@ public class TestLocalRepositoryAccess extends TestCase {
     public void testAdHocView() throws Exception {
 		// Ad-Hoc view
 		JSONArray resultAdHoc = AdHocViewRunner.adHocView(fdb,"foodb","function (doc) { if (doc.foo=='bar') return doc; }").getJSONArray("rows");
+		int numObjects = 0;
 		for (Object k : resultAdHoc) {
 			Document id = Document.newDocument((JSONObject)k);
             // ViewResults don't actually contain the full document, only what the view
 	        // returned. So, in order to get the full document, you need to request a new copy from the database     
 	        Document full = db.getDocument("foodb",id.getId());
 			System.out.println(full);
+			numObjects++;
 		}
+		assertEquals(numObjects,2);
 	}
     
     public static void main ( String args[] ) throws Exception {

@@ -32,5 +32,7 @@
 	<classpathentry kind="lib" path="WEB-INF/lib/oaicatnewton.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/oaiharvester.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/bsf.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/lib/js-14.jar"/>
+	<classpathentry kind="lib" path="/Web 1T N-Gram/WEB-INF/lib/berkley-db.jar"/>
 	<classpathentry kind="output" path="WEB-INF/classes"/>
 </classpath>

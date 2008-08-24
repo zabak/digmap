@@ -24,7 +24,7 @@
  
  <servlet-mapping>
    <servlet-name>OAIHandler</servlet-name>
-   <url-pattern>/oai/</url-pattern>
+   <url-pattern>/oai/*</url-pattern>
  </servlet-mapping>
 
  <listener>
@@ -47,12 +47,17 @@
  
  <servlet-mapping> 
   <servlet-name>HttpProxy</servlet-name> 
-  <url-pattern>/rep/</url-pattern> 
+  <url-pattern>/rep/*</url-pattern> 
  </servlet-mapping>
 
  <servlet-mapping> 
   <servlet-name>HttpProxy</servlet-name> 
-  <url-pattern>/</url-pattern> 
+  <url-pattern>*</url-pattern> 
+ </servlet-mapping>
+
+ <servlet-mapping> 
+  <servlet-name>HttpProxy</servlet-name> 
+  <url-pattern>/*</url-pattern> 
  </servlet-mapping>
  
  <mime-mapping>

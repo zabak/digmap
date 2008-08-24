@@ -13,7 +13,7 @@ import org.apache.lucene.index.TermDocs;
  * See a description at http://ir.dcs.gla.ac.uk/wiki/FormulasOfDFRModels
  * 
  */
-final class TermScorerBM25 extends Scorer  {
+final class TermScorerDFR extends Scorer  {
 	
 	private static final int DLHHypergeometricDFRModel = 1;
 	private static final int InExpC2DFRModel = 2;
@@ -49,7 +49,7 @@ final class TermScorerBM25 extends Scorer  {
 	
 	int fieldLen;
 
-	TermScorerBM25(
+	TermScorerDFR(
 		Weight weight,
 		TermDocs td,
 		Similarity similarity,

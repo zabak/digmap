@@ -1,7 +1,7 @@
 #summary Lucene with GeoTemporal Extensions (LGTE)
 #labels Featured
 
-http://code.google.com/p/digmap/source/browse/trunk/ThumbnailsService/DIGMAP_logo.png
+http://digmap.googlecode.com/svn/trunk/LuceneGeoTemporal/lgte.png
 
 = Introduction =
 

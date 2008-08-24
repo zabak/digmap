@@ -1,6 +1,7 @@
 package org.apache.lucene.search;
 
 import java.io.IOException;
+
 import org.apache.lucene.ilps.DataCacher;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.LanguageModelIndexReader;
@@ -33,12 +34,7 @@ final class TermScorerDFR extends Scorer  {
 	private byte[] norms;
 	private float weightValue;
 	private int doc;
-	//private float collSizeDFS; // sum of docFreq for all terms 
-	//private float collSizeCFS; // sum of collFreq for all terms
-	private float collSize = 0.0f;
-	private int tfCollection; // collection frequency of the term
 	private LanguageModelIndexReader indexReader;
-	private float lambda;
     private boolean useFieldLengths;
 
 	private final int[] docs = new int[32]; // buffered doc numbers
@@ -103,7 +99,7 @@ final class TermScorerDFR extends Scorer  {
         }
 		float tfDoc = freqs[pointer];
 		double sim = 0;
-		double avgLen = 1000; // TODO: indexReader.getAvgDocLength(doc);	
+		double avgLen = indexReader.getCollectionTokenNumber() / indexReader.getTotalDocFreqs();
 		double collSize = indexReader.getTotalDocFreqs();
 		double tfCollection = indexReader.collFreq(term);
 		double numTerms = indexReader.getCollectionTokenNumber();

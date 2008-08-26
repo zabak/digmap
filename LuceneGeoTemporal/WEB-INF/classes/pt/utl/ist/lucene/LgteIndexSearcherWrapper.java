@@ -23,7 +23,9 @@ import java.io.IOException;
 public class LgteIndexSearcherWrapper
 {
     private IndexSearcher indexSearcher;
+
     Model defaultModel = Model.parse(ConfigProperties.getProperty("lucene.model"));
+
     LuceneVersion luceneVersion = LuceneVersionFactory.getLuceneVersion();
 
     private static final Logger logger = Logger.getLogger(LgteIndexSearcherWrapper.class);
@@ -31,17 +33,20 @@ public class LgteIndexSearcherWrapper
     public LgteIndexSearcherWrapper(Model model, String s)
             throws IOException
     {
+        ModelManager.getInstance().setModel(model);
         indexSearcher = LgteIndexSearcherManager.openSearcher(model, s);
     }
 
     public LgteIndexSearcherWrapper(Model model, Directory directory)
             throws IOException
     {
+        ModelManager.getInstance().setModel(model);
         indexSearcher = LgteIndexSearcherManager.openSearcher(model, directory);
     }
 
     public LgteIndexSearcherWrapper(Model model, IndexReader indexReader) throws IOException
     {
+        ModelManager.getInstance().setModel(model);
         indexSearcher = LgteIndexSearcherManager.openSearcher(model, indexReader);
     }
 
@@ -74,6 +79,7 @@ public class LgteIndexSearcherWrapper
 
     public LgteHits search(String query) throws java.io.IOException, ParseException
     {
+
         LgteQuery lgteQuery = LgteQueryParser.parseQuery(query,this);
         return searchAndFilter(lgteQuery);
     }
@@ -201,6 +207,7 @@ public class LgteIndexSearcherWrapper
     public void search(String query, String field, Analyzer analyzer, org.apache.lucene.search.Filter filter, HitCollector hitCollector) throws java.io.IOException, ParseException
     {
         LgteQuery lgteQuery = LgteQueryParser.parseQuery(query,field, analyzer,this);
+        if(lgteQuery.getQueryParams().getModel() != null) ModelManager.getInstance().setModel(lgteQuery.getQueryParams().getModel());
         FilterOrchestrator filterOrchestrator = new FilterOrchestrator();
         Filter finalFilter = filterOrchestrator.getFilter(lgteQuery,filter);
         indexSearcher.search(lgteQuery.getQuery(),finalFilter,hitCollector);

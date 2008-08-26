@@ -45,7 +45,7 @@ public class Level1QueryParser
 
     public Term getTerm(String term, String index)
     {
-        Term t = new Term(term.toLowerCase(), index, termId++);
+        Term t = new Term(term, index, termId++);
         allObjects.add(t);
         return t;
     }
@@ -235,7 +235,11 @@ public class Level1QueryParser
             t = getTerm(merge, index);
         if (useIndexField && pendingIndexField != null)
         {
-            if(pendingIndexField.getIndexName().equals(Globals.LUCENE_QE_FIELD_QUERY))
+            if(pendingIndexField.getIndexName().equals(Globals.LUCENE_MODEL_FIELD_QUERY))
+            {
+                queryParams.setModel(t.getValue());
+            }
+            else if(pendingIndexField.getIndexName().equals(Globals.LUCENE_QE_FIELD_QUERY))
             {
                 queryParams.setQEEnum(t.getValue());
             }

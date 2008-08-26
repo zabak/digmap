@@ -134,7 +134,7 @@ public class LgteIndexSearcherManager
 
     public static IndexReader openReader(File f, Model model) throws IOException
     {
-        if(model == Model.LanguageModel)
+        if(model.isProbabilistcModel())
         {
             return new LanguageModelIndexReader(IndexReader.open(f));
         }
@@ -151,7 +151,7 @@ public class LgteIndexSearcherManager
 
     public static IndexReader openReader(String f, Model model) throws IOException
     {
-        if(model == Model.LanguageModel)
+        if(model.isProbabilistcModel())
         {
             return new LanguageModelIndexReader(IndexReader.open(f));
         }
@@ -168,7 +168,7 @@ public class LgteIndexSearcherManager
 
     public static IndexReader openReader(Directory f, Model model) throws IOException
     {
-        if(model == Model.LanguageModel)
+        if(model.isProbabilistcModel())
         {
             return new LanguageModelIndexReader(IndexReader.open(f));
         }
@@ -185,7 +185,7 @@ public class LgteIndexSearcherManager
 
     private static IndexSearcher initSearcher(IndexReader reader, Model model) throws IOException
     {
-        if(model == Model.LanguageModel)
+        if(model.isProbabilistcModel())
         {
             return new IndexSearcherLanguageModel(reader);
         }
@@ -202,7 +202,7 @@ public class LgteIndexSearcherManager
 
     private static IndexSearcher initSearcher(Directory dir, Model model) throws IOException
     {
-        if(model == Model.LanguageModel)
+        if(model.isProbabilistcModel())
         {
             return new IndexSearcherLanguageModel(dir);
         }
@@ -219,7 +219,7 @@ public class LgteIndexSearcherManager
 
     private static IndexSearcher initSearcher(String dir, Model model) throws IOException
     {
-        if(model == Model.LanguageModel)
+        if(model.isProbabilistcModel())
         {
             return new IndexSearcherLanguageModel(dir);
         }
@@ -236,7 +236,7 @@ public class LgteIndexSearcherManager
 
     private static IndexSearcher initSearcher(File dir, Model model) throws IOException
     {
-        if(model == Model.LanguageModel)
+        if(model.isProbabilistcModel())
         {
             return new IndexSearcherLanguageModel(openReader(dir,model));
         }
@@ -255,10 +255,11 @@ public class LgteIndexSearcherManager
 
     private static void initSimilarity(IndexSearcher indexSearcher, Model model, Properties modelProperties)
     {
-        if(model == Model.LanguageModel)
+        
+        if(model.isProbabilistcModel())
         {
             indexSearcher.setSimilarity(new LangModelSimilarity());
-            System.setProperty("RetrievalModel", "LanguageModel");
+            System.setProperty("RetrievalModel", model.getName());
             if(!extentData)
             {
                 ((IndexSearcherLanguageModel) indexSearcher).readExtendedDate(Globals.TMP_DIR);

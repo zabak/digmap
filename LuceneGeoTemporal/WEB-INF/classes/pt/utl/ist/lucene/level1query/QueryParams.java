@@ -1,10 +1,7 @@
 package pt.utl.ist.lucene.level1query;
 
 import org.apache.log4j.Logger;
-import pt.utl.ist.lucene.FilterEnum;
-import pt.utl.ist.lucene.OrderEnum;
-import pt.utl.ist.lucene.QueryConfiguration;
-import pt.utl.ist.lucene.QEEnum;
+import pt.utl.ist.lucene.*;
 import pt.utl.ist.lucene.utils.Dates;
 
 import java.util.GregorianCalendar;
@@ -12,7 +9,7 @@ import java.util.GregorianCalendar;
 /**
  * @author Jorge Machado
  * @date 25/Jul/2008
- * @see mitra.app.indexlayer.impl
+ * @see pt.utl.ist.lucene.level1query
  */
 public class QueryParams
 {
@@ -49,6 +46,8 @@ public class QueryParams
     FilterEnum filter = FilterEnum.timeSpace;
     OrderEnum order = OrderEnum.scoreTimeSpace;
 
+
+    Model model = null;
 
 
     public QueryParams()
@@ -597,4 +596,18 @@ public class QueryParams
     }
 
 
+    public Model getModel()
+    {
+        return model;
+    }
+
+    public void setModel(Model model)
+    {
+        this.model = model;
+    }
+
+    public void setModel(String model)
+    {
+        this.model = Model.parse(model);
+    }
 }

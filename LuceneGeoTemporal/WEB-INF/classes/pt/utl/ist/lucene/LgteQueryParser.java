@@ -92,6 +92,9 @@ public class LgteQueryParser
         Level1Query level1Query = parser.buildQuery(query);
         QueryParams queryParams = level1Query.getQueryParams();
         queryParams.setQueryConfiguration(queryConfiguration);
+        //Set Model in Manager
+        if(queryParams.getModel() != null) ModelManager.getInstance().setModel(queryParams.getModel());
+        
         Query returnQuery = luceneVersion.parseQuery(level1Query.toString(),field,analyzer);
         if(queryParams.getQeEnum().isQE() || (queryConfiguration != null && queryConfiguration.getForceQE().isQE()))
         {

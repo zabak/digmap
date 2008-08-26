@@ -12,8 +12,21 @@ import org.apache.log4j.Logger;
  */
 public enum Model
 {
-    LanguageModel("lm"),
-    VectorSpaceModel("vs");
+
+    VectorSpaceModel("VectorSpace", false,"vs"),
+    LanguageModel("LanguageModel", true,"lm"),
+    DLHHypergeometricDFRModel("DLHHypergeometricDFRModel", true,"DLHHypergeometricDFRModel"),
+    InExpC2DFRModel("InExpC2DFRModel", true,"InExpC2DFRModel"),
+    InExpB2DFRModel("InExpB2DFRModel", true,"InExpB2DFRModel"),
+    IFB2DFRModel("IFB2DFRModel", true,"IFB2DFRModel"),
+    InL2DFRModel("InL2DFRModel", true,"InL2DFRModel"),
+    PL2DFRModel("PL2DFRModel", true,"PL2DFRModel"),
+    BB2DFRModel("BB2DFRModel", true,"BB2DFRModel"),
+    OkapiBM25Model("OkapiBM25Model", true,"bm25");
+
+
+
+
 
     public static Model defaultModel;
     private static final Logger logger = Logger.getLogger(Model.class);
@@ -21,7 +34,7 @@ public enum Model
     static
     {
         defaultModel = Model.parse(ConfigProperties.getProperty("lucene.model"));
-        if(defaultModel == LanguageModel && LuceneVersionFactory.getLuceneVersion().getVersion() != VersionEnum.v143)
+        if(defaultModel.isProbabilistcModel() && LuceneVersionFactory.getLuceneVersion().getVersion() != VersionEnum.v143)
         {
             logger.warn("Language Model should be used only with Lucene Version 1.4.3, please check pt/utl/ist/lucene/app.properties, or check in your code if you are using LM");
 //            System.exit(-1);
@@ -29,20 +42,25 @@ public enum Model
     }
 
     String name;
+    boolean probabilistcModel;
+    String shortName;
 
-    private Model(String name)
+
+    private Model(String name, boolean isProbabilistic, String shortName)
     {
         this.name = name;
+        this.probabilistcModel = isProbabilistic;
+        this.shortName = shortName;
     }
 
     public static Model parse(String name)
     {
         if(name == null)
             return null;
-        for(Model spatialEnum: Model.values())
+        for(Model modelEnum: Model.values())
         {
-            if(spatialEnum.name.equals(name))
-                return spatialEnum;
+            if(modelEnum.shortName.equals(name) || modelEnum.name.equals(name))
+                return modelEnum;
         }
         return defaultModel;
     }
@@ -51,5 +69,16 @@ public enum Model
     public String getName()
     {
         return name;
+    }
+
+
+    public String getShortName()
+    {
+        return shortName;
+    }
+
+    public boolean isProbabilistcModel()
+    {
+        return probabilistcModel;
     }
 }

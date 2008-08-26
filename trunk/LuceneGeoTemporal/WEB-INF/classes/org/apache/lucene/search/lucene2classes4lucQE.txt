@@ -1,0 +1,6 @@
+
+ComplexExplanation (New in 2.0)
+ConstantScoreQuery (New in 2.0)
+Explanation  (has one more method in 2.0: match())
+RangeFilter (New in 2.0)
+QueryWrapperFilter (New in 2.0)

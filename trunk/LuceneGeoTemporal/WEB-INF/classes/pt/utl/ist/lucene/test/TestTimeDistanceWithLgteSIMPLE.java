@@ -38,7 +38,7 @@ public class TestTimeDistanceWithLgteSIMPLE extends TestCase
 
     protected void setUp() throws IOException
     {
-        LgteIndexWriter writer = new LgteIndexWriter(path, true, Model.LanguageModel);
+        LgteIndexWriter writer = new LgteIndexWriter(path, true, Model.OkapiBM25Model);
 
         LgteDocumentWrapper doc1 = new LgteDocumentWrapper();
         doc1.indexText("id", "1");
@@ -65,13 +65,13 @@ public class TestTimeDistanceWithLgteSIMPLE extends TestCase
 
     protected void tearDown() throws java.lang.Exception
     {
-        Files.delDirsE(path);
+//        Files.delDirsE(path);
     }
 
     public void testRange() throws IOException, InvalidGeoException
     {
         //Lets use Lgte wrapper to dont worry about details with time, filters and all of that boring stuff
-        LgteIndexSearcherWrapper searcher = new LgteIndexSearcherWrapper(path);
+        LgteIndexSearcherWrapper searcher = new LgteIndexSearcherWrapper(Model.OkapiBM25Model,path);
 
         //try find Jorge and Bruno documents last year
         // In this case the closest one will be in 2007

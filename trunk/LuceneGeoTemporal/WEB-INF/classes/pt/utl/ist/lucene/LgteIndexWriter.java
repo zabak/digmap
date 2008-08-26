@@ -41,6 +41,7 @@ public class LgteIndexWriter extends IndexWriter
         indexPath = s;
         init(model);
     }
+
     public LgteIndexWriter(String s, boolean b)
             throws IOException
     {
@@ -104,16 +105,17 @@ public class LgteIndexWriter extends IndexWriter
         this.model = model;
         luceneVersion.setWriterBuffer(this);
 
-        if (model == Model.LanguageModel)
-        {
-            System.setProperty("RetrievalModel", "LanguageModel");
-            storeTermVectors = true;
-            setSimilarity(new LangModelSimilarity());
-        }
-        else if (model == Model.VectorSpaceModel)
+
+        if (model == Model.VectorSpaceModel)
         {
             System.setProperty("RetrievalModel", "VectorSpace");
             setSimilarity(new DefaultSimilarity());
+        }
+        else if (model.isProbabilistcModel())
+        {
+            System.setProperty("RetrievalModel", model.getName());
+            storeTermVectors = true;
+            setSimilarity(new LangModelSimilarity());
         }
         else
         {
@@ -129,7 +131,7 @@ public class LgteIndexWriter extends IndexWriter
         if (storeTermVectors)
         {
             // store some cached data
-            if(indexPath == null)
+            if (indexPath == null)
             {
                 indexPath = Globals.TMP_DIR;
                 new File(indexPath).mkdirs();
@@ -146,9 +148,9 @@ public class LgteIndexWriter extends IndexWriter
 
         IndexReader reader;
 
-        if(directory != null)
+        if (directory != null)
             reader = IndexReader.open(directory);
-        else if(file != null)
+        else if (file != null)
             reader = IndexReader.open(file);
         else
             reader = IndexReader.open(indexPath);
@@ -158,7 +160,7 @@ public class LgteIndexWriter extends IndexWriter
         for (int i = 0; i < reader.maxDoc(); ++i)
         {
             doc = reader.document(i);
-            docid = doc.get("id");
+            docid = doc.get(Globals.DOCUMENT_ID_FIELD);
             fileOutput.println(i + " " + docid);
         }
         fileOutput.close();
@@ -173,6 +175,6 @@ public class LgteIndexWriter extends IndexWriter
 
     public void addDocument(LgteDocumentWrapper documentWrapper, Analyzer analyzer) throws IOException
     {
-        super.addDocument(documentWrapper.getDocument(),analyzer);
+        super.addDocument(documentWrapper.getDocument(), analyzer);
     }
 }

@@ -29,8 +29,11 @@ public class Globals {
 		    	TMP_DIR = aux.substring(aux.indexOf("/"))+"test-index";
 		    }
 	}
-	
-	public Globals getInstance() { return instance; }
+
+    //This ID must be respected for use of LuceneLanguageModel
+    public static final String DOCUMENT_ID_FIELD = "id";
+
+    public Globals getInstance() { return instance; }
 	
     public static String TMP_DIR;
     public static String DATA_DIR;
@@ -41,6 +44,7 @@ public class Globals {
     public static final String LUCENE_ORDER_FIELD_QUERY = ConfigProperties.getProperty("lucene.order.field.query.language");
     public static final String LUCENE_FILTER_FIELD_QUERY = ConfigProperties.getProperty("lucene.filter.field.query.language");
     public static final String LUCENE_QE_FIELD_QUERY = ConfigProperties.getProperty("lucene.qe.field.query.language");
+    public static final String LUCENE_MODEL_FIELD_QUERY = ConfigProperties.getProperty("lucene.model.field.query.language");
 
     public static final String LUCENE_LATITUDE_FIELD_QUERY = ConfigProperties.getProperty("lucene.latitude.field.query.language");
     public static final String LUCENE_LONGITUDE_FIELD_QUERY = ConfigProperties.getProperty("lucene.longitude.field.query.language");

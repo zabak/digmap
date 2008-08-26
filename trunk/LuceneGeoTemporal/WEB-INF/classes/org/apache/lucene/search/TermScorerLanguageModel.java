@@ -1,5 +1,21 @@
 package org.apache.lucene.search;
 
+/**
+ * Copyright 2004 The Apache Software Foundation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import java.io.IOException;
 
 import org.apache.lucene.ilps.DataCacher;
@@ -7,28 +23,19 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.LanguageModelIndexReader;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.index.TermDocs;
-import pt.utl.ist.lucene.Model;
 
-/*
- * 
- * This class implements several DivergenceFromRandomness (DFR) models
- * See a description at http://ir.dcs.gla.ac.uk/wiki/FormulasOfDFRModels
- * 
- */
-final class TermScorerDFR extends Scorer  {
-	
-
-	
-	// TODO: Set model and free parameters dynamically
-	private static final double c = 1, k1 = 1.2, b = 0.5;
-	private Model model = Model.DLHHypergeometricDFRModel;
-	
+final class TermScorerLanguageModel extends Scorer {
 	private Weight weight;
 	private TermDocs termDocs;
 	private byte[] norms;
 	private float weightValue;
 	private int doc;
+	//private float collSizeDFS; // sum of docFreq for all terms 
+	//private float collSizeCFS; // sum of collFreq for all terms
+	private float collSize = 0.0f;
+	private int tfCollection; // collection frequency of the term
 	private LanguageModelIndexReader indexReader;
+	private float lambda;
     private boolean useFieldLengths;
 
 	private final int[] docs = new int[32]; // buffered doc numbers
@@ -36,20 +43,19 @@ final class TermScorerDFR extends Scorer  {
 	private int pointer;
 	private int pointerMax;
 	private Term term;
+	private float log10 = (float) Math.log(10);
 	
 	int fieldLen;
 
-	TermScorerDFR(
+	TermScorerLanguageModel(
 		Weight weight,
 		TermDocs td,
 		Similarity similarity,
 		byte[] norms,
-		IndexReader reader,
-        Model model)
+		IndexReader reader)
 		throws IOException {
 		super(similarity);
-        this.model = model;
-        this.weight = weight;
+		this.weight = weight;
 		this.termDocs = td;
 		this.norms = norms;
 		this.weightValue = weight.getValue();
@@ -57,7 +63,23 @@ final class TermScorerDFR extends Scorer  {
 		this.term = ((TermQueryLanguageModel) weight.getQuery()).getTerm();
 		
 		// Get data for the collection model
-		String docLengthType = (String) DataCacher.Instance().get("LM-lengths");
+		String collectionModel =
+			(String) DataCacher.Instance().get("LM-cmodel");
+		this.lambda =
+				(Float.valueOf((String) DataCacher.Instance().get("LM-lambda")))
+					.floatValue();
+		String docLengthType =
+			(String) DataCacher.Instance().get("LM-lengths");
+
+        if (collectionModel.equals("cf")){
+			this.collSize = (float) indexReader.getCollectionTokenNumber();
+			this.tfCollection = indexReader.collFreq(term);
+		} else if (collectionModel.equals("df")) {
+			this.collSize = (float) indexReader.getTotalDocFreqs();
+			this.tfCollection = indexReader.docFreq(term);
+		} else {
+			throw new IllegalArgumentException("Unknown collection model: " + collectionModel);
+		}
 		if (docLengthType.equalsIgnoreCase("field")){
 			this.useFieldLengths = true;
 		} else if (docLengthType.equalsIgnoreCase("document")) {
@@ -88,37 +110,20 @@ final class TermScorerDFR extends Scorer  {
 	}
 
 	public float score() throws IOException {
-        if (useFieldLengths) { 
-        	fieldLen = indexReader.getFieldLength(doc, term.field());
+
+        if (useFieldLengths) {
+            fieldLen = indexReader.getFieldLength(doc, term.field());
         } else {
             fieldLen = indexReader.getDocLength(doc);
         }
 		float tfDoc = freqs[pointer];
-		double sim = 0;
-		double avgLen = indexReader.getCollectionTokenNumber() / indexReader.getTotalDocFreqs();
-		double collSize = indexReader.getTotalDocFreqs();
-		double tfCollection = indexReader.collFreq(term);
-		double numTerms = indexReader.getCollectionTokenNumber();
-		double nt = indexReader.docFreq(term);
-		double lambda = tfCollection / collSize;
-		double ne = collSize * (1-Math.pow(1-nt/collSize, tfCollection));
-		double tfn = tfDoc * Math.log1p(1+c*(avgLen/fieldLen));
-		double tfne = tfDoc * Math.log(1+c*(avgLen/fieldLen));
-		switch ( model ) {
-			case DLHHypergeometricDFRModel: sim = (1 / (tfDoc + 0.5)) * Math.log1p( ((tfDoc * avgLen) / fieldLen) * ( collSize / tfCollection) ) + ((fieldLen-tfDoc) * Math.log1p( 1 - ( tfDoc / fieldLen ) ) ) + ( 0.5 * Math.log1p( 2*Math.PI*tfDoc*(1 - ( tfDoc / fieldLen ))) ); break;
-			case InExpC2DFRModel : sim = (tfCollection/(nt*(tfne+1))) * (tfne*Math.log1p((collSize+1)/(ne+0.5))); break;
-			case InExpB2DFRModel : sim = (tfCollection/(nt*(tfn+1))) * (tfn*Math.log1p((collSize+1)/(ne+0.5))); break; 
-			case IFB2DFRModel :	sim = (tfCollection/(nt*(tfn+1))) * (tfn*Math.log1p((collSize+1)/(tfCollection+0.5))); break;
-			case InL2DFRModel : sim = (1/(tfn+1)) * (tfn*Math.log1p((collSize+1)/(nt+0.5))); break;
-			case PL2DFRModel : sim = (1/(tfn+1)) * (tfn*Math.log1p(tfn/lambda) + (lambda-tfn) * Math.log1p(Math.E) + 0.5 * Math.log1p(Math.PI*2*tfn) ); break;
-			case BB2DFRModel : sim = ((tfCollection+1)/(nt+(tfn+1))) * (-Math.log1p(collSize-1)-Math.log1p(Math.E)+stirlingFormula(tfCollection+collSize-1,tfCollection+collSize-tfn-2)-stirlingFormula(tfCollection,tfCollection+tfn)); break;
-			case OkapiBM25Model : sim = Math.log((collSize - tfCollection +0.5)/(tfCollection+0.5)) *((tfDoc*(k1+1))/(tfDoc+k1*(1+b+b*(collSize/avgLen)))); break;
-		}
-		return (float)sim;
-	}
-	
-	private double stirlingFormula ( double m, double n ) {
-		return (m+0.5)*Math.log1p(n/m)+(n-m)*Math.log1p(n);		
+		float sim =
+			(float) Math.log(
+                 1.0f + ((lambda * tfDoc * collSize) / 
+						((1.0f - lambda) * tfCollection * fieldLen)));
+		sim /= log10;
+
+		return sim;
 	}
 
 	public boolean skipTo(int target) throws IOException {
@@ -129,6 +134,7 @@ final class TermScorerDFR extends Scorer  {
 				return true;
 			}
 		}
+
 		// not found in cache, seek underlying stream
 		boolean result = termDocs.skipTo(target);
 		if (result) {
@@ -160,7 +166,9 @@ final class TermScorerDFR extends Scorer  {
 		}
 		termDocs.close();
 		tfExplanation.setValue(getSimilarity().tf(tf));
-		tfExplanation.setDescription("tf(termFreq(" + query.getTerm() + ")=" + tf + ")");
+		tfExplanation.setDescription(
+			"tf(termFreq(" + query.getTerm() + ")=" + tf + ")");
+
 		return tfExplanation;
 	}
 

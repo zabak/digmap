@@ -5,6 +5,6 @@
   * [Gazetteer]
   * [Thumbnails]
   * [XMLTransformations]
-  * [Mitra]
+  * [Search Interface]
   * [Repox]
   * [Cataloger]

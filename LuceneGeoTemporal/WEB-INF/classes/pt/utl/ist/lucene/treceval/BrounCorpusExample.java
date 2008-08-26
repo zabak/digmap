@@ -46,7 +46,7 @@ public class BrounCorpusExample
 
         String dataDir = Globals.DATA_DIR;
         if(args.length>3)
-            dataDir = args[2];
+            dataDir = args[3];
 
         logger.info("Forcing data dir to: " + dataDir);
 

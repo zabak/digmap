@@ -286,7 +286,7 @@ public class QueryExpansion
             Term term = termQuery.getTerm();
 
             //Jorge: only will be considered boost greater than 0.00001 this is the threshold
-            float boost = (termQuery.getBoost());   //todo meter de novo o 10000
+            float boost = (termQuery.getBoost()) * 10000;   
 
             
             if(termQuery.getBoost() > 0)

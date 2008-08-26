@@ -177,9 +177,9 @@
 					<exclude name="servlet-api.jar" />
 					<exclude name="jsp-api.jar" />
 				</fileset>
-				<fileset dir="${base.dir}/lib">
-					<include name="*.jar" />
-				</fileset>
+				<!--<fileset dir="${base.dir}/lib">-->
+					<!--<include name="*.jar" />-->
+				<!--</fileset>-->
 			</classpath>
 			<classpath path="${webapp.path}/WEB-INF/classes" />
 			<arg value="${webapp.path}/WEB-INF/test-data/documents" />

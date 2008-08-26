@@ -32,11 +32,11 @@ public class BrounCorpusExample
     public static void main(String [] args) throws DocumentException, IOException
     {
 
-//        String collectionPath = "C:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-data\\documents";
-//        String topicsPath = "C:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-data\\topics";
-//        String outputDir = "/tmp/output";
-
-
+//        args = new String[4];
+//        args[0] = "C:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-data\\documents";
+//        args[1] = "C:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-data\\topics";
+//        args[2] = "C:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-data\\output";
+//        args[3] = "C:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-index";
 
 
 
@@ -106,7 +106,7 @@ public class BrounCorpusExample
         Configuration LM_BC = new Configuration("version1", "bc","lm",Model.LanguageModel , IndexCollections.du.getAnalyzerNoStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.du.getWordList(),outputDir,maxResults);
         Configuration VS_STEMMER_BC = new Configuration("version1", "bc","vsstem", Model.VectorSpaceModel, IndexCollections.du.getAnalyzerWithStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.du.getWordList(),outputDir,maxResults);
         Configuration LM_STEMMER_BC = new Configuration("version1", "bc","lmstem", Model.LanguageModel, IndexCollections.du.getAnalyzerWithStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.du.getWordList(),outputDir,maxResults);
-        Configuration BM25_STEMMER_BC = new Configuration("version1", "bc","bm25", Model.OkapiBM25Model, IndexCollections.du.getAnalyzerWithStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.du.getWordList(),outputDir,maxResults);
+        Configuration BM25_STEMMER_BC = new Configuration("version1", "bc","bm25stem", Model.OkapiBM25Model, IndexCollections.du.getAnalyzerWithStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.du.getWordList(),outputDir,maxResults);
 
         List<Configuration> configurations = new ArrayList<Configuration>();
         configurations.add(VS_BC);

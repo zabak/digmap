@@ -11,7 +11,7 @@ In a glance, the main features of LGTE are:
 
  * Provides a simple and efective abstraction layer on top of Lucene
  * Supports integrated retrieval and ranking with basis on thematic, temporal and geographical aspects.
- * Supports the Lucene standard retrieval model, as well as a more advanced language modelling approach.
+ * Supports the Lucene standard retrieval model, as well as the more advanced probabilistic retrieval approaches.
  * Supports Rochio Query Expansion
  * Provides a framework for IR evaluation experiments (e.g. handling CLEF/TREC topics)
  * Includes a Java alternative to the trec_eval tool, capable of performing significance tests over pairs of runs

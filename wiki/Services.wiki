@@ -5,6 +5,6 @@
   * [Gazetteer]
   * [Thumbnails]
   * [XMLTransformations]
-  * [Search Interface]
+  * [LuceneGeoTemporal Search Interface]
   * [Repox]
   * [Cataloger]

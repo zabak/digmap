@@ -26,6 +26,8 @@ import java.util.Collection;
  * <p>BPREF is defined in Buckley and Voorhees, "Retrieval Evaluation
  * with Incomplete Information", SIGIR 2004.</p>
  *
+ * Note : Small bugfixes (e.g. divs by zero) made by bgmartins
+ *
  * @author Trevor Strohman
  */
 public class RetrievalEvaluator {

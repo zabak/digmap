@@ -20,7 +20,10 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
- *
+ * Java IR evaluation tool
+ * 
+ * Note : Small bugfixes (e.g. divs by zero) made by bgmartins on original code from the Lemur project
+ * 
  * @author trevor
  */
 public class Main {

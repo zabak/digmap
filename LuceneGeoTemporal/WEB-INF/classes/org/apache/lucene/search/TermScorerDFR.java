@@ -26,7 +26,7 @@ final class TermScorerDFR extends Scorer  {
 	private static final int OkapiBM25Model = 8;
 	
 	// TODO: Set model and free parameters dynamically
-	private static final double c = 1, k1 = 1, b = 0;
+	private static final double c = 1, k1 = 1.2, b = 0.5;
 	private int model = DLHHypergeometricDFRModel;
 	
 	private Weight weight;

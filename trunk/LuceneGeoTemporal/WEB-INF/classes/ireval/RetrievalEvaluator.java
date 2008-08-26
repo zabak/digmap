@@ -239,9 +239,8 @@ public class RetrievalEvaluator {
      */
     
     public double reciprocalRank( ) {
-        if( _relevantRetrieved.size() == 0 )
-            return 0;
-        
+        if( _relevantRetrieved.size() == 0 ) return 0;
+        if( _relevantRetrieved.get(0).rank == 0 ) return 0;
         return 1.0 / (double) _relevantRetrieved.get(0).rank;
     }
     
@@ -254,12 +253,12 @@ public class RetrievalEvaluator {
      * The mean of all these precision values is the average precision.
      */
     public double averagePrecision( ) {
-        double sumPrecision = 0;
+    	double sumPrecision = 0;
         int relevantCount = 0;
         
         for( Document document : _relevantRetrieved ) {
             relevantCount++;
-            sumPrecision += relevantCount / (double) document.rank;
+            if ((double) document.rank > 0) sumPrecision += relevantCount / (double) document.rank;
         }
         if (_relevant.size() > 0)
             return (double) sumPrecision / _relevant.size();
@@ -363,7 +362,7 @@ public class RetrievalEvaluator {
             Judgment judgment = _judgments.get( document.documentNumber );
             
             if( judgment != null && judgment.judgment > 0 ) {
-                dcg += (Math.pow(2, judgment.judgment) - 1.0) / Math.log( 1 + document.rank );
+                if(document.rank > 0) dcg += (Math.pow(2, judgment.judgment) - 1.0) / Math.log( 1 + document.rank );
             }
         }    
         
@@ -401,6 +400,7 @@ public class RetrievalEvaluator {
             relevanceCount = Math.min( relevanceCount, documentsRetrieved - documentsProcessed );
             
             for( int i = 1; i <= relevanceCount; i++ ) {
+            	
                 normalizer += (Math.pow(2, relevanceValue) - 1.0) / Math.log( 1 + i + countsSoFar ); 
             }
             

@@ -54,6 +54,7 @@ public class LgteIndexSearcherWrapper
             throws IOException
     {
         logger.info("using default space model");
+        ModelManager.getInstance().setModel(defaultModel);
         indexSearcher = LgteIndexSearcherManager.openSearcher(defaultModel, s);
     }
 
@@ -61,12 +62,14 @@ public class LgteIndexSearcherWrapper
             throws IOException
     {
         logger.info("using default space model");
+        ModelManager.getInstance().setModel(defaultModel);
         indexSearcher = LgteIndexSearcherManager.openSearcher(defaultModel, directory);
     }
 
     public LgteIndexSearcherWrapper(IndexReader indexReader) throws IOException
     {
         logger.info("using default space model");
+        ModelManager.getInstance().setModel(defaultModel);
         indexSearcher = LgteIndexSearcherManager.openSearcher(defaultModel, indexReader);
     }
 

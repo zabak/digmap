@@ -52,7 +52,7 @@ public class TermQuery extends Query
         }
 
         switch ( model ) {
-            case VectorSpaceModel: new TermQueryVectorSpace(term); break;
+            case VectorSpaceModel: termQueryImpl = new TermQueryVectorSpace(term); break;
             case LanguageModel: termQueryImpl = new TermQueryLanguageModel(term) ; break;
             case DLHHypergeometricDFRModel:
             case InExpC2DFRModel :

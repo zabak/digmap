@@ -117,7 +117,7 @@
 		</javadoc>
 	</target>
 
-	<target name="test" depends="compile" description="Unit Tests and Examples">
+	<target name="test" depends="" description="Unit Tests and Examples">
 		<junit showoutput="true" haltonerror="true" printsummary="true">
 			<classpath path="${webapp.path}/WEB-INF/classes">
 				<fileset dir="${webapp.path}/WEB-INF/lib">

@@ -2,6 +2,7 @@ package pt.utl.ist.lucene.treceval;
 
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
+import org.apache.log4j.Logger;
 import pt.utl.ist.lucene.Model;
 import pt.utl.ist.lucene.QEEnum;
 import pt.utl.ist.lucene.QueryConfiguration;
@@ -26,17 +27,30 @@ import java.util.Map;
  */
 public class BrounCorpusExample
 {
+
+    private static final Logger logger = Logger.getLogger(BrounCorpusExample.class);
     public static void main(String [] args) throws DocumentException, IOException
     {
 
-//        String collectionPath = "C:\\Servidores\\workspace\\luceneDigmap\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\classes\\test-data\\documents";
-//        String topicsPath = "C:\\Servidores\\workspace\\luceneDigmap\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\classes\\test-data\\topics";
+//        String collectionPath = "C:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-data\\documents";
+//        String topicsPath = "C:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-data\\topics";
 //        String outputDir = "/tmp/output";
 
-//
+
+
+
+
         String collectionPath = args[0];
         String topicsPath = args[1];
         String outputDir = args[2];
+
+        String dataDir = Globals.DATA_DIR;
+        if(args.length>3)
+            dataDir = args[2];
+
+        logger.info("Forcing data dir to: " + dataDir);
+
+        Globals.DATA_DIR = dataDir;
 
         /**
          * Lets create Broun Corpus Collection preprocessor
@@ -92,12 +106,14 @@ public class BrounCorpusExample
         Configuration LM_BC = new Configuration("version1", "bc","lm",Model.LanguageModel , IndexCollections.du.getAnalyzerNoStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.du.getWordList(),outputDir,maxResults);
         Configuration VS_STEMMER_BC = new Configuration("version1", "bc","vsstem", Model.VectorSpaceModel, IndexCollections.du.getAnalyzerWithStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.du.getWordList(),outputDir,maxResults);
         Configuration LM_STEMMER_BC = new Configuration("version1", "bc","lmstem", Model.LanguageModel, IndexCollections.du.getAnalyzerWithStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.du.getWordList(),outputDir,maxResults);
+        Configuration BM25_STEMMER_BC = new Configuration("version1", "bc","bm25", Model.OkapiBM25Model, IndexCollections.du.getAnalyzerWithStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.du.getWordList(),outputDir,maxResults);
 
         List<Configuration> configurations = new ArrayList<Configuration>();
         configurations.add(VS_BC);
         configurations.add(LM_BC);
         configurations.add(VS_STEMMER_BC);
         configurations.add(LM_STEMMER_BC);
+        configurations.add(BM25_STEMMER_BC);
         IndexCollections.indexConfiguration(configurations,Globals.DOCUMENT_ID_FIELD);
 
         /***
@@ -114,10 +130,12 @@ public class BrounCorpusExample
         searchConfigurations.add(new SearchConfiguration(queryConfiguration1, LM_BC));
         searchConfigurations.add(new SearchConfiguration(queryConfiguration1, VS_STEMMER_BC));
         searchConfigurations.add(new SearchConfiguration(queryConfiguration1, LM_STEMMER_BC));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, BM25_STEMMER_BC));
         searchConfigurations.add(new SearchConfiguration(queryConfiguration2, VS_BC));
         searchConfigurations.add(new SearchConfiguration(queryConfiguration2, LM_BC));
         searchConfigurations.add(new SearchConfiguration(queryConfiguration2, VS_STEMMER_BC));
         searchConfigurations.add(new SearchConfiguration(queryConfiguration2, LM_STEMMER_BC));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, BM25_STEMMER_BC));
         //Search Topics Runs to submission
         SearchTopics.search(searchConfigurations);
     }

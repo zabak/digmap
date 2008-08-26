@@ -65,7 +65,7 @@ public class TestTimeDistanceWithLgteSIMPLE extends TestCase
 
     protected void tearDown() throws java.lang.Exception
     {
-//        Files.delDirsE(path);
+        Files.delDirsE(path);
     }
 
     public void testRange() throws IOException, InvalidGeoException

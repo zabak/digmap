@@ -168,7 +168,7 @@
 		</junit>
 	</target>
 
-    <target name="build-test-index" depends="compile" description="Index a Collection and run all the topics">
+    <target name="build-test-index" depends="" description="Index a Collection and run all the topics">
         <mkdir dir="${webapp.path}/WEB-INF/test-data/output"/>
         <java fork="true" classname="pt.utl.ist.lucene.treceval.BrounCorpusExample">
 			<classpath>
@@ -185,7 +185,8 @@
 			<arg value="${webapp.path}/WEB-INF/test-data/documents" />
 			<arg value="${webapp.path}/WEB-INF/test-data/topics" />
 			<arg value="${webapp.path}/WEB-INF/test-data/output" />
-		</java>
+            <arg value="${webapp.path}/WEB-INF/test-index" />
+        </java>
 	</target>
 
     <target name="build-test-index-evaluate" depends="compile" description="Index a Collection and run all the topics">

@@ -41,6 +41,6 @@ If you check the distances with Google Earth you will see that the results are c
 
 = TREC/CLEF Evaluation Framework =
 
-We provide a tool to index a collection, run a set of search topics and output the results in treckeval format. This format is like a standard in information retrieval tasks. You can found in the package [ireval ]
+We provide a tool to index a collection, run a set of search topics and output the results in treckeval format. This format is like a standard in information retrieval tasks. You can found in the package [ireval http://code.google.com/p/digmap/source/browse/trunk/LuceneGeoTemporal/WEB-INF/classes/ireval/Main.java]
 
 We provide a test collection and a geospatial collection as an example and we configure those collections with a set of runs previously used in old tasks.

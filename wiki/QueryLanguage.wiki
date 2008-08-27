@@ -37,11 +37,11 @@ LGTE provides a top layer on lucene query parser creating an `LgteQuery`. `LgteQ
 
 You can combine all this fields creating your query. You just need to know the constraints in terms of minimal queries:
 
- * SpatialPointQuery(lat,lng)
- * SpatialPointQuery(lat,lng,SRadium) where SRadium := radium | radiumMiles | radiumKm
- * SpatialRectangleQuery(north,south,east,west) where north, south := latitude; west, east := longitude
-  * Point can be defined by your self with a simple SpatialPointQuery or Lgte will set the middle point in rectangle
- * TimePointQuery(time)
- * TimePointQuery(time,TRadium) where TRadium := radiumYears | radiumMonths | ... | radiumMiliSeconds
- * IntervalQuery(startTime, endTime)
-  * You can define a TimePointQuery to set reference query point or you can let LGTE choose the middle point between start and end time
+ * `SpatialPointQuery(lat,lng)`
+ * `SpatialPointQuery(lat,lng,SRadium)` where `SRadium := radium | radiumMiles | radiumKm
+ * SpatialRectangleQuery(north,south,east,west) where north, south := latitude; west, east := longitude`
+  * `Point` can be defined by your self with a simple `SpatialPointQuery` or LGTE will set the middle point in rectangle
+ * `TimePointQuery(time)`
+ * `TimePointQuery(time,TRadium)` where `TRadium := radiumYears | radiumMonths | ... | radiumMiliSeconds`
+ * `IntervalQuery(startTime, endTime)`
+  * You can define a `TimePointQuery` to set reference query point or you can let LGTE choose the middle point between start and end time

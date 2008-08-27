@@ -4,6 +4,7 @@ import org.dom4j.Element;
 import pt.utl.ist.lucene.treceval.handlers.IdMap;
 
 import java.io.IOException;
+import java.util.Map;
 
 /**
  * @author Jorge Machado
@@ -14,4 +15,5 @@ public interface ResourceHandler
 {
     public String getResourceXpath();
     public IdMap handle(Element element) throws IOException;
+    public Map<String, String> getNamespaces();
 }

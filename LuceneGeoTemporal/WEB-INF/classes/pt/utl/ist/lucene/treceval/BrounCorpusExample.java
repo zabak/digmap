@@ -2,6 +2,7 @@ package pt.utl.ist.lucene.treceval;
 
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
+import org.dom4j.Node;
 import org.apache.log4j.Logger;
 import pt.utl.ist.lucene.Model;
 import pt.utl.ist.lucene.QEEnum;
@@ -177,7 +178,7 @@ public class BrounCorpusExample
     /*Specific filter for BrounCorpus Resource Collection*/
     static class BrounCorpusTextFieldFilter implements FieldFilter
     {
-        public Map<String, String> filter(Element element, String fieldName)
+        public Map<String, String> filter(Node element, String fieldName)
         {
             HashMap<String, String> map = new HashMap<String, String>();
             String text = element.getText();

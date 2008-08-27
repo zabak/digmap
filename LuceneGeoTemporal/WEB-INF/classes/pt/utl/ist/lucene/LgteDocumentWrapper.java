@@ -1,6 +1,7 @@
 package pt.utl.ist.lucene;
 
 import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field;
 import org.apache.solr.util.NumberUtils;
 import com.pjaol.search.geo.utils.DistanceUtils;
 import pt.utl.ist.lucene.utils.GeoUtils;
@@ -10,6 +11,8 @@ import pt.utl.ist.lucene.versioning.LuceneVersionFactory;
 import pt.utl.ist.lucene.versioning.LuceneVersion;
 
 import java.util.Date;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Lucene Extenstion Document
@@ -93,6 +96,16 @@ public class LgteDocumentWrapper
         luceneVersion.addField(document,field,value,store,index,tokenized);
     }
 
+    public static Field getField( String field, String value,  boolean store, boolean index, boolean tokenized)
+    {
+        return luceneVersion.getField(field,value,store,index,tokenized);
+    }
+
+    public static Field getField( String field, String value,  boolean store, boolean index, boolean tokenized, boolean termVector)
+    {
+        return luceneVersion.getField(field,value,store,index,tokenized,termVector);
+    }
+
     /**
      * Set this document as a Geographic Circumference
      * @param form unkonwn of resource
@@ -133,7 +146,7 @@ public class LgteDocumentWrapper
         GeoPoint geoPoint = getGeoPoint();
         if(geoPoint != null && diagonal != null)
             return new DefaultUknownForm(geoPoint,diagonal);
-        return null;            
+        return null;
     }
 
     /**
@@ -174,24 +187,45 @@ public class LgteDocumentWrapper
      */
     public void addGeoBoxField(double north, double south, double west, double east)
     {
+        List<Field> fields = getGeoBoxFields(north,south,west,east);
+        addFields(fields);
+    }
+
+    public void addFields(List<Field> fields)
+    {
+        luceneVersion.addFields(document,fields);
+    }
+
+    /**
+     * Set this document as a Geographic Box
+     *
+     * @param north limit of resource
+     * @param south limit of resource
+     * @param west limit of resource
+     * @param east limit of resource
+     */
+    public static List<Field> getGeoBoxFields(double north, double south, double west, double east)
+    {
         //Calc distance between lower left and top right corners
         double diagonal = DistanceUtils.getDistanceMi(south, west, north, east);
         double middleLatitude = GeoUtils.calcMiddleLatitude(north, south);
         double middleLongitude = GeoUtils.calcMiddleLongitude(west, east);
 
-        addGeoPointField(middleLatitude,middleLongitude);
+        List<Field> geoPointFields = getGeoPointField(middleLatitude,middleLongitude);
 
-        addField(Globals.LUCENE_DIAGONAL_ORIGINAL_INDEX,""+diagonal,true,false,false);
-        addField(Globals.LUCENE_NORTHLIMIT_ORGINAL_INDEX,""+north,true,false,false);
-        addField(Globals.LUCENE_SOUTHLIMIT_ORGINAL_INDEX,""+south,true,false,false);
-        addField(Globals.LUCENE_EASTLIMIT_ORGINAL_INDEX,""+east,true,false,false);
-        addField(Globals.LUCENE_WESTLIMIT_ORGINAL_INDEX,""+west,true,false,false);
+        geoPointFields.add(getField(Globals.LUCENE_DIAGONAL_ORIGINAL_INDEX,""+diagonal,true,false,false));
+        geoPointFields.add(getField(Globals.LUCENE_NORTHLIMIT_ORGINAL_INDEX,""+north,true,false,false));
+        geoPointFields.add(getField(Globals.LUCENE_SOUTHLIMIT_ORGINAL_INDEX,""+south,true,false,false));
+        geoPointFields.add(getField(Globals.LUCENE_EASTLIMIT_ORGINAL_INDEX,""+east,true,false,false));
+        geoPointFields.add(getField(Globals.LUCENE_WESTLIMIT_ORGINAL_INDEX,""+west,true,false,false));
 
-        addField(Globals.LUCENE_DIAGONAL_INDEX, NumberUtils.double2sortableStr(diagonal),false,true,false,true);
-        addField(Globals.LUCENE_NORTHLIMIT_INDEX,NumberUtils.double2sortableStr(north),false,true,false,true);
-        addField(Globals.LUCENE_SOUTHLIMIT_INDEX,NumberUtils.double2sortableStr(south),false,true,false,true);
-        addField(Globals.LUCENE_EASTLIMIT_INDEX,NumberUtils.double2sortableStr(east),false,true,false,true);
-        addField(Globals.LUCENE_WESTLIMIT_INDEX,NumberUtils.double2sortableStr(west),false,true,false,true);
+        geoPointFields.add(getField(Globals.LUCENE_DIAGONAL_INDEX, NumberUtils.double2sortableStr(diagonal),false,true,false,true));
+        geoPointFields.add(getField(Globals.LUCENE_NORTHLIMIT_INDEX,NumberUtils.double2sortableStr(north),false,true,false,true));
+        geoPointFields.add(getField(Globals.LUCENE_SOUTHLIMIT_INDEX,NumberUtils.double2sortableStr(south),false,true,false,true));
+        geoPointFields.add(getField(Globals.LUCENE_EASTLIMIT_INDEX,NumberUtils.double2sortableStr(east),false,true,false,true));
+        geoPointFields.add(getField(Globals.LUCENE_WESTLIMIT_INDEX,NumberUtils.double2sortableStr(west),false,true,false,true));
+
+        return geoPointFields;
     }
 
     /**
@@ -212,11 +246,23 @@ public class LgteDocumentWrapper
      */
     public void addGeoPointField(double latitude, double longitude)
     {
-        addField(Globals.LUCENE_CENTROIDE_LATITUDE_ORIGINAL_INDEX,""+latitude,true,false,false);
-        addField(Globals.LUCENE_CENTROIDE_LONGITUDE_ORIGINAL_INDEX,""+longitude,true,false,false);
+        List<Field> fields = getGeoPointField(latitude,longitude);
+        addFields(fields);
+    }
 
-        addField(Globals.LUCENE_CENTROIDE_LATITUDE_INDEX,NumberUtils.double2sortableStr(latitude),false,true,false,true);
-        addField(Globals.LUCENE_CENTROIDE_LONGITUDE_INDEX,NumberUtils.double2sortableStr(longitude),false,true,false,true);
+    public static List<Field> getGeoPointField(double latitude, double longitude)
+    {
+        Field cOrigLat = getField(Globals.LUCENE_CENTROIDE_LATITUDE_ORIGINAL_INDEX,""+latitude,true,false,false);
+        Field cOrigLng = getField(Globals.LUCENE_CENTROIDE_LONGITUDE_ORIGINAL_INDEX,""+longitude,true,false,false);
+
+        Field cLat = getField(Globals.LUCENE_CENTROIDE_LATITUDE_INDEX,NumberUtils.double2sortableStr(latitude),false,true,false,true);
+        Field cLng = getField(Globals.LUCENE_CENTROIDE_LONGITUDE_INDEX,NumberUtils.double2sortableStr(longitude),false,true,false,true);
+        List<Field> fields = new ArrayList<Field>();
+        fields.add(cOrigLat);
+        fields.add(cOrigLng);
+        fields.add(cLat);
+        fields.add(cLng);
+        return fields;
     }
 
     /**
@@ -275,8 +321,16 @@ public class LgteDocumentWrapper
      */
     public void addTimeField(long miliseconds)
     {
-        addField(Globals.LUCENE_TIME_ORIGINAL_INDEX,"" + miliseconds,true,false,false);
-        addField(Globals.LUCENE_TIME_INDEX,NumberUtils.long2sortableStr(miliseconds),false,true,false,true);
+        List<Field> fields = getTimeFields(miliseconds);
+        addFields(fields);
+    }
+
+    public static List<Field> getTimeFields(long miliseconds)
+    {
+        List<Field> fields = new ArrayList<Field>();
+        fields.add(getField(Globals.LUCENE_TIME_ORIGINAL_INDEX,"" + miliseconds,true,false,false));
+        fields.add(getField(Globals.LUCENE_TIME_INDEX,NumberUtils.long2sortableStr(miliseconds),false,true,false,true));
+        return fields;
     }
 
     /**
@@ -337,6 +391,12 @@ public class LgteDocumentWrapper
      */
     public void addTimeBoxField(int fromYear,int fromMonth, int fromDay, int fromHour, int fromMinute, int fromSecond,  int toYear, int toMonth, int toDay, int toHour, int toMinute, int toSecond)
     {
+        List<Field> fields = getTimeBoxFields(fromYear, fromMonth,  fromDay,  fromHour,  fromMinute,  fromSecond,   toYear,  toMonth,  toDay,  toHour,  toMinute,  toSecond);
+        addFields(fields);
+    }
+
+    public static List<Field> getTimeBoxFields(int fromYear,int fromMonth, int fromDay, int fromHour, int fromMinute, int fromSecond,  int toYear, int toMonth, int toDay, int toHour, int toMinute, int toSecond)
+    {
         MyCalendar fromCalendar = new MyCalendar(fromYear,fromMonth,fromDay,fromHour,fromMinute,fromSecond);
         MyCalendar toCalendar = new MyCalendar(toYear,toMonth,toDay,toHour,toMinute,toSecond);
 
@@ -344,7 +404,7 @@ public class LgteDocumentWrapper
         long middleMili = (fromCalendar.getTimeInMillis() + toCalendar.getTimeInMillis())/2;
         long width = Math.abs(toCalendar.getTimeInMillis() - fromCalendar.getTimeInMillis());
 
-        addTimeBoxField(middleMili,width/2);
+        return getTimeBoxFields(middleMili,width/2);
     }
 
     /**
@@ -355,19 +415,28 @@ public class LgteDocumentWrapper
      */
     public void addTimeBoxField(long centerMiddleTimeMiliseconds, long radium)
     {
-        addTimeField(centerMiddleTimeMiliseconds);
+        List<Field> fields = getTimeBoxFields(centerMiddleTimeMiliseconds,radium);
+        addFields(fields);
+    }
+
+    public static List<Field> getTimeBoxFields(long centerMiddleTimeMiliseconds, long radium)
+    {
+        List<Field> fields = getTimeFields(centerMiddleTimeMiliseconds);
 
         long start = centerMiddleTimeMiliseconds - radium;
         long end = centerMiddleTimeMiliseconds + radium;
         long width = 2*radium;
-        addField(Globals.LUCENE_TIMEWIDTH_ORIGINAL_INDEX,""+width,true,false,false);
-        addField(Globals.LUCENE_START_TIME_LIMIT_INDEX_ORIGINAL,""+start,true,false,false);
-        addField(Globals.LUCENE_END_TIME_LIMIT_INDEX_ORIGINAL,""+end,true,false,false);
+        fields.add(getField(Globals.LUCENE_TIMEWIDTH_ORIGINAL_INDEX,""+width,true,false,false));
+        fields.add(getField(Globals.LUCENE_START_TIME_LIMIT_INDEX_ORIGINAL,""+start,true,false,false));
+        fields.add(getField(Globals.LUCENE_END_TIME_LIMIT_INDEX_ORIGINAL,""+end,true,false,false));
 
-        addField(Globals.LUCENE_TIMEWIDTH_INDEX, NumberUtils.long2sortableStr(width),false,true,false,true);
-        addField(Globals.LUCENE_START_TIME_LIMIT_INDEX,NumberUtils.long2sortableStr(start),false,true,false,true);
-        addField(Globals.LUCENE_END_TIME_LIMIT_INDEX,NumberUtils.long2sortableStr(end),false,true,false,true);
+        fields.add(getField(Globals.LUCENE_TIMEWIDTH_INDEX, NumberUtils.long2sortableStr(width),false,true,false,true));
+        fields.add(getField(Globals.LUCENE_START_TIME_LIMIT_INDEX,NumberUtils.long2sortableStr(start),false,true,false,true));
+        fields.add(getField(Globals.LUCENE_END_TIME_LIMIT_INDEX,NumberUtils.long2sortableStr(end),false,true,false,true));
+
+        return fields;
     }
+
 
 
 

@@ -1,6 +1,7 @@
 package pt.utl.ist.lucene.treceval.handlers;
 
 import org.dom4j.Element;
+import org.dom4j.Node;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,11 +33,11 @@ public class MultipleFieldFilter implements FieldFilter
         this.multiplicity = multiplicity;
     }
 
-    public Map<String, String> filter(Element element, String fieldName)
+    public Map<String, String> filter(Node element, String fieldName)
     {
         HashMap<String, String> map = new HashMap<String, String>();
         StringBuilder builder = new StringBuilder();
-        String text = element.getTextTrim();
+        String text = element.getText();
         for (int i = 0; i < multiplicity; i++)
         {
             builder.append(text).append(' ');

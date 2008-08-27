@@ -19,6 +19,7 @@ import pt.utl.ist.lucene.config.ConfigProperties;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.Collection;
+import java.util.List;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
@@ -63,6 +64,27 @@ public class LuceneVersion143 implements LuceneVersion
     public void addField(Document doc, String field, String value,  boolean store, boolean index, boolean tokenized)
     {
         addField(doc, field, value, store, index, tokenized, false);
+    }
+
+    public Field getField( String field, String value,  boolean store, boolean index, boolean tokenized)
+    {
+        return new Field(field, value, store, index, tokenized, false);
+    }
+
+    public Field getField( String field, String value,  boolean store, boolean index, boolean tokenized, boolean termVector)
+    {
+        return new Field(field, value, store, index, tokenized, termVector);
+    }
+
+    public void addFields(Document doc, List<Field> fields)
+    {
+        if(fields != null)
+        {
+            for(Field f: fields)
+            {
+                doc.add(f);
+            }
+        }
     }
 
     public void addField(Document doc, String field, String value, boolean store, boolean index, boolean tokenized, boolean termVector)

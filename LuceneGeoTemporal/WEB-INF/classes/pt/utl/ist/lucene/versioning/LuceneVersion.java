@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Token;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.store.FSDirectory;
@@ -14,6 +15,7 @@ import org.apache.lucene.queryParser.ParseException;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * @author Jorge Machado
@@ -24,6 +26,9 @@ public interface LuceneVersion
 {
     public void deleteDocument(int i, IndexReader r) throws IOException;
     public void addField(Document doc, String field, String value, boolean index, boolean store, boolean tokenized);
+    public Field getField(String field, String value, boolean index, boolean store, boolean tokenized);
+    public Field getField( String field, String value,  boolean store, boolean index, boolean tokenized, boolean termVector);
+    public void addFields(Document doc, List<Field> fields);
     public void addFieldUnIndexed(Document doc, String field, String value);
     public void addFieldUnStored(Document doc, String field, String value);
     public void addFieldUnStored(Document doc, String field, String value, boolean termVector);

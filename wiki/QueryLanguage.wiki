@@ -57,3 +57,19 @@ The order or ranking system is using aou GeoTemporal Model based in ranking sigm
 || `sc_t` || Score and Time distance ||
 || `t_sp` || Time distance and Spatial distance ||
 || `sc_t_sp` || All together ||
+
+== Filter ==
+Filtering cn be used to prune results out of the box in rectangle, interval, and radium queries. When you define a radium or a limit you dont need to prune the results, by default thats what is being done for performance reasons. Radium or limits are allays   used in ranking formulas, and if you choose not prune out of the box results they will appear but the ranking depends on time, spatial and textual formulas.
+
+|| Filter Field Values || Active Filters ||
+|| `sp` || Filter spatial ||
+|| `t` || Filter time ||
+|| `t_sp` || Filter time and spatial ||
+
+== Query Expansion ==
+Query expansion uses LuQE with rochio pseudo feedback alghorithm. You can set your own algorithm using advanced query configuration provided by LGTE. Query expansion can be provided in two diferent configurations. First using only textual retrieval in first set of results. Second using LGTE full machine to get first set of results to obtain expanded query. In second interaction full LGTE machine will allays be used.
+
+|| QE Field  Values || ||
+|| no || don't use query expansion ||
+|| yes || use but first retrieval uses only textual ranking ||
+|| lgte || use and first retrieval uses full lgte ranking ||

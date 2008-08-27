@@ -3,14 +3,12 @@ package eu.digmap.thumbnails;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.awt.image.RenderedImage;
 import java.awt.image.renderable.ParameterBlock;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Properties;
@@ -189,16 +187,14 @@ public abstract class AbstractThumbnailMaker {
 		   transparencyHeight2 <=100) {
 			int x1 = (int)(img.getWidth() * transparencyWidth1 / 100.0);
 			int x2 = (int)(img.getWidth() * transparencyWidth2 / 100.0);
-			int y1 = (int)(img.getWidth() * transparencyHeight1 / 100.0);
-			int y2 = (int)(img.getWidth() * transparencyHeight2 / 100.0);
+			int y1 = (int)(img.getHeight() * transparencyHeight1 / 100.0);
+			int y2 = (int)(img.getHeight() * transparencyHeight2 / 100.0);
 			int rgb[] = new int[img.getWidth() * img.getHeight()];
 			img.getRGB(0, 0, img.getWidth(), img.getHeight(), rgb, 0, img.getWidth());
 			int _alpha = (transparency & 0xFF) << 24;
 			for(int i = 0; i < rgb.length; i++) rgb[i] = (rgb[i] & 0xFFFFFF) | _alpha;
 			img.setRGB(0,0,img.getWidth(),img.getHeight(), rgb, 0, img.getWidth());
-			img.getRGB(x1, y1, x2, y2, rgb, 0, x2-x1);
-			for(int i = 0; i < (x2-x1)*(y2-y1); i++) rgb[i] = (rgb[i] & 0xFFFFFF) | (0xFF << 24);
-			img.setRGB(x1,y1,x2,y2, rgb, 0, x2-x1);
+			for (int i=x1; i<x2; i++) for (int j=y1; j<y2; j++) img.setRGB(i, j, (img.getRGB(i, j) & 0xFFFFFF) | (0xFF << 24));
 		} else {
 			int rgb[] = new int[img.getWidth() * img.getHeight()];
 			img.getRGB(0, 0, img.getWidth(), img.getHeight(), rgb, 0, img.getWidth());

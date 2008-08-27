@@ -211,22 +211,9 @@ public class ExceptionsThumbnailMaker extends AbstractThumbnailMaker {
 	/** Handle the exception case of the Royal Library of Belgium */
 	protected BufferedImage handleKBRException () {
 		if(uri.startsWith("http://mara.kbr.be/kbrImage/CM/") || uri.startsWith("http://mara.kbr.be/kbrImage/maps/") || uri.startsWith("http://opteron2.kbr.be/kp/viewer/")) try {
-			if(uri.startsWith("http://opteron2.kbr.be/kp/viewer")) uri = "http://mara.kbr.be/kbrImage/maps" + uri.substring(uri.lastIndexOf("/")); 
-			URLConnection connection = new URL(uri).openConnection();
-			int index = uri.lastIndexOf("?");
-			uri = "get_image.php?intId="; 
-			BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-			String url = null;
-			while((url=reader.readLine())!=null) {
-				index = url.indexOf(uri);
-				if(index!=-1) {
-					url = "http://mara.kbr.be/kbrImage/" + url.substring(index);
-					url = url.substring(0,url.indexOf("\""));
-					break;
-				}
-			}
+			String url = "http://mara.kbr.be/xlimages/CM/thumbnails" + uri.substring(uri.lastIndexOf("/")).replace(".imgf",".jpg");
 			if(url!=null) {
-				connection = new URL(url).openConnection();
+				URLConnection connection = new URL(url).openConnection();
 				return scaleAndRotateImage((new ImageThumbnailMaker(uri,connection.getInputStream(),-1,-1,(byte)transparency)).getImage());				
 			}
 		} catch ( Exception e) { }

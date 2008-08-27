@@ -1,0 +1,47 @@
+#summary One-sentence summary of this page.
+
+= Lgte Query Language =
+
+This page is a quick tour on how to use LGTE query language. Follow we describe the fields carried by LGTE and their possible values.
+
+= Fields =
+
+LGTE provides a top layer on lucene query parser creating an `LgteQuery`. `LgteQueryParser` parses a query on LGTE query language creating a middle query we call a level 1 query. This query will have all LGTE specific parameters in `QueryParams` class and the rest of the query will be parsed with lucene `QueryParser`. You can crete an `LgteQuery` by yourself passing a `Query` and a `QueryParams`, or you can simply use our query language and let `LgteQueryParser` do the job for you. Next list enumerates all possible fields of LGTE query language, each of the with parameter in QueryParam:
+
+ * lat (query reference latitude)
+ * lng (query reference longitude)
+ * north (limited box north limit)
+ * south (limited box south limit)
+ * east (limited box east limit)
+ * west (limited box west limit)
+ * radium (limit radium in miles by default)
+ * radiumMiles
+ * radiumKm
+ * starttime (Time interval query bottom limit yyyy[-mm[-dd]] or reverse direction)
+ * endtime (Top limit in time)
+ * starttimeMiliseconds (in miliseconds)
+ * endtimeMiliseconds (in miliseconds)
+ * time (Reference Query Time yyyy[-mm[-dd]] or reverse direction)
+ * timeMiliseconds (in miliseconds)
+ * radiumYears (limit radium in years)
+ * radiumMonths 
+ * radiumDays 
+ * radiumHours 
+ * radiumMinutes
+ * radiumSeconds
+ * radiumMiliSeconds
+ * order
+ * filter
+ * qe
+ * model
+
+You can combine all this fields creating your query. You just need to know the constraints in terms of minimal queries:
+
+ * SpatialPointQuery(lat,lng)
+ * SpatialPointQuery(lat,lng,SRadium) where SRadium := radium | radiumMiles | radiumKm
+ * SpatialRectangleQuery(north,south,east,west) where north, south := latitude; west, east := longitude
+  * Point can be defined by your self with a simple SpatialPointQuery or Lgte will set the middle point in rectangle
+ * TimePointQuery(time)
+ * TimePointQuery(time,TRadium) where TRadium := radiumYears | radiumMonths | ... | radiumMiliSeconds
+ * IntervalQuery(startTime, endTime)
+  * You can define a TimePointQuery to set reference query point or you can let LGTE choose the middle point between start and end time

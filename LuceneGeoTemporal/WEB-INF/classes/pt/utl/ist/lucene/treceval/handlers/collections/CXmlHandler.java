@@ -10,7 +10,6 @@ import java.net.MalformedURLException;
 import java.util.Properties;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 
 import pt.utl.ist.lucene.utils.Dom4jUtil;
 import pt.utl.ist.lucene.treceval.IndexFilesCallBack;
@@ -66,8 +65,8 @@ public class CXmlHandler implements CDocumentHandler
                 {
                     try
                     {
-                        idMap.getFields().put(Globals.DOCUMENT_FILE_PATH,filepath);
-                        callBack.indexDoc(idMap.getId(),idMap.getFields());
+                        idMap.getTextFields().put(Globals.DOCUMENT_FILE_PATH,filepath);
+                        callBack.indexDoc(idMap.getId(),idMap.getTextFields(),null);
                     }
                     catch (IOException e)
                     {

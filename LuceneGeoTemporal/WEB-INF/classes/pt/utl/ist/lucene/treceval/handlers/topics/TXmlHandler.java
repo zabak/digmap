@@ -78,7 +78,7 @@ public class TXmlHandler implements TDocumentHandler
             try
             {
                 IdMap idMap = handler.handle(element);
-                Topic topic = new FieldsTopic(idMap.getId(),idMap.getFields(),outputFormat);
+                Topic topic = new FieldsTopic(idMap.getId(),idMap.getTextFields(),outputFormat);
                 callBack.searchCallback(topic);
             }
             catch (IOException e)

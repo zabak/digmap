@@ -2,6 +2,7 @@ package pt.utl.ist.lucene.treceval;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field;
 import org.apache.lucene.index.IndexWriter;
 import org.dom4j.DocumentException;
 import pt.utl.ist.lucene.LgteDocumentWrapper;
@@ -13,6 +14,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Collection;
 
 /**
  * @author Jorge Machado
@@ -69,6 +71,7 @@ public class IndexCollections implements IndexFilesCallBack
      * @throws IOException writing files
      * @throws DocumentException opening XML documents
      * @param configurations to index
+     * @param idField to indentify document
      */
 
     public static void indexConfiguration(List<Configuration> configurations, String idField) throws IOException, DocumentException
@@ -102,15 +105,18 @@ public class IndexCollections implements IndexFilesCallBack
      * index a document in index writer
      * @param id identifier field in use
      * @param indexFields to add in document
-     * @throws IOException
+     * @param uniqueFields to add to index
+     * @throws IOException writing index
      */
-    public void indexDoc(String id, Map<String,String> indexFields) throws IOException
+    public void indexDoc(String id, Map<String,String> indexFields, Collection<Field> uniqueFields) throws IOException
     {
         LgteDocumentWrapper d = new LgteDocumentWrapper();
         d.addField(idField, id, true, false, false);
         for (Map.Entry<String,String> entry : indexFields.entrySet())
         {
             d.addField(entry.getKey(), entry.getValue(), true, true, true, true);
+            if(uniqueFields!=null)
+                d.addFields(uniqueFields);
         }
         try
         {

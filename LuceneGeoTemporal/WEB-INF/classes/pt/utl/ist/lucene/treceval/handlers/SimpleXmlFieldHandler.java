@@ -29,7 +29,7 @@ public class SimpleXmlFieldHandler implements XmlFieldHandler
         this.fieldName = fieldName;
     }
 
-    public Map<String, String> getFields(Node element)
+    public FilteredFields getFields(Node element)
     {
         return fieldFilter.filter(element,fieldName);
     }

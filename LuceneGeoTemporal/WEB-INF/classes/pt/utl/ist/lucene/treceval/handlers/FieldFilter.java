@@ -14,5 +14,5 @@ import java.util.Map;
  */
 public interface FieldFilter
 {
-    public Map<String,String> filter(Node element, String fieldName);
+    public FilteredFields filter(Node element, String fieldName);
 }

@@ -35,7 +35,7 @@ LGTE provides a top layer on lucene query parser creating an `LgteQuery`. `LgteQ
  * qe
  * model
 
-You can combine all this fields creating your query. You just need to know the constraints in terms of minimal queries:
+You can combine all these fields creating your own query. You just need to know the constraints in terms of minimal queries, further you can combine all of them:
 
  * `SpatialPointQuery(lat,lng)`
  * `SpatialPointQuery(lat,lng,SRadium)` where `SRadium := radium | radiumMiles | radiumKm

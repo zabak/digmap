@@ -73,3 +73,6 @@ Query expansion uses LuQE with rochio pseudo feedback alghorithm. You can set yo
 || no || don't use query expansion ||
 || yes || use but first retrieval uses only textual ranking ||
 || lgte || use and first retrieval uses full lgte ranking ||
+
+== Model ==
+LGTE provides retrieval model configuration at run time using an implementation of University of Amsterdam (IPLS) Language Model. Beside Language Model and Vector Space Model, LGTE provides a set of 8 more models including BM25 and another 7 studied intensively in

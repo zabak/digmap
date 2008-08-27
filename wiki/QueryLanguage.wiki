@@ -30,10 +30,10 @@ LGTE provides a top layer on lucene query parser creating an `LgteQuery`. `LgteQ
  * radiumMinutes
  * radiumSeconds
  * radiumMiliSeconds
- * order
- * filter
- * qe
- * model
+ * order (order type spatial, temporal, textual)
+ * filter (filter results out of the box)
+ * qe (use query expansion)
+ * model (Searching model)
 
 You can combine all these fields creating your own query. You just need to know the constraints in terms of minimal queries, further you can combine all of them:
 
@@ -45,3 +45,17 @@ You can combine all these fields creating your own query. You just need to know 
  * `TimePointQuery(time,TRadium)` where `TRadium := radiumYears | radiumMonths | ... | radiumMiliSeconds`
  * `IntervalQuery(startTime, endTime)`
   * You can define a `TimePointQuery` to set reference query point or you can let LGTE choose the middle point between start and end time
+
+== Order ==
+The order or ranking system is using aou GeoTemporal Model based in ranking sigmoid formulas and puted all together in an integrated avarege model. We can choose here wich dimensions should and should not be used in that ranking model.
+
+| Order Field Values | Ranking |
+| `sc` | Score |
+| `sp` | Spatial distance |
+| `t` | Time distance |
+| `sc_sp` | Score and Spatial distance  |
+| `sc_t` | Score and Time distance |
+| `t_sp` | Time distance and Spatial distance |
+| `sc_t_sp` | All together |
+
+

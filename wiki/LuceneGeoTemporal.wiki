@@ -32,12 +32,13 @@ LGTE essentially assembles the following open-source libraries, patching them wh
 We provide a set of unit tests to help you to learn how to use LGTE. Our Library it is very similar to Lucene
 and gives you an abstraction layer of time and spatial. You can find our examples at pt.utl.ist.lucene.test
 
-Start with classes prefixed with SIMPLE. The other classes are also simple but there you will found more complex
-tests. After the simple try TestSpatialDistanceWithLgteQueryParser and TestSpatialDistanceWithLgte.
+Start with classes suffixed with SIMPLE. The other classes are also simple but there you will found more complex tests. After the simple try TestSpatialDistanceWithLgteQueryParser and TestSpatialDistanceWithLgte.
 
 In our spatial examples we use a set of bars and restaurants in Portalegre, Portugal.
 We set the stadium as the start geoPoint. you can find a Google Earth Document KML with this information.
 If you check the distances with Google Earth you will see that the results are correct.
+
+Here we provide a set of examples on LGTE QueryLanguage
 
 = TREC/CLEF Evaluation Framework =
 

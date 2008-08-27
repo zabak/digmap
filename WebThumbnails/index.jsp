@@ -301,6 +301,77 @@
 </table>
 </form>
 
+<form method="get" action="index.jsp">
+<table>
+	<tr>
+		<td width="33%">&nbsp;</td>
+		<td width="33%">
+		<table width="600">
+			<tr>
+				<td>
+				<table class="tablemain">
+					<tr>
+						<td class="tableheader" colspan="2">Generate PNG thumbnail with a transparency window</td>
+					</tr>
+					<tr>
+						<td class="tablekey">URL</td>
+						<td class="infobody"><input type="text" size="51" name="url"
+							value="http://digmap1.ist.utl.pt:8080/nail.map/DIGMAP_logo.png" />
+						</td>
+					</tr>
+					<tr>
+						<td class="tablekey">Width</td>
+						<td class="infobody"><input type="text" size="10"
+							maxlength="10" name="width" value="160" /></td>
+					</tr>
+					<tr>
+						<td class="tablekey">Height</td>
+						<td class="infobody"><input type="text" size="10"
+							maxlength="10" name="height" value="100" /></td>
+					</tr>
+					<tr>
+						<td class="tablekey">Transparency Window</td>
+						<td class="infobody">
+						  H1<input type="text" size="3" maxlength="3" name="theight1" value="30" />%&nbsp;
+						  W1<input type="text" size="3" maxlength="3" name="twidth1" value="30" />%&nbsp;
+						  H2<input type="text" size="3" maxlength="3" name="theight2" value="70" />%&nbsp;
+						  W2<input type="text" size="3" maxlength="3" name="twidth2" value="70" />%&nbsp;
+						</td>
+					</tr>
+					<tr>
+						<td class="tablekey">Transparency</td>
+						<td class="infobody"><input type="text" size="10"
+							maxlength="10" name="transparency" value="50" /></td>
+					</tr>
+					<tr>
+						<td class="tablekey">Rotation</td>
+						<td class="infobody"><input type="text" size="10"
+							maxlength="10" name="rotation" value="0" /></td>
+					</tr>
+				</table>
+				<table width="100%" border="0" cellspacing="0" cellpadding="0">
+					<tr>
+						<td height="8"></td>
+					</tr>
+				</table>
+				<table class="tablemain">
+					<tr>
+						<td class="tablebody">
+						<center><input type="submit" name="button"
+							value="Generate" /> <input type="reset" name="reset"
+							value="Reset" /></center>
+						</td>
+					</tr>
+				</table>
+				</td>
+			</tr>
+		</table>
+		</td>
+		<td width="33%">&nbsp;</td>
+	</tr>
+</table>
+</form>
+
 <form method="post" enctype="multipart/form-data" action="index.jsp">
 <table>
 	<tr>

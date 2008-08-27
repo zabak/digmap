@@ -49,13 +49,11 @@ You can combine all these fields creating your own query. You just need to know 
 == Order ==
 The order or ranking system is using aou GeoTemporal Model based in ranking sigmoid formulas and puted all together in an integrated avarege model. We can choose here wich dimensions should and should not be used in that ranking model.
 
-| Order Field Values | Ranking |
-| `sc` | Score |
-| `sp` | Spatial distance |
-| `t` | Time distance |
-| `sc_sp` | Score and Spatial distance  |
-| `sc_t` | Score and Time distance |
-| `t_sp` | Time distance and Spatial distance |
-| `sc_t_sp` | All together |
-
-
+|| *Order Field Values* || *Ranking* ||
+|| `sc` || Score ||
+|| `sp` || Spatial distance ||
+|| `t` || Time distance ||
+|| `sc_sp` || Score and Spatial distance  ||
+|| `sc_t` || Score and Time distance ||
+|| `t_sp` || Time distance and Spatial distance ||
+|| `sc_t_sp` || All together ||

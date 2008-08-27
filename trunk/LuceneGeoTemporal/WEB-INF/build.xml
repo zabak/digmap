@@ -169,7 +169,7 @@
 	</target>
 
     <target name="build-test-index" depends="" description="Index a Collection and run all the topics">
-        <mkdir dir="${webapp.path}/WEB-INF/test-data/output"/>
+        <mkdir dir="${webapp.path}/WEB-INF/brauncorpus/test-data/output"/>
         <java fork="true" classname="pt.utl.ist.lucene.treceval.BrounCorpusExample">
 			<classpath>
 				<fileset dir="${webapp.path}/WEB-INF/lib">
@@ -182,10 +182,31 @@
 				<!--</fileset>-->
 			</classpath>
 			<classpath path="${webapp.path}/WEB-INF/classes" />
-			<arg value="${webapp.path}/WEB-INF/test-data/documents" />
-			<arg value="${webapp.path}/WEB-INF/test-data/topics" />
-			<arg value="${webapp.path}/WEB-INF/test-data/output" />
-            <arg value="${webapp.path}/WEB-INF/test-index" />
+			<arg value="${webapp.path}/WEB-INF/test-data/brauncorpus/documents" />
+			<arg value="${webapp.path}/WEB-INF/test-data/brauncorpus/topics" />
+			<arg value="${webapp.path}/WEB-INF/test-data/brauncorpus/output" />
+            <arg value="${webapp.path}/WEB-INF/test-index/brauncorpus" />
+        </java>
+	</target>
+
+    <target name="build-test-index-digmap" depends="" description="Index a Collection and run all the topics">
+        <mkdir dir="${webapp.path}/WEB-INF/test-data/digmap/output"/>
+        <java fork="true" classname="pt.utl.ist.lucene.treceval.DigmapExample">
+			<classpath>
+				<fileset dir="${webapp.path}/WEB-INF/lib">
+					<include name="**.jar" />
+					<exclude name="servlet-api.jar" />
+					<exclude name="jsp-api.jar" />
+				</fileset>
+				<!--<fileset dir="${base.dir}/lib">-->
+					<!--<include name="*.jar" />-->
+				<!--</fileset>-->
+			</classpath>
+			<classpath path="${webapp.path}/WEB-INF/classes" />
+			<arg value="${webapp.path}/WEB-INF/test-data/digmap/documents" />
+			<arg value="${webapp.path}/WEB-INF/test-data/digmap/topics" />
+			<arg value="${webapp.path}/WEB-INF/test-data/digmap/output" />
+            <arg value="${webapp.path}/WEB-INF/test-index/digmap" />
         </java>
 	</target>
 
@@ -198,7 +219,7 @@
 	<target name="evaluation-metrics" description="Generate trec_eval results">
 		<for param="runfile">
 			<path>
-				<fileset dir="${webapp.path}/WEB-INF/test-data/output/">
+				<fileset dir="${webapp.path}/WEB-INF/test-data/brauncorpus/output/">
 					<include name="*.txt" />
 					<exclude name="*-treceval-report.txt" />
 					<exclude name="*-significance-report.txt" />
@@ -216,7 +237,7 @@
 					</classpath>
 					<classpath path="${webapp.path}/WEB-INF/classes" />
 					<arg value="@{runfile}" />
-					<arg value="${webapp.path}/WEB-INF/test-data/assessements/qrels.ac-gls.txt" />
+					<arg value="${webapp.path}/WEB-INF/test-data/brauncorpus/assessements/qrels.ac-gls.txt" />
 				</java>
 			</sequential>
 		</for>
@@ -225,7 +246,7 @@
 	<target name="significance-tests" description="Generate trec_eval results">
 		<for param="runfile">
 			<path>
-				<fileset dir="${webapp.path}/WEB-INF/test-data/output/">
+				<fileset dir="${webapp.path}/WEB-INF/test-data/brauncorpus/output/">
 					<include name="*.txt" />
 					<exclude name="*-treceval-report.txt" />
 					<exclude name="*-significance-report.txt" />
@@ -234,7 +255,7 @@
 			<sequential>
 				<for param="runfile2">
 					<path>
-						<fileset dir="${webapp.path}/WEB-INF/test-data/output/">
+						<fileset dir="${webapp.path}/WEB-INF/test-data/brauncorpus/output/">
 							<include name="*.txt" />
 							<exclude name="*-treceval-report.txt" />
 							<exclude name="*-significance-report.txt" />
@@ -254,7 +275,7 @@
 							<classpath path="${webapp.path}/WEB-INF/classes" />
 							<arg value="@{runfile}" />
 							<arg value="@{runfile2}" />
-							<arg value="${webapp.path}/WEB-INF/test-data/assessements/qrels.ac-gls.txt" />
+							<arg value="${webapp.path}/WEB-INF/test-data/brauncorpus/assessements/qrels.ac-gls.txt" />
 						</java>
 					</sequential>
 				</for>

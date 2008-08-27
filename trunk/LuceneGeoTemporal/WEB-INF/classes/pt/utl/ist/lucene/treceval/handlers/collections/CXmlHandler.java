@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Properties;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 import pt.utl.ist.lucene.utils.Dom4jUtil;
 import pt.utl.ist.lucene.treceval.IndexFilesCallBack;
@@ -51,20 +53,26 @@ public class CXmlHandler implements CDocumentHandler
     public void run(Document dom, String filepath, ResourceHandler handler, IndexFilesCallBack callBack) throws IOException
     {
         XPath resourceXpath = dom.createXPath(handler.getResourceXpath());
+        Map<String,String> namespaces = handler.getNamespaces();
+        if(namespaces != null)
+            resourceXpath.setNamespaceURIs(namespaces);
         List<Element> resources = resourceXpath.selectNodes(dom.getRootElement());
         for(Element element: resources)
         {
             try
             {
                 IdMap idMap = handler.handle(element);
-                try
+                if(idMap != null)
                 {
-                    idMap.getFields().put(Globals.DOCUMENT_FILE_PATH,filepath);
-                    callBack.indexDoc(idMap.getId(),idMap.getFields());
-                }
-                catch (IOException e)
-                {
-                    throw e;
+                    try
+                    {
+                        idMap.getFields().put(Globals.DOCUMENT_FILE_PATH,filepath);
+                        callBack.indexDoc(idMap.getId(),idMap.getFields());
+                    }
+                    catch (IOException e)
+                    {
+                        throw e;
+                    }
                 }
             }
             catch (IOException e)

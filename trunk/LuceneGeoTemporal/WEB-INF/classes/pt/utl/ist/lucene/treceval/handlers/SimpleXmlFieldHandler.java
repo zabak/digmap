@@ -1,6 +1,7 @@
 package pt.utl.ist.lucene.treceval.handlers;
 
 import org.dom4j.Element;
+import org.dom4j.Node;
 
 import java.util.Map;
 
@@ -28,7 +29,7 @@ public class SimpleXmlFieldHandler implements XmlFieldHandler
         this.fieldName = fieldName;
     }
 
-    public Map<String, String> getFields(Element element)
+    public Map<String, String> getFields(Node element)
     {
         return fieldFilter.filter(element,fieldName);
     }

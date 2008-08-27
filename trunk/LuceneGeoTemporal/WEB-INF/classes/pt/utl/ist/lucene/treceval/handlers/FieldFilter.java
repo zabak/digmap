@@ -1,6 +1,7 @@
 package pt.utl.ist.lucene.treceval.handlers;
 
 import org.dom4j.Element;
+import org.dom4j.Node;
 
 import java.util.Map;
 
@@ -13,5 +14,5 @@ import java.util.Map;
  */
 public interface FieldFilter
 {
-    public Map<String,String> filter(Element element, String fieldName);
+    public Map<String,String> filter(Node element, String fieldName);
 }

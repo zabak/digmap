@@ -178,7 +178,7 @@ public class BrounCorpusExample
     /*Specific filter for BrounCorpus Resource Collection*/
     static class BrounCorpusTextFieldFilter implements FieldFilter
     {
-        public Map<String, String> filter(Node element, String fieldName)
+        public FilteredFields filter(Node element, String fieldName)
         {
             HashMap<String, String> map = new HashMap<String, String>();
             String text = element.getText();
@@ -200,7 +200,7 @@ public class BrounCorpusExample
             }
             map.put(Globals.DOCUMENT_TITLE,firstLines.toString());
             map.put(fieldName,firstLines.toString() + " " + firstLines.toString() + " "  + text);
-            return map;
+            return new FilteredFields(map);
         }
     }
 }

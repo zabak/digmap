@@ -145,12 +145,12 @@ public class DigmapExample
     /*Specific filter for BrounCorpus Resource Collection*/
     static class DigmapSpatialFieldFilter implements FieldFilter
     {
-        public Map<String, String> filter(Node node, String fieldName)
+        public FilteredFields filter(Node node, String fieldName)
         {
             Element spatial = (Element) node;
-            
             HashMap<String, String> map = new HashMap<String, String>();
-            String text = "";//element.getText();
+            String text = spatial.getText();
+
             BufferedReader reader = new BufferedReader(new StringReader(text));
             StringBuilder firstLines = new StringBuilder();
             try
@@ -169,7 +169,7 @@ public class DigmapExample
             }
             map.put(Globals.DOCUMENT_TITLE,firstLines.toString());
             map.put(fieldName,firstLines.toString() + " " + firstLines.toString() + " "  + text);
-            return map;
+            return null;
         }
     }
 }

@@ -1,17 +1,15 @@
 package pt.utl.ist.lucene.treceval.handlers;
 
-import pt.utl.ist.lucene.treceval.handlers.XmlFieldHandler;
-import pt.utl.ist.lucene.treceval.handlers.ResourceHandler;
-import pt.utl.ist.lucene.treceval.handlers.IdMap;
+import org.apache.log4j.Logger;
+import org.apache.lucene.document.Field;
+import org.dom4j.Element;
+import org.dom4j.Node;
+import org.dom4j.XPath;
 
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
-import java.io.IOException;
-
-import org.dom4j.Element;
-import org.dom4j.XPath;
-import org.dom4j.Node;
 
 /**
  * XML Resource Handler will Call Field Handler for each given field
@@ -23,6 +21,9 @@ import org.dom4j.Node;
  */
 public class XmlResourceHandler implements ResourceHandler
 {
+
+    private static final Logger logger = Logger.getLogger(XmlResourceHandler.class);
+
     private String resourceXpath;
     private String idXpath;
     private String idXpathSecondary;
@@ -75,9 +76,14 @@ public class XmlResourceHandler implements ResourceHandler
                 idXPath.setNamespaceURIs(namespaces);
             id = idXPath.selectSingleNode(element);
         }
-
+        if(id == null)
+        {
+            logger.error("Doc without id field: " + element);
+            return null;
+        }
 
         Map<String,String> map = new HashMap<String,String>();
+        Map<String,Field> uniqueFields = new HashMap<String,Field>();
         for(XmlFieldHandler handler: fieldHandlers)
         {
             XPath xPath = element.createXPath(handler.getFieldXpath());
@@ -86,24 +92,35 @@ public class XmlResourceHandler implements ResourceHandler
             List<Node> nodes = xPath.selectNodes(element);
             for(Node node: nodes)
             {
-                Map<String,String> nodeMap = handler.getFields((Element) node);
-                for(Map.Entry<String,String> entry:nodeMap.entrySet())
+                FilteredFields fields = handler.getFields( node);
+                //TextFields
+                if(fields.getTextFields() != null)
                 {
-                    String old = map.get(entry.getKey());
-                    if(old == null)
-                        map.put(entry.getKey(),entry.getValue());
-                    else
-                        map.put(entry.getKey(),old + ' ' + entry.getValue());
+                    for(Map.Entry<String,String> entry:fields.getTextFields().entrySet())
+                    {
+                        String old = map.get(entry.getKey());
+                        if(old == null)
+                            map.put(entry.getKey(),entry.getValue());
+                        else
+                            map.put(entry.getKey(),old + ' ' + entry.getValue());
+                    }
+                }
+                //UniqueFields
+                if(fields.getUniqueFields() != null)
+                {
+                    for(Field f: fields.getUniqueFields())
+                    {
+                        Field old = uniqueFields.get(f.name());
+                        if(old == null)
+                            uniqueFields.put(f.name(),f);
+                        else
+                            logger.error("Not UNIQUE field " + f.name() + " in doc: " + id.getText());
+                    }
                 }
             }
         }
-        if(id == null)
-        {
-            System.out.println("----------->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>ERRO:"+ map.get("contents"));
-            return null;
-        }
-        else if(id instanceof Element)
-            return new IdMap(((Element)id).getTextTrim(),map);
+        if(id instanceof Element)
+            return new IdMap(((Element)id).getTextTrim(),map,uniqueFields.values());
         else
             return new IdMap(id.getText().trim(),map);
     }

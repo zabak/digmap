@@ -33,7 +33,7 @@ public class MultipleFieldFilter implements FieldFilter
         this.multiplicity = multiplicity;
     }
 
-    public Map<String, String> filter(Node element, String fieldName)
+    public FilteredFields filter(Node element, String fieldName)
     {
         HashMap<String, String> map = new HashMap<String, String>();
         StringBuilder builder = new StringBuilder();
@@ -43,6 +43,6 @@ public class MultipleFieldFilter implements FieldFilter
             builder.append(text).append(' ');
         }
         map.put(fieldName, builder.toString());
-        return map;
+        return new FilteredFields(map);
     }
 }

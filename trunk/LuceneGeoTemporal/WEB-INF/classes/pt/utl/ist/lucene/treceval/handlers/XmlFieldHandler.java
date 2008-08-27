@@ -12,6 +12,6 @@ import java.util.Map;
  */
 public interface XmlFieldHandler
 {
-    public Map<String,String> getFields(Node element);
+    public FilteredFields getFields(Node element);
     public String getFieldXpath();
 }

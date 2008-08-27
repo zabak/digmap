@@ -28,7 +28,7 @@ public interface LuceneVersion
     public void addField(Document doc, String field, String value, boolean index, boolean store, boolean tokenized);
     public Field getField(String field, String value, boolean index, boolean store, boolean tokenized);
     public Field getField( String field, String value,  boolean store, boolean index, boolean tokenized, boolean termVector);
-    public void addFields(Document doc, List<Field> fields);
+    public void addFields(Document doc, Collection<Field> fields);
     public void addFieldUnIndexed(Document doc, String field, String value);
     public void addFieldUnStored(Document doc, String field, String value);
     public void addFieldUnStored(Document doc, String field, String value, boolean termVector);

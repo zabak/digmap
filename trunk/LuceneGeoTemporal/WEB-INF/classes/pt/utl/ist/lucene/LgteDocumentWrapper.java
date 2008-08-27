@@ -13,6 +13,7 @@ import pt.utl.ist.lucene.versioning.LuceneVersion;
 import java.util.Date;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * Lucene Extenstion Document
@@ -134,13 +135,13 @@ public class LgteDocumentWrapper
     {
         return getDoubleField(Globals.LUCENE_DIAGONAL_ORIGINAL_INDEX);
     }
+    
     /**
      * Set this document as a Geographic Circumference
      *
-     * @param form unkonwn of resource
      * @return return a DefaultUknownForm instance
      */
-    public UnknownForm getUnknownFormField(UnknownForm form)
+    public UnknownForm getUnknownForm()
     {
         Double diagonal = getDoubleField(Globals.LUCENE_DIAGONAL_ORIGINAL_INDEX);
         GeoPoint geoPoint = getGeoPoint();
@@ -158,13 +159,20 @@ public class LgteDocumentWrapper
      */
     public void addCircleBoxField(double latitude, double longitude, double radium)
     {
+        List<Field> fields = getCircleBoxFields(latitude,longitude,radium);
+        addFields(fields);
+    }
+
+    public static List<Field> getCircleBoxFields(double latitude, double longitude, double radium)
+    {
         //Calc distance between lower left and top right corners
         double diagonal = radium * 2;
-        addGeoPointField(latitude,longitude);
-        addField(Globals.LUCENE_DIAGONAL_ORIGINAL_INDEX,""+diagonal,true,false,false);
-        addField(Globals.LUCENE_DIAGONAL_INDEX, NumberUtils.double2sortableStr(diagonal),false,true,false,true);
-        addField(Globals.LUCENE_RADIUM_ORIGINAL_INDEX,""+radium,true,false,false);
-        addField(Globals.LUCENE_RADIUM_INDEX, NumberUtils.double2sortableStr(radium),false,true,false,true);
+        List<Field> fields = getGeoPointFields(latitude,longitude);
+        fields.add(getField(Globals.LUCENE_DIAGONAL_ORIGINAL_INDEX,""+diagonal,true,false,false));
+        fields.add(getField(Globals.LUCENE_DIAGONAL_INDEX, NumberUtils.double2sortableStr(diagonal),false,true,false,true));
+        fields.add(getField(Globals.LUCENE_RADIUM_ORIGINAL_INDEX,""+radium,true,false,false));
+        fields.add(getField(Globals.LUCENE_RADIUM_INDEX, NumberUtils.double2sortableStr(radium),false,true,false,true));
+        return fields;
     }
 
     /**
@@ -191,7 +199,7 @@ public class LgteDocumentWrapper
         addFields(fields);
     }
 
-    public void addFields(List<Field> fields)
+    public void addFields(Collection<Field> fields)
     {
         luceneVersion.addFields(document,fields);
     }
@@ -211,7 +219,7 @@ public class LgteDocumentWrapper
         double middleLatitude = GeoUtils.calcMiddleLatitude(north, south);
         double middleLongitude = GeoUtils.calcMiddleLongitude(west, east);
 
-        List<Field> geoPointFields = getGeoPointField(middleLatitude,middleLongitude);
+        List<Field> geoPointFields = getGeoPointFields(middleLatitude,middleLongitude);
 
         geoPointFields.add(getField(Globals.LUCENE_DIAGONAL_ORIGINAL_INDEX,""+diagonal,true,false,false));
         geoPointFields.add(getField(Globals.LUCENE_NORTHLIMIT_ORGINAL_INDEX,""+north,true,false,false));
@@ -246,11 +254,11 @@ public class LgteDocumentWrapper
      */
     public void addGeoPointField(double latitude, double longitude)
     {
-        List<Field> fields = getGeoPointField(latitude,longitude);
+        List<Field> fields = getGeoPointFields(latitude,longitude);
         addFields(fields);
     }
 
-    public static List<Field> getGeoPointField(double latitude, double longitude)
+    public static List<Field> getGeoPointFields(double latitude, double longitude)
     {
         Field cOrigLat = getField(Globals.LUCENE_CENTROIDE_LATITUDE_ORIGINAL_INDEX,""+latitude,true,false,false);
         Field cOrigLng = getField(Globals.LUCENE_CENTROIDE_LONGITUDE_ORIGINAL_INDEX,""+longitude,true,false,false);
@@ -275,6 +283,11 @@ public class LgteDocumentWrapper
         addTimeField(year,1,1,0,0,0);
     }
 
+    public static List<Field> getTimeFields(int year)
+    {
+        return getTimeFields(year,1,1,0,0,0);
+    }
+
     /**
      * Associate this resource with a timestamp
      *
@@ -284,6 +297,11 @@ public class LgteDocumentWrapper
     public void addTimeField(int year, int month)
     {
         addTimeField(year,month,1,0,0,0);
+    }
+
+    public static List<Field> getTimeFields(int year, int month)
+    {
+        return getTimeFields(year,month,1,0,0,0);
     }
 
     /**
@@ -296,6 +314,11 @@ public class LgteDocumentWrapper
     public void addTimeField(int year, int month, int day)
     {
         addTimeField(year,month,day,0,0,0);
+    }
+
+    public static List<Field> getTimeFields(int year, int month, int day)
+    {
+        return getTimeFields(year,month,day,0,0,0);
     }
 
     /**
@@ -312,6 +335,12 @@ public class LgteDocumentWrapper
     {
         MyCalendar myCalendar = new MyCalendar(year,month,day,hour,minute,second);
         addTimeField(myCalendar.getTimeInMillis());
+    }
+
+    public static List<Field> getTimeFields(int year, int month, int day, int hour, int minute, int second)
+    {
+        MyCalendar myCalendar = new MyCalendar(year,month,day,hour,minute,second);
+        return getTimeFields(myCalendar.getTimeInMillis());
     }
 
     /**
@@ -344,6 +373,11 @@ public class LgteDocumentWrapper
         addTimeBoxField(fromYear,1,1,toYear,1,1);
     }
 
+    public static List<Field> getTimeBoxFields(int fromYear,int toYear)
+    {
+        return getTimeBoxField(fromYear,1,1,toYear,1,1);
+    }
+
     /**
      * Set this document as time interval
      *
@@ -357,6 +391,10 @@ public class LgteDocumentWrapper
         addTimeBoxField(fromYear,fromMonth,1,0,0,0,toYear,toMonth,1,0,0,0);
     }
 
+    public static List<Field> getTimeBoxFields(int fromYear,int fromMonth, int toYear, int toMonth)
+    {
+        return getTimeBoxFields(fromYear,fromMonth,1,0,0,0,toYear,toMonth,1,0,0,0);
+    }
     /**
      * Set this document as time interval
      *
@@ -370,6 +408,11 @@ public class LgteDocumentWrapper
     public void addTimeBoxField(int fromYear,int fromMonth, int fromDay, int toYear, int toMonth, int toDay)
     {
         addTimeBoxField(fromYear,fromMonth,fromDay,0,0,0,toYear,toMonth,toDay,0,0,0);
+    }
+
+    public static List<Field> getTimeBoxField(int fromYear,int fromMonth, int fromDay, int toYear, int toMonth, int toDay)
+    {
+        return getTimeBoxFields(fromYear,fromMonth,fromDay,0,0,0,toYear,toMonth,toDay,0,0,0);
     }
 
 

@@ -15,7 +15,7 @@ import pt.utl.ist.lucene.treceval.handlers.FieldFilter;
  */
 public class FirstLine2TimesFilter implements FieldFilter
 {
-    public Map<String, String> filter(Node element, String fieldName)
+    public FilteredFields filter(Node element, String fieldName)
     {
         HashMap<String, String> map = new HashMap<String, String>();
         String text = element.getText();
@@ -30,6 +30,6 @@ public class FirstLine2TimesFilter implements FieldFilter
             text += ' ' + text;
         }
         map.put(fieldName,text);
-        return map;
+        return new FilteredFields(map);
     }
 }

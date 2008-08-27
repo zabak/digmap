@@ -201,7 +201,7 @@ public class LuceneRetriever {
 						countOnly = true;
 					} else if (paramName.equals("queryID")) {
 						queryID = paramValue;
-					} else if (paramName.equals("getFields")) {
+					} else if (paramName.equals("getTextFields")) {
 						fieldsToGet = paramValue;
 					} else {
 						System.err.println("Unknown parameter " + lineParts[i]);

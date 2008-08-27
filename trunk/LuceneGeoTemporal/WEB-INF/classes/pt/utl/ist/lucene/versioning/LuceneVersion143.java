@@ -1,27 +1,25 @@
 package pt.utl.ist.lucene.versioning;
 
 import org.apache.log4j.Logger;
-import org.apache.lucene.analysis.Token;
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.Token;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.queryParser.ParseException;
+import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.highlight.*;
-import org.apache.lucene.queryParser.QueryParser;
-import org.apache.lucene.queryParser.ParseException;
+import org.apache.lucene.store.FSDirectory;
 import pt.utl.ist.lucene.config.ConfigProperties;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.Collection;
-import java.util.List;
-
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  * @author Jorge Machado
@@ -76,7 +74,7 @@ public class LuceneVersion143 implements LuceneVersion
         return new Field(field, value, store, index, tokenized, termVector);
     }
 
-    public void addFields(Document doc, List<Field> fields)
+    public void addFields(Document doc, Collection<Field> fields)
     {
         if(fields != null)
         {

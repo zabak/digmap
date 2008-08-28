@@ -130,7 +130,7 @@ public class BrounCorpusExample
         queryConfiguration1.setForceQE(QEEnum.no);
 
         QueryConfiguration queryConfiguration2 = new QueryConfiguration();
-        queryConfiguration2.setForceQE(QEEnum.yes);
+        queryConfiguration2.setForceQE(QEEnum.text);
         List<SearchConfiguration> searchConfigurations = new ArrayList<SearchConfiguration>();
 
         searchConfigurations.add(new SearchConfiguration(queryConfiguration1, VS_BC));

@@ -75,4 +75,18 @@ Query expansion uses LuQE with rochio pseudo feedback alghorithm. You can set yo
 || lgte || use and first retrieval uses full lgte ranking ||
 
 == Model ==
-LGTE provides retrieval model configuration at run time using an implementation of University of Amsterdam (IPLS) Language Model. Beside Language Model and Vector Space Model, LGTE provides a set of 8 more models including BM25 and another 7 studied intensively in
+LGTE provides retrieval model configuration at run time using an implementation of University of Amsterdam (IPLS) Language Model. Beside Language Model and Vector Space Model, LGTE provides a set of 8 more models including BM25 and another 7 studied intensively in references. Follow we enumerate the possible values for model field:
+
+ * VectorSpace
+ * LanguageMoldel
+ * DLHHypergeometricDFRModel
+ * InExpC2DFRModel
+ * InExpB2DFRModel
+ * IFB2DFRModel
+ * InL2DFRModel
+ * PL2DFRModel 
+ * BB2DFRModel
+ * OkapiBM25Model
+
+=== Examples of Queries ===
+Here we present several queries and a short explanation on it.

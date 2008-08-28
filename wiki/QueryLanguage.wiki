@@ -101,4 +101,13 @@ Here we present several queries and a short explanation on it.
  q7 := jorge lisbon portalegre lat:38.78844 lng:-9.171290 radiumKm:200 qe:lgte
 }}}
 
-Query 1 it's a time interval query. ). With years ou can use diferent combinations in date format because parser find 4 digits for year and 2 digits for month and day. Another option is setting times in miliseconds (starttimeMiliseconds endtimeMiliseconds. Query 2 is a time radium query goes from 2003 to 2011 with center time in 2007. Query 3 is selecting results from the specified box limited from south to north and from west to east. Query 4 is doing the same as query 3 but is turning off the filters and setting up query expansion in textual mode. Note that turning off the filters will not prune results out of the choosed radium but the radium will be used to obtain time ranking trough our sigmoid formula.
+Query 1 it's a time interval query. ). With years ou can use diferent combinations in date format because parser find 4 digits for year and 2 digits for month and day. Another option is setting times in miliseconds (starttimeMiliseconds endtimeMiliseconds. Query 2 is a time radium query goes from 2003 to 2011 with center time in 2007. Query 3 is selecting results from the specified box limited from south to north and from west to east. Query 4 is doing the same as query 3 but is turning off the filters and setting up query expansion in textual mode. Note that turning off the filters will not prune results out of the choosed radium but the radium will be used to obtain time ranking trough our sigmoid formula. Query 5 is setting up text, spatial and time fields so ranking model will conbine the 3 dimensions. In spatial dimension no radium was assigned so the system will use the choosed strategy in configuration.
+
+
+== Strategies when no radium is assigned == 
+
+=== Time ===
+In strategy one we set the radium to be the half of the distance between the two most distant resources. In strategy two radium is the minimum distance between: a) the distance from the lower time in index and query time; b) the distance from the searched time to the upper time in index . In strategy 3 we will set radium to the diference between query time and actual date. In strategy one we will set α1=0.75 to get a score very close to zero when (distance = radium) since any resource should be after the radium distance. In strategy two and three we set α2=0. 5 because it is more permissive. Both variables can be defined in run time over query configuration class.
+
+== Spatial ===
+For spatial dimension we will set the radium equal to twice the bigger width in index. The width is the distance between the two most distant point in a form. If there are no resources with width defined we will use half of earth radium 3000 km. We hope this case don’t happens many times.

@@ -20,7 +20,7 @@
 
 <p>with or with not radiumYears for example radiumYears:200</p>
 
-<p>try ths search and note that many results but the first set is closer in text and space: Imperii map lat:51 lng:-175 radiumMiles:1000 filter:no</p>
+<p>try ths search and note that many results but the first set is closer in text and space: Imperii map lat:51 lng:-175 radiumMiles:1000 time:1666 filter:no</p>
 
 <form action="indexDigmap.jsp" method="post">
     <input type="text" size="50" name="q"/>

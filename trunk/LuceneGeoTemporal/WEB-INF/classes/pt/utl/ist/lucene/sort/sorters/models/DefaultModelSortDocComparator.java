@@ -17,14 +17,14 @@ public class DefaultModelSortDocComparator implements ModelSortDocComparator
 {
     HashMap<Integer,Float> scoresCache;
 
-    private float timeFactor;
-    private float spatialFactor;
-    private float textFactor;
-    private QueryParams queryParams;
+    protected float timeFactor;
+    protected float spatialFactor;
+    protected float textFactor;
+    protected QueryParams queryParams;
 
-    private SpatialDistancesScoreDocComparator spatialScoreDocComparator = null;
-    private TimeDistancesScoreDocComparator timeScoreDocComparator = null;
-    private LgteScoreDocComparator textScoreDocComparator = null;
+    protected SpatialDistancesScoreDocComparator spatialScoreDocComparator = null;
+    protected TimeDistancesScoreDocComparator timeScoreDocComparator = null;
+    protected LgteScoreDocComparator textScoreDocComparator = null;
 
 //    private QueryParams queryParams = null;
 
@@ -96,9 +96,14 @@ public class DefaultModelSortDocComparator implements ModelSortDocComparator
         {
             textScore1 =  (Float) textScoreDocComparator.sortValue(scoreDoc);
         }
-        score = timeScore1*timeFactor + spaceScore1*spatialFactor + textScore1*textFactor;
+        score = merge(timeScore1,spaceScore1,textScore1);
         scoresCache.put(scoreDoc.doc,score);
         return score;
+    }
+
+    protected float merge(float time, float spatial, float text)
+    {
+        return time*timeFactor + spatial*spatialFactor + text*textFactor;
     }
 
     public int sortType()

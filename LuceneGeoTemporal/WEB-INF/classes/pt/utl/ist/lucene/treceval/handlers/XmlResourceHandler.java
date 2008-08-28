@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
 
 /**
  * XML Resource Handler will Call Field Handler for each given field
@@ -94,7 +95,7 @@ public class XmlResourceHandler implements ResourceHandler
             {
                 FilteredFields fields = handler.getFields( node);
                 //TextFields
-                if(fields.getTextFields() != null)
+                if(fields != null && fields.getTextFields() != null)
                 {
                     for(Map.Entry<String,String> entry:fields.getTextFields().entrySet())
                     {
@@ -105,24 +106,24 @@ public class XmlResourceHandler implements ResourceHandler
                             map.put(entry.getKey(),old + ' ' + entry.getValue());
                     }
                 }
-                //UniqueFields
-                if(fields.getUniqueFields() != null)
+                //PreparedFields
+                if(fields != null && fields.getPreparedFields() != null)
                 {
-                    for(Field f: fields.getUniqueFields())
+                    for(Field f: fields.getPreparedFields())
                     {
                         Field old = uniqueFields.get(f.name());
                         if(old == null)
                             uniqueFields.put(f.name(),f);
                         else
-                            logger.error("Not UNIQUE field " + f.name() + " in doc: " + id.getText());
+                            logger.error("Not UNIQUE Prepared field " + f.name() + " in doc: " + id.getText());
                     }
                 }
             }
         }
         if(id instanceof Element)
-            return new IdMap(((Element)id).getTextTrim(),map,uniqueFields.values());
+            return new IdMap(((Element)id).getTextTrim(),map,new ArrayList<Field>(uniqueFields.values()));
         else
-            return new IdMap(id.getText().trim(),map);
+            return new IdMap(id.getText().trim(),map,new ArrayList<Field>(uniqueFields.values()));
     }
 
     public String getIdXpath()

@@ -14,14 +14,14 @@ public class IdMap
 {
     String id;
     Map<String,String> textFields;
-    Collection<Field> uniqueFields;
+    Collection<Field> preparedFields;
 
 
     public IdMap(String id, Map<String, String> textFields, Collection<Field> uniqueFields)
     {
         this.id = id;
         this.textFields = textFields;
-        this.uniqueFields = uniqueFields;
+        this.preparedFields = uniqueFields;
     }
 
     public IdMap(String id, Map<String, String> textFields)
@@ -51,13 +51,13 @@ public class IdMap
     }
 
 
-    public Collection<Field> getUniqueFields()
+    public Collection<Field> getPreparedFields()
     {
-        return uniqueFields;
+        return preparedFields;
     }
 
-    public void setUniqueFields(Collection<Field> uniqueFields)
+    public void setPreparedFields(Collection<Field> preparedFields)
     {
-        this.uniqueFields = uniqueFields;
+        this.preparedFields = preparedFields;
     }
 }

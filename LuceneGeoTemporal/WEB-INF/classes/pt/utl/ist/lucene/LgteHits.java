@@ -168,6 +168,8 @@ public class LgteHits
      */
     public long timeDistanceMiliseconds(int i) throws IOException
     {
+        if(timeDistances == null)
+            return -1;
         return timeDistances.get(id(i));
     }
 
@@ -182,6 +184,8 @@ public class LgteHits
      */
     public int timeDistanceYears(int i) throws IOException
     {
+        if(timeDistances == null)
+            return -1;
         if(timeDistancesYearsCache == null)
             timeDistancesYearsCache = new HashMap<Integer,Integer>();
         Integer difYears = timeDistancesYearsCache.get(i);

@@ -111,7 +111,7 @@ public class IndexCollections implements IndexFilesCallBack
     public void indexDoc(String id, Map<String,String> indexFields, Collection<Field> uniqueFields) throws IOException
     {
         LgteDocumentWrapper d = new LgteDocumentWrapper();
-        d.addField(idField, id, true, false, false);
+        d.addField(idField, id, true, true, false);
         for (Map.Entry<String,String> entry : indexFields.entrySet())
         {
             d.addField(entry.getKey(), entry.getValue(), true, true, true, true);

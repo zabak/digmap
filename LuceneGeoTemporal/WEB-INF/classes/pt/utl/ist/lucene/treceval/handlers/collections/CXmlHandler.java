@@ -3,6 +3,7 @@ package pt.utl.ist.lucene.treceval.handlers.collections;
 import org.dom4j.*;
 import org.xml.sax.InputSource;
 import org.apache.log4j.Logger;
+import org.apache.lucene.document.Field;
 
 import java.io.InputStream;
 import java.io.IOException;
@@ -10,12 +11,14 @@ import java.net.MalformedURLException;
 import java.util.Properties;
 import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
 
 import pt.utl.ist.lucene.utils.Dom4jUtil;
 import pt.utl.ist.lucene.treceval.IndexFilesCallBack;
 import pt.utl.ist.lucene.treceval.Globals;
 import pt.utl.ist.lucene.treceval.handlers.ResourceHandler;
 import pt.utl.ist.lucene.treceval.handlers.IdMap;
+import pt.utl.ist.lucene.LgteDocumentWrapper;
 
 /**
  * Handles a XML Document and select all resources from it invoking the handler for each one
@@ -49,6 +52,7 @@ public class CXmlHandler implements CDocumentHandler
         }
     }
 
+    static int i = 0;
     public void run(Document dom, String filepath, ResourceHandler handler, IndexFilesCallBack callBack) throws IOException
     {
         XPath resourceXpath = dom.createXPath(handler.getResourceXpath());
@@ -65,8 +69,11 @@ public class CXmlHandler implements CDocumentHandler
                 {
                     try
                     {
-                        idMap.getTextFields().put(Globals.DOCUMENT_FILE_PATH,filepath);
-                        callBack.indexDoc(idMap.getId(),idMap.getTextFields(),null);
+                        if(idMap.getPreparedFields() == null)
+                            idMap.setPreparedFields(new ArrayList<Field>());
+                        //add file path as a prepared field not tokenized
+                        idMap.getPreparedFields().add(LgteDocumentWrapper.getField(Globals.DOCUMENT_FILE_PATH,filepath,true,true,false));
+                        callBack.indexDoc(idMap.getId(),idMap.getTextFields(),idMap.getPreparedFields());
                     }
                     catch (IOException e)
                     {

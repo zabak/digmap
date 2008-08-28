@@ -13,8 +13,13 @@ import java.util.Map;
 public class FilteredFields
 {
     Map<String,String> textFields;
-    Collection<Field> uniqueFields;
+    Collection<Field> preparedFields;
 
+
+    public FilteredFields(Collection<Field> uniqueFields)
+    {
+        this.preparedFields = uniqueFields;
+    }
 
     public FilteredFields(Map<String, String> textFields)
     {
@@ -24,7 +29,7 @@ public class FilteredFields
     public FilteredFields(Map<String, String> textFields,  Collection<Field> uniqueFields)
     {
         this.textFields = textFields;
-        this.uniqueFields = uniqueFields;
+        this.preparedFields = uniqueFields;
     }
 
     public Map<String, String> getTextFields()
@@ -37,14 +42,14 @@ public class FilteredFields
         this.textFields = textFields;
     }
 
-    public Collection<Field> getUniqueFields()
+    public Collection<Field> getPreparedFields()
     {
-        return uniqueFields;
+        return preparedFields;
     }
 
-    public void setUniqueFields(Collection<Field> uniqueFields)
+    public void setPreparedFields(Collection<Field> preparedFields)
     {
-        this.uniqueFields = uniqueFields;
+        this.preparedFields = preparedFields;
     }
 
 

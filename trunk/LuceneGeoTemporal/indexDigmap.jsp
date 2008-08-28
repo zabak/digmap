@@ -16,11 +16,9 @@
 
 <p>Or you can try a search centered in Belgique with text Imperii: Imperii lat:51 lng:-175 radiumMiles:1000</p>
 
-or you can try time:
+<p>or you can try time: Imperii lat:51 lng:-175 radiumMiles:1000 time:1680</p>
 
-<p>Or you can try a search centered in Belgique with text Imperii: Imperii lat:51 lng:-175 radiumMiles:1000 time:1680</p>
-
-with or with not radiumYears for example radiumYears:200
+<p>with or with not radiumYears for example radiumYears:200</p>
 
 <form action="indexDigmap.jsp" method="post">
     <input type="text" size="50" name="q"/>

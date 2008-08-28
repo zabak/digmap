@@ -124,16 +124,23 @@ public class Strings
         return finalStr.toString();
     }
 
+    public String getModDate(int year,int month,int day,int hour,int min,int second,int milisecond)
+    {
+        StringBuilder strBuilder = new StringBuilder();
+        strBuilder.append(getDigits(year, 4));
+        strBuilder.append(getDigits(month, 2));
+        strBuilder.append(getDigits(day, 2));
+        strBuilder.append(getDigits(hour, 2));
+        strBuilder.append(getDigits(min, 2));
+        strBuilder.append(getDigits(second, 2));
+        strBuilder.append(getDigits(milisecond, 3));
+        return strBuilder.toString();
+    }
+
     public static void main(String[] args){
 
 
-        System.out.println(getDigits(12,4));
-        System.out.println(getDigits(12,3));
-        System.out.println(getDigits(12,2));
-        System.out.println(getDigits(12,1));
-        System.out.println(getDigits(1244,4));
-        System.out.println(getDigits(0,4));
-        System.out.println(getDigits(-1,4));
+
         System.out.println(findYears("1710-[1712").getStart());
         System.out.println(findYears("1710-[1712").getEnd());
 

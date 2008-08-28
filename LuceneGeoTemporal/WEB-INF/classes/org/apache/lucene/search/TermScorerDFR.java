@@ -95,10 +95,12 @@ final class TermScorerDFR extends Scorer  {
         }
 		float tfDoc = freqs[pointer];
 		double sim = 0;
-		double avgLen = indexReader.getCollectionTokenNumber() / indexReader.getTotalDocFreqs();
+        double tokenNumber = indexReader.getCollectionTokenNumber();
+        double totalFreqs = indexReader.getTotalDocFreqs();
+        double avgLen = tokenNumber/totalFreqs;
 		double collSize = indexReader.getTotalDocFreqs();
 		double tfCollection = indexReader.collFreq(term);
-		double numTerms = indexReader.getCollectionTokenNumber();
+//		double numTerms = indexReader.getCollectionTokenNumber();    tava repetido
 		double nt = indexReader.docFreq(term);
 		double lambda = tfCollection / collSize;
 		double ne = collSize * (1-Math.pow(1-nt/collSize, tfCollection));

@@ -115,9 +115,9 @@ public class IndexCollections implements IndexFilesCallBack
         for (Map.Entry<String,String> entry : indexFields.entrySet())
         {
             d.addField(entry.getKey(), entry.getValue(), true, true, true, true);
-            if(uniqueFields!=null)
-                d.addFields(uniqueFields);
         }
+        if(uniqueFields!=null)
+            d.addFields(uniqueFields);
         try
         {
             docs.add(d.getDocument());

@@ -18,6 +18,6 @@ public class PiModelSortDocComparator extends DefaultModelSortDocComparator
 {
     protected float merge(float time, float spatial, float text)
     {
-        return (0.0001f + time*timeFactor) * (0.0001f + spatial*spatialFactor) * (0.0001f + text*textFactor);
+        return (0.0001f + time) * (0.0001f + spatial) * (0.0001f + text);
     }
 }

@@ -71,7 +71,7 @@ Query expansion uses LuQE with rochio pseudo feedback alghorithm. You can set yo
 
 || QE Field  Values || ||
 || no || don't use query expansion ||
-|| yes || use but first retrieval uses only textual ranking ||
+|| text|| use but first retrieval uses only textual ranking ||
 || lgte || use and first retrieval uses full lgte ranking ||
 
 == Model ==
@@ -88,15 +88,17 @@ LGTE provides retrieval model configuration at run time using an implementation 
  * `BB2DFRModel`
  * `OkapiBM25Model`
 
-=== Examples of Queries ===
+= Examples of Queries =
 Here we present several queries and a short explanation on it.
 
 {{{
- contents:(Jorge Bruno) starttime:10-2008 endtime:2008-11 
- contents:(Jorge Bruno) time:2007 radiumYears:4 
- contents:(jorge bruno in lisbon) north:39.754720 south:37.754720 west:-9.5 east:-4
- author:(Jorge Bruno) papers time:2007 radiumYears:4 order:t filter:none useQE:true 
- Jorge Bruno time:2007 lat:56.162500 lng:10.144250  radiumYears:4 order:t_sp_sc  
- jorge bruno in lisbon lat:56.162500 lng:10.144250 radiumKm:250 filter:none order:sc
- jorge lisbon portalegre lat:38.78844 lng:-9.171290 radiumKm:200 useQE:true lgteQE:true
+ q1 := contents:(Jorge Bruno) starttime:10-2008 endtime:2008-11 
+ q2 := contents:(Jorge Bruno) time:2007 radiumYears:4 
+ q3 := contents:(jorge bruno in lisbon) north:39.754720 south:37.754720 west:-9.5 east:-4
+ q4 := author:(Jorge Bruno) papers time:2007 radiumYears:4 order:t filter:none qe:text
+ q5 := Jorge Bruno time:2007 lat:56.162500 lng:10.144250  radiumYears:4 order:t_sp_sc  
+ q6 := jorge bruno in lisbon lat:56.162500 lng:10.144250 radiumKm:250 filter:none order:sc
+ q7 := jorge lisbon portalegre lat:38.78844 lng:-9.171290 radiumKm:200 qe:lgte
 }}}
+
+Query 1 it's a time interval query. ). With years ou can use diferent combinations in date format because parser find 4 digits for year and 2 digits for month and day. Another option is setting times in miliseconds (starttimeMiliseconds endtimeMiliseconds. Query 2 is a time radium query goes from 2003 to 2011 with center time in 2007. Query 3 is selecting results from the specified box limited from south to north and from west to east. Query 4 is doing the same as query 3 but is turning off the filters and setting up query expansion in textual mode. Note that turning off the filters will not prune results out of the choosed radium but the radium will be used to obtain time ranking trough our sigmoid formula.

@@ -78,28 +78,31 @@ public class SpaceDistanceBuilderFilter extends Filter
         {
             String sx = latIndex[i];
             String sy = lngIndex[i];
-
-            double x = NumberUtils.SortableStr2double(sx);
-            double y = NumberUtils.SortableStr2double(sy);
-
-            // round off lat / longs if necessary
-            x = DistanceHandler.getPrecision(x, precise);
-            y = DistanceHandler.getPrecision(y, precise);
-
-            String ck = Double.toString(x) + "," + Double.toString(y);
-            Double cachedDistance = cdistance.get(ck);
-            double d;
-            if (cachedDistance != null)
+            if(sx != null && sy != null)  //No coordinate no distance -> no bit set
             {
-                d = cachedDistance;
+
+                double x = NumberUtils.SortableStr2double(sx);
+                double y = NumberUtils.SortableStr2double(sy);
+
+                // round off lat / longs if necessary
+                x = DistanceHandler.getPrecision(x, precise);
+                y = DistanceHandler.getPrecision(y, precise);
+
+                String ck = Double.toString(x) + "," + Double.toString(y);
+                Double cachedDistance = cdistance.get(ck);
+                double d;
+                if (cachedDistance != null)
+                {
+                    d = cachedDistance;
+                }
+                else
+                {
+                    d = DistanceUtils.getDistanceMi(lat, lng, x, y);
+                    cdistance.put(ck, d);
+                }
+                distances.put(i, d);
+                bits.set(i);
             }
-            else
-            {
-                d = DistanceUtils.getDistanceMi(lat, lng, x, y);
-                cdistance.put(ck, d);
-            }
-            distances.put(i, d);
-            bits.set(i);
         }
         return bits;
     }

@@ -25,11 +25,11 @@ public class DigmapExample
     public static void main(String[] args) throws DocumentException, IOException
     {
 
-//        args = new String[4];
-//        args[0] = "C:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-data\\digmap\\documents";
-//        args[1] = "C:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-data\\digmap\\topics";
-//        args[2] = "C:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-data\\digmap\\output";
-//        args[3] = "C:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-index";
+        args = new String[4];
+        args[0] = "C:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-data\\digmap\\documents";
+        args[1] = "C:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-data\\digmap\\topics";
+        args[2] = "C:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-data\\digmap\\output";
+        args[3] = "C:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-index";
 
 
         String collectionPath = args[0];
@@ -239,8 +239,11 @@ public class DigmapExample
     {
         public FilteredFields filter(Node node, String fieldName)
         {
+            
             Element time = (Element) node;
             String text = time.getText();
+            if(text.equals("1680><1690"))
+                System.out.println("");
             Strings.YearPattern yearPattern = Strings.findYears(text);
             if(yearPattern != null)
             {

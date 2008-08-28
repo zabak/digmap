@@ -73,19 +73,22 @@ public class TimeDistanceBuilderFilter extends ISerialChainFilter implements ITi
         {
             long x;
             String time = timeIndex[i];
-            time = NumberUtils.SortableStr2long(time);
-            //todo think in this in order to make possible to add results without any Time Value, the only condition is give a very High distance to decrease ranking in Time Dimention
-            if (time != null)
+            if (time != null)  //No time no distance -> no bit set
             {
-                x = Long.parseLong(time);
-                long d = Math.abs(pointTime - x);
-                if (distance < 0 || d < distance)
+                time = NumberUtils.SortableStr2long(time);
+
+                if (time != null)
                 {
-                    result.set(i);
-                    timeDistances.put(i, d);
-                } 
+                    x = Long.parseLong(time);
+                    long d = Math.abs(pointTime - x);
+                    if (distance < 0 || d < distance) //distance < 0 for queries where distance is not defined
+                    {
+                        result.set(i);
+                        timeDistances.put(i, d);
+                    }
 
 //                timeDistances.put(i, d);
+                }
             }
             i = bits.nextSetBit(i + 1);
         }
@@ -122,8 +125,7 @@ public class TimeDistanceBuilderFilter extends ISerialChainFilter implements ITi
             long x;
             String time = timeIndex[i];
             time = NumberUtils.SortableStr2long(time);
-            //todo think in this in order to make possible to add results without any Time Value, the only condition is give a very High distance to decrease ranking in Time Dimention
-            if (time != null)
+            if (time != null)  //No time no distance -> no bit set
             {
                 x = Long.parseLong(time);
                 long d = Math.abs(pointTime - x);

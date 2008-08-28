@@ -37,7 +37,7 @@ public class TestDiferentModelsSIMPLE extends TestCase
 
         LgteDocumentWrapper doc1 = new LgteDocumentWrapper();
         doc1.indexText(Globals.DOCUMENT_ID_FIELD, "1");
-        doc1.indexText("contents","Jorge Machado and Bruno Martins in Lisbon");
+        doc1.indexText("contents","Jorge Machado and Bruno Martins Jorge Machado and Bruno Martins in Lisbon"); //temporarly to test totalDocsFreq in Scorer
         doc1.addGeoPointField(38.788440, -9.171290);
 
         LgteDocumentWrapper doc2 = new LgteDocumentWrapper();

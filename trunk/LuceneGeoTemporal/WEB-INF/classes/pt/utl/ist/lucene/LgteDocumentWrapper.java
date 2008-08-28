@@ -212,6 +212,7 @@ public class LgteDocumentWrapper
      * @param south limit of resource
      * @param west limit of resource
      * @param east limit of resource
+     * @return a list of fields
      */
     public static List<Field> getGeoBoxFields(double north, double south, double west, double east)
     {
@@ -261,7 +262,7 @@ public class LgteDocumentWrapper
 
     public static List<Field> getGeoPointFields(double latitude, double longitude)
     {
-        Field geoDoc = getField(Globals.LUCENE_GEO_DOC_INDEX,Globals.LUCENE_GEO_DOC_YES,true,true,true,false);
+        Field geoDoc = getField(Globals.LUCENE_GEO_DOC_INDEX,Globals.LUCENE_GEO_DOC_YES,true,true,false);
         Field cOrigLat = getField(Globals.LUCENE_CENTROIDE_LATITUDE_ORIGINAL_INDEX,""+latitude,true,false,false);
         Field cOrigLng = getField(Globals.LUCENE_CENTROIDE_LONGITUDE_ORIGINAL_INDEX,""+longitude,true,false,false);
 
@@ -360,7 +361,7 @@ public class LgteDocumentWrapper
     public static List<Field> getTimeFields(long miliseconds)
     {
         List<Field> fields = new ArrayList<Field>();
-        fields.add(getField(Globals.LUCENE_TIME_DOC_INDEX,Globals.LUCENE_TIME_DOC_YES,true,true,true,false));
+        fields.add(getField(Globals.LUCENE_TIME_DOC_INDEX,Globals.LUCENE_TIME_DOC_YES,true,true,false));
         fields.add(getField(Globals.LUCENE_TIME_ORIGINAL_INDEX,"" + miliseconds,true,false,false));
         fields.add(getField(Globals.LUCENE_TIME_INDEX,NumberUtils.long2sortableStr(miliseconds),false,true,false,true));
         return fields;

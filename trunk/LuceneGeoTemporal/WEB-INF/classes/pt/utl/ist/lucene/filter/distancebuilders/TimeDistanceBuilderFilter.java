@@ -124,9 +124,10 @@ public class TimeDistanceBuilderFilter extends ISerialChainFilter implements ITi
         {
             long x;
             String time = timeIndex[i];
-            time = NumberUtils.SortableStr2long(time);
+
             if (time != null)  //No time no distance -> no bit set
             {
+                time = NumberUtils.SortableStr2long(time);
                 x = Long.parseLong(time);
                 long d = Math.abs(pointTime - x);
                 if (distance < 0 ||  d < distance)

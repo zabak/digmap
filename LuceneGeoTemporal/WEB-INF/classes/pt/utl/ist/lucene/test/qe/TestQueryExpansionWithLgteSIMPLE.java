@@ -81,7 +81,7 @@ public class TestQueryExpansionWithLgteSIMPLE extends TestCase
             assertTrue(lgteHits.length() == 1);
             assertEquals(lgteHits.doc(0).get("id"),"1");
 
-            query = "jorge qe:yes";
+            query = "jorge qe:text";
 
             lgteHits = searcher.search(query);
             assert(lgteHits.length() == 3);

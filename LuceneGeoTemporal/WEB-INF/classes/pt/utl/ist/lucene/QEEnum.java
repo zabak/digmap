@@ -8,7 +8,7 @@ package pt.utl.ist.lucene;
 public enum QEEnum
 {
     no("no"),
-    yes("yes"),
+    text("text"),
     lgte("lgte");
 
     private final String type;

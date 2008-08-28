@@ -9,6 +9,8 @@
 
 <h3>Please enter your search query:</h3>
 
+<p>try for example: Officie amptluyden</p>
+
 <form action="indexBc.jsp" method="post">
     <input type="text" size="50" name="q"/>
 </form>

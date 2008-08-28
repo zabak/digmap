@@ -40,7 +40,10 @@ public class ModelManager
 
     public Model getModel()
     {
-        return service(ManagerService.getModel,null);
+        ModelContainer mc = threadModels.get(Thread.currentThread());
+        if(mc != null)
+            return mc.getModel();
+        return null;
     }
 
     public synchronized Model service(ManagerService service, Model m)
@@ -48,13 +51,6 @@ public class ModelManager
         switch ( service )
         {
             case setModel: threadModels.put(Thread.currentThread(),new ModelContainer(m)); break;
-            case getModel:
-            {
-                ModelContainer mc = threadModels.get(Thread.currentThread());
-                if(mc != null)
-                    return mc.getModel();
-                return null;
-            }
             case clear: threadModels.clear();
         }
         checkOldThreads();

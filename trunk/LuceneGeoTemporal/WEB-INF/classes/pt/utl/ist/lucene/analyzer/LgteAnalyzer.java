@@ -15,6 +15,7 @@ import java.io.Reader;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Set;
+import java.util.List;
 
 import pt.utl.ist.lucene.analyzer.LgteDiacriticFilter;
 import pt.utl.ist.lucene.treceval.IndexCollections;
@@ -52,8 +53,8 @@ public class LgteAnalyzer extends org.apache.lucene.analysis.Analyzer
     /**
      * Contains the stopwords used with the StopFilter.
      */
-    protected Set stoptable = new HashSet();
-
+    protected Set<String> stoptable = new HashSet<String>();
+    protected Set<String> notTokenizedFields = null;
    
     /**
      * Builds an analyzer with the given stop words.
@@ -69,12 +70,13 @@ public class LgteAnalyzer extends org.apache.lucene.analysis.Analyzer
      * @param stopwords xx
      */
     public LgteAnalyzer( Hashtable stopwords ) {
-        stoptable = new HashSet(stopwords.keySet());
+        stoptable = new HashSet<String>(stopwords.keySet());
     }
 
     /**
      * Builds an analyzer with the given stop words.
      * @param stopwords z
+     * @throws java.io.IOException on error
      */
     public LgteAnalyzer( File stopwords ) throws IOException
     {
@@ -82,17 +84,26 @@ public class LgteAnalyzer extends org.apache.lucene.analysis.Analyzer
     }
 
     /**
-     * Builds an analyzer with the given stop words.
+     * Builds an analyzer.
+     *
+     * @throws java.io.IOException on error
      */
     public LgteAnalyzer( ) throws IOException
     {
         stoptable = null;
     }
 
+    public LgteAnalyzer(Set<String> notTokenizedFields) throws IOException
+    {
+        this.notTokenizedFields = notTokenizedFields;
+    }
+
 
     public final TokenStream tokenStream(String fieldName, Reader reader)
     {
         TokenStream result = new StandardTokenizer( reader );
+        if(notTokenizedFields != null && notTokenizedFields.contains(fieldName))
+            return new StandardFilter( result );
         result = new StandardFilter( result );
         result = new LowerCaseFilter( result );
         result = new LgteDiacriticFilter( result );

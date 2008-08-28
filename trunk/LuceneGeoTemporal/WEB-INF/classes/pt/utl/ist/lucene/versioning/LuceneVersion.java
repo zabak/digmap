@@ -25,8 +25,8 @@ import java.util.List;
 public interface LuceneVersion
 {
     public void deleteDocument(int i, IndexReader r) throws IOException;
-    public void addField(Document doc, String field, String value, boolean index, boolean store, boolean tokenized);
-    public Field getField(String field, String value, boolean index, boolean store, boolean tokenized);
+    public void addField(Document doc, String field, String value, boolean store, boolean index, boolean tokenized);
+    public Field getField(String field, String value, boolean store, boolean index, boolean tokenized);
     public Field getField( String field, String value,  boolean store, boolean index, boolean tokenized, boolean termVector);
     public void addFields(Document doc, Collection<Field> fields);
     public void addFieldUnIndexed(Document doc, String field, String value);

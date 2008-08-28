@@ -94,8 +94,24 @@ public class LgteQueryParser
         queryParams.setQueryConfiguration(queryConfiguration);
         //Set Model in Manager
         if(queryParams.getModel() != null) ModelManager.getInstance().setModel(queryParams.getModel());
-        
-        Query returnQuery = luceneVersion.parseQuery(level1Query.toString(),field,analyzer);
+
+        Query returnQuery;
+        String queryStr = level1Query.toString().trim();
+        if(queryStr.length() == 0)
+        {
+            StringBuilder newQueryBuilder = new StringBuilder();
+            if(queryParams.isSpatial())
+                newQueryBuilder.append(Globals.LUCENE_GEO_DOC_QUERY).append(' ');
+            if(queryParams.isTime())
+                newQueryBuilder.append(Globals.LUCENE_TIME_DOC_QUERY);
+            String finalQuery = newQueryBuilder.toString();
+            if(finalQuery.length() > 0)
+                returnQuery = luceneVersion.parseQuery(finalQuery,field,analyzer);
+            else
+                return null;
+        }
+        else
+            returnQuery = luceneVersion.parseQuery(level1Query.toString(),field,analyzer);
         if(queryParams.getQeEnum().isQE() || (queryConfiguration != null && queryConfiguration.getForceQE().isQE()))
         {
             returnQuery = lucQE(returnQuery, level1Query.toString(),field, analyzer, indexSearcherWrapper,queryParams, sort);

@@ -71,7 +71,7 @@ public class TestTimeDistanceWithLgteSIMPLE extends TestCase
     public void testRange() throws IOException, InvalidGeoException
     {
         //Lets use Lgte wrapper to dont worry about details with time, filters and all of that boring stuff
-        LgteIndexSearcherWrapper searcher = new LgteIndexSearcherWrapper(Model.OkapiBM25Model,path);
+        LgteIndexSearcherWrapper searcher = new LgteIndexSearcherWrapper(Model.LanguageModel,path);
 
         //try find Jorge and Bruno documents last year
         // In this case the closest one will be in 2007

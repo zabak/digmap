@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.text.SimpleDateFormat;
 
 /**
  * Lucene Extenstion Document
@@ -260,12 +261,14 @@ public class LgteDocumentWrapper
 
     public static List<Field> getGeoPointFields(double latitude, double longitude)
     {
+        Field geoDoc = getField(Globals.LUCENE_GEO_DOC_INDEX,Globals.LUCENE_GEO_DOC_YES,true,true,true,false);
         Field cOrigLat = getField(Globals.LUCENE_CENTROIDE_LATITUDE_ORIGINAL_INDEX,""+latitude,true,false,false);
         Field cOrigLng = getField(Globals.LUCENE_CENTROIDE_LONGITUDE_ORIGINAL_INDEX,""+longitude,true,false,false);
 
         Field cLat = getField(Globals.LUCENE_CENTROIDE_LATITUDE_INDEX,NumberUtils.double2sortableStr(latitude),false,true,false,true);
         Field cLng = getField(Globals.LUCENE_CENTROIDE_LONGITUDE_INDEX,NumberUtils.double2sortableStr(longitude),false,true,false,true);
         List<Field> fields = new ArrayList<Field>();
+        fields.add(geoDoc);
         fields.add(cOrigLat);
         fields.add(cOrigLng);
         fields.add(cLat);
@@ -357,6 +360,7 @@ public class LgteDocumentWrapper
     public static List<Field> getTimeFields(long miliseconds)
     {
         List<Field> fields = new ArrayList<Field>();
+        fields.add(getField(Globals.LUCENE_TIME_DOC_INDEX,Globals.LUCENE_TIME_DOC_YES,true,true,true,false));
         fields.add(getField(Globals.LUCENE_TIME_ORIGINAL_INDEX,"" + miliseconds,true,false,false));
         fields.add(getField(Globals.LUCENE_TIME_INDEX,NumberUtils.long2sortableStr(miliseconds),false,true,false,true));
         return fields;
@@ -558,6 +562,14 @@ public class LgteDocumentWrapper
             return Double.parseDouble(field);
     }
 
+    public int getTimeYear()
+    {
+        Date time = getTime();
+        if(time != null)
+            return Integer.parseInt(new SimpleDateFormat("yyyy").format(time));
+        return -1;
+    }
+
     public Date getTime()
     {
         String time = document.get(Globals.LUCENE_TIME_ORIGINAL_INDEX);
@@ -566,6 +578,15 @@ public class LgteDocumentWrapper
             long mili = Long.parseLong(time);
             return new Date(mili);
         }
+        return null;
+    }
+
+    public TimeBox getTimeBox()
+    {
+        String start = document.get(Globals.LUCENE_START_TIME_LIMIT_INDEX_ORIGINAL);
+        String to = document.get(Globals.LUCENE_END_TIME_LIMIT_INDEX_ORIGINAL);
+        if(start != null && to != null)
+            return new TimeBox(Long.parseLong(start),Long.parseLong(to));
         return null;
     }
 }

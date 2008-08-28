@@ -81,6 +81,16 @@ public class Globals {
 
     public static final String LUCENE_RADIUM_ORIGINAL_INDEX = LUCENE_RADIUM_INDEX + "_ORIGINAL";
 
+    //When document has geo fields
+    public static final String LUCENE_GEO_DOC_INDEX = "GEO_DOC_LE";
+    public static final String LUCENE_GEO_DOC_YES = "YES";
+    //When document has time fields
+    public static final String LUCENE_TIME_DOC_INDEX = "TIME_DOC_LE";
+    public static final String LUCENE_TIME_DOC_YES = "YES";
+
+    public static final String LUCENE_GEO_DOC_QUERY = LUCENE_GEO_DOC_INDEX + ":" + LUCENE_GEO_DOC_YES;
+    public static final String LUCENE_TIME_DOC_QUERY = LUCENE_TIME_DOC_INDEX + ":" + LUCENE_TIME_DOC_YES;
+
     public static final String LUCENE_CENTROIDE_LATITUDE_ORIGINAL_INDEX = LUCENE_CENTROIDE_LATITUDE_INDEX + "_ORIGINAL";
     public static final String LUCENE_CENTROIDE_LONGITUDE_ORIGINAL_INDEX = LUCENE_CENTROIDE_LONGITUDE_INDEX + "_ORIGINAL";
     public static final String LUCENE_NORTHLIMIT_ORGINAL_INDEX = LUCENE_NORTHLIMIT_INDEX + "_ORIGINAL";

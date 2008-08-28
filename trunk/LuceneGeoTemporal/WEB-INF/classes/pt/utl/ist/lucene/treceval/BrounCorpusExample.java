@@ -1,9 +1,8 @@
 package pt.utl.ist.lucene.treceval;
 
-import org.dom4j.DocumentException;
-import org.dom4j.Element;
-import org.dom4j.Node;
 import org.apache.log4j.Logger;
+import org.dom4j.DocumentException;
+import org.dom4j.Node;
 import pt.utl.ist.lucene.Model;
 import pt.utl.ist.lucene.QEEnum;
 import pt.utl.ist.lucene.QueryConfiguration;
@@ -19,7 +18,6 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author Jorge Machado
@@ -34,9 +32,9 @@ public class BrounCorpusExample
     {
 
 //        args = new String[4];
-//        args[0] = "C:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-data\\documents";
-//        args[1] = "C:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-data\\topics";
-//        args[2] = "C:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-data\\output";
+//        args[0] = "C:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-data\\brauncorpus\\documents";
+//        args[1] = "C:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-data\\brauncorpus\\topics";
+//        args[2] = "C:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-data\\brauncorpus\\output";
 //        args[3] = "C:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-index";
 
 
@@ -103,40 +101,26 @@ public class BrounCorpusExample
         //Lets create our configuration indexes
         //We gone put the diferences about model, output folder name, analyser
 
-//        Configuration VS_BC = new Configuration("version1", "bc","vs", Model.VectorSpaceModel, IndexCollections.du.getAnalyzerNoStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.du.getWordList(),outputDir,maxResults);
-//        Configuration LM_BC = new Configuration("version1", "bc","lm",Model.LanguageModel , IndexCollections.du.getAnalyzerNoStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.du.getWordList(),outputDir,maxResults);
-//        Configuration VS_STEMMER_BC = new Configuration("version1", "bc","vsstem", Model.VectorSpaceModel, IndexCollections.du.getAnalyzerWithStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.du.getWordList(),outputDir,maxResults);
-//        Configuration LM_STEMMER_BC = new Configuration("version1", "bc","lmstem", Model.LanguageModel, IndexCollections.du.getAnalyzerWithStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.du.getWordList(),outputDir,maxResults);
-//        Configuration BM25_STEMMER_BC = new Configuration("version1", "bc","bm25stem", Model.OkapiBM25Model, IndexCollections.du.getAnalyzerWithStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.du.getWordList(),outputDir,maxResults);
-
-        Configuration M1 = new Configuration("version1", "bc","vs", Model.VectorSpaceModel, IndexCollections.du.getAnalyzerNoStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.du.getWordList(),outputDir,maxResults);
-        Configuration M2 = new Configuration("version1", "bc","lm",Model.LanguageModel , IndexCollections.du.getAnalyzerNoStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.du.getWordList(),outputDir,maxResults);
-        Configuration M3 = new Configuration("version1", "bc","BB2DFRModel", Model.BB2DFRModel, IndexCollections.du.getAnalyzerNoStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.du.getWordList(),outputDir,maxResults);
-        Configuration M4 = new Configuration("version1", "bc","DLHHypergeometricDFRModel", Model.DLHHypergeometricDFRModel, IndexCollections.du.getAnalyzerNoStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.du.getWordList(),outputDir,maxResults);
-        Configuration M5 = new Configuration("version1", "bc","IFB2DFRModel", Model.IFB2DFRModel, IndexCollections.du.getAnalyzerNoStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.du.getWordList(),outputDir,maxResults);
-        Configuration M6 = new Configuration("version1", "bc","InExpB2DFRModel", Model.InExpB2DFRModel, IndexCollections.du.getAnalyzerNoStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.du.getWordList(),outputDir,maxResults);
-        Configuration M7 = new Configuration("version1", "bc","InExpC2DFRModel", Model.InExpC2DFRModel, IndexCollections.du.getAnalyzerNoStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.du.getWordList(),outputDir,maxResults);
-        Configuration M8 = new Configuration("version1", "bc","InL2DFRModel", Model.InL2DFRModel, IndexCollections.du.getAnalyzerNoStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.du.getWordList(),outputDir,maxResults);
-        Configuration M9 = new Configuration("version1", "bc","OkapiBM25Model", Model.OkapiBM25Model, IndexCollections.du.getAnalyzerNoStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.du.getWordList(),outputDir,maxResults);
-        Configuration M10 = new Configuration("version1", "bc","PL2DFRModel", Model.PL2DFRModel, IndexCollections.du.getAnalyzerNoStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.du.getWordList(),outputDir,maxResults);
+        Configuration VS_BC = new Configuration("version1", "bc","vs", Model.VectorSpaceModel, IndexCollections.du.getAnalyzerNoStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.du.getWordList(),outputDir,maxResults);
+        Configuration LM_BC = new Configuration("version1", "bc","lm",Model.LanguageModel , IndexCollections.du.getAnalyzerNoStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.du.getWordList(),outputDir,maxResults);
+        Configuration VS_STEMMER_BC = new Configuration("version1", "bc","vsstem", Model.VectorSpaceModel, IndexCollections.du.getAnalyzerWithStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.du.getWordList(),outputDir,maxResults);
+        Configuration LM_STEMMER_BC = new Configuration("version1", "bc","lmstem", Model.LanguageModel, IndexCollections.du.getAnalyzerWithStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.du.getWordList(),outputDir,maxResults);
+        Configuration M3 = new Configuration("version1", "bc","lm", Model.BB2DFRModel, IndexCollections.du.getAnalyzerNoStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.du.getWordList(),outputDir,maxResults);
+        Configuration M4 = new Configuration("version1", "bc","lm", Model.DLHHypergeometricDFRModel, IndexCollections.du.getAnalyzerNoStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.du.getWordList(),outputDir,maxResults);
+        Configuration M5 = new Configuration("version1", "bc","lm", Model.IFB2DFRModel, IndexCollections.du.getAnalyzerNoStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.du.getWordList(),outputDir,maxResults);
+        Configuration M6 = new Configuration("version1", "bc","lm", Model.InExpB2DFRModel, IndexCollections.du.getAnalyzerNoStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.du.getWordList(),outputDir,maxResults);
+        Configuration M7 = new Configuration("version1", "bc","lm", Model.InExpC2DFRModel, IndexCollections.du.getAnalyzerNoStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.du.getWordList(),outputDir,maxResults);
+        Configuration M8 = new Configuration("version1", "bc","lm", Model.InL2DFRModel, IndexCollections.du.getAnalyzerNoStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.du.getWordList(),outputDir,maxResults);
+        Configuration M9 = new Configuration("version1", "bc","lm", Model.OkapiBM25Model, IndexCollections.du.getAnalyzerNoStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.du.getWordList(),outputDir,maxResults);
+        Configuration M10 = new Configuration("version1", "bc","lm", Model.PL2DFRModel, IndexCollections.du.getAnalyzerNoStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.du.getWordList(),outputDir,maxResults);
 
 
         List<Configuration> configurations = new ArrayList<Configuration>();
-//        configurations.add(VS_BC);
-//        configurations.add(LM_BC);
-//        configurations.add(VS_STEMMER_BC);
-//        configurations.add(LM_STEMMER_BC);
-//        configurations.add(BM25_STEMMER_BC);
-        configurations.add(M1);
-        configurations.add(M2);
-        configurations.add(M3);
-        configurations.add(M4);
-        configurations.add(M5);
-        configurations.add(M6);
-        configurations.add(M7);
-        configurations.add(M8);
-        configurations.add(M9);
-        configurations.add(M10);
+        //we just need these four configurations because the lm and lmstem indexes are the same for all probabilistic models
+        configurations.add(VS_BC);
+        configurations.add(LM_BC);
+        configurations.add(VS_STEMMER_BC);
+        configurations.add(LM_STEMMER_BC);
         IndexCollections.indexConfiguration(configurations,Globals.DOCUMENT_ID_FIELD);
 
         /***
@@ -149,19 +133,16 @@ public class BrounCorpusExample
         queryConfiguration2.setForceQE(QEEnum.yes);
         List<SearchConfiguration> searchConfigurations = new ArrayList<SearchConfiguration>();
 
-//        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, VS_BC));
-//        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, LM_BC));
-//        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, VS_STEMMER_BC));
-//        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, LM_STEMMER_BC));
-//        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, BM25_STEMMER_BC));
-//        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, VS_BC));
-//        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, LM_BC));
-//        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, VS_STEMMER_BC));
-//        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, LM_STEMMER_BC));
-//        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, BM25_STEMMER_BC));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, VS_BC));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, LM_BC));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, VS_STEMMER_BC));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, LM_STEMMER_BC));
 
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, M1));
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, M2));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, VS_BC));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, LM_BC));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, VS_STEMMER_BC));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, LM_STEMMER_BC));
+
         searchConfigurations.add(new SearchConfiguration(queryConfiguration1, M3));
         searchConfigurations.add(new SearchConfiguration(queryConfiguration1, M4));
         searchConfigurations.add(new SearchConfiguration(queryConfiguration1, M5));

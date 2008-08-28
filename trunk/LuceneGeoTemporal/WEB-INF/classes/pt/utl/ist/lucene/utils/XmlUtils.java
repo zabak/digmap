@@ -7,6 +7,7 @@ import org.dom4j.Node;
 
 import java.io.File;
 import java.net.MalformedURLException;
+import java.util.Map;
 
 
 /**
@@ -17,12 +18,14 @@ import java.net.MalformedURLException;
 public class XmlUtils
 {
 
-    public static Node getFragment(String filePath, String xpathString) throws MalformedURLException, DocumentException
+    public static Node getFragment(String filePath, String xpathString, Map<String,String> namespaces) throws MalformedURLException, DocumentException
     {
         try
         {
             Document dom = Dom4jUtil.parse(new File(filePath));
             XPath xPath = dom.createXPath(xpathString);
+            if(namespaces != null)
+                xPath.setNamespaceURIs(namespaces);
             return xPath.selectSingleNode(dom.getRootElement());
         }
         catch (DocumentException e)
@@ -37,6 +40,6 @@ public class XmlUtils
 
     public static void main(String [] args) throws MalformedURLException, DocumentException
     {
-        System.out.println(getFragment("c:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\classes\\test-data\\documents\\GLS-1620.xml","//DOC[contains(DOCNO,'GLS-01-01-04']')]"));
+        System.out.println(getFragment("c:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\classes\\test-data\\documents\\GLS-1620.xml","//DOC[contains(DOCNO,'GLS-01-01-04']')]",null));
     }
 }

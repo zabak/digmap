@@ -1,10 +1,8 @@
-#summary One-sentence summary of this page.
-
 = LGTE Query Language =
 
 This page is a quick tour on how to use LGTE query language. Follow we describe the fields carried by LGTE and their possible values.
 
-= Fields =
+== Fields ==
 
 LGTE provides a top layer on lucene query parser creating an `LgteQuery`. `LgteQueryParser` parses a query on LGTE query language creating a middle query we call a level 1 query. This query will have all LGTE specific parameters in `QueryParams` class and the rest of the query will be parsed with lucene `QueryParser`. You can crete an `LgteQuery` by yourself passing a `Query` and a `QueryParams`, or you can simply use our query language and let `LgteQueryParser` do the job for you. Next list enumerates all possible fields of LGTE query language, each of the with parameter in `QueryParam`:
 
@@ -89,7 +87,7 @@ LGTE provides retrieval model configuration at run time using an implementation 
  * `BB2DFRModel`
  * `OkapiBM25Model`
 
-= Examples of Queries =
+== Examples of Queries ==
 Here we present several queries and a short explanation on it.
 
 {{{

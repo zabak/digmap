@@ -70,6 +70,27 @@ public class TimeSpatialTextSorterSource implements TimeSpatialDistancesSorterSo
         return score;
     }
 
+    public float getTextScore(int doc, float score)
+    {
+        if(comparator != null)
+            return comparator.getTextScore(doc,score);
+        return score;
+    }
+
+    public float getSpatialScore(int doc, float score)
+    {
+        if(comparator != null)
+            return comparator.getSpatialScore(doc,score);
+        return score;
+    }
+
+    public float getTimeScore(int doc, float score)
+    {
+        if(comparator != null)
+            return comparator.getTimeScore(doc,score);
+        return score;
+    }
+
     public ScoreDocComparator newComparator(IndexReader reader, String field) throws IOException
     {
         if(spatialScoreDocComparator == null)

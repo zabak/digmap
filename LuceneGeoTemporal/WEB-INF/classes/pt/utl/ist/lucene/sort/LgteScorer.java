@@ -11,4 +11,7 @@ import pt.utl.ist.lucene.level1query.QueryParams;
 public interface LgteScorer
 {
     public float getScore(int doc, float score);
+    public float getTimeScore(int doc, float score);
+    public float getSpatialScore(int doc, float score);
+    public float getTextScore(int doc, float score);
 }

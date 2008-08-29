@@ -104,6 +104,27 @@ public class LgteHits
         return hits.score(i);
     }
 
+    public float textScore(int i) throws java.io.IOException
+    {
+        if(sort != null && sort instanceof LgteScorer)
+            return ((LgteScorer)sort).getTextScore(hits.id(i),hits.score(i));
+        return hits.score(i);
+    }
+
+    public float spatialScore(int i) throws java.io.IOException
+    {
+        if(sort != null && sort instanceof LgteScorer)
+            return ((LgteScorer)sort).getSpatialScore(hits.id(i),hits.score(i));
+        return 0;
+    }
+
+    public float timeScore(int i) throws java.io.IOException
+    {
+        if(sort != null && sort instanceof LgteScorer)
+            return ((LgteScorer)sort).getTimeScore(hits.id(i),hits.score(i));
+        return 0;
+    }
+
     public int id(int i) throws java.io.IOException
     {
         return hits.id(i);

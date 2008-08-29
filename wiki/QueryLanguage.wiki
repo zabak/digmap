@@ -62,6 +62,7 @@ The order or ranking system is using aou GeoTemporal Model based in ranking sigm
 Filtering cn be used to prune results out of the box in rectangle, interval, and radium queries. When you define a radium or a limit you dont need to prune the results, by default thats what is being done for performance reasons. Radium or limits are allays   used in ranking formulas, and if you choose not prune out of the box results they will appear but the ranking depends on time, spatial and textual formulas.
 
 || Filter Field Values || Active Filters ||
+|| `no` || all Filters off ||
 || `sp` || Filter spatial ||
 || `t` || Filter time ||
 || `t_sp` || Filter time and spatial ||

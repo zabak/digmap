@@ -17,6 +17,7 @@ In a glance, the main features of LGTE are:
  * Includes a Java alternative to the trec_eval tool, capable of performing significance tests over pairs of runs
  * Includes a simple test application for searching over the [http://ilps.science.uva.nl/datafiles/braun-corpus.zip Braun Corpus]
 
+If you want to see LGTE running you have a [http://digmap2.ist.utl.pt:8080/lgte DEMO online here]
 = Libraries =
 
 LGTE essentially assembles the following open-source libraries, patching them when necessary to work with our specific extensions:

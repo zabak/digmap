@@ -3,13 +3,49 @@
 <%@page import="pt.utl.ist.lucene.*"%>
 <%@page import="pt.utl.ist.lucene.analyzer.LgteAnalyzer"%>
 <html>
-<head><title>Example Web Application for Search with Lucene GeoTemporal Extensions</title></head>
-<body>
-<a href="http://code.google.com/p/digmap/wiki/LuceneGeoTemporal"><img src="lgte.png" alt="LGTE"/></a>
+<head><title>Example Web Application for Search with Lucene GeoTemporal Extensions</title>
+    <style type="text/css">
+       #header{}
+       body * {font-size:11px;font-family: Verdana, Helvetica, sans-serif;}
+       #search{}
+       #searches{padding:3px;}
+       #searches a{text-decoration:none}
+       #searches td{font-size:11px;font-family: Verdana, Helvetica, sans-serif; border-bottom: 1px solid black;}
+       #fields ul{margin:0; padding:5px;border:1px solid black; background-color:#4C6C8F;color:white;}
+       #fields ul li{margin:0}
+       #fields li{font-size:11px;font-family: Verdana, Helvetica, sans-serif;}
 
+       #results
+       {
+       }
+       .result {margin-top:10px}
+       .result th
+       {
+           background-color:#A5B6C6;
+           font-size:11px;font-family: Verdana, Helvetica, sans-serif;
+           text-align:left;
+           font-weight:normal;
+
+
+       }
+        .result td
+       {border-bottom:1px solid black;
+            font-size:11px;font-family: Verdana, Helvetica, sans-serif;
+          text-align:left;
+          font-weight:normal;
+           margin-top:5px;
+       }
+
+    </style>
+</head>
+<body>
+<div id="header">
+    <a href="http://code.google.com/p/digmap/wiki/LuceneGeoTemporal"><img border="0"  height="80" src="lgtesmall.png" alt="LGTE"/></a> <a href="http://code.google.com/p/digmap/wiki/LuceneGeoTemporal">go to project home page</a> | <a href="indexDigmap.jsp">go to Georeferenced Collection</a> | <a href="http://digmap.googlecode.com/files/lgte.war">download LGTE last version</a>
+</div>
+<a href="index.jsp">go back</a>
 <h3>Please enter your search query:</h3>
 
-<p>try for example: Officie amptluyden</p>
+<p>try for example: <a href="indexBc.jsp?q=Officie amptluyden">Officie amptluyden</a></p>
 
 <form action="indexBc.jsp" method="post">
     <input type="text" size="50" name="q"/>
@@ -50,5 +86,6 @@
             }
         }
     %>
+    <jsp:include page="footer.jsp"/>
   </body>
 </html>

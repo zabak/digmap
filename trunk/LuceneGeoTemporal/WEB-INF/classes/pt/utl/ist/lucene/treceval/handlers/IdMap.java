@@ -14,6 +14,7 @@ public class IdMap
 {
     String id;
     Map<String,String> textFields;
+    Map<String,String> storedFields;
     Collection<Field> preparedFields;
 
 
@@ -28,6 +29,14 @@ public class IdMap
     {
         this.id = id;
         this.textFields = textFields;
+    }
+
+    public IdMap(String id, Map<String, String> textFields, Map<String, String> storedFields, Collection<Field> preparedFields)
+    {
+        this.id = id;
+        this.textFields = textFields;
+        this.storedFields = storedFields;
+        this.preparedFields = preparedFields;
     }
 
     public String getId()
@@ -59,5 +68,16 @@ public class IdMap
     public void setPreparedFields(Collection<Field> preparedFields)
     {
         this.preparedFields = preparedFields;
+    }
+
+
+    public Map<String, String> getStoredFields()
+    {
+        return storedFields;
+    }
+
+    public void setStoredFields(Map<String, String> storedFields)
+    {
+        this.storedFields = storedFields;
     }
 }

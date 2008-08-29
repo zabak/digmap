@@ -16,6 +16,7 @@ import java.util.HashMap;
 public class DefaultModelSortDocComparator implements ModelSortDocComparator
 {
     HashMap<Integer,Float> scoresCache;
+    HashMap<Integer,Float> textScoresCache;
 
     protected float timeFactor;
     protected float spatialFactor;
@@ -45,6 +46,8 @@ public class DefaultModelSortDocComparator implements ModelSortDocComparator
         textFactor = queryParams.getQueryConfiguration().getFloatProperty("default.model.text.factor");
 
         scoresCache = new HashMap<Integer,Float>();
+        textScoresCache = new HashMap<Integer,Float>();
+
     }
 
     public void cleanUp()
@@ -74,9 +77,20 @@ public class DefaultModelSortDocComparator implements ModelSortDocComparator
         return (Float) spatialScoreDocComparator.sortValue(new ScoreDoc(doc,score));
     }
 
-    public float getTextScore(int doc, float score)
+    public float getTextScore(int doc,float score)
     {
-        return (Float) textScoreDocComparator.sortValue(new ScoreDoc(doc,score));
+        return getTextScore(new ScoreDoc(doc,score));
+    }
+
+    public float getTextScore(ScoreDoc scoreDoc)
+    {
+        //we need a cache for Text because text score it is the real lucene returned score, and that value will change after ranking to a normalized real value
+        Float scoreCache = textScoresCache.get(scoreDoc.doc);
+        if(scoreCache != null)
+            return scoreCache;
+        scoreCache = (Float) textScoreDocComparator.sortValue(scoreDoc);
+        textScoresCache.put(scoreDoc.doc,scoreCache);
+        return scoreCache;
     }
 
     public int compare(ScoreDoc scoreDoc1, ScoreDoc scoreDoc2)
@@ -109,7 +123,7 @@ public class DefaultModelSortDocComparator implements ModelSortDocComparator
         }
         if(queryParams.getOrder().isScore() && textScoreDocComparator != null)
         {
-            textScore1 =  (Float) textScoreDocComparator.sortValue(scoreDoc);
+            textScore1 =  getTextScore(scoreDoc);
         }
         score = merge(timeScore1,spaceScore1,textScore1);
         scoresCache.put(scoreDoc.doc,score);

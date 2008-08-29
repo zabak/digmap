@@ -73,7 +73,7 @@ public class CXmlHandler implements CDocumentHandler
                             idMap.setPreparedFields(new ArrayList<Field>());
                         //add file path as a prepared field not tokenized
                         idMap.getPreparedFields().add(LgteDocumentWrapper.getField(Globals.DOCUMENT_FILE_PATH,filepath,true,true,false));
-                        callBack.indexDoc(idMap.getId(),idMap.getTextFields(),idMap.getPreparedFields());
+                        callBack.indexDoc(idMap.getId(),idMap.getTextFields(),idMap.getStoredFields(), idMap.getPreparedFields());
                     }
                     catch (IOException e)
                     {

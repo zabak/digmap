@@ -487,6 +487,15 @@ public class LgteDocumentWrapper
 
 
 
+    public boolean isGeoDoc()
+    {
+        return document.get(Globals.LUCENE_GEO_DOC_INDEX)!=null;
+    }
+
+    public boolean isTimeDoc()
+    {
+        return document.get(Globals.LUCENE_TIME_DOC_INDEX)!=null;
+    }
 
     public String get(String field)
     {

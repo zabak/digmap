@@ -25,7 +25,7 @@ public class ModelManager
 
     private long lastCheck = 0;
 
-    private HashMap<Thread,ModelContainer> threadModels = new HashMap<Thread,ModelContainer>();
+    private HashMap<Long,ModelContainer> threadModels = new HashMap<Long,ModelContainer>();
 
 
     public void setModel(Model m)
@@ -40,17 +40,18 @@ public class ModelManager
 
     public Model getModel()
     {
-        ModelContainer mc = threadModels.get(Thread.currentThread());
+        ModelContainer mc = threadModels.get(Thread.currentThread().getId());
         if(mc != null)
             return mc.getModel();
         return null;
     }
 
-    public synchronized Model service(ManagerService service, Model m)
+//    public synchronized Model service(ManagerService service, Model m)
+    public Model service(ManagerService service, Model m)
     {
         switch ( service )
         {
-            case setModel: threadModels.put(Thread.currentThread(),new ModelContainer(m)); break;
+            case setModel: threadModels.put(Thread.currentThread().getId(),new ModelContainer(m)); break;
             case clear: threadModels.clear();
         }
         checkOldThreads();
@@ -62,7 +63,7 @@ public class ModelManager
         if(System.currentTimeMillis() - lastCheck > THREAD_TIMEOUT)
         {
             lastCheck = System.currentTimeMillis();
-            for(Map.Entry<Thread, ModelContainer> entry: threadModels.entrySet())
+            for(Map.Entry<Long, ModelContainer> entry: threadModels.entrySet())
             {
                 if(System.currentTimeMillis() - entry.getValue().getLastAccess() > THREAD_TIMEOUT)
                 {

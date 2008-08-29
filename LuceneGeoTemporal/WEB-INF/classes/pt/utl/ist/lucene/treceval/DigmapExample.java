@@ -218,6 +218,20 @@ public class DigmapExample
                         logger.error("Error in Field spatial " + dcterms_att_box + ":" + text);
                     else
                     {
+                        if(southlimit > northlimit)
+                        {
+                            logger.info("Possible record error, changing north with south.");
+                            double aux = southlimit;
+                            southlimit = northlimit;
+                            northlimit = aux;
+                        }
+                        if(westlimit > eastlimit)
+                        {
+                            logger.info("Possible record error, changing east with west.");
+                            double aux = westlimit;
+                            westlimit = eastlimit;
+                            eastlimit = aux;
+                        }
                         List<Field> pointFields = LgteDocumentWrapper.getGeoBoxFields(northlimit, southlimit, westlimit, eastlimit);
                         uniqueFields.addAll(pointFields);
                     }

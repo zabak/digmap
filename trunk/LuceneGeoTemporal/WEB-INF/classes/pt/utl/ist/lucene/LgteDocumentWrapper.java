@@ -144,6 +144,12 @@ public class LgteDocumentWrapper
      */
     public UnknownForm getUnknownForm()
     {
+        RectangleForm rectangleForm = getRectangleForm();
+        if(rectangleForm != null)
+            return rectangleForm;
+        CircleForm circleForm = getCircleForm();
+        if(circleForm != null)
+            return circleForm;
         Double diagonal = getDoubleField(Globals.LUCENE_DIAGONAL_ORIGINAL_INDEX);
         GeoPoint geoPoint = getGeoPoint();
         if(geoPoint != null && diagonal != null)

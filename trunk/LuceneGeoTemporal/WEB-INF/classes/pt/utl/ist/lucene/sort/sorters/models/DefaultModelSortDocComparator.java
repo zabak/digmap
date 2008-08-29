@@ -64,6 +64,21 @@ public class DefaultModelSortDocComparator implements ModelSortDocComparator
         return (Float) sortValue(new ScoreDoc(doc,score));
     }
 
+    public float getTimeScore(int doc, float score)
+    {
+        return (Float) timeScoreDocComparator.sortValue(new ScoreDoc(doc,score));
+    }
+
+    public float getSpatialScore(int doc, float score)
+    {
+        return (Float) spatialScoreDocComparator.sortValue(new ScoreDoc(doc,score));
+    }
+
+    public float getTextScore(int doc, float score)
+    {
+        return (Float) textScoreDocComparator.sortValue(new ScoreDoc(doc,score));
+    }
+
     public int compare(ScoreDoc scoreDoc1, ScoreDoc scoreDoc2)
     {
         Float score1 = (Float) sortValue(scoreDoc1);
@@ -100,6 +115,7 @@ public class DefaultModelSortDocComparator implements ModelSortDocComparator
         scoresCache.put(scoreDoc.doc,score);
         return score;
     }
+
 
     protected float merge(float time, float spatial, float text)
     {

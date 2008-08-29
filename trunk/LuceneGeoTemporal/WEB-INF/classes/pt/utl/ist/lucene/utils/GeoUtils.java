@@ -3,13 +3,13 @@ package pt.utl.ist.lucene.utils;
 /**
  * @author Jorge Machado
  * @date 25/Jul/2008
- * @see jomm.util
+ * @see pt.utl.ist.lucene.utils
  */
 public class GeoUtils
 {
     public static double calcMiddleLatitude(double northlimit, double southlimit)
     {
-        return northlimit - ((northlimit - southlimit) / 2.0);
+        return (northlimit + southlimit) / 2.0;
     }
     public static double calcMiddleLatitude(String northlimit, String southlimit)
     {

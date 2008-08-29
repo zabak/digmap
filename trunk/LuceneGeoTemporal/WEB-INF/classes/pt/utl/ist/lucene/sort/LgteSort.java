@@ -101,4 +101,67 @@ public class LgteSort extends Sort implements LgteScorer
         }
         return score;
     }
+
+    /**
+     * @param doc to score
+     * @param score given by sourceComparatorSource
+     * @return the score of the first LgteScorer found in sortFields
+     */
+    public float getTextScore(int doc, float score)
+    {
+        if (sortFields != null)
+        {
+            for (SortField sortField : sortFields)
+            {
+                SortComparatorSource sortComparatorSource = sortField.getFactory();
+                if (sortComparatorSource instanceof LgteScorer)
+                {
+                    return ((LgteScorer) sortComparatorSource).getTextScore(doc,score);
+                }
+            }
+        }
+        return score;
+    }
+
+    /**
+     * @param doc to score
+     * @param score given by sourceComparatorSource
+     * @return the score of the first LgteScorer found in sortFields
+     */
+    public float getSpatialScore(int doc, float score)
+    {
+        if (sortFields != null)
+        {
+            for (SortField sortField : sortFields)
+            {
+                SortComparatorSource sortComparatorSource = sortField.getFactory();
+                if (sortComparatorSource instanceof LgteScorer)
+                {
+                    return ((LgteScorer) sortComparatorSource).getSpatialScore(doc,score);
+                }
+            }
+        }
+        return score;
+    }
+
+    /**
+     * @param doc to score
+     * @param score given by sourceComparatorSource
+     * @return the score of the first LgteScorer found in sortFields
+     */
+    public float getTimeScore(int doc, float score)
+    {
+        if (sortFields != null)
+        {
+            for (SortField sortField : sortFields)
+            {
+                SortComparatorSource sortComparatorSource = sortField.getFactory();
+                if (sortComparatorSource instanceof LgteScorer)
+                {
+                    return ((LgteScorer) sortComparatorSource).getTimeScore(doc,score);
+                }
+            }
+        }
+        return score;
+    }
 }

@@ -108,13 +108,17 @@ public class IndexCollections implements IndexFilesCallBack
      * @param uniqueFields to add to index
      * @throws IOException writing index
      */
-    public void indexDoc(String id, Map<String,String> indexFields, Collection<Field> uniqueFields) throws IOException
+    public void indexDoc(String id, Map<String,String> indexFields, Map<String,String> storedFields, Collection<Field> uniqueFields) throws IOException
     {
         LgteDocumentWrapper d = new LgteDocumentWrapper();
         d.addField(idField, id, true, true, false);
         for (Map.Entry<String,String> entry : indexFields.entrySet())
         {
             d.addField(entry.getKey(), entry.getValue(), true, true, true, true);
+        }
+        for (Map.Entry<String,String> entry : storedFields.entrySet())
+        {
+            d.addField(entry.getKey(), entry.getValue(), true, false, false);
         }
         if(uniqueFields!=null)
             d.addFields(uniqueFields);

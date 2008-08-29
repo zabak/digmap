@@ -2,6 +2,8 @@ package pt.utl.ist.lucene;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * This class manages the model used in each thread by a search
@@ -40,35 +42,38 @@ public class ModelManager
 
     public Model getModel()
     {
-        ModelContainer mc = threadModels.get(Thread.currentThread().getId());
-        if(mc != null)
-            return mc.getModel();
-        return null;
+        return service(ManagerService.getModel,null);
     }
 
 //    public synchronized Model service(ManagerService service, Model m)
-    public Model service(ManagerService service, Model m)
+    public synchronized Model service(ManagerService service, Model m)
     {
         switch ( service )
         {
             case setModel: threadModels.put(Thread.currentThread().getId(),new ModelContainer(m)); break;
+            case getModel: return threadModels.get(Thread.currentThread().getId()).getModel();
             case clear: threadModels.clear();
         }
         checkOldThreads();
         return null;
     }
 
-    private void checkOldThreads()
+    private synchronized void checkOldThreads()
     {
         if(System.currentTimeMillis() - lastCheck > THREAD_TIMEOUT)
         {
             lastCheck = System.currentTimeMillis();
+            List<Long> toRemoveKey = new ArrayList<Long>();
             for(Map.Entry<Long, ModelContainer> entry: threadModels.entrySet())
             {
                 if(System.currentTimeMillis() - entry.getValue().getLastAccess() > THREAD_TIMEOUT)
                 {
-                    threadModels.remove(entry.getKey());
+                    toRemoveKey.add(entry.getKey());
                 }
+            }
+            for(Long key:toRemoveKey)
+            {
+                threadModels.remove(key);
             }
         }
     }

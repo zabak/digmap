@@ -13,12 +13,13 @@ import java.util.Map;
 public class FilteredFields
 {
     Map<String,String> textFields;
+    Map<String,String> storedTextFields;
     Collection<Field> preparedFields;
 
 
-    public FilteredFields(Collection<Field> uniqueFields)
+    public FilteredFields(Collection<Field> textFields)
     {
-        this.preparedFields = uniqueFields;
+        this.preparedFields = textFields;
     }
 
     public FilteredFields(Map<String, String> textFields)
@@ -30,6 +31,14 @@ public class FilteredFields
     {
         this.textFields = textFields;
         this.preparedFields = uniqueFields;
+    }
+
+
+    public FilteredFields(Map<String, String> textFields, Collection<Field> preparedFields, Map<String, String> storedTextFields)
+    {
+        this.textFields = textFields;
+        this.preparedFields = preparedFields;
+        this.storedTextFields = storedTextFields;
     }
 
     public Map<String, String> getTextFields()
@@ -53,4 +62,13 @@ public class FilteredFields
     }
 
 
+    public Map<String, String> getStoredTextFields()
+    {
+        return storedTextFields;
+    }
+
+    public void setStoredTextFields(Map<String, String> storedTextFields)
+    {
+        this.storedTextFields = storedTextFields;
+    }
 }

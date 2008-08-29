@@ -25,11 +25,11 @@ public class DigmapExample
     public static void main(String[] args) throws DocumentException, IOException
     {
 
-        args = new String[4];
-        args[0] = "C:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-data\\digmap\\documents";
-        args[1] = "C:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-data\\digmap\\topics";
-        args[2] = "C:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-data\\digmap\\output";
-        args[3] = "C:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-index";
+//        args = new String[4];
+//        args[0] = "C:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-data\\digmap\\documents";
+//        args[1] = "C:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-data\\digmap\\topics";
+//        args[2] = "C:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-data\\digmap\\output";
+//        args[3] = "C:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-index";
 
 
         String collectionPath = args[0];
@@ -57,6 +57,16 @@ public class DigmapExample
         XmlFieldHandler xmlFieldHandlerSpatial = new SimpleXmlFieldHandler("./dcterms:spatial", new DigmapSpatialFieldFilter(), "contents");
         XmlFieldHandler xmlFieldHandlerTime = new SimpleXmlFieldHandler("./dc:date", new DigmapTimeFieldFilter(), null);
 
+        //To store all content in line
+        XmlFieldHandler xmlFieldHandlerTitlePresentStore = new SimpleXmlFieldHandler("./dc:title", new SimpleStoreFieldFilter(), "contentsStore");
+        XmlFieldHandler xmlFieldHandlerCreatorStore = new SimpleXmlFieldHandler("./dc:creator", new SimpleStoreFieldFilter(), "contentsStore");
+        XmlFieldHandler xmlFieldHandlerCreatorPersonStore = new SimpleXmlFieldHandler("./digmap:creator-person/dc:creator", new SimpleStoreFieldFilter(), "contentsStore");
+        XmlFieldHandler xmlFieldHandlerContributorStore = new SimpleXmlFieldHandler("./dc:contributor", new SimpleStoreFieldFilter(), "contentsStore");
+        XmlFieldHandler xmlFieldHandlerSubjectStore = new SimpleXmlFieldHandler("./dc:subject", new SimpleStoreFieldFilter(), "contentsStore");
+        XmlFieldHandler xmlFieldHandlerDescriptionStore = new SimpleXmlFieldHandler("./dc:description", new SimpleStoreFieldFilter(), "contentsStore");
+        XmlFieldHandler xmlFieldHandlerSpatialStore = new SimpleXmlFieldHandler("./dcterms:spatial", new SimpleStoreFieldFilter(), "contentsStore");
+        XmlFieldHandler xmlFieldHandlerTimeStore = new SimpleXmlFieldHandler("./dc:date", new SimpleStoreFieldFilter(), "contentsStore");
+
         xmlFieldHandlers.add(xmlFieldHandlerCollection);
         xmlFieldHandlers.add(xmlFieldHandlerTitlePresent);
         xmlFieldHandlers.add(xmlFieldHandlerTitle);
@@ -67,6 +77,17 @@ public class DigmapExample
         xmlFieldHandlers.add(xmlFieldHandlerContributor);
         xmlFieldHandlers.add(xmlFieldHandlerSpatial);
         xmlFieldHandlers.add(xmlFieldHandlerTime);
+
+        //To store all content in line
+        xmlFieldHandlers.add(xmlFieldHandlerTitlePresentStore);
+        xmlFieldHandlers.add(xmlFieldHandlerCreatorStore);
+        xmlFieldHandlers.add(xmlFieldHandlerCreatorPersonStore);
+        xmlFieldHandlers.add(xmlFieldHandlerContributorStore);
+        xmlFieldHandlers.add(xmlFieldHandlerSubjectStore);
+        xmlFieldHandlers.add(xmlFieldHandlerDescriptionStore);
+        xmlFieldHandlers.add(xmlFieldHandlerSpatialStore);
+        xmlFieldHandlers.add(xmlFieldHandlerTimeStore);
+
 
         Map<String, String> namespaces = new HashMap<String, String>();
         namespaces.put("digmap", "http://www.digmap.eu/schemas/resource/");
@@ -253,7 +274,7 @@ public class DigmapExample
     {
         public FilteredFields filter(Node node, String fieldName)
         {
-            
+
             Element time = (Element) node;
             String text = time.getText();
             if(text.equals("1680><1690"))

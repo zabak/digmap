@@ -83,7 +83,8 @@ public class XmlResourceHandler implements ResourceHandler
             return null;
         }
 
-        Map<String,String> map = new HashMap<String,String>();
+        Map<String,String> textFields = new HashMap<String,String>();
+        Map<String,String> storedFields = new HashMap<String,String>();
         Map<String,Field> uniqueFields = new HashMap<String,Field>();
         for(XmlFieldHandler handler: fieldHandlers)
         {
@@ -99,11 +100,23 @@ public class XmlResourceHandler implements ResourceHandler
                 {
                     for(Map.Entry<String,String> entry:fields.getTextFields().entrySet())
                     {
-                        String old = map.get(entry.getKey());
+                        String old = textFields.get(entry.getKey());
                         if(old == null)
-                            map.put(entry.getKey(),entry.getValue());
+                            textFields.put(entry.getKey(),entry.getValue());
                         else
-                            map.put(entry.getKey(),old + ' ' + entry.getValue());
+                            textFields.put(entry.getKey(),old + ' ' + entry.getValue());
+                    }
+                }
+                //StoredFields
+                if(fields != null && fields.getStoredTextFields() != null)
+                {
+                    for(Map.Entry<String,String> entry:fields.getStoredTextFields().entrySet())
+                    {
+                        String old = storedFields.get(entry.getKey());
+                        if(old == null)
+                            storedFields.put(entry.getKey(),entry.getValue());
+                        else
+                            storedFields.put(entry.getKey(),old + ' ' + entry.getValue());
                     }
                 }
                 //PreparedFields
@@ -121,9 +134,9 @@ public class XmlResourceHandler implements ResourceHandler
             }
         }
         if(id instanceof Element)
-            return new IdMap(((Element)id).getTextTrim(),map,new ArrayList<Field>(uniqueFields.values()));
+            return new IdMap(((Element)id).getTextTrim(),textFields,storedFields,new ArrayList<Field>(uniqueFields.values()));
         else
-            return new IdMap(id.getText().trim(),map,new ArrayList<Field>(uniqueFields.values()));
+            return new IdMap(id.getText().trim(),textFields,storedFields,new ArrayList<Field>(uniqueFields.values()));
     }
 
     public String getIdXpath()

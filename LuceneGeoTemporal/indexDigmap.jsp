@@ -56,10 +56,9 @@
 </head>
 <body>
 <div id="header">
-    <a href="http://code.google.com/p/digmap/wiki/LuceneGeoTemporal"><img border="0"  height="80" src="lgtesmall.png" alt="LGTE"/></a>
+    <a href="http://code.google.com/p/digmap/wiki/LuceneGeoTemporal"><img border="0"  height="80" src="lgtesmall.png" alt="LGTE"/></a> <a href="http://code.google.com/p/digmap/wiki/LuceneGeoTemporal">go to project home page</a> | <a href="http://digmap.googlecode.com/files/lgte.war">download LGTE last version</a>
 </div>
-
-
+<a href="index.jsp">go back</a>
 
 <table>
 <tr>
@@ -73,6 +72,7 @@
         <table cellpadding="0" cellspacing="0" id="searches">
             <tr><td>You can try a search centered in Portugal</td><td><a href="indexDigmap.jsp?q=lat:37 lng:-9 radium:1000">lat:37 lng:-9 radium:1000</a></td></tr>
             <tr><td>A search centered in Belgique with text "Imperii"</td><td><a href="indexDigmap.jsp?q=Imperii lat:51 lng:4 radiumMiles:1000">Imperii lat:51 lng:4 radiumMiles:1000</a></td></tr>
+            <tr><td>Using a diferent Text Model</td><td><a href="indexDigmap.jsp?q=Imperii lat:51 lng:4 radiumMiles:1000 time:1680 model:bm25">model:bm25 Imperii lat:51 lng:4 radiumMiles:1000 time:1680</a></td></tr>
             <tr><td>Try time search</td><td><a href="indexDigmap.jsp?q=Imperii lat:51 lng:4 radiumMiles:1000 time:1680">Imperii lat:51 lng:4 radiumMiles:1000 time:1680</a></td></tr>
             <tr><td>Note that the first set is closer in text and space because no radium was defined</td><td><a href="indexDigmap.jsp?q=Imperii map lat:51 lng:4 radiumMiles:1000 time:1666 filter:no">Imperii map lat:51 lng:4 radiumMiles:1000 time:1666 filter:no</a></td></tr>
             <tr><td>Note that the first set is closer in time, text because time radium is short</td><td><a href="indexDigmap.jsp?q=Imperii map lat:51 lng:4 radiumMiles:1000 time:1666 radiumYears:10 filter:no">Imperii map lat:51 lng:4 radiumMiles:1000 time:1666 radiumYears:10 filter:no</a></td></tr>
@@ -88,7 +88,7 @@
         <%
                 try
                 {
-                    LgteIndexSearcherWrapper searcher = new LgteIndexSearcherWrapper(Model.InExpB2DFRModel, Globals.DATA_DIR + "/lm/version1/digmap");
+                    LgteIndexSearcherWrapper searcher = new LgteIndexSearcherWrapper(Model.LanguageModel, Globals.DATA_DIR + "/lm/version1/digmap");
 
                     //LgteAnalizer let you define witch fields should not be tokenized
                     //typicaly here we choose those fields used as identifiers, previously indexed with tokenize option setted to false in document Field.
@@ -126,7 +126,7 @@
                             out.print("<tr><th>DOCNO</th><td>" + docno + "</td></tr>");
                             out.print("<tr><th>score</th><td> " + hits.score(i) + "</td></tr>");
                             out.print("<tr><th>only text score</th><td> " + hits.textScore(i) + "</td></tr>");
-                            out.print("<tr><th>summary</th><td>" + hits.summary(i, "contents") + "</td></tr>");
+                            out.print("<tr><th>summary</th><td>" + hits.summary(i, "contentsStore") + "</td></tr>");
                             out.print("<tr><th>FILE_PATH</th><td> " + filepath + "</td></tr>");
                             if (doc.isGeoDoc())
                             {
@@ -248,10 +248,25 @@
                 model (Searching model)
             </li>
         </ul>
+        <h3>LGTE Supported Retrieval Models:</h3>
+        <ul>
+            <li>`VectorSpace` or just `vs`</li>
+            <li>`LanguageMoldel` or just `lm`</li>
+            <li>`DLHHypergeometricDFRModel`</li>
+            <li>`InExpC2DFRModel`</li>
+            <li>`InExpB2DFRModel`</li>
+            <li>`IFB2DFRModel` </li>
+            <li>`InL2DFRModel`</li>
+            <li>`PL2DFRModel` </li>
+            <li>`BB2DFRModel` </li>
+            <li>`OkapiBM25Model` or just `bm25`</li>
+        </ul>
         <p>To learn more about LGTE query language please go to wiki page: <a href="http://code.google.com/p/digmap/wiki/QueryLanguage">http://code.google.com/p/digmap/wiki/QueryLanguage</a></p>
     </td>
 </tr>
 </table>
+
+<jsp:include page="footer.jsp"/>
 
 </body>
 </html>

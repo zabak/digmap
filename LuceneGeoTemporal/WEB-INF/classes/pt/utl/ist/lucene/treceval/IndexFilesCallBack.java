@@ -14,5 +14,5 @@ import java.util.Collection;
  */
 public interface IndexFilesCallBack
 {
-    public void indexDoc(String id, Map<String,String> indexFields, Collection<Field> uniqueFields) throws IOException;
+    public void indexDoc(String id, Map<String,String> textFields,Map<String,String> storedFields, Collection<Field> uniqueFields) throws IOException;
 }

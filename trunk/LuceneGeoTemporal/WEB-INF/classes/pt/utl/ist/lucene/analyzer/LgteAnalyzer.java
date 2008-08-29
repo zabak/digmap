@@ -101,9 +101,11 @@ public class LgteAnalyzer extends org.apache.lucene.analysis.Analyzer
 
     public final TokenStream tokenStream(String fieldName, Reader reader)
     {
-        TokenStream result = new StandardTokenizer( reader );
+
         if(notTokenizedFields != null && notTokenizedFields.contains(fieldName))
-            return new StandardFilter( result );
+            return new LgteNothingTokenizer( reader );
+        
+        TokenStream result = new StandardTokenizer( reader );
         result = new StandardFilter( result );
         result = new LowerCaseFilter( result );
         result = new LgteDiacriticFilter( result );

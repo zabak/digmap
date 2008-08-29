@@ -4,6 +4,7 @@ import com.hrstc.lucene.Defs;
 import com.hrstc.lucene.queryexpansion.QueryExpansion;
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.WhitespaceAnalyzer;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.Query;
@@ -106,7 +107,7 @@ public class LgteQueryParser
                 newQueryBuilder.append(Globals.LUCENE_TIME_DOC_QUERY);
             String finalQuery = newQueryBuilder.toString();
             if(finalQuery.length() > 0)
-                returnQuery = luceneVersion.parseQuery(finalQuery,field,analyzer);
+                returnQuery = luceneVersion.parseQuery(finalQuery,field,new WhitespaceAnalyzer());
             else
                 return null;
         }

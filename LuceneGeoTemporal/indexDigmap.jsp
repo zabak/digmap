@@ -34,6 +34,10 @@
         try
         {
             LgteIndexSearcherWrapper searcher = new LgteIndexSearcherWrapper(Model.InExpB2DFRModel, Globals.DATA_DIR + "/lm/version1/digmap");
+
+	    //LgteAnalizer let you define witch fields should not be tokenized
+	    //typicaly here we choose those fields used as identifiers, previously indexed with tokenize option setted to false in document Field.
+	    //Identifiers are constant fields, so should not be filtered with any kind of Tokenizers like stopwords, stemming, ...
             Set<String> notTokenizableFields = new HashSet<String>();
             notTokenizableFields.add("collection");
             notTokenizableFields.add(pt.utl.ist.lucene.treceval.Globals.DOCUMENT_ID_FIELD);

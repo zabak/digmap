@@ -12,6 +12,7 @@
 
 = Open Source Software =
 
+  * [http://www.geonames.org/source-code/ Java Client for GeoNames Webservices]
   * [http://geoserver.org/ GeoServer]
   * [http://www.deegree.org/ Deegree]
   * [http://www.alexandria.ucsb.edu/downloads/ Alexandria Digital Library Gazetteer]

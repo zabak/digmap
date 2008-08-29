@@ -73,6 +73,8 @@
             <tr><td>You can try a search centered in Portugal</td><td><a href="indexDigmap.jsp?q=lat:37 lng:-9 radium:1000">lat:37 lng:-9 radium:1000</a></td></tr>
             <tr><td>A search centered in Belgique with text "Imperii"</td><td><a href="indexDigmap.jsp?q=Imperii lat:51 lng:4 radiumMiles:1000">Imperii lat:51 lng:4 radiumMiles:1000</a></td></tr>
             <tr><td>Using a diferent Text Model</td><td><a href="indexDigmap.jsp?q=Imperii lat:51 lng:4 radiumMiles:1000 time:1680 model:bm25">model:bm25 Imperii lat:51 lng:4 radiumMiles:1000 time:1680</a></td></tr>
+            <tr><td>Using Textual Query Expansion</td><td><a href="indexDigmap.jsp?q=qe:text Imperii lat:51 lng:4 radiumMiles:1000 time:1680">qe:text Imperii lat:51 lng:4 radiumMiles:1000 time:1680</a></td></tr>
+            <tr><td>Using LGTE Query Expansion</td><td><a href="indexDigmap.jsp?q=qe:lgte Imperii lat:51 lng:4 radiumMiles:1000 time:1680">qe:lgte Imperii lat:51 lng:4 radiumMiles:1000 time:1680</a></td></tr>
             <tr><td>Try time search</td><td><a href="indexDigmap.jsp?q=Imperii lat:51 lng:4 radiumMiles:1000 time:1680">Imperii lat:51 lng:4 radiumMiles:1000 time:1680</a></td></tr>
             <tr><td>Note that the first set is closer in text and space because no radium was defined</td><td><a href="indexDigmap.jsp?q=Imperii map lat:51 lng:4 radiumMiles:1000 time:1666 filter:no">Imperii map lat:51 lng:4 radiumMiles:1000 time:1666 filter:no</a></td></tr>
             <tr><td>Note that the first set is closer in time, text because time radium is short</td><td><a href="indexDigmap.jsp?q=Imperii map lat:51 lng:4 radiumMiles:1000 time:1666 radiumYears:10 filter:no">Imperii map lat:51 lng:4 radiumMiles:1000 time:1666 radiumYears:10 filter:no</a></td></tr>
@@ -98,7 +100,8 @@
                     notTokenizableFields.add(pt.utl.ist.lucene.treceval.Globals.DOCUMENT_ID_FIELD);
                     notTokenizableFields.add(pt.utl.ist.lucene.treceval.Globals.DOCUMENT_FILE_PATH);
                     Analyzer analyzer = new LgteAnalyzer(notTokenizableFields);
-                    LgteQuery query = LgteQueryParser.parseQuery(request.getParameter("q"), analyzer);
+                    //we pass the searcher to parser because in case of query expansion it will be needed
+                    LgteQuery query = LgteQueryParser.parseQuery(request.getParameter("q"),analyzer,searcher);
                     if (query != null)
                     {
                         System.out.println("Searching for: " + query.getQuery().toString());

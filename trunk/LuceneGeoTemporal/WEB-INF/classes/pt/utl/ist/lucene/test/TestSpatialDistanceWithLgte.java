@@ -10,7 +10,6 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.TermQuery;
 import pt.utl.ist.lucene.*;
-import pt.utl.ist.lucene.analyzer.LgteAnalyzer;
 import pt.utl.ist.lucene.filter.ISpatialDistancesWrapper;
 import pt.utl.ist.lucene.level1query.QueryParams;
 import pt.utl.ist.lucene.sort.LgteSort;
@@ -39,7 +38,7 @@ public class TestSpatialDistanceWithLgte extends TestCase
      * PLEASE SET DATA DIR WHERE INDEXES SHOULD BE PLACED
      * IT's IS NECESSARY BECAUSE LANGUAGE MODELING USES A SPETIAL DOCUMENT ID INDEX
      */
-    private String path = Globals.DATA_DIR + "/" + getClass().getName();
+    private String path = Globals.INDEX_DIR + "/" + getClass().getName();
     
     //Portalegre Football Stadium
     private double lat = 39.297754;

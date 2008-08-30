@@ -2,14 +2,11 @@ package pt.utl.ist.lucene.test;
 
 import junit.framework.TestCase;
 import pt.utl.ist.lucene.*;
-import pt.utl.ist.lucene.sort.sorters.SpatialDistanceSortSource;
-import pt.utl.ist.lucene.sort.LgteSort;
 import pt.utl.ist.lucene.utils.Files;
 
 import java.io.IOException;
 
 import com.pjaol.search.geo.utils.InvalidGeoException;
-import org.apache.lucene.search.SortField;
 import org.apache.lucene.queryParser.ParseException;
 
 /**
@@ -28,7 +25,7 @@ public class TestDiferentModelsSIMPLE extends TestCase
      * You can use the diferent Probabilistic Models creating the index just once with any one of the probabilist models
      *
      */
-    private String path = Globals.DATA_DIR + "/" + getClass().getName();
+    private String path = Globals.INDEX_DIR + "/" + getClass().getName();
 
 
     protected void setUp() throws IOException

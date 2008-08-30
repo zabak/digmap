@@ -58,7 +58,7 @@
     <%
             try
             {
-                LgteIndexSearcherWrapper searcher = new LgteIndexSearcherWrapper(Model.LanguageModel, Globals.DATA_DIR + "/lm/version1/bc");
+                LgteIndexSearcherWrapper searcher = new LgteIndexSearcherWrapper(Model.LanguageModel, Globals.INDEX_DIR + "/lm/version1/bc");
                 Analyzer analyzer = new LgteAnalyzer();
                 LgteQuery query = LgteQueryParser.parseQuery(request.getParameter("q"), analyzer);
                 System.out.println("Searching for: " + query.getQuery().toString());
@@ -74,7 +74,7 @@
                     out.print("<p><b>TITLE</b>: <a href=\"downloadBc.jsp?docno=" + docno + "&filepath=" + filepath + "\">" + doc.get(pt.utl.ist.lucene.treceval.Globals.DOCUMENT_TITLE) + "</a></p>");
                     out.print("<p><b>DOCNO</b> " + docno + "</p>");
                     out.print("<p><b>score</b>: " + hits.score(i) + "</p>");
-                    out.print("<p><b>summary</b>" + hits.summary(i,"contents")+ "</p>");
+                    out.print("<p><b>summary</b>" + hits.summary(i, "contents") + "</p>");
                     out.print("<p><b>FILE_PATH</b>: " + filepath + "</p>");
                     out.print("<hr>");
                 }

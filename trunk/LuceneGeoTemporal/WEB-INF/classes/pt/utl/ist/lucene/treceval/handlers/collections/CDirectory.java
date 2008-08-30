@@ -2,7 +2,7 @@ package pt.utl.ist.lucene.treceval.handlers.collections;
 
 import org.apache.log4j.Logger;
 import org.dom4j.DocumentException;
-import pt.utl.ist.lucene.treceval.handlers.collections.ICollectionPreprocessor;
+import pt.utl.ist.lucene.treceval.Globals;
 import pt.utl.ist.lucene.treceval.IndexFilesCallBack;
 import pt.utl.ist.lucene.treceval.handlers.ResourceHandler;
 
@@ -48,7 +48,7 @@ public class CDirectory implements ICollectionPreprocessor
             try
             {
                 InputStream fileInputStream = new FileInputStream(f);
-                documentHandler.handle(fileInputStream, f.getAbsolutePath(), resourceHandler,callBack, fileTypesPlugins);
+                documentHandler.handle(fileInputStream, collectionPath.substring(Globals.DATA_DIR.length()) + File.separator + f.getName(), resourceHandler,callBack, fileTypesPlugins);
                 fileInputStream.close();
             }
             catch (FileNotFoundException e)

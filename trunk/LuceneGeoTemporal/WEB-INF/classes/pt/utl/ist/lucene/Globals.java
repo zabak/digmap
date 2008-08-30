@@ -21,13 +21,15 @@ public class Globals {
   		    if(aux.endsWith("Globals.class")) aux = aux.substring(0,aux.lastIndexOf("/")) + "/../../../../../";
 		    ConfigProperties = new ConfigProperties();
 		    TMP_DIR = ConfigProperties.getProperty("tmp.dir");
-		    DATA_DIR = ConfigProperties.getProperty("data.dir");
-		    if(DATA_DIR == null || (!new File(DATA_DIR).exists() && !DATA_DIR.startsWith(File.separator))) {
-		    	DATA_DIR = aux.substring(aux.indexOf("/"))+"test-index";
-		    }
-		    if(TMP_DIR == null || (!new File(TMP_DIR).exists() && !DATA_DIR.startsWith(File.separator))) {
+		    INDEX_DIR = ConfigProperties.getProperty("index.dir");
+            DATA_DIR = ConfigProperties.getProperty("data.dir");
+            if(INDEX_DIR == null || (!new File(INDEX_DIR).exists() && !INDEX_DIR.startsWith(File.separator))) {
+		    	INDEX_DIR = aux.substring(aux.indexOf("/"))+"test-index";
+                DATA_DIR = aux.substring(aux.indexOf("/"))+"test-data";
+            }
+		    if(TMP_DIR == null || (!new File(TMP_DIR).exists() && !INDEX_DIR.startsWith(File.separator))) {
 		    	TMP_DIR = aux.substring(aux.indexOf("/"))+"test-index";
-		    }
+            }
 	}
 
     //This ID must be respected for use of LuceneLanguageModel
@@ -36,6 +38,7 @@ public class Globals {
     public Globals getInstance() { return instance; }
 	
     public static String TMP_DIR;
+    public static String INDEX_DIR;
     public static String DATA_DIR;
     
     public static final String LUCENE_DEFAULT_FIELD = ConfigProperties.getProperty("lucene.default.field");

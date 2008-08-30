@@ -24,7 +24,7 @@ import java.io.IOException;
 public class TestHighlightVersion extends TestCase
 {
 
-    private String path = Globals.DATA_DIR + "/" + getClass().getName();
+    private String path = Globals.INDEX_DIR + "/" + getClass().getName();
 
 
 

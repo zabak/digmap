@@ -90,7 +90,7 @@
         <%
                 try
                 {
-                    LgteIndexSearcherWrapper searcher = new LgteIndexSearcherWrapper(Model.LanguageModel, Globals.DATA_DIR + "/lm/version1/digmap");
+                    LgteIndexSearcherWrapper searcher = new LgteIndexSearcherWrapper(Model.LanguageModel, Globals.INDEX_DIR + "/lm/version1/digmap");
 
                     //LgteAnalizer let you define witch fields should not be tokenized
                     //typicaly here we choose those fields used as identifiers, previously indexed with tokenize option setted to false in document Field.
@@ -101,7 +101,7 @@
                     notTokenizableFields.add(pt.utl.ist.lucene.treceval.Globals.DOCUMENT_FILE_PATH);
                     Analyzer analyzer = new LgteAnalyzer(notTokenizableFields);
                     //we pass the searcher to parser because in case of query expansion it will be needed
-                    LgteQuery query = LgteQueryParser.parseQuery(request.getParameter("q"),analyzer,searcher);
+                    LgteQuery query = LgteQueryParser.parseQuery(request.getParameter("q"), analyzer, searcher);
                     if (query != null)
                     {
                         System.out.println("Searching for: " + query.getQuery().toString());

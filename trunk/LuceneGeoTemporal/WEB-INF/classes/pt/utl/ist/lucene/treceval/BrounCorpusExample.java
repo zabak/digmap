@@ -28,28 +28,26 @@ public class BrounCorpusExample
 {
 
     private static final Logger logger = Logger.getLogger(BrounCorpusExample.class);
+    
     public static void main(String [] args) throws DocumentException, IOException
     {
 
-//        args = new String[4];
-//        args[0] = "C:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-data\\brauncorpus\\documents";
-//        args[1] = "C:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-data\\brauncorpus\\topics";
-//        args[2] = "C:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-data\\brauncorpus\\output";
-//        args[3] = "C:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-index";
+//        args = new String[2];
+//        args[0] = "C:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-index";
+//        args[1] = "C:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-data";
+
+        
+        Globals.INDEX_DIR = args[0];
+        Globals.DATA_DIR = args[1];
 
 
+        String collectionPath = Globals.DATA_DIR + "\\brauncorpus\\documents";
+        String topicsPath = Globals.DATA_DIR + "\\brauncorpus\\topics";
+        String outputDir = Globals.DATA_DIR + "\\brauncorpus\\output";
 
-        String collectionPath = args[0];
-        String topicsPath = args[1];
-        String outputDir = args[2];
+        logger.info("Writing indexes to:" + Globals.INDEX_DIR);
+        logger.info("Reading data from:" + Globals.DATA_DIR);
 
-        String dataDir = Globals.DATA_DIR;
-        if(args.length>3)
-            dataDir = args[3];
-
-        logger.info("Forcing data dir to: " + dataDir);
-
-        Globals.DATA_DIR = dataDir;
 
         /**
          * Lets create Broun Corpus Collection preprocessor

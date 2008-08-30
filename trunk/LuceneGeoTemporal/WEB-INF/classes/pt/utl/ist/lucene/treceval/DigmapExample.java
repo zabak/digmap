@@ -25,25 +25,19 @@ public class DigmapExample
     public static void main(String[] args) throws DocumentException, IOException
     {
 
-//        args = new String[4];
-//        args[0] = "C:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-data\\digmap\\documents";
-//        args[1] = "C:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-data\\digmap\\topics";
-//        args[2] = "C:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-data\\digmap\\output";
-//        args[3] = "C:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-index";
+//        args = new String[2];
+//        args[0] = "C:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-index";
+//        args[1] = "C:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-data";
 
+        Globals.INDEX_DIR = args[0];
+        Globals.DATA_DIR = args[1];
 
-        String collectionPath = args[0];
-        String topicsPath = args[1];
-        String outputDir = args[2];
+        String collectionPath = Globals.DATA_DIR + "\\digmap\\documents";
+        String topicsPath = Globals.DATA_DIR + "\\digmap\\topics";
+        String outputDir = Globals.DATA_DIR +  "\\digmap\\output";
 
-        String dataDir = Globals.DATA_DIR;
-        if (args.length > 3)
-            dataDir = args[3];
-
-        logger.info("Forcing data dir to: " + dataDir);
-
-        Globals.DATA_DIR = dataDir;
-
+        logger.info("Writing indexes to:" + Globals.INDEX_DIR);
+        logger.info("Reading data from:" + Globals.DATA_DIR);
 
         XmlFieldHandler xmlFieldHandlerCollection = new SimpleXmlFieldHandler("../@collection", new SimpleNotTokenizedFieldFilter(), "collection");
         XmlFieldHandler xmlFieldHandlerTitlePresent = new SimpleXmlFieldHandler("./dc:title", new SimpleFieldFilter(), Globals.DOCUMENT_TITLE);
@@ -277,8 +271,6 @@ public class DigmapExample
 
             Element time = (Element) node;
             String text = time.getText();
-            if(text.equals("1680><1690"))
-                System.out.println("");
             Strings.YearPattern yearPattern = Strings.findYears(text);
             if(yearPattern != null)
             {

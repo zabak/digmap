@@ -34,7 +34,8 @@
         </copy>
         <replace file="${webapp.path}/WEB-INF/classes/pt/utl/ist/lucene/app.properties" value="">
             <replacefilter token="@tmp.dir@" value="${base.dir}/test-index" />
-            <replacefilter token="@data.dir@" value="${base.dir}/test-index" />
+            <replacefilter token="@index.dir@" value="${base.dir}/test-index" />
+            <replacefilter token="@data.dir@" value="${base.dir}/test-data" />
         </replace>
         <jasper2 validateXml="false" uriroot="${webapp.path}" webXmlFragment="${webapp.path}/WEB-INF/generated_web.xml" addWebXmlMappings="true" outputDir="${webapp.path}/WEB-INF/classes" />
         <mkdir dir="${webapp.path}/WEB-INF/classes" />
@@ -165,10 +166,8 @@
                 <!--</fileset>-->
             </classpath>
             <classpath path="${webapp.path}/WEB-INF/classes" />
-            <arg value="${webapp.path}/WEB-INF/test-data/brauncorpus/documents" />
-            <arg value="${webapp.path}/WEB-INF/test-data/brauncorpus/topics" />
-            <arg value="${webapp.path}/WEB-INF/test-data/brauncorpus/output" />
             <arg value="${webapp.path}/WEB-INF/test-index" />
+            <arg value="${webapp.path}/WEB-INF/test-data" />
         </java>
         <delete>
             <fileset dir="./test-index">
@@ -197,10 +196,8 @@
                 <!--</fileset>-->
             </classpath>
             <classpath path="${webapp.path}/WEB-INF/classes" />
-            <arg value="${webapp.path}/WEB-INF/test-data/digmap/documents" />
-            <arg value="${webapp.path}/WEB-INF/test-data/digmap/topics" />
-            <arg value="${webapp.path}/WEB-INF/test-data/digmap/output" />
             <arg value="${webapp.path}/WEB-INF/test-index" />
+            <arg value="${webapp.path}/WEB-INF/test-data" />
         </java>
         <delete>
             <fileset dir="./test-index">

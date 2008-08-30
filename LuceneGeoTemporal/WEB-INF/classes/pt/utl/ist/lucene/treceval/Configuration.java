@@ -7,6 +7,7 @@ import pt.utl.ist.lucene.treceval.handlers.topics.ITopicsPreprocessor;
 import pt.utl.ist.lucene.treceval.handlers.collections.ICollectionPreprocessor;
 
 import java.util.HashSet;
+import java.io.File;
 
 /**
  * @author Jorge Machado
@@ -77,7 +78,7 @@ public class Configuration
 
     public String getIndexPath()
     {
-        return  Globals.DATA_DIR + "/" + dir + "/" + version + "/" + collectionId;
+        return  Globals.INDEX_DIR + "/" + dir + "/" + version + "/" + collectionId;
     }
 
 

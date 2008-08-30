@@ -170,7 +170,9 @@ public class SigmoidTimeScoreDocComparator implements TimeDistancesScoreDocCompa
         Long timewidth = timewidthCache[scoreDoc.doc];
         if (timewidth != null)
         {
-            return ((Double) GeoUtils.distancePointAreaMapExpDDmbr(distance, timewidth)).floatValue();
+            float intervalScore =  ((Double) GeoUtils.distancePointAreaMapExpDDmbr(distance, timewidth)).floatValue();
+            float sigmoideScore = ((Double) GeoUtils.sigmoideDistanceRadium(distance, radium, alfa, beta)).floatValue();
+            return intervalScore > sigmoideScore? intervalScore : sigmoideScore;
         }
         else
         {

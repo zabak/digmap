@@ -106,7 +106,13 @@ public class SigmoidSpatialScoreDocComparator implements SpatialDistancesScoreDo
             if(diagonalStr != null)
             {
                 double diagonal = NumberUtils.SortableStr2double(diagonalStr);
-                return ((Double)GeoUtils.distancePointAreaMapExpDDmbr(distance,diagonal)).floatValue();
+                float areaScore = ((Double)GeoUtils.distancePointAreaMapExpDDmbr(distance,diagonal)).floatValue();
+                if(queryParams.getRadium() > 0)
+                {
+                    float sigmoidScore = ((Double)GeoUtils.sigmoideDistanceRadium(distance,queryParams.getRadiumMiles(),alfa,beta)).floatValue();
+                    return sigmoidScore > areaScore? sigmoidScore : areaScore;
+                }
+                return areaScore;
             }
             else if(queryParams.getRadium() > 0 && queryParams.getRadium() != Integer.MAX_VALUE)
             {

@@ -11,5 +11,6 @@ public class Globals
     public static final String DOCUMENT_FILE_PATH = "filepath";
     public static final String DOCUMENT_TITLE = "title";
     public static String DATA_DIR = pt.utl.ist.lucene.Globals.DATA_DIR;
+    public static String INDEX_DIR = pt.utl.ist.lucene.Globals.INDEX_DIR;
 
 }

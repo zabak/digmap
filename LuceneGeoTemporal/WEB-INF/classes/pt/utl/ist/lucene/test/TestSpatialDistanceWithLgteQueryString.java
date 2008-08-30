@@ -35,7 +35,7 @@ public class TestSpatialDistanceWithLgteQueryString extends TestCase
      * PLEASE SET DATA DIR WHERE INDEXES SHOULD BE PLACED
      * IT's IS NECESSARY BECAUSE LANGUAGE MODELING USES A SPETIAL DOCUMENT ID INDEX
      */
-    private String path = Globals.DATA_DIR + "/" + getClass().getName();
+    private String path = Globals.INDEX_DIR + "/" + getClass().getName();
 
     //Portalegre Football Stadium
     private double lat = 39.297754;

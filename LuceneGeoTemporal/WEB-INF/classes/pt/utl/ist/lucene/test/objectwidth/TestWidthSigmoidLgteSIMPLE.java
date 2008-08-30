@@ -2,14 +2,11 @@ package pt.utl.ist.lucene.test.objectwidth;
 
 import junit.framework.TestCase;
 import pt.utl.ist.lucene.*;
-import pt.utl.ist.lucene.sort.sorters.SpatialDistanceSortSource;
-import pt.utl.ist.lucene.sort.LgteSort;
 import pt.utl.ist.lucene.utils.Files;
 
 import java.io.IOException;
 
 import com.pjaol.search.geo.utils.InvalidGeoException;
-import org.apache.lucene.search.SortField;
 import org.apache.lucene.queryParser.ParseException;
 
 /**
@@ -32,7 +29,7 @@ public class TestWidthSigmoidLgteSIMPLE extends TestCase
      * PLEASE SET DATA DIR WHERE INDEXES SHOULD BE PLACED
      * IT's IS NECESSARY BECAUSE LANGUAGE MODELING USES A SPETIAL DOCUMENT ID INDEX
      */
-    private String path = Globals.DATA_DIR + "/" + getClass().getName();
+    private String path = Globals.INDEX_DIR + "/" + getClass().getName();
 
 
     protected void setUp() throws IOException

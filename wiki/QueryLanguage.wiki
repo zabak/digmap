@@ -1,4 +1,5 @@
 = LGTE Query Language =
+[LuceneGeoTemporal go back to LuceneGeoTemporal ]
 
 This page is a quick tour on how to use LGTE query language. Follow we describe the fields carried by LGTE and their possible values.
 

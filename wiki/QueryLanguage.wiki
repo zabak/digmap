@@ -46,7 +46,7 @@ You can combine all these fields creating your own query. You just need to know 
   * You can define a `TimePointQuery` to set reference query point or you can let LGTE choose the middle point between start and end time
 
 == Order ==
-The order or ranking system is using aou GeoTemporal Model based in ranking sigmoid formulas and puted all together in an integrated avarege model. We can choose here wich dimensions should and should not be used in that ranking model.
+The order or ranking system is using aou `GeoTemporal` Model based in ranking sigmoid formulas and puted all together in an integrated avarege model. We can choose here wich dimensions should and should not be used in that ranking model.
 
 || *Order Field Values* || *Ranking* ||
 || `sc` || Score ||

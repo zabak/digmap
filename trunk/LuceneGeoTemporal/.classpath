@@ -8,7 +8,6 @@
 	<classpathentry kind="lib" path="WEB-INF/lib/googleapi.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/gt2-referencing-2.3.1.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/ipls.jar"/>
-	<classpathentry kind="lib" path="WEB-INF/lib/iplscommon.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/jsr108-0.01.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/junit.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/log4j-1.2.8.jar"/>

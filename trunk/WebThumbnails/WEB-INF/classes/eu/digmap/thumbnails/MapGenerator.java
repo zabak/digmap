@@ -174,6 +174,7 @@ public class MapGenerator extends Applet implements MouseMotionListener, MouseLi
 	static BufferedImage mapcacheOld = readImage("http://127.0.0.1:8080/nail.map/OldWorldMap.gif");
 	static BufferedImage mapcacheRelief = readImage("http://127.0.0.1:8080/nail.map/ReliefWorldMap.gif");
 	static BufferedImage mapcacheSimple = readImage("http://127.0.0.1:8080/nail.map/SimpleWorldMap.gif");
+	static BufferedImage mapcacheLight = readImage("http://127.0.0.1:8080/nail.map/LightWorldMap.gif");
 
 	public static BufferedImage readImage(String aux) {
 		try {
@@ -201,10 +202,8 @@ public class MapGenerator extends Applet implements MouseMotionListener, MouseLi
 		sb = new StatusBar(this);
 
 		r = getBounds();
-		// TODO: check if applet works without mapbuffer = createImage(r.width,
-		// r.height);
-		mapbuffer = new BufferedImage(r.width, r.height,
-				BufferedImage.TYPE_INT_ARGB);
+		// TODO: check if applet works without mapbuffer = createImage(r.width, r.height);
+		mapbuffer = new BufferedImage(r.width, r.height, BufferedImage.TYPE_INT_ARGB);
 
 		gc = mapbuffer.getGraphics();
 		tracker = new MediaTracker(this);
@@ -217,18 +216,14 @@ public class MapGenerator extends Applet implements MouseMotionListener, MouseLi
 
 			if (param.toLowerCase().startsWith("http://")) {
 				try {
-					if (param
-							.equals("http://127.0.0.1:8080/nail.map/OldWorldMap.gif")
-							&& mapcacheOld != null)
+					if (param.endsWith("/nail.map/OldWorldMap.gif") && mapcacheOld != null)
 						map = mapcacheOld;
-					else if (param
-							.equals("http://127.0.0.1:8080/nail.map/ReliefWorldMap.gif")
-							&& mapcacheRelief != null)
+					else if (param.endsWith("/nail.map/ReliefWorldMap.gif") && mapcacheRelief != null)
 						map = mapcacheRelief;
-					else if (param
-							.equals("http://127.0.0.1:8080/nail.map/SimpleWorldMap.gif")
-							&& mapcacheSimple != null)
+					else if (param.endsWith("/nail.map/SimpleWorldMap.gif") && mapcacheSimple != null)
 						map = mapcacheSimple;
+					else if (param.endsWith("/nail.map/LightWorldMap.gif") && mapcacheLight != null)
+						map = mapcacheLight;
 					else
 						map = readImage(param);
 				} catch (Exception e) {
@@ -296,8 +291,7 @@ public class MapGenerator extends Applet implements MouseMotionListener, MouseLi
 					default_node_size = 6;
 				}
 			} catch (NumberFormatException e) {
-				System.err
-						.println("Handle numberformatexception default_node_size");
+				System.err.println("Handle numberformatexception default_node_size");
 			}
 
 			param = getParameter("default_line_size");
@@ -308,8 +302,7 @@ public class MapGenerator extends Applet implements MouseMotionListener, MouseLi
 					default_line_size = 1;
 				}
 			} catch (NumberFormatException e) {
-				System.err
-						.println("Handle numberformatexception default_line_size");
+				System.err.println("Handle numberformatexception default_line_size");
 			}
 
 			param = getParameter("default_node_color");
@@ -394,72 +387,52 @@ public class MapGenerator extends Applet implements MouseMotionListener, MouseLi
 				tokenizer = new StringTokenizer(param, ";");
 				while (tokenizer.hasMoreTokens()) {
 					str = tokenizer.nextToken();
-
 					if (str.startsWith("key")) {
 						char ch;
 						StringTokenizer key;
 						fields = new StringTokenizer(str, ",");
 						fields.nextToken();
-
 						while (fields.hasMoreTokens()) {
 							str = fields.nextToken();
 							str = str.trim();
 							ch = Character.toLowerCase(str.charAt(0));
-
 							try {
 								key = new StringTokenizer(str, ":");
 								key.nextToken();
-
 								switch (ch) {
 								case 'x':
 									try {
-										Ckey_x = Integer.valueOf(
-												key.nextToken()).intValue();
-									} catch (NumberFormatException nfe) {
-									}
+										Ckey_x = Integer.valueOf(key.nextToken()).intValue();
+									} catch (NumberFormatException nfe) { }
 									break;
-
 								case 'y':
 									try {
-										Ckey_y = Integer.valueOf(
-												key.nextToken()).intValue();
-									} catch (NumberFormatException nfe) {
-									}
+										Ckey_y = Integer.valueOf(key.nextToken()).intValue();
+									} catch (NumberFormatException nfe) { }
 									break;
 
 								case 'w':
 									try {
-										Ckey_width = Integer.valueOf(
-												key.nextToken()).intValue();
-									} catch (NumberFormatException nfe) {
-									}
+										Ckey_width = Integer.valueOf(key.nextToken()).intValue();
+									} catch (NumberFormatException nfe) { }
 									break;
-
 								case 'h':
 									try {
-										Ckey_height = Integer.valueOf(
-												key.nextToken()).intValue();
-									} catch (NumberFormatException nfe) {
-									}
+										Ckey_height = Integer.valueOf(key.nextToken()).intValue();
+									} catch (NumberFormatException nfe) { }
 									break;
-
 								case 't':
 									try {
 										Ckey_title = key.nextToken();
-									} catch (NoSuchElementException nsee) {
-									}
+									} catch (NoSuchElementException nsee) { }
 									break;
-
 								case 's':
 									try {
-										Ckey_fontSize = Integer.valueOf(
-												key.nextToken()).intValue();
-									} catch (NumberFormatException nfe) {
-									}
+										Ckey_fontSize = Integer.valueOf(key.nextToken()).intValue();
+									} catch (NumberFormatException nfe) { }
 									break;
 								}
-							} catch (NoSuchElementException nsee) {
-							}
+							} catch (NoSuchElementException nsee) { }
 						}
 					} else {
 						color_key.addElement(new Key(str.trim()));
@@ -473,68 +446,51 @@ public class MapGenerator extends Applet implements MouseMotionListener, MouseLi
 				tokenizer = new StringTokenizer(param, ";");
 				while (tokenizer.hasMoreTokens()) {
 					str = tokenizer.nextToken();
-
 					if (str.startsWith("key")) {
 						char ch;
 						StringTokenizer key;
 						fields = new StringTokenizer(str, ",");
 						fields.nextToken();
-
 						while (fields.hasMoreTokens()) {
 							str = fields.nextToken();
 							str = str.trim();
 							ch = Character.toLowerCase(str.charAt(0));
-
 							try {
 								key = new StringTokenizer(str, ":");
 								key.nextToken();
-
 								switch (ch) {
 								case 'x':
 									try {
 										Skey_x = Integer.valueOf(
 												key.nextToken()).intValue();
-									} catch (NumberFormatException nfe) {
-									}
+									} catch (NumberFormatException nfe) { }
 									break;
-
 								case 'y':
 									try {
 										Skey_y = Integer.valueOf(
 												key.nextToken()).intValue();
-									} catch (NumberFormatException nfe) {
-									}
+									} catch (NumberFormatException nfe) { }
 									break;
-
 								case 'w':
 									try {
 										Skey_width = Integer.valueOf(
 												key.nextToken()).intValue();
-									} catch (NumberFormatException nfe) {
-									}
+									} catch (NumberFormatException nfe) { }
 									break;
-
 								case 'h':
 									try {
-										Skey_height = Integer.valueOf(
-												key.nextToken()).intValue();
-									} catch (NumberFormatException nfe) {
-									}
+										Skey_height = Integer.valueOf(key.nextToken()).intValue();
+									} catch (NumberFormatException nfe) { }
 									break;
-
 								case 't':
 									try {
 										Skey_title = key.nextToken();
-									} catch (NoSuchElementException nsee) {
-									}
+									} catch (NoSuchElementException nsee) { }
 									break;
-
 								case 's':
 									try {
-										Skey_fontSize = Integer.valueOf(
-												key.nextToken()).intValue();
-									} catch (NumberFormatException nfe) {
-									}
+										Skey_fontSize = Integer.valueOf(key.nextToken()).intValue();
+									} catch (NumberFormatException nfe) { }
 									break;
 								}
 							} catch (NoSuchElementException nsee) {
@@ -550,18 +506,14 @@ public class MapGenerator extends Applet implements MouseMotionListener, MouseLi
 			if (param != null) {
 				data = param;
 				parseData(data);
-			} else {
-
-			}
+			} else { }
 
 			buildLineMatrix();
-
 			bLon = top_lon;
 			bLat = top_lat;
 			aLon = (bot_lon - top_lon) / r.width;
 			aLat = (bot_lat - top_lat) / r.height;
 		} else {
-
 			error = true;
 			repaint();
 		}
@@ -569,26 +521,18 @@ public class MapGenerator extends Applet implements MouseMotionListener, MouseLi
 
 	private void parseData(String locData) {
 		String str;
-
 		String field[] = new String[4];
-
 		StringTokenizer tokenizer;
-
 		StringTokenizer fields;
-
 		if (locData.toLowerCase().startsWith("http://")) {
 			int c;
-
 			URL data;
 			URLConnection dataCon;
 			StringBuffer sb;
-
 			try {
 				data = new URL(locData);
 				dataCon = data.openConnection();
-
 				int len = dataCon.getContentLength();
-
 				if (len > 0) {
 					sb = new StringBuffer(len);
 					InputStream input = dataCon.getInputStream();
@@ -603,13 +547,10 @@ public class MapGenerator extends Applet implements MouseMotionListener, MouseLi
 				locData = null;
 			}
 		}
-
 		if (locData != null) {
 			int numofTokens = 0;
-
 			int numofNodes = 0;
 			char ch;
-
 			tokenizer = new StringTokenizer(locData, ";");
 			while (tokenizer.hasMoreTokens()) {
 				str = tokenizer.nextToken();
@@ -625,13 +566,10 @@ public class MapGenerator extends Applet implements MouseMotionListener, MouseLi
 						for (int i = 0; i < 3; i++) {
 							field[i] = fields.nextToken();
 						}
-
 						field[3] = "";
-
 						while (fields.hasMoreTokens()) {
 							field[3] = field[3] + " " + fields.nextToken();
 						}
-
 						if (field[3].length() > 0) {
 							node = new Node(numofNodes++, field[1], field[2],
 									default_node_size, default_node_color,
@@ -640,7 +578,6 @@ public class MapGenerator extends Applet implements MouseMotionListener, MouseLi
 							node = new Node(numofNodes++, field[1], field[2],
 									default_node_size, default_node_color);
 						}
-
 						nodes.put(field[0], node);
 					}
 				} else if (ch == 'l') {
@@ -657,7 +594,6 @@ public class MapGenerator extends Applet implements MouseMotionListener, MouseLi
 						while (fields.hasMoreTokens()) {
 							field[2] = field[2] + " " + fields.nextToken();
 						}
-
 						if (field[2].length() > 0) {
 							line = new Line(field[0], field[1],
 									default_line_size, default_line_color,
@@ -666,11 +602,8 @@ public class MapGenerator extends Applet implements MouseMotionListener, MouseLi
 							line = new Line(field[0], field[1],
 									default_line_size, default_line_color);
 						}
-
 						lines.addElement(line);
 					}
-				} else {
-
 				}
 			}
 		}
@@ -708,8 +641,6 @@ public class MapGenerator extends Applet implements MouseMotionListener, MouseLi
 	}
 
 	public void paint(Graphics g) {
-		// xxx - pending error flag is also set for bad lat/lons.
-
 		if (error) {
 			String errorMsg = "Image Could Not Be Loaded";
 			g.setColor(Color.red);
@@ -718,47 +649,37 @@ public class MapGenerator extends Applet implements MouseMotionListener, MouseLi
 			Font font = new Font("Dialog", Font.BOLD, 20);
 			g.setFont(font);
 			fm = g.getFontMetrics();
-			g.drawString(errorMsg, r.width / 2 - fm.stringWidth(errorMsg) / 2,
-					r.height / 2);
+			g.drawString(errorMsg, r.width / 2 - fm.stringWidth(errorMsg) / 2, r.height / 2);
 		} else {
-
 			if (!mapLoaded) {
 				g.drawImage(map, 0, 0, r.width, r.height, this);
-
 				if (tracker.checkID(1, true)) {
 					if (!paintDataCalled) {
 						paintData(gc);
 					}
 					mapLoaded = true;
 				}
-			} else if (mouseOver)
-
-			{
+			} else if (mouseOver) {
 				drawNodLin(g);
-			} else
-
-			{
+			} else {
 				g.drawImage(mapbuffer, 0, 0, r.width, r.height, this);
 			}
 		}
 	}
 
 	public boolean imageUpdate(Image img, int flags, int x, int y, int w, int h) {
-		if ((flags & ALLBITS) != 0) // entire image loaded
-		{
+		if ((flags & ALLBITS) != 0)  {
 			repaint();
 			if (!paintDataCalled) {
 				paintData(gc);
 			}
 			mapLoaded = true;
-		} else if ((flags & SOMEBITS) != 0) // new partial data
-		{
+		} else if ((flags & SOMEBITS) != 0) {
 			repaint(x, y, w, h); // paint new pixels
 		} else if ((flags & (ABORT | ERROR)) != 0) {
 			error = true; // file not found
 			repaint();
 		}
-
 		return (flags & (ALLBITS | ABORT | ERROR)) == 0;
 	}
 
@@ -770,19 +691,16 @@ public class MapGenerator extends Applet implements MouseMotionListener, MouseLi
 				if (key.withinbounds(ln.getSValue())) {
 					try {
 						nodlinSize = Integer.valueOf(key.getValue()).intValue();
-					} catch (NumberFormatException nfe) {
-					}
+					} catch (NumberFormatException nfe) { }
 					break;
 				}
 			}
 		}
-
 		return nodlinSize;
 	}
 
 	private void setColor(Graphics g, NodLin ln, int numofCkeys) {
 		g.setColor(ln.getColor());
-
 		if (colorkey && ln.getCValue() != Float.POSITIVE_INFINITY) {
 			for (int ck = 0; ck < numofCkeys; ck++) {
 				key = (Key) color_key.elementAt(ck);
@@ -796,7 +714,6 @@ public class MapGenerator extends Applet implements MouseMotionListener, MouseLi
 
 	private void setColor(Graphics g, String color) {
 		StringTokenizer tokenizer;
-
 		if (!color.substring(0, 3).toLowerCase().startsWith("rgb")) {
 			g.setColor((Color) NodLin.colormap.get(color));
 		} else {
@@ -805,7 +722,6 @@ public class MapGenerator extends Applet implements MouseMotionListener, MouseLi
 				g.setColor(fgcolor);
 				return;
 			}
-
 			tokenizer.nextToken();
 			try {
 				g.setColor(new Color(Integer.valueOf(tokenizer.nextToken())
@@ -813,40 +729,27 @@ public class MapGenerator extends Applet implements MouseMotionListener, MouseLi
 						.intValue(), Integer.valueOf(tokenizer.nextToken())
 						.intValue()));
 			} catch (NumberFormatException e) {
-				System.err
-						.println("Handle numberformatexception color_key setting color");
+				System.err.println("Handle numberformatexception color_key setting color");
 				g.setColor(fgcolor);
 				return;
 			}
 		}
 	}
 
-	private static Point[] getRectPoints(Point p1, Point p2, float minusH,
-			float plusH) {
+	private static Point[] getRectPoints(Point p1, Point p2, float minusH, float plusH) {
 		Point p[] = new Point[2];
 		p[0] = new Point(0, 0);
 		p[1] = new Point(0, 0);
-
 		float angle = new Double(Math.PI / 2.0).floatValue();
-
-		double theta = Math.atan(new Float(Math.abs(p1.y - p2.y)).floatValue()
-				/ new Float(Math.abs(p1.x - p2.x)).floatValue());
-
+		double theta = Math.atan(new Float(Math.abs(p1.y - p2.y)).floatValue() / new Float(Math.abs(p1.x - p2.x)).floatValue());
 		int quad = getQuadP1(p1, p2);
-
 		if (quad == quadtwo || quad == quadfour) {
 			theta = Math.PI / 2 - theta;
 		}
-
-		int x1 = new Double(Math.round(minusH * Math.cos(theta + angle)))
-				.intValue();
-		int y1 = new Double(Math.round(minusH * Math.sin(theta + angle)))
-				.intValue();
-		int x2 = new Double(Math.round(plusH * Math.cos(angle - theta)))
-				.intValue();
-		int y2 = new Double(Math.round(plusH * Math.sin(angle - theta)))
-				.intValue();
-
+		int x1 = new Double(Math.round(minusH * Math.cos(theta + angle))).intValue();
+		int y1 = new Double(Math.round(minusH * Math.sin(theta + angle))).intValue();
+		int x2 = new Double(Math.round(plusH * Math.cos(angle - theta))).intValue();
+		int y2 = new Double(Math.round(plusH * Math.sin(angle - theta))).intValue();
 		switch (quad) {
 		case quadone:
 			p[0].x = p1.x + x1;
@@ -872,33 +775,24 @@ public class MapGenerator extends Applet implements MouseMotionListener, MouseLi
 			p[0].x = p1.x - y2;
 			p[0].y = p1.y + x2;
 		}
-
 		return p;
 	}
 
-	public static Point[] getArrowPoints(Point p1, Point p2, float length,
-			float angle) {
+	public static Point[] getArrowPoints(Point p1, Point p2, float length, float angle) {
 		Point p[] = new Point[2];
 		p[0] = new Point(0, 0);
 		p[1] = new Point(0, 0);
-
 		angle = new Double(angle * Math.PI / 180.0).floatValue();
-
 		double h = length / Math.sin(angle);
-		double theta = Math.atan(new Float(Math.abs(p1.y - p2.y)).floatValue()
-				/ new Float(Math.abs(p1.x - p2.x)).floatValue());
-
+		double theta = Math.atan(new Float(Math.abs(p1.y - p2.y)).floatValue() / new Float(Math.abs(p1.x - p2.x)).floatValue());
 		int quad = getQuadP1(p1, p2);
-
 		if (quad == quadtwo || quad == quadfour) {
 			theta = Math.PI / 2 - theta;
 		}
-
 		int x1 = new Double(Math.round(h * Math.cos(theta + angle))).intValue();
 		int y1 = new Double(Math.round(h * Math.sin(theta + angle))).intValue();
 		int x2 = new Double(Math.round(h * Math.cos(angle - theta))).intValue();
 		int y2 = new Double(Math.round(h * Math.sin(angle - theta))).intValue();
-
 		switch (quad) {
 		case quadone:
 			p[0].x = p1.x + x1;
@@ -924,15 +818,12 @@ public class MapGenerator extends Applet implements MouseMotionListener, MouseLi
 			p[0].x = p1.x - y2;
 			p[0].y = p1.y + x2;
 		}
-
 		return p;
 	}
 
-	public static void drawArrow(Graphics g, int lineSize, Point p1, Point p2,
-			int topBtm) {
+	public static void drawArrow(Graphics g, int lineSize, Point p1, Point p2, int topBtm) {
 		int wd;
 		Point P1[] = new Point[2];
-
 		if (lineSize == 1) {
 			g.drawLine(p1.x, p1.y, p2.x, p2.y);
 			return;
@@ -941,34 +832,23 @@ public class MapGenerator extends Applet implements MouseMotionListener, MouseLi
 		} else {
 			wd = lineSize;
 		}
-
 		int xPoints[] = new int[3];
 		int yPoints[] = new int[3];
-
-		// P1 = getArrowPoints(p1, p2, lineSize, 45);
 		P1 = getArrowPoints(p1, p2, wd, 45);
 		xPoints[0] = p1.x;
 		xPoints[1] = P1[topBtm].x;
 		yPoints[0] = p1.y;
 		yPoints[1] = P1[topBtm].y;
-
-		// P1 = getArrowPoints(p1, p2, lineSize, 0);
 		P1 = getArrowPoints(p1, p2, wd, 0);
 		xPoints[2] = P1[topBtm].x;
-		;
 		yPoints[2] = P1[topBtm].y;
-		;
-
 		g.fillPolygon(xPoints, yPoints, 3);
 	}
 
-	public static void drawThickLine(Graphics g, int lineSize, Point p1,
-			Point p2) {
+	public static void drawThickLine(Graphics g, int lineSize, Point p1, Point p2) {
 		Point P1[] = new Point[2];
 		Point P2[] = new Point[2];
-
 		int wd = lineSize / 2;
-
 		if ((lineSize % 2) == 0) {
 			P1 = getRectPoints(p1, p2, wd, wd);
 			P2 = getRectPoints(p2, p1, wd, wd);
@@ -976,7 +856,6 @@ public class MapGenerator extends Applet implements MouseMotionListener, MouseLi
 			P1 = getRectPoints(p1, p2, wd, wd + 1);
 			P2 = getRectPoints(p2, p1, wd, wd + 1);
 		}
-
 		int xPoints[] = { P1[0].x, P2[0].x, P2[1].x, P1[1].x };
 		int yPoints[] = { P1[0].y, P2[0].y, P2[1].y, P1[1].y };
 		g.fillPolygon(xPoints, yPoints, 4);
@@ -986,7 +865,6 @@ public class MapGenerator extends Applet implements MouseMotionListener, MouseLi
 		Point P1[] = new Point[2];
 		Point P2[] = new Point[2];
 		Point P3[] = new Point[2];
-
 		if (lineSize == 1) {
 			switch (p.length) {
 			case 2:
@@ -1024,16 +902,12 @@ public class MapGenerator extends Applet implements MouseMotionListener, MouseLi
 				break;
 			}
 		}
-
 		int wd = lineSize / 2;
-
 		if (lineSize > 1) {
 			if (lineSize < 4) {
 				lineSize = 4;
 			}
-
 			lineSize /= 2;
-
 			switch (p.length) {
 			case 4:
 				if ((lineSize % 2) == 0) {
@@ -1043,7 +917,6 @@ public class MapGenerator extends Applet implements MouseMotionListener, MouseLi
 					P1 = getRectPoints(p[0], p[1], wd, wd + 1);
 					P2 = getRectPoints(p[1], p[0], wd, wd + 1);
 				}
-
 				if (direc == 5 || direc == 6) {
 					drawArrow(g, lineSize, P1[0], P2[0], 0);
 					drawArrow(g, lineSize, P1[1], P2[1], 1);
@@ -1053,30 +926,24 @@ public class MapGenerator extends Applet implements MouseMotionListener, MouseLi
 					P1 = getRectPoints(p[p.length - 1], p[p.length - 2], wd, wd);
 					P2 = getRectPoints(p[p.length - 2], p[p.length - 1], wd, wd);
 				} else {
-					P1 = getRectPoints(p[p.length - 1], p[p.length - 2], wd,
-							wd + 1);
-					P2 = getRectPoints(p[p.length - 2], p[p.length - 1], wd,
-							wd + 1);
+					P1 = getRectPoints(p[p.length - 1], p[p.length - 2], wd, wd + 1);
+					P2 = getRectPoints(p[p.length - 2], p[p.length - 1], wd, wd + 1);
 				}
-
 				if (direc == 4 || direc == 6) {
 					drawArrow(g, lineSize, P1[0], P2[0], 0);
 					drawArrow(g, lineSize, P1[1], P2[1], 1);
 				}
-
 				if ((direc == 5 || direc == 6) && p.length == 2) {
 					drawArrow(g, lineSize, P2[0], P1[0], 0);
 					drawArrow(g, lineSize, P2[1], P1[1], 1);
 				}
 			}
 		}
-
 		if (direc == 1 || direc == 3) {
 			P1 = getArrowPoints(p[p.length - 1], p[p.length - 2], 7, 45);
 			drawArrow(g, 1, p[p.length - 1], P1[0], 0);
 			drawArrow(g, 1, p[p.length - 1], P1[1], 0);
 		}
-
 		if (direc == 2 || direc == 3) {
 			P1 = getArrowPoints(p[0], p[1], 7, 45);
 			drawArrow(g, 1, p[0], P1[0], 0);
@@ -1086,23 +953,18 @@ public class MapGenerator extends Applet implements MouseMotionListener, MouseLi
 
 	public static void drawSCircle(Graphics g, int lineSize, Point p[]) {
 		if (lineSize == 1) {
-			g
-					.drawOval(p[0].x - p[1].x, p[0].y - p[1].y, 2 * p[1].x,
-							2 * p[1].y);
+			g.drawOval(p[0].x - p[1].x, p[0].y - p[1].y, 2 * p[1].x, 2 * p[1].y);
 		} else {
 			int rx = p[1].x;
 			int ry = p[1].y;
 			for (int i = 0; i < lineSize; i++) {
 				g.drawOval(p[0].x - rx, p[0].y - ry, 2 * rx--, 2 * ry--);
-				if (rx == 4 || ry == 4) {
-					break;
-				}
+				if (rx == 4 || ry == 4) break;
 			}
 		}
 	}
 
-	private void drawSelfLine(Graphics g, Line line[], float latp1,
-			float lonp1, Node nodeP1) {
+	private void drawSelfLine(Graphics g, Line line[], float latp1, float lonp1, Node nodeP1) {
 		int lineSize;
 		int direc;
 		int numofCkeys = color_key.capacity();
@@ -1114,23 +976,16 @@ public class MapGenerator extends Applet implements MouseMotionListener, MouseLi
 		int X;
 		int Y;
 		String lineTitle;
-
 		Point p1 = latLonToPoint(latp1, lonp1);
-
 		int max_radius = Math.min(r.width, r.height) / 20;
-		if (max_radius > 25) {
-			max_radius = 25;
-		}
-
+		if (max_radius > 25) max_radius = 25;
 		int xtmp = Math.min(Math.abs(p1.x - r.width), p1.x);
 		int ytmp = Math.min(Math.abs(p1.y - r.height), p1.y);
-
 		if (xtmp > max_radius && ytmp > max_radius) {
 			radius = max_radius;
 		} else {
 			radius = Math.min(xtmp, ytmp);
 		}
-
 		for (int i = 1; i < 25; i++) {
 			Point ptmp[] = new Point[2];
 			ptmp[1] = new Point(radius, radius);
@@ -1139,22 +994,18 @@ public class MapGenerator extends Applet implements MouseMotionListener, MouseLi
 			} else {
 				ptmp[0] = getArcCenter(p1, angleFac, ptmp[1].x, 2 - quad);
 			}
-
 			if ((i % 20) == 0) {
 				angleFac = 0;
 			}
-
 			if (!(r.contains(new Point(ptmp[0].x - ptmp[1].x, ptmp[0].y
 					- ptmp[1].x)) && r.contains(new Point(
 					ptmp[0].x + ptmp[1].x, ptmp[0].y + ptmp[1].x)))) {
 				quad *= -1;
-
 				if ((i % 2) == 0) {
 					angleFac += 15;
 				}
 				continue;
 			}
-
 			setColor(g, line[lineNum], numofCkeys);
 			lineSize = getNodeLineSize(line[lineNum], numofSkeys);
 			line[lineNum].setSize(lineSize);
@@ -1167,12 +1018,10 @@ public class MapGenerator extends Applet implements MouseMotionListener, MouseLi
 			if ((lineTitle = line[lineNum].getTitle()) != "") {
 				int position = 2;
 				if (lineTitle.indexOf(',') > 0) {
-					StringTokenizer tokenizer = new StringTokenizer(lineTitle,
-							",");
+					StringTokenizer tokenizer = new StringTokenizer(lineTitle,",");
 					while (tokenizer.countTokens() > 1) {
 						tokenizer.nextToken();
 					}
-
 					try {
 						position = Integer.parseInt(tokenizer.nextToken());
 					} catch (NumberFormatException nfe) {
@@ -1181,13 +1030,10 @@ public class MapGenerator extends Applet implements MouseMotionListener, MouseLi
 				} else {
 					lineTitle = lineTitle.concat(",2");
 				}
-
 				X = ptmp[0].x - ptmp[1].x;
 				Y = ptmp[0].y - ptmp[1].x;
-
 				g.setFont(new Font("Dialog", Font.BOLD, fontSize));
 				fm = g.getFontMetrics();
-
 				switch (position) {
 				case 1:
 					drawLineTitle(g, 1, new Point(X, Y), new Point(X, Y
@@ -1212,31 +1058,22 @@ public class MapGenerator extends Applet implements MouseMotionListener, MouseLi
 							+ (2 * ptmp[1].x), Y), lineTitle);
 				}
 			}
-
 			line[lineNum].setType(8);
 			line[lineNum].setPoint(ptmp, 8);
-
 			nodeP1.quad_matrix[getQuadrant(p1, ptmp[0])]++;
-
 			if (++lineNum == line.length) {
 				break;
 			}
-
 			quad *= -1;
-			if ((i % 2) == 0) {
-				angleFac += 15;
-			}
+			if ((i % 2) == 0) angleFac += 15;
 		}
 	}
 
 	private Point getArcCenter(Point p, int angle, int hyp, int quad) {
 		Point pt = new Point();
-
 		float anglerad = new Double(angle * Math.PI / 180.0).floatValue();
-
 		int x = new Double(Math.cos(anglerad) * hyp).intValue();
 		int y = new Double(Math.sin(anglerad) * hyp).intValue();
-
 		switch (quad) {
 		case quadone:
 			pt.x = p.x + x;
@@ -1254,27 +1091,22 @@ public class MapGenerator extends Applet implements MouseMotionListener, MouseLi
 			pt.x = p.x + y;
 			pt.y = p.y + x;
 		}
-
 		return pt;
 	}
 
-	private void drawLineTitle(Graphics g, int lineSize, Point p1, Point p2,
-			String lineTitle) {
+	private void drawLineTitle(Graphics g, int lineSize, Point p1, Point p2, String lineTitle) {
 		String tmp = new String();
-
 		g.setFont(new Font("Dialog", Font.BOLD, fontSize));
 		fm = g.getFontMetrics();
 		int position = 3;
 		if (lineTitle.indexOf(',') > 0) {
 			StringTokenizer tokenizer = new StringTokenizer(lineTitle, ",");
 			String temp = new String();
-
 			while (tokenizer.countTokens() > 2) {
 				temp = temp.concat(tokenizer.nextToken());
 				temp = temp.concat(",");
 			}
 			temp = temp.concat(tokenizer.nextToken());
-
 			try {
 				tmp = tokenizer.nextToken();
 				position = Integer.parseInt(tmp);
@@ -1284,22 +1116,17 @@ public class MapGenerator extends Applet implements MouseMotionListener, MouseLi
 			}
 			lineTitle = temp;
 		}
-
 		Point p = new Point();
-
 		p.x = Math.min(p1.x, p2.x) + Math.abs(p1.x - p2.x) / 2;
 		p.y = Math.min(p1.y, p2.y) + Math.abs(p1.y - p2.y) / 2;
-
 		int strlen = fm.stringWidth(lineTitle);
-
 		if (!(p1.x == p2.x || p1.y == p2.y)) {
 			switch (getQuadP1(p1, p2)) {
 			case quadone:
 			case quadthree:
 				switch (position) {
 				case 1:
-					p.x = p.x - (lineSize + 1) / 2 - strlen
-							- fm.getMaxAdvance();
+					p.x = p.x - (lineSize + 1) / 2 - strlen - fm.getMaxAdvance();
 					p.y = p.y - fm.getLeading() - fm.getDescent();
 					break;
 				case 2:
@@ -1314,8 +1141,7 @@ public class MapGenerator extends Applet implements MouseMotionListener, MouseLi
 			case quadfour:
 				switch (position) {
 				case 3:
-					p.x = p.x - (lineSize + 1) / 2 - strlen
-							- fm.getMaxAdvance();
+					p.x = p.x - (lineSize + 1) / 2 - strlen - fm.getMaxAdvance();
 					p.y = p.y + fm.getLeading() + fm.getAscent();
 					break;
 				case 2:
@@ -1331,8 +1157,7 @@ public class MapGenerator extends Applet implements MouseMotionListener, MouseLi
 			if (p1.x == p2.x) {
 				switch (position) {
 				case 1:
-					p.x = p.x - (lineSize + 1) / 2 - strlen
-							- fm.getMaxAdvance();
+					p.x = p.x - (lineSize + 1) / 2 - strlen - fm.getMaxAdvance();
 					break;
 				case 2:
 					p.x = p.x - (lineSize + 1) / 2 - strlen / 2;
@@ -1354,74 +1179,56 @@ public class MapGenerator extends Applet implements MouseMotionListener, MouseLi
 				}
 			}
 		}
-
-		// Handle case when p.x and p.y become invalid values
 		g.drawString(lineTitle, p.x, p.y);
 	}
 
-	private void drawLine(Graphics g, Line line[], float latp1, float lonp1,
-			float latp2, float lonp2, Node nodeP1, Node nodeP2) {
+	private void drawLine(Graphics g, Line line[], float latp1, float lonp1, float latp2, float lonp2, Node nodeP1, Node nodeP2) {
 		int lineSize;
 		int prevMaxLineSize = 1;
 		int direc;
 		int numofCkeys = color_key.capacity();
 		int numofSkeys = size_key.capacity();
 		String lineTitle = new String();
-
 		Point p1 = latLonToPoint(latp1, lonp1);
 		Point p2 = latLonToPoint(latp2, lonp2);
 		Point P1[] = new Point[2];
 		Point P2[] = new Point[2];
-
 		if (comparelon(lonp1, lonp2) < Math.abs(bot_lon - top_lon) / 2) {
 			int lineSize1;
 			int lineSize2;
 			int start = 0;
 			boolean extra = false;
 			int w = 0;
-
 			if ((line.length % 2) != 0) {
 				setColor(g, line[0], numofCkeys);
 				lineSize = getNodeLineSize(line[0], numofSkeys);
 				line[0].setSize(lineSize);
-
 				if (lineSize > 1) {
 					w = lineSize / 2;
 					direc = line[0].setDirec(1);
 				} else {
 					direc = line[0].setDirec(0);
 				}
-
 				P1[0] = p1;
 				P1[1] = p2;
-
 				drawSLine(g, lineSize, P1, direc);
-
 				if ((lineTitle = line[0].getTitle()) != "") {
 					drawLineTitle(g, lineSize, p1, p2, lineTitle);
 				}
-
 				line[0].setType(1);
 				line[0].setPoint(p1, p2);
-
 				nodeP1.quad_matrix[getQuadrant(p1, p2)]++;
 				nodeP2.quad_matrix[getQuadrant(p2, p1)]++;
-
 				start = 1;
 			}
-
 			float angle = 45;
-
 			for (int i = start; i < line.length; i += 2) {
 				Point ptmp1[] = new Point[4];
 				Point ptmp2[] = new Point[4];
-
 				lineSize1 = getNodeLineSize(line[i], numofSkeys);
-
 				lineSize2 = getNodeLineSize(line[i + 1], numofSkeys);
 				line[i].setSize(lineSize1);
 				line[i + 1].setSize(lineSize2);
-
 				if (lineSize1 == 1 && lineSize2 == 1) {
 					w += 5;
 					if (extra) {
@@ -1437,27 +1244,19 @@ public class MapGenerator extends Applet implements MouseMotionListener, MouseLi
 					prevMaxLineSize = lineSize2;
 					extra = true;
 				}
-
-				if (angle > 165) // xxx - check 165
-				{
+				if (angle > 165) {
 					continue;
 				}
-
 				P1 = getArrowPoints(p1, p2, w, new Double(angle).floatValue());
 				P2 = getArrowPoints(p2, p1, w, new Double(angle).floatValue());
-
 				setColor(g, line[i], numofCkeys);
-
 				direc = line[i].setDirec(0);
-
-				if (((Node) nodes.get(line[i].getSrc())).getNodNum() == nodeP1
-						.getNodNum()) {
+				if (((Node) nodes.get(line[i].getSrc())).getNodNum() == nodeP1.getNodNum()) {
 					ptmp1[0] = p1;
 					ptmp1[1] = P1[0];
 					ptmp1[2] = P2[0];
 					ptmp1[3] = p2;
-				} else if (((Node) nodes.get(line[i].getSrc())).getNodNum() == nodeP2
-						.getNodNum()) {
+				} else if (((Node) nodes.get(line[i].getSrc())).getNodNum() == nodeP2.getNodNum()) {
 					ptmp1[0] = p2;
 					ptmp1[1] = P2[0];
 					ptmp1[2] = P1[0];
@@ -1465,47 +1264,34 @@ public class MapGenerator extends Applet implements MouseMotionListener, MouseLi
 				}
 
 				drawSLine(g, lineSize1, ptmp1, direc);
-
 				if ((lineTitle = line[i].getTitle()) != "") {
 					drawLineTitle(g, lineSize1, P1[0], P2[0], lineTitle);
 				}
-
 				line[i].setType(3);
 				line[i].setPoint(ptmp1, 0);
-
 				nodeP1.quad_matrix[getQuadrant(p1, P1[0])]++;
 				nodeP2.quad_matrix[getQuadrant(p2, P2[0])]++;
-
 				setColor(g, line[i + 1], numofCkeys);
-
 				direc = line[i + 1].setDirec(0);
-
-				if (((Node) nodes.get(line[i + 1].getSrc())).getNodNum() == nodeP1
-						.getNodNum()) {
+				if (((Node) nodes.get(line[i + 1].getSrc())).getNodNum() == nodeP1.getNodNum()) {
 					ptmp2[0] = p1;
 					ptmp2[1] = P1[1];
 					ptmp2[2] = P2[1];
 					ptmp2[3] = p2;
-				} else if (((Node) nodes.get(line[i + 1].getSrc())).getNodNum() == nodeP2
-						.getNodNum()) {
+				} else if (((Node) nodes.get(line[i + 1].getSrc())).getNodNum() == nodeP2.getNodNum()) {
 					ptmp2[0] = p2;
 					ptmp2[1] = P2[1];
 					ptmp2[2] = P1[1];
 					ptmp2[3] = p1;
 				}
-
 				drawSLine(g, lineSize2, ptmp2, direc);
-
 				if ((lineTitle = line[i + 1].getTitle()) != "") {
 					drawLineTitle(g, lineSize2, P1[1], P2[1], lineTitle);
 				}
-
 				line[i + 1].setType(3);
 				line[i + 1].setPoint(ptmp2, 0);
-
 				nodeP1.quad_matrix[getQuadrant(p1, P1[1])]++;
 				nodeP2.quad_matrix[getQuadrant(p2, P2[1])]++;
-
 				angle += 15;
 			}
 		} else {
@@ -1513,48 +1299,35 @@ public class MapGenerator extends Applet implements MouseMotionListener, MouseLi
 				Point P[] = new Point[2];
 				P[0] = new Point(0, 0);
 				boolean flipped = false;
-
 				if (p1.x < p2.x) {
 					Point pTemp = p2;
 					p2 = p1;
 					p1 = pTemp;
-
 					Node nTemp = nodeP2;
 					nodeP2 = nodeP1;
 					nodeP1 = nTemp;
-
 					flipped = true;
 				}
-
 				P[0] = new Point(p1.x - r.width, p1.y);
 				P[1] = p2;
-
-				float m = new Float(P[0].y - P[1].y).floatValue()
-						/ new Float(P[0].x - P[1].x).floatValue();
-				float c = new Integer(P[0].y).floatValue()
-						- (new Float(m).floatValue() * new Integer(P[0].x)
-								.floatValue());
-
+				float m = new Float(P[0].y - P[1].y).floatValue() / new Float(P[0].x - P[1].x).floatValue();
+				float c = new Integer(P[0].y).floatValue() - (new Float(m).floatValue() * new Integer(P[0].x).floatValue());
 				int y = Math.round(c);
-
 				int lineSize1;
 				int lineSize2;
 				int start = 0;
 				boolean extra = false;
 				int w = 0;
 				int h = 0;
-
 				if ((line.length % 2) != 0) {
 					setColor(g, line[0], numofCkeys);
 					lineSize = getNodeLineSize(line[0], numofSkeys);
 					line[0].setSize(lineSize);
-
 					Point ptmp[] = new Point[4];
 					ptmp[0] = p1;
 					ptmp[1] = new Point(r.width, y);
 					ptmp[2] = new Point(0, y);
 					ptmp[3] = p2;
-
 					if (flipped) {
 						switch (line[0].getDirec()) {
 						case 1:
@@ -1564,51 +1337,38 @@ public class MapGenerator extends Applet implements MouseMotionListener, MouseLi
 							line[0].chngDirec(1);
 						}
 					}
-
 					if (lineSize > 1) {
 						w = lineSize / 2;
 						direc = line[0].setDirec(1);
 					} else {
 						direc = line[0].setDirec(0);
 					}
-
 					drawSLine(g, lineSize, ptmp, direc);
-
 					if ((lineTitle = line[0].getTitle()) != "") {
 						if ((r.width - p1.x) > p2.x) {
-							drawLineTitle(g, lineSize, ptmp[0], ptmp[1],
-									lineTitle);
+							drawLineTitle(g, lineSize, ptmp[0], ptmp[1], lineTitle);
 						} else {
-							drawLineTitle(g, lineSize, ptmp[2], ptmp[3],
-									lineTitle);
+							drawLineTitle(g, lineSize, ptmp[2], ptmp[3], lineTitle);
 						}
 					}
-
 					line[0].setType(3);
 					line[0].setPoint(ptmp, 1);
-
 					nodeP1.quad_matrix[getQuadrant(p1, new Point(r.width, y))]++;
 					nodeP2.quad_matrix[getQuadrant(new Point(0, y), p2)]++;
-
 					start = 1;
 				}
-
 				float angle = 45;
-
 				for (int i = start; i < line.length; i += 2) {
 					Point ptmp1[] = new Point[6];
 					Point ptmp2[] = new Point[6];
-
 					lineSize1 = getNodeLineSize(line[i], numofSkeys);
 					lineSize2 = getNodeLineSize(line[i + 1], numofSkeys);
 					line[i].setSize(lineSize1);
 					line[i + 1].setSize(lineSize2);
-
 					if (lineSize1 == 1 && lineSize2 == 1) {
 						w += 5;
 						if (extra) {
 							w += prevMaxLineSize / 2;
-							;
 							extra = false;
 						}
 					} else if (lineSize1 >= lineSize2) {
@@ -1620,17 +1380,11 @@ public class MapGenerator extends Applet implements MouseMotionListener, MouseLi
 						prevMaxLineSize = lineSize2;
 						extra = true;
 					}
-
-					if (angle > 165) // xxx - check 165
-					{
+					if (angle > 165) {
 						continue;
 					}
-
-					// Code to draw Stuff for the LHS
-
 					P1 = getArrowPoints(p1, new Point(r.width, y), w, angle);
 					h = w;
-
 					if (flipped) {
 						switch (line[i].getDirec()) {
 						case 1:
@@ -1641,15 +1395,12 @@ public class MapGenerator extends Applet implements MouseMotionListener, MouseLi
 						}
 					}
 					line[i].setDirec(0);
-
 					if (p1.y < y) {
 						h = -w;
 					}
-
 					ptmp1[0] = p1;
 					ptmp1[1] = P1[0];
 					ptmp1[2] = new Point(r.width, y - h);
-
 					if (flipped) {
 						switch (line[i + 1].getDirec()) {
 						case 1:
@@ -1660,72 +1411,50 @@ public class MapGenerator extends Applet implements MouseMotionListener, MouseLi
 						}
 					}
 					line[i + 1].setDirec(0);
-
 					ptmp2[0] = p1;
 					ptmp2[1] = P1[1];
 					ptmp2[2] = new Point(r.width, y + h);
-
 					nodeP1.quad_matrix[getQuadrant(p1, P1[0])]++;
 					nodeP1.quad_matrix[getQuadrant(p1, P1[1])]++;
-
-					// Code to draw stuff on the RHS
-
 					P1 = getArrowPoints(p2, new Point(0, y), w, angle);
-
 					if (p2.y > y) {
 						h = -w;
 					}
-
 					ptmp1[3] = new Point(0, y - h);
 					ptmp1[4] = P1[0];
 					ptmp1[5] = p2;
-
 					ptmp2[3] = new Point(0, y + h);
 					ptmp2[4] = P1[1];
 					ptmp2[5] = p2;
-
 					line[i].setType(5);
 					line[i].setPoint(ptmp1, 1);
 					line[i + 1].setType(5);
 					line[i + 1].setPoint(ptmp2, 1);
-
 					setColor(g, line[i], numofCkeys);
 					direc = line[i].getDirec();
 					drawSLine(g, lineSize1, ptmp1, direc);
-
 					if ((lineTitle = line[i].getTitle()) != "") {
 						if ((r.width - ptmp1[1].x) > ptmp1[4].x) {
-							drawLineTitle(g, lineSize1, ptmp1[1], ptmp1[2],
-									lineTitle);
+							drawLineTitle(g, lineSize1, ptmp1[1], ptmp1[2], lineTitle);
 						} else {
-							drawLineTitle(g, lineSize1, ptmp1[3], ptmp1[4],
-									lineTitle);
+							drawLineTitle(g, lineSize1, ptmp1[3], ptmp1[4], lineTitle);
 						}
 					}
-
 					setColor(g, line[i + 1], numofCkeys);
 					direc = line[i + 1].getDirec();
 					drawSLine(g, lineSize2, ptmp2, direc);
-
 					if ((lineTitle = line[i + 1].getTitle()) != "") {
 						if ((r.width - ptmp2[1].x) > ptmp2[4].x) {
-							drawLineTitle(g, lineSize2, ptmp2[1], ptmp2[2],
-									lineTitle);
+							drawLineTitle(g, lineSize2, ptmp2[1], ptmp2[2], lineTitle);
 						} else {
-							drawLineTitle(g, lineSize2, ptmp2[3], ptmp2[4],
-									lineTitle);
+							drawLineTitle(g, lineSize2, ptmp2[3], ptmp2[4], lineTitle);
 						}
 					}
-
 					nodeP2.quad_matrix[getQuadrant(p2, P1[0])]++;
 					nodeP2.quad_matrix[getQuadrant(p2, P1[1])]++;
-
-					// xxx - check angle increment
 					angle += 15;
 				}
-			}
-
-			else if (!pointWithinComponent(p1)) {
+			} else if (!pointWithinComponent(p1)) {
 				// From P2's perspective of things
 				Point orgp2 = latLonToPoint(latp2, lonp2);
 				float x1 = new Float(r.width - orgp2.x).floatValue();
@@ -1738,29 +1467,19 @@ public class MapGenerator extends Applet implements MouseMotionListener, MouseLi
 					y1 = new Float(r.height - orgp2.y).floatValue();
 					laty = Math.abs(bot_lat - latp2);
 				}
-
 				float latx = bot_lon - lonp2;
-
 				float realx = difflon(lonp1, lonp2) * x1 / latx;
 				float realy = difflat(latp1, latp2) * y1 / laty;
-
 				float slope = realx / realy;
 				int y1dash = new Float((r.width - p2.x) / slope).intValue();
-
 				if (latp2 < latp1) {
 					g.drawLine(r.width, p2.y - y1dash, p2.x, p2.y);
-
-					nodeP2.quad_matrix[getQuadrant(p2, new Point(r.width, p2.y
-							- y1dash))]++;
+					nodeP2.quad_matrix[getQuadrant(p2, new Point(r.width, p2.y - y1dash))]++;
 				} else {
 					g.drawLine(r.width, p2.y + y1dash, p2.x, p2.y);
-
-					nodeP2.quad_matrix[getQuadrant(p2, new Point(r.width, p2.y
-							+ y1dash))]++;
+					nodeP2.quad_matrix[getQuadrant(p2, new Point(r.width, p2.y + y1dash))]++;
 				}
-			}
-
-			else {
+			} else {
 				// From P1's perspective of things
 				Point orgp1 = latLonToPoint(latp1, lonp1);
 				float x1 = new Float(orgp1.x).floatValue();

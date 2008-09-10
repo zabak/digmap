@@ -11,6 +11,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URL;
 import java.util.Properties;
 import javax.imageio.ImageIO;
 import javax.media.jai.Interpolation;
@@ -18,9 +19,13 @@ import javax.media.jai.JAI;
 
 public abstract class AbstractThumbnailMaker {
 	
+	protected static BufferedImage working;
+	
 	protected static final String PROPERTY_FILE = "htmlthumbnail.properties";
 	
 	protected static boolean initialized = false;
+	
+	protected static boolean nowait = false;
 	
 	protected static int timeout = 10000;
 	
@@ -71,7 +76,7 @@ public abstract class AbstractThumbnailMaker {
 		this.transparencyHeight1 = transparencyHeight1;
 		this.transparencyHeight2 = transparencyHeight2;
 		if (transparency==0) transparency = (byte)255;
-		if (width==0) width = 255;
+		if (width==0 && height==0) width = 255;
 	}
 	
 	public void makeAndUpdate(OutputStream out, String url) throws Exception {
@@ -97,9 +102,11 @@ public abstract class AbstractThumbnailMaker {
 		if (initialized) return;
 		Properties properties = new Properties();
 		try {
+			working = ImageIO.read(new URL("http://127.0.0.1:8080/nail.map/Working.png"));
 			InputStream in = AbstractThumbnailMaker.class.getClassLoader().getResourceAsStream(PROPERTY_FILE);
 			properties.load(in);
 			in.close();
+			nowait = Boolean.parseBoolean(properties.getProperty("nail.map.nowait"));
 			timeout = Integer.parseInt(properties.getProperty("nail.map.timeout"));
 			waitTimeAfterRender = Long.parseLong(properties.getProperty("nail.map.waitTimeAfterRender"));
 			cacheDirectory = properties.getProperty("cache.path");
@@ -137,8 +144,13 @@ public abstract class AbstractThumbnailMaker {
 		boolean incache = false;
 		boolean updated = false;
 		try { if(useCache) { incache = ((image = getFromCache(uri,width,height,rotation))!=null); } } catch (Exception e) { }
-		try { if(!incache || image==null) image = getImage(); } catch (Exception e) { }
-		try { if(!incache && image!=null) putInCache(uri,width,height,rotation,image,false); } catch (Exception ex) { }
+		try { if(!incache || image==null) {
+			if(!nowait || !useCache) image = getImage(); else {
+				AsynchronosGenerator.getInstance().addRequest(this);
+				image = scaleImage(working);
+			}
+		} } catch (Exception e) { }
+		try { if(!nowait && !incache && image!=null) putInCache(uri,width,height,rotation,image,false); } catch (Exception ex) { }
 		done = true;
 		return image;
 	}
@@ -147,8 +159,13 @@ public abstract class AbstractThumbnailMaker {
 		return (int) (width * ((float) bimage.getHeight() / (float) bimage.getWidth()));
 	}
 	
+	protected int getAutoWidth(BufferedImage bimage) {
+		return (int) (height * ((float) bimage.getWidth() / (float) bimage.getHeight()));
+	}
+	
 	protected BufferedImage scaleImage(BufferedImage bimage) {
 		int height = (this.height == 0) ? getAutoHeight(bimage) : this.height;
+		int width = (this.width == 0) ? getAutoWidth(bimage) : this.width;
 		if ((width != bimage.getWidth()) || (height != bimage.getHeight())) {
 			Image b2 = bimage.getScaledInstance(width, height, Image.SCALE_SMOOTH);
 			bimage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);

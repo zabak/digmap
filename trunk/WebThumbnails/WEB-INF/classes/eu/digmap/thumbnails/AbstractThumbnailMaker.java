@@ -80,21 +80,33 @@ public abstract class AbstractThumbnailMaker {
 	}
 	
 	public void makeAndUpdate(OutputStream out, String url) throws Exception {
-		BufferedImage image = generateImage(false);
+		BufferedImage image = generateImage(false,nowait);
 		if (image == null) return;
 		try { putInCache(url,width,height,rotation,image,true); } catch ( Exception e ) { }
 		ImageIO.write(addTransparency(image), "png", out);
 	}
 	
 	public void make(boolean useCache, OutputStream out) throws Exception {
-		BufferedImage image = generateImage(useCache);
+		BufferedImage image = generateImage(useCache, nowait);
 		if (image == null) return;
 		ImageIO.write(addTransparency(image), "png", out);
 	}
 
 	public void make(boolean useCache, File file) throws Exception {
 		OutputStream out = new FileOutputStream(file);
-		make(useCache,out);
+		make(useCache,nowait,out);
+		out.close();
+	}
+	
+	public void make(boolean useCache, boolean nowait, OutputStream out) throws Exception {
+		BufferedImage image = generateImage(useCache, nowait);
+		if (image == null) return;
+		ImageIO.write(addTransparency(image), "png", out);
+	}
+
+	public void make(boolean useCache, boolean nowait, File file) throws Exception {
+		OutputStream out = new FileOutputStream(file);
+		make(useCache,nowait,out);
 		out.close();
 	}
 	
@@ -125,20 +137,28 @@ public abstract class AbstractThumbnailMaker {
 	protected abstract BufferedImage getImage() throws Exception;
 	
 	protected BufferedImage generateImage(boolean useCache, int tempWidth, int tempHeight, byte tempTransparency) throws Exception {
+		return generateImage(useCache, nowait, tempWidth, tempHeight, tempTransparency);
+	}
+	
+	protected BufferedImage generateImage(boolean useCache, boolean nowait, int tempWidth, int tempHeight, byte tempTransparency) throws Exception {
 		int realWidth = width;
 		int realHeight = height;
 		byte realTransparency = transparency;
 		width = tempWidth;
 		height = tempHeight;
 		transparency = tempTransparency;
-		BufferedImage image = generateImage(useCache);
+		BufferedImage image = generateImage(useCache,nowait);
 		width = realWidth;
 		height = realHeight;
 		transparency = realTransparency;
 		return image;
 	}
-
+	
 	private BufferedImage generateImage(boolean useCache) throws Exception {
+		return generateImage(useCache,nowait);
+	}
+
+	private BufferedImage generateImage(boolean useCache, boolean nowait) throws Exception {
 		BufferedImage image = null;
 		boolean done = false;
 		boolean incache = false;

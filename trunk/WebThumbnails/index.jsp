@@ -158,7 +158,8 @@
 		response.setContentType("image/png");
 		OutputStream os = response.getOutputStream();
 		if (replaceurl == null || replaceurl.length() == 0) {
-			ThumbnailMakerFactory.getThumbnailMaker(url, width, height, transparency, transparencyWidth1, transparencyWidth2, transparencyHeight1, transparencyHeight2, rotation).make(true, os);
+			if(request.getParameter("nowait")!=null) ThumbnailMakerFactory.getThumbnailMaker(url, width, height, transparency, transparencyWidth1, transparencyWidth2, transparencyHeight1, transparencyHeight2, rotation).make(true, new Boolean(request.getParameter("nowait")).booleanValue(), os);
+			else ThumbnailMakerFactory.getThumbnailMaker(url, width, height, transparency, transparencyWidth1, transparencyWidth2, transparencyHeight1, transparencyHeight2, rotation).make(true, os);
 		} else {
 			if (replaceurl.indexOf("://") == -1) replaceurl = "http://" + replaceurl;
 			ThumbnailMakerFactory.getThumbnailMaker(url, width, height, transparency, transparencyWidth1, transparencyWidth2, transparencyHeight1, transparencyHeight2, rotation).makeAndUpdate(os, replaceurl);
@@ -187,6 +188,7 @@
 				response.setContentType("image/png");
 				OutputStream os = response.getOutputStream();
 				if (replaceurl == null || replaceurl.length() == 0) {
+					if(request.getParameter("nowait")!=null) new ImageThumbnailMaker(file.getFileName(),file.getInpuStream(), width, height, transparency, transparencyWidth1, transparencyWidth2, transparencyHeight1, transparencyHeight2, rotation).make(true, new Boolean(request.getParameter("nowait")).booleanValue(), os);
 					new ImageThumbnailMaker(file.getFileName(),file.getInpuStream(), width, height, transparency, transparencyWidth1, transparencyWidth2, transparencyHeight1, transparencyHeight2, rotation).make(true, os);
 				} else {
 					if (replaceurl.indexOf("://") == -1) replaceurl = "http://" + replaceurl;

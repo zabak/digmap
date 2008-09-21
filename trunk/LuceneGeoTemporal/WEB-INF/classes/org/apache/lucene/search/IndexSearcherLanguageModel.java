@@ -22,6 +22,14 @@ import java.util.BitSet;
 import org.apache.lucene.ilps.DataCacher;
 import org.apache.lucene.index.LanguageModelIndexReader;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.search.Filter;
+import org.apache.lucene.search.HitCollector;
+import org.apache.lucene.search.HitQueue;
+import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.Scorer;
+import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 
 /**

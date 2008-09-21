@@ -1,5 +1,7 @@
 package org.apache.lucene.search;
 
+import org.apache.lucene.search.Similarity;
+
 /**
  * Copyright 2004 The Apache Software Foundation
  *

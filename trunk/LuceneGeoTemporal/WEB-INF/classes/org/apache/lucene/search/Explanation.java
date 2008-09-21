@@ -19,6 +19,8 @@ package org.apache.lucene.search;
 
 import java.util.ArrayList;
 
+import org.apache.lucene.search.Explanation;
+
 /** Expert: Describes the score computation for document and level1query. */
 public class Explanation implements java.io.Serializable {
   private float value;                            // the value of this node

@@ -2,8 +2,8 @@ package com.pjaol.search.geo.utils;
 
 import org.apache.lucene.search.Filter;
 import org.apache.lucene.search.Query;
-import org.apache.lucene.search.QueryWrapperFilter;
-import org.apache.lucene.search.ConstantScoreQuery;
+import org.apache.lucene.search2.ConstantScoreQuery;
+import org.apache.lucene.search2.QueryWrapperFilter;
 import org.apache.solr.util.NumberUtils;
 
 import java.awt.geom.Rectangle2D;

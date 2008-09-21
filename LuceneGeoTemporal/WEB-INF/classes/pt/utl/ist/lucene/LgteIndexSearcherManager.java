@@ -1,9 +1,9 @@
 package pt.utl.ist.lucene;
 
 import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.IndexSearcherLanguageModel;
-import org.apache.lucene.search.LangModelSimilarity;
 import org.apache.lucene.search.DefaultSimilarity;
+import org.apache.lucene.search2.IndexSearcherLanguageModel;
+import org.apache.lucene.search2.LangModelSimilarity;
 import org.apache.lucene.index.LanguageModelIndexReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.ilps.DataCacher;

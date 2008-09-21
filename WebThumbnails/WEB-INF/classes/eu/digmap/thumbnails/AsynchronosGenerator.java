@@ -52,7 +52,7 @@ public class AsynchronosGenerator {
   }
   
   private AsynchronosGenerator() {
-	  this(10);
+	  this(5);
   }
 
   private AsynchronosGenerator(int nC) {

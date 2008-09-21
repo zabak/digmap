@@ -42,6 +42,7 @@ public class ExceptionsThumbnailMaker extends AbstractThumbnailMaker {
 		if ((img = handleBNException()) != null) return img;
 		if ((img = handleKBRException()) != null) return img;
 		if ((img = handleGOVException()) != null) return img;
+		if ((img = handleBibDigHispanica()) != null) return img;
 		return img;
 	}
 	
@@ -183,43 +184,72 @@ public class ExceptionsThumbnailMaker extends AbstractThumbnailMaker {
 	/** Handle the exception case of the National Library of Estonia */
 	protected BufferedImage handleNLIBException () {
 		if(uri.startsWith("http://digar.nlib.ee/otsing/") || uri.startsWith("http://digar.nlib.ee/show")) try {
-			if(uri.startsWith("http://digar.nlib.ee/show")) uri = "http://digar.nlib.ee/otsing/?pid=" +  uri.substring(uri.lastIndexOf("/")+1) + "&show";
- 			URLConnection connection = new URL(uri).openConnection();
-			if(uri.endsWith("&show")) uri = uri.substring(0,uri.length()-5);
-			int index = uri.lastIndexOf("?");
-			uri = "stream" + uri.substring(index); 
-			BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-			String url = null;
-			while((url=reader.readLine())!=null) {
-				index = url.indexOf(uri);
-				if(index!=-1) {
-					url = "http://digar.nlib.ee/otsing/" + url.substring(index);
-					index = url.indexOf('>');
-					if(index==-1) index = url.indexOf("\"");
-					url = url.substring(0,index);
-					break;
+			String url = "http://digar.nlib.ee/gmap/nd" + uri.substring(uri.indexOf(":")+1,uri.lastIndexOf("&")) + "-tiles/z0x0y0.jpeg";
+			URLConnection connection = new URL(url).openConnection();
+			return scaleAndRotateImage((new ImageThumbnailMaker(uri,connection.getInputStream(),-1,-1,(byte)transparency)).getImage());
+		} catch ( Exception e) { 
+			try {
+				if(uri.startsWith("http://digar.nlib.ee/show")) uri = "http://digar.nlib.ee/otsing/?pid=" +  uri.substring(uri.lastIndexOf("/")+1) + "&show";
+	 			URLConnection connection = new URL(uri).openConnection();
+				String url = uri;
+	 			if(url.endsWith("&show")) url = url.substring(0,url.length()-5);
+				int index = url.lastIndexOf("?");
+				url = "stream" + url.substring(index); 
+				BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+				String aux = null;
+				while((aux=reader.readLine())!=null) {
+					index = aux.indexOf(url);
+					if(index!=-1) {
+						url = "http://digar.nlib.ee/otsing/" + aux.substring(index);
+						index = url.indexOf('>');
+						if(index==-1) index = url.indexOf("\"");
+						url = url.substring(0,index);
+						break;
+					}
 				}
-			}
-			if(url!=null) {
 				connection = new URL(url).openConnection();
 				return scaleAndRotateImage((new ImageThumbnailMaker(uri,connection.getInputStream(),-1,-1,(byte)transparency)).getImage());				
-			}
-		} catch ( Exception e) { }
+			} catch ( Exception e2 ) {
+			}			
+		}
 		return null;
 	}
 	
 	/** Handle the exception case of the Royal Library of Belgium */
-	protected BufferedImage handleKBRException () {
+	protected BufferedImage handleKBRException () {		
 		if(uri.startsWith("http://mara.kbr.be/kbrImage/CM/") || uri.startsWith("http://mara.kbr.be/kbrImage/maps/") || uri.startsWith("http://opteron2.kbr.be/kp/viewer/")) try {
-			String url = "http://mara.kbr.be/xlimages/CM/thumbnails" + uri.substring(uri.lastIndexOf("/")).replace(".imgf",".jpg");
-			if(url!=null) {
+			URLConnection connection = new URL(uri).openConnection();
+			String url = "get_image.php?intId="; 
+			BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+			String aux = null;
+			while((aux=reader.readLine())!=null) {
+				if(aux.indexOf(url)!=-1) {
+					aux = aux.substring(aux.indexOf(url));					
+					url = "http://mara.kbr.be/kbrImage/" + aux.substring(0,aux.indexOf("\""));
+					break;
+				}
+			}
+			connection = new URL(url).openConnection();
+			return scaleAndRotateImage((new ImageThumbnailMaker(uri,connection.getInputStream(),-1,-1,(byte)transparency)).getImage());				
+		} catch ( Exception e) { 
+			try {
+			  String url = "http://mara.kbr.be/xlimages/maps/thumbnails" + uri.substring(uri.lastIndexOf("/")).replace(".imgf",".jpg");
+			  if(url!=null) {
 				URLConnection connection = new URL(url).openConnection();
 				return scaleAndRotateImage((new ImageThumbnailMaker(uri,connection.getInputStream(),-1,-1,(byte)transparency)).getImage());				
-			}
-		} catch ( Exception e) { }
+			  }
+			} catch ( Exception e2 ) { }
+		}
 		return null;
 	}
 	
+	/** TODO: Handle the exception case of the Biblioteca Digital Hispanica */
+	protected BufferedImage handleBibDigHispanica () {
+		if(uri.startsWith("http://bibliotecadigitalhispanica.bne.es:80/view/action/singleViewer.do")) try {
+		} catch ( Exception e) { }	
+		return null;
+	}
+		
 	/** Handle the exception case of the US Library of Congress */
 	protected BufferedImage handleGOVException () {
 		if(uri.startsWith("http://memory.loc.gov/cgi-bin/ampage")) try {

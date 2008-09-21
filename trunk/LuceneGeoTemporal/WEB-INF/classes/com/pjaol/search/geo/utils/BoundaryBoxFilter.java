@@ -170,7 +170,7 @@ public class BoundaryBoxFilter extends Filter {
     /** 
      * Returns true if <code>o</code> is equal to this.
      * 
-     * @see org.apache.lucene.search.RangeFilter#equals
+     * @see org.apache.lucene.search2.RangeFilter#equals
      */
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -189,7 +189,7 @@ public class BoundaryBoxFilter extends Filter {
     /** 
      * Returns a hash code value for this object.
      * 
-     * @see org.apache.lucene.search.RangeFilter#hashCode
+     * @see org.apache.lucene.search2.RangeFilter#hashCode
      */
     public int hashCode() {
       int h = fieldName.hashCode();

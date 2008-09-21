@@ -20,7 +20,7 @@ import java.math.RoundingMode;
 import java.util.logging.Logger;
 
 import org.apache.lucene.search.Filter;
-import org.apache.lucene.search.RangeFilter;
+import org.apache.lucene.search2.RangeFilter;
 import org.apache.solr.util.NumberUtils;
 
 import com.pjaol.search.geo.utils.projections.CartesianTierPlotter;

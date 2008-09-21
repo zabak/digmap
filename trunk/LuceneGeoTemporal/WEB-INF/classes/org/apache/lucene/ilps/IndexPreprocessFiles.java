@@ -38,8 +38,8 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.search.DefaultSimilarity;
-import org.apache.lucene.search.IndexSearcherLanguageModel;
-import org.apache.lucene.search.LangModelSimilarity;
+import org.apache.lucene.search2.IndexSearcherLanguageModel;
+import org.apache.lucene.search2.LangModelSimilarity;
 import org.apache.lucene.ilps.StreamReaderThread;
 import pt.utl.ist.lucene.versioning.LuceneVersionFactory;
 

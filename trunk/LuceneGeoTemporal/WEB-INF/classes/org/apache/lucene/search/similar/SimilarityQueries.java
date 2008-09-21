@@ -28,7 +28,7 @@ import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
-import org.apache.lucene.search2.TermQuery;
+import org.apache.lucene.search.TermQuery;
 
 /**
  * Simple similarity measures.

@@ -11,7 +11,7 @@ package com.hrstc.lucene.queryexpansion;
 import java.util.*;
 
 import org.apache.lucene.search.Query;
-import org.apache.lucene.search2.*;
+import org.apache.lucene.search.*;
 
 public class QueryBoostComparator implements Comparator
 {

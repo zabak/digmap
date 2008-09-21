@@ -11,9 +11,7 @@ import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.QueryTermVector;
 import org.apache.lucene.search.Searcher;
-import org.apache.lucene.search.Similarity;
-import org.apache.lucene.search2.*;
-
+import org.apache.lucene.search.*;
 import com.google.soap.search.GoogleSearchFault;
 import com.hrstc.lucene.*;
 import pt.utl.ist.lucene.versioning.LuceneVersionFactory;

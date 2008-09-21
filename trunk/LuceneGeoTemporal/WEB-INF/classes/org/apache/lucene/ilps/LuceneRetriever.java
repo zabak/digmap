@@ -31,7 +31,7 @@ import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.Searcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Similarity;
-import org.apache.lucene.search2.*;
+import org.apache.lucene.search.*;
 import org.apache.lucene.queryParser.ParseException;
 import pt.utl.ist.lucene.versioning.LuceneVersionFactory;
 

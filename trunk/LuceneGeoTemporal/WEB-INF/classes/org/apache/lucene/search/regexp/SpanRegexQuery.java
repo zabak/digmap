@@ -26,7 +26,7 @@ import org.apache.lucene.search.spans.SpanOrQuery;
 import org.apache.lucene.search.spans.SpanQuery;
 import org.apache.lucene.search.spans.SpanTermQuery;
 import org.apache.lucene.search.spans.Spans;
-import org.apache.lucene.search2.TermQuery;
+import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.util.ToStringUtils;
 import java.io.IOException;
 import java.util.Collection;

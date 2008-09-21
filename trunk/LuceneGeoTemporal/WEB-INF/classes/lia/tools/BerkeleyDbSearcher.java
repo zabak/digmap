@@ -6,7 +6,7 @@ import com.sleepycat.db.DbException;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search2.TermQuery;
+import org.apache.lucene.search.*;
 import org.apache.lucene.store.db.DbDirectory;
 
 import java.io.IOException;

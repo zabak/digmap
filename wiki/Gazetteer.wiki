@@ -18,8 +18,7 @@ The DIGMAP gazetteer supports the [http://www.alexandria.ucsb.edu/gazetteer/prot
 
 An example of a service request is shown below. The request asks the gazetteer for standard reports for all populated places whose names contain the phrase "portugal".
 
-
-
+{{{
 <?xml version="1.0" encoding="UTF-8"?>
 <gazetteer-service xmlns="http://www.alexandria.ucsb.edu/gazetteer" version="1.2">
 <query-request>
@@ -32,9 +31,11 @@ An example of a service request is shown below. The request asks the gazetteer f
   <report-format>standard</report-format>
 </query-request>
 </gazetteer-service>
+}}}
 
 Another example of a gazetteer query is shown below. This example requests all currently existing places whose names contain the phrase "lisbon" and that overlap a given spatial region, and that are neither populated places nor cemeteries.
 
+{{{
 <?xml version="1.0" encoding="UTF-8"?>
 <gazetteer-query xmlns="http://www.alexandria.ucsb.edu/gazetteer" xmlns:gml="http://www.opengis.net/gml">
 <and-not>
@@ -53,3 +54,4 @@ Another example of a gazetteer query is shown below. This example requests all c
   </or>
 </and-not>
 </gazetteer-query>
+}}}

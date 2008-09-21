@@ -29,6 +29,12 @@ import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.index.TermEnum;
+import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.DefaultSimilarity;
+import org.apache.lucene.search.FuzzyTermEnum;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.Searcher;
+import org.apache.lucene.search.Similarity;
 import org.apache.lucene.util.PriorityQueue;
 
 /**

@@ -37,8 +37,8 @@ import org.apache.lucene.analysis.snowball.SnowballAnalyzer;
 import org.apache.lucene.search.DefaultSimilarity;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Similarity;
-import org.apache.lucene.search2.IndexSearcherLanguageModel;
-import org.apache.lucene.search2.LangModelSimilarity;
+import org.apache.lucene.search.IndexSearcherLanguageModel;
+import org.apache.lucene.search.LangModelSimilarity;
 
 import pt.utl.ist.lucene.versioning.LuceneVersionFactory;
 

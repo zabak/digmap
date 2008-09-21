@@ -27,7 +27,7 @@ package org.apache.lucene.queryParser.surround.query;
  
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.spans.SpanTermQuery;
-import org.apache.lucene.search2.TermQuery;
+import org.apache.lucene.search.TermQuery;
 
 public class BasicQueryFactory {
   public BasicQueryFactory(int maxBasicQueries) {

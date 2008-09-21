@@ -10,7 +10,6 @@
 	<classpathentry kind="lib" path="WEB-INF/lib/highlighter-dev.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/lucene-db-dev.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/lucene-wordnet-dev.jar"/>
-	<classpathentry kind="lib" path="WEB-INF/lib/carrot2-launcher.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/carrot2-local-core.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/carrot2-util-common.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/catalina-ant.jar"/>
@@ -57,5 +56,6 @@
 	<classpathentry kind="lib" path="WEB-INF/lib/velocity-tools.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/webgraph.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/caliph-emir-cbir.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/lib/carrot2-launcher.jar"/>
 	<classpathentry kind="output" path="WEB-INF/classes"/>
 </classpath>

@@ -27,7 +27,7 @@ LGTE essentially assembles the following open-source libraries, patching them wh
  * LucQE http://lucene-qe.sourceforge.net/
  * Misc. Projects from Lucene sandbox http://lucene.apache.org/java/docs/lucene-sandbox/
  * IPLS Lucene with language modeling (LM-Lucene) http://ilps.science.uva.nl/resources/lm-lucene
- * WebGraph framework for making computations over linkage graphs http://webgraph.dsi.unimi.it/
+ * Webgraph framework for making computations over linkage graphs http://webgraph.dsi.unimi.it/
  * LAW framework for computing PageRank and devivatives http://law.dsi.unimi.it/software/
  * Lucene Image REtrival (LIRE) library for content-based image retrieval http://www.semanticmetadata.net/lire/
 

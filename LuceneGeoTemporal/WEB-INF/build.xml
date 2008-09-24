@@ -161,25 +161,29 @@
                     <exclude name="servlet-api.jar" />
                     <exclude name="jsp-api.jar" />
                 </fileset>
-                <!--<fileset dir="${base.dir}/lib">-->
-                <!--<include name="*.jar" />-->
-                <!--</fileset>-->
             </classpath>
             <classpath path="${webapp.path}/WEB-INF/classes" />
             <arg value="${webapp.path}/WEB-INF/test-index" />
             <arg value="${webapp.path}/WEB-INF/test-data" />
         </java>
-        <delete>
-            <fileset dir="./test-index">
-                <include name="**/*"/>
-                <exclude name="**/*.svn"/>
-            </fileset>
-        </delete>
-        <copy todir="./test-index" overwrite="true">
-            <fileset dir="${webapp.path}/WEB-INF/test-index">
-                <include name="**/*"/>
-            </fileset>
-        </copy>
+        <antcall target="copyIndexesToDataDirs"/>
+    </target>
+
+     <target name="build-test-index-cran" depends="" description="Index a Collection and run all the topics">
+        <mkdir dir="${webapp.path}/WEB-INF/cran/test-data/output"/>
+        <java fork="true" classname="pt.utl.ist.lucene.treceval.CranfieldExample">
+            <classpath>
+                <fileset dir="${webapp.path}/WEB-INF/lib">
+                    <include name="**.jar" />
+                    <exclude name="servlet-api.jar" />
+                    <exclude name="jsp-api.jar" />
+                </fileset>
+            </classpath>
+            <classpath path="${webapp.path}/WEB-INF/classes" />
+            <arg value="${webapp.path}/WEB-INF/test-index" />
+            <arg value="${webapp.path}/WEB-INF/test-data" />
+        </java>
+        <antcall target="copyIndexesToDataDirs"/>
     </target>
 
     <target name="build-test-index-digmap" depends="" description="Index a Collection and run all the topics">
@@ -191,31 +195,24 @@
                     <exclude name="servlet-api.jar" />
                     <exclude name="jsp-api.jar" />
                 </fileset>
-                <!--<fileset dir="${base.dir}/lib">-->
-                <!--<include name="*.jar" />-->
-                <!--</fileset>-->
             </classpath>
             <classpath path="${webapp.path}/WEB-INF/classes" />
             <arg value="${webapp.path}/WEB-INF/test-index" />
             <arg value="${webapp.path}/WEB-INF/test-data" />
         </java>
-        <delete>
-            <fileset dir="./test-index">
-                <include name="**/*"/>
-                <exclude name="**/*.svn"/>
-            </fileset>
-        </delete>
-        <copy todir="./test-index" overwrite="true">
-            <fileset dir="${webapp.path}/WEB-INF/test-index">
-                <include name="**/*"/>
-            </fileset>
-        </copy>
+        <antcall target="copyIndexesToDataDirs"/>
     </target>
 
     <target name="build-test-index-brauncorpus-evaluate" depends="compile" description="Index a Collection and run all the topics">
         <antcall target="build-test-index-brauncorpus"/>
         <antcall target="evaluation-metrics-brauncorpus" />
         <antcall target="significance-tests-brauncorpus" />
+    </target>
+
+    <target name="build-test-index-cran-evaluate" depends="compile" description="Index a Collection and run all the topics">
+        <antcall target="build-test-index-cran"/>
+        <antcall target="evaluation-metrics-cran" />
+        <antcall target="significance-tests-cran" />
     </target>
 
     <target name="evaluation-metrics-brauncorpus" description="Generate trec_eval results">
@@ -240,6 +237,33 @@
                     <classpath path="${webapp.path}/WEB-INF/classes" />
                     <arg value="@{runfile}" />
                     <arg value="${webapp.path}/WEB-INF/test-data/brauncorpus/assessements/qrels.ac-gls.txt" />
+                </java>
+            </sequential>
+        </for>
+    </target>
+
+    <target name="evaluation-metrics-cran" description="Generate trec_eval results">
+        <for param="runfile">
+            <path>
+                <fileset dir="${webapp.path}/WEB-INF/test-data/cran/output/">
+                    <include name="*.txt" />
+                    <exclude name="*-treceval-report.txt" />
+                    <exclude name="*-significance-report.txt" />
+                </fileset>
+            </path>
+            <sequential>
+                <java fork="true" classname="ireval.Main" output="@{runfile}-treceval-report.txt">
+                    <classpath>
+                        <fileset dir="${webapp.path}/WEB-INF/lib">
+                            <include name="*.jar" />
+                        </fileset>
+                        <fileset dir="${base.dir}/lib">
+                            <include name="*.jar" />
+                        </fileset>
+                    </classpath>
+                    <classpath path="${webapp.path}/WEB-INF/classes" />
+                    <arg value="@{runfile}" />
+                    <arg value="${webapp.path}/WEB-INF/test-data/cran/assessements/cran.qrels" />
                 </java>
             </sequential>
         </for>
@@ -283,6 +307,60 @@
                 </for>
             </sequential>
         </for>
+    </target>
+
+    <target name="significance-tests-cran" description="Generate trec_eval results">
+        <for param="runfile">
+            <path>
+                <fileset dir="${webapp.path}/WEB-INF/test-data/cran/output/">
+                    <include name="*.txt" />
+                    <exclude name="*-treceval-report.txt" />
+                    <exclude name="*-significance-report.txt" />
+                </fileset>
+            </path>
+            <sequential>
+                <for param="runfile2">
+                    <path>
+                        <fileset dir="${webapp.path}/WEB-INF/test-data/cran/output/">
+                            <include name="*.txt" />
+                            <exclude name="*-treceval-report.txt" />
+                            <exclude name="*-significance-report.txt" />
+                            <exclude name="@{runfile}" />
+                        </fileset>
+                    </path>
+                    <sequential>
+                        <java fork="true" classname="ireval.Main">
+                            <classpath>
+                                <fileset dir="${webapp.path}/WEB-INF/lib">
+                                    <include name="**.jar" />
+                                </fileset>
+                                <fileset dir="${base.dir}/lib">
+                                    <include name="*.jar" />
+                                </fileset>
+                            </classpath>
+                            <classpath path="${webapp.path}/WEB-INF/classes" />
+                            <arg value="@{runfile}" />
+                            <arg value="@{runfile2}" />
+                            <arg value="${webapp.path}/WEB-INF/test-data/cran/assessements/qrels.ac-gls.txt" />
+                        </java>
+                    </sequential>
+                </for>
+            </sequential>
+        </for>
+    </target>
+
+    <target name="copyIndexesToDataDirs">
+        <delete>
+            <fileset dir="./test-index">
+                <include name="**/*"/>
+                <exclude name="**/*.svn"/>
+            </fileset>
+        </delete>
+        <copy todir="./test-index" overwrite="true">
+            <fileset dir="${webapp.path}/WEB-INF/test-index">
+                <include name="**/*"/>
+            </fileset>
+        </copy>
     </target>
 
 </project>

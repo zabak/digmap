@@ -86,7 +86,7 @@ public class CranfieldExample
 
         //Special Indexes for Advanced Search
         XmlFieldHandler xmlAuthorFieldHandler = new SimpleXmlFieldHandler("./AUTHOR",new SimpleFieldFilter(),"author");
-        XmlFieldHandler xmlTitleFieldHandler = new SimpleXmlFieldHandler("./TITLE",new SimpleFieldFilter(),"title");
+        XmlFieldHandler xmlTitleFieldHandler = new SimpleXmlFieldHandler("./TITLE",new SimpleFieldFilter(),pt.utl.ist.lucene.treceval.Globals.DOCUMENT_TITLE);
 
         //Index to store all fields with out repetitions to be used in summary
         XmlFieldHandler xmlContentSummaryTitleStoreFieldHandler = new SimpleXmlFieldHandler("./TITLE",new SimpleStoreFieldFilter(),"contentStore");

@@ -13,6 +13,7 @@
 
 <h3>Please choose a collection:</h3>
 <ul>
+    <li><a href="indexCran.jsp">Cranfield Corpus</a> (Text Index)</li>
     <li><a href="indexBc.jsp">Braun Corpus</a> (Text Index)</li>
     <li><a href="indexDigmap.jsp">Digmap Georeferenced Resources</a> (Georeferenced, Temporal and Text Index)</li>
 </ul>

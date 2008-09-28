@@ -55,7 +55,7 @@ public class PDFThumbnailMaker extends AbstractThumbnailMaker {
 		g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
 		Context cx = doc.getStyleSheet().getContext(g, null);
 		top.paintBeforeAfter(g.getClipBounds(), cx);
-		bimage = scaleAndRotateImage(bimage);
+		bimage = transparencyAndScaleAndRotateImage(bimage);
 		doc.removeAllChildren();
 		cx.reset();
 		g.dispose();

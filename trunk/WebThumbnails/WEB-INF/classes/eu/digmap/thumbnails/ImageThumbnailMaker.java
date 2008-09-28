@@ -40,7 +40,7 @@ public class ImageThumbnailMaker extends AbstractThumbnailMaker {
 		pb.add(new InterpolationNearest());
 		reader = JAI.create("scale", pb, null);
 		BufferedImage img = reader.getAsBufferedImage();
-		return scaleAndRotateImage(img);
+		return transparencyAndScaleAndRotateImage(img);
 	}
 
 }

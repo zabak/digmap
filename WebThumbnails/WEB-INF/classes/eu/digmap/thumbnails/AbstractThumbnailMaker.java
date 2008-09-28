@@ -83,13 +83,13 @@ public abstract class AbstractThumbnailMaker {
 		BufferedImage image = generateImage(false,nowait);
 		if (image == null) return;
 		try { putInCache(url,width,height,rotation,image,true); } catch ( Exception e ) { }
-		ImageIO.write(addTransparency(image), "png", out);
+		ImageIO.write(image, "png", out);
 	}
 	
 	public void make(boolean useCache, OutputStream out) throws Exception {
 		BufferedImage image = generateImage(useCache, nowait);
 		if (image == null) return;
-		ImageIO.write(addTransparency(image), "png", out);
+		ImageIO.write(image, "png", out);
 	}
 
 	public void make(boolean useCache, File file) throws Exception {
@@ -101,7 +101,7 @@ public abstract class AbstractThumbnailMaker {
 	public void make(boolean useCache, boolean nowait, OutputStream out) throws Exception {
 		BufferedImage image = generateImage(useCache, nowait);
 		if (image == null) return;
-		ImageIO.write(addTransparency(image), "png", out);
+		ImageIO.write(image, "png", out);
 	}
 
 	public void make(boolean useCache, boolean nowait, File file) throws Exception {
@@ -210,8 +210,8 @@ public abstract class AbstractThumbnailMaker {
 		return JAI.create("rotate", pb).getAsBufferedImage();
 	}
 	
-	protected BufferedImage scaleAndRotateImage ( BufferedImage img ) {
-		return scaleImage(rotateImage(img));
+	protected BufferedImage transparencyAndScaleAndRotateImage ( BufferedImage img ) {
+		return scaleImage(rotateImage(addTransparency(img)));
 	}
 	
 	protected BufferedImage addTransparency (BufferedImage img ) {

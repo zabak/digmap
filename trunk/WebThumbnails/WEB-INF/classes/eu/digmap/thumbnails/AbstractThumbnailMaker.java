@@ -218,8 +218,7 @@ public abstract class AbstractThumbnailMaker {
 	}
 	
 	protected BufferedImage transparencyAndScaleAndRotateImage ( BufferedImage img ) {
-		// TODO: fix transparency issue
-		return scaleImage(rotateImage(addTransparency(img)));
+		return rotateImage(addTransparency(scaleImage(img)));
 	}
 	
 	protected BufferedImage addTransparency (BufferedImage img ) {
@@ -229,7 +228,7 @@ public abstract class AbstractThumbnailMaker {
 		   transparencyWidth1 <= 100 &&
 		   transparencyWidth2 <= 100 &&
 		   transparencyHeight1 <=100 &&
-		   transparencyHeight2 <=100) {
+		   transparencyHeight2 <=100) {	
 			int x1 = (int)(img.getWidth() * transparencyWidth1 / 100.0);
 			int x2 = (int)(img.getWidth() * transparencyWidth2 / 100.0);
 			int y1 = (int)(img.getHeight() * transparencyHeight1 / 100.0);

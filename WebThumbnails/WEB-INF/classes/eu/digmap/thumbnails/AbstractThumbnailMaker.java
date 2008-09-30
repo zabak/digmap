@@ -1,7 +1,12 @@
 package eu.digmap.thumbnails;
 
+import java.awt.AlphaComposite;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
 import java.awt.Image;
+import java.awt.RenderingHints;
+import java.awt.Transparency;
 import java.awt.image.BufferedImage;
 import java.awt.image.renderable.ParameterBlock;
 import java.io.DataInputStream;
@@ -187,11 +192,13 @@ public abstract class AbstractThumbnailMaker {
 		int height = (this.height == 0) ? getAutoHeight(bimage) : this.height;
 		int width = (this.width == 0) ? getAutoWidth(bimage) : this.width;
 		if ((width != bimage.getWidth()) || (height != bimage.getHeight())) {
-			Image b2 = bimage.getScaledInstance(width, height, Image.SCALE_SMOOTH);
-			bimage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-			Graphics g = bimage.getGraphics(); 
-			g.drawImage(b2, 0, 0, null);
-			g.dispose();
+			GraphicsConfiguration gc = bimage.createGraphics().getDeviceConfiguration();
+			BufferedImage out = gc.createCompatibleImage(width, height, Transparency.TRANSLUCENT);
+			Graphics2D g2d = out.createGraphics();
+			g2d.setComposite(AlphaComposite.Src);
+			g2d.drawImage(bimage, 0, 0, width, height, null);
+			g2d.dispose();
+			bimage = out;
 		}
 		return bimage;
 	}
@@ -211,6 +218,7 @@ public abstract class AbstractThumbnailMaker {
 	}
 	
 	protected BufferedImage transparencyAndScaleAndRotateImage ( BufferedImage img ) {
+		// TODO: fix transparency issue
 		return scaleImage(rotateImage(addTransparency(img)));
 	}
 	

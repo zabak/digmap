@@ -10,7 +10,7 @@
 	<property name="path" value="/nail.map" />
 
 	<!-- Configure deployment properties and access the application server manager application -->
-	<property name="url" value="http://digmap3.ist.utl.pt:8080/manager" />
+	<property name="url" value="http://127.0.0.1:8080/manager" />
 	<property name="username" value="admin" />
 	<property name="password" value="admin" />
 	<property name="googlemapsapi" value="ABQIAAAAcbu3y-a3nZ_Sm9U7mWE6rRSxnlM8x71FZtoaV2b1lrSUnqCwEhR6bLxgwCCbCtuIEh5CFf8NNQ6rQA" />

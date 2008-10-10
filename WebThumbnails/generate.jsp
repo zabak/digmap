@@ -16,7 +16,7 @@
 					String url = params[0];
 					int height = Integer.parseInt( params.length>1 ? params[1] : "-1");
 					int width = Integer.parseInt( params.length>2 ? params[2] : "-1" );
-					byte transparency = Byte.parseByte(params.length>3 ? params[3] : "false" );
+					byte transparency = Byte.parseByte(params.length>3 ? params[3] : "255" );
 					float rotation = Float.parseFloat( params.length>4 ? params[4] : "0" );
 					ByteArrayOutputStream trash = new ByteArrayOutputStream();
 					ThumbnailMakerFactory.getThumbnailMaker(url, width, height, transparency, rotation).make(true, true, trash);	

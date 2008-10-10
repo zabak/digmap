@@ -73,7 +73,7 @@ public class HTMLThumbnailMaker extends AbstractThumbnailMaker {
 			try { Thread.sleep(waitTimeAfterRender); } catch ( InterruptedException e ) { }
 			panel.update(g2d);
 		} });
-		bimage = transparencyAndScaleAndRotateImage(bimage);
+		bimage = scaleImage(bimage);
 		g2d.dispose();
 		return bimage;
 	}

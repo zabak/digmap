@@ -36,7 +36,7 @@ public class AsynchronosGenerator {
 		try {
 			System.out.println("Generating thumbnail for " + obj.uri);
 			if(obj.rotation==Float.MAX_VALUE) obj.rotation = 0;
-			String file = "0000" + (obj.uri + obj.width + obj.height + obj.rotation).hashCode();
+			String file = "0000" + (obj.uri + obj.width + obj.height).hashCode();
 			String dir1 = file.substring(file.length()-2);
 			String dir2 = file.substring(file.length()-4,file.length()-2);
 			file = obj.cacheDirectory+File.separator+dir1+File.separator+dir2+File.separator+file.substring(0,file.length()-4);

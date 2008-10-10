@@ -84,7 +84,7 @@ public abstract class AbstractThumbnailMaker {
 	public void makeAndUpdate(OutputStream out, String url) throws Exception {
 		BufferedImage image = generateImage(false,nowait);
 		if (image == null) return;
-		try { putInCache(url,width,height,rotation,image,true); } catch ( Exception e ) { }
+		try { putInCache(url,width,height,image,true); } catch ( Exception e ) { }
 		ImageIO.write(image, "png", out);
 	}
 	
@@ -162,19 +162,19 @@ public abstract class AbstractThumbnailMaker {
 
 	private BufferedImage generateImage(boolean useCache, boolean nowait) throws Exception {
 		BufferedImage image = null;
-		boolean done = false;
 		boolean incache = false;
-		boolean updated = false;
-		try { if(useCache) { incache = ((image = getFromCache(uri,width,height,rotation))!=null); } } catch (Exception e) { }
+		boolean addtransparency = true;
+		try { if(useCache) incache = ((image = getFromCache(uri,width,height))!=null); } catch (Exception e) { }
 		try { if(!incache || image==null) {
 			if(!nowait || !useCache) image = getImage(); else {
 				AsynchronosGenerator.getInstance().addRequest(this);
 				image = scaleImage(working);
+				addtransparency = false;
 			}
 		} } catch (Exception e) { }
-		try { if(!nowait && !incache && image!=null) putInCache(uri,width,height,rotation,image,false); } catch (Exception ex) { }
-		done = true;
-		return image;
+		try { if(!nowait && !incache && image!=null) putInCache(uri,width,height,image,false); } catch (Exception ex) { }
+		if(addtransparency) return transparencyAndRotateImage(image);
+		else return image;
 	}
 
 	protected int getAutoHeight(BufferedImage bimage) {
@@ -214,8 +214,8 @@ public abstract class AbstractThumbnailMaker {
 		return JAI.create("rotate", pb).getAsBufferedImage();
 	}
 	
-	protected BufferedImage transparencyAndScaleAndRotateImage ( BufferedImage img ) {
-		return rotateImage(addTransparency(scaleImage(img)));
+	protected BufferedImage transparencyAndRotateImage ( BufferedImage img ) {
+		return rotateImage(addTransparency(img));
 	}
 	
 	protected BufferedImage addTransparency (BufferedImage img ) {
@@ -246,9 +246,8 @@ public abstract class AbstractThumbnailMaker {
 		return img;
 	}
 	
-	protected BufferedImage getFromCache ( String uri, int width, int height, float rotation ) throws Exception {
-		if(rotation==Float.MAX_VALUE) rotation = 0;
-		String file = "0000" + (uri + width + height + rotation).hashCode();
+	protected BufferedImage getFromCache ( String uri, int width, int height ) throws Exception {
+		String file = "0000" + (uri + width + height).hashCode();
 		String dir1 = file.substring(file.length()-2);
 		String dir2 = file.substring(file.length()-4,file.length()-2);
 		file = cacheDirectory+File.separator+dir1+File.separator+dir2+File.separator+file.substring(0,file.length()-4);
@@ -259,9 +258,8 @@ public abstract class AbstractThumbnailMaker {
 		return ImageIO.read(new FileInputStream(file+".png"));
 	}
 	
-	protected synchronized void putInCache ( String uri, int width, int height, float rotation, BufferedImage img, boolean forever ) throws Exception {
-		if(rotation==Float.MAX_VALUE) rotation = 0;
-		String file = "0000" + (uri + width + height + rotation).hashCode();
+	protected synchronized void putInCache ( String uri, int width, int height, BufferedImage img, boolean forever ) throws Exception {
+		String file = "0000" + (uri + width + height).hashCode();
 		String dir1 = file.substring(file.length()-2);
 		String dir2 = file.substring(file.length()-4,file.length()-2);
 		file = cacheDirectory+File.separator+dir1+File.separator+dir2+File.separator+file.substring(0,file.length()-4);

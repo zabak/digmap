@@ -52,13 +52,13 @@ public class ExceptionsThumbnailMaker extends AbstractThumbnailMaker {
 			uri = uri + "-v.jpg";
 			URL url = new URL(uri);
 			URLConnection connection = url.openConnection();
-			return transparencyAndScaleAndRotateImage((new ImageThumbnailMaker(uri,connection.getInputStream(),-1,-1,(byte)transparency)).getImage());
+			return scaleImage((new ImageThumbnailMaker(uri,connection.getInputStream(),-1,-1,(byte)transparency)).getImage());
 		} catch ( Exception e ) { }
 		else if(uri.startsWith("http://www.nla.gov.au/apps/cdview?pi=nla.map")) try {
 			uri = "http://nla.gov.au/nla.map" + uri.substring(uri.indexOf('-'),uri.lastIndexOf('-')) + "-v.jpg";
 			URL url = new URL(uri);
 			URLConnection connection = url.openConnection();
-			return transparencyAndScaleAndRotateImage((new ImageThumbnailMaker(uri,connection.getInputStream(),-1,-1,(byte)transparency)).getImage());
+			return scaleImage((new ImageThumbnailMaker(uri,connection.getInputStream(),-1,-1,(byte)transparency)).getImage());
 		} catch ( Exception e ) { }	
 		return null;
 	}
@@ -69,7 +69,7 @@ public class ExceptionsThumbnailMaker extends AbstractThumbnailMaker {
 			uri = uri.replace("cgi-bin/gallery.pl/detail","maps/medium");
 			URL url = new URL(uri);
 			URLConnection connection = url.openConnection();
-			return transparencyAndScaleAndRotateImage((new ImageThumbnailMaker(uri,connection.getInputStream(),-1,-1,(byte)transparency)).getImage());
+			return scaleImage((new ImageThumbnailMaker(uri,connection.getInputStream(),-1,-1,(byte)transparency)).getImage());
 		} catch ( Exception e ) { }
 		return null;
 	}
@@ -81,7 +81,7 @@ public class ExceptionsThumbnailMaker extends AbstractThumbnailMaker {
 			uri = uri.replace("/u?", "cgi-bin/getimage.exe?CISOROOT=").replace(",","&CISOPTR=") + "&DMSCALE=3";
 			URL url = new URL(uri);
 			URLConnection connection = url.openConnection();
-			return transparencyAndScaleAndRotateImage((new ImageThumbnailMaker(uri,connection.getInputStream(),-1,-1,(byte)transparency)).getImage());
+			return scaleImage((new ImageThumbnailMaker(uri,connection.getInputStream(),-1,-1,(byte)transparency)).getImage());
 		} catch ( Exception e ) { }
 		return null;
 	}
@@ -113,7 +113,7 @@ public class ExceptionsThumbnailMaker extends AbstractThumbnailMaker {
 			}
 			if(url!=null) {
 				connection = new URL(url).openConnection();
-				return transparencyAndScaleAndRotateImage((new ImageThumbnailMaker(uri,connection.getInputStream(),-1,-1,(byte)transparency)).getImage());				
+				return scaleImage((new ImageThumbnailMaker(uri,connection.getInputStream(),-1,-1,(byte)transparency)).getImage());				
 			}
 		} catch ( Exception e ) { }	
 		return null;
@@ -137,7 +137,7 @@ public class ExceptionsThumbnailMaker extends AbstractThumbnailMaker {
 			}
 			if(url!=null) {
 				connection = new URL(url).openConnection();
-				return transparencyAndScaleAndRotateImage((new ImageThumbnailMaker(uri,connection.getInputStream(),-1,-1,(byte)transparency)).getImage());				
+				return scaleImage((new ImageThumbnailMaker(uri,connection.getInputStream(),-1,-1,(byte)transparency)).getImage());				
 			}
 		} catch ( Exception e ) { }
 		return null;
@@ -151,7 +151,7 @@ public class ExceptionsThumbnailMaker extends AbstractThumbnailMaker {
 			uri = "http://image11.fcla.edu/m/map/thumb/" + uri.substring(uri.length()-3,uri.length()-2) + "/" + uri.substring(uri.length()-2,uri.length()-1) + "/" + uri.substring(uri.length()-1,uri.length()) + "/" + uri + ".jpg"; 
 			URL url = new URL(uri);
 			URLConnection connection = url.openConnection();
-			return transparencyAndScaleAndRotateImage((new ImageThumbnailMaker(uri,connection.getInputStream(),-1,-1,(byte)transparency)).getImage());
+			return scaleImage((new ImageThumbnailMaker(uri,connection.getInputStream(),-1,-1,(byte)transparency)).getImage());
 		} catch ( Exception e ) { }
 		return null;
 	}
@@ -175,7 +175,7 @@ public class ExceptionsThumbnailMaker extends AbstractThumbnailMaker {
 			}
 			if(url!=null) {
 				connection = new URL(url).openConnection();
-				return transparencyAndScaleAndRotateImage((new ImageThumbnailMaker(uri,connection.getInputStream(),-1,-1,(byte)transparency)).getImage());				
+				return scaleImage((new ImageThumbnailMaker(uri,connection.getInputStream(),-1,-1,(byte)transparency)).getImage());				
 			}
 		} catch ( Exception e) { }
 		return null;
@@ -186,7 +186,7 @@ public class ExceptionsThumbnailMaker extends AbstractThumbnailMaker {
 		if(uri.startsWith("http://digar.nlib.ee/otsing/") || uri.startsWith("http://digar.nlib.ee/show")) try {
 			String url = "http://digar.nlib.ee/gmap/nd" + uri.substring(uri.indexOf(":")+1,uri.lastIndexOf("&")) + "-tiles/z0x0y0.jpeg";
 			URLConnection connection = new URL(url).openConnection();
-			return transparencyAndScaleAndRotateImage((new ImageThumbnailMaker(uri,connection.getInputStream(),-1,-1,(byte)transparency)).getImage());
+			return scaleImage((new ImageThumbnailMaker(uri,connection.getInputStream(),-1,-1,(byte)transparency)).getImage());
 		} catch ( Exception e) { 
 			try {
 				if(uri.startsWith("http://digar.nlib.ee/show")) uri = "http://digar.nlib.ee/otsing/?pid=" +  uri.substring(uri.lastIndexOf("/")+1) + "&show";
@@ -208,7 +208,7 @@ public class ExceptionsThumbnailMaker extends AbstractThumbnailMaker {
 					}
 				}
 				connection = new URL(url).openConnection();
-				return transparencyAndScaleAndRotateImage((new ImageThumbnailMaker(uri,connection.getInputStream(),-1,-1,(byte)transparency)).getImage());				
+				return scaleImage((new ImageThumbnailMaker(uri,connection.getInputStream(),-1,-1,(byte)transparency)).getImage());				
 			} catch ( Exception e2 ) {
 			}			
 		}
@@ -230,13 +230,13 @@ public class ExceptionsThumbnailMaker extends AbstractThumbnailMaker {
 				}
 			}
 			connection = new URL(url).openConnection();
-			return transparencyAndScaleAndRotateImage((new ImageThumbnailMaker(uri,connection.getInputStream(),-1,-1,(byte)transparency)).getImage());				
+			return scaleImage((new ImageThumbnailMaker(uri,connection.getInputStream(),-1,-1,(byte)transparency)).getImage());				
 		} catch ( Exception e) { 
 			try {
 			  String url = "http://mara.kbr.be/xlimages/maps/thumbnails" + uri.substring(uri.lastIndexOf("/")).replace(".imgf",".jpg");
 			  if(url!=null) {
 				URLConnection connection = new URL(url).openConnection();
-				return transparencyAndScaleAndRotateImage((new ImageThumbnailMaker(uri,connection.getInputStream(),-1,-1,(byte)transparency)).getImage());				
+				return scaleImage((new ImageThumbnailMaker(uri,connection.getInputStream(),-1,-1,(byte)transparency)).getImage());				
 			  }
 			} catch ( Exception e2 ) { }
 		}
@@ -266,7 +266,7 @@ public class ExceptionsThumbnailMaker extends AbstractThumbnailMaker {
 			}
 			if(url!=null) {
 				connection = new URL(url).openConnection();
-				return transparencyAndScaleAndRotateImage((new ImageThumbnailMaker(uri,connection.getInputStream(),-1,-1,(byte)transparency)).getImage());				
+				return scaleImage((new ImageThumbnailMaker(uri,connection.getInputStream(),-1,-1,(byte)transparency)).getImage());				
 			}
 		} catch ( Exception e) { }	
 		return null;

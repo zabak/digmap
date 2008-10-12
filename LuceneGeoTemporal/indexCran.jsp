@@ -74,7 +74,7 @@
                     out.print("<p><b>TITLE</b>: <a href=\"downloadCran.jsp?docno=" + docno + "&filepath=" + filepath + "\">" + doc.get(pt.utl.ist.lucene.treceval.Globals.DOCUMENT_TITLE) + "</a></p>");
                     out.print("<p><b>DOCNO</b> " + docno + "</p>");
                     out.print("<p><b>score</b>: " + hits.score(i) + "</p>");
-                    out.print("<p><b>summary</b>" + hits.summary(i, "contents") + "</p>");
+                    out.print("<p><b>summary</b>" + hits.summary(i, "contentStore") + "</p>");
                     out.print("<p><b>FILE_PATH</b>: " + filepath + "</p>");
                     out.print("<hr>");
                 }

@@ -57,5 +57,7 @@
 	<classpathentry kind="lib" path="WEB-INF/lib/webgraph.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/caliph-emir-cbir.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/carrot2-launcher.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/lib/spellcheker.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/lib/commons-cli-1.0.jar"/>
 	<classpathentry kind="output" path="WEB-INF/classes"/>
 </classpath>

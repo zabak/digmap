@@ -10,8 +10,8 @@ import java.io.IOException;
  * @date 14/Ago/2008
  * @see pt.utl.ist.lucene
  */
-public class LuceneVersionFactory
-{
+public class LuceneVersionFactory {
+	
     private static LuceneVersion luceneVersion = null;
 
     private static final Logger logger = Logger.getLogger(LuceneVersionFactory.class);

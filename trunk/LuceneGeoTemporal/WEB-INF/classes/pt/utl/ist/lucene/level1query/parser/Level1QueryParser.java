@@ -421,6 +421,10 @@ public class Level1QueryParser
 
         Level1Query q = new Level1QueryParser().buildQuery("lat:-38.2323232 lng:2.34432342 dlib.year:\\(year99\\) dlib.year:(year99) AND title:jonhy^0.223 AND creator:joao~3 AND (contents:(ticer))");
         System.out.println(q.toString());
+        System.out.println(q.getQueryParams().getLatitude());
+
+        q = new Level1QueryParser().buildQuery("lat:(-38.2323232) lng:2.34432342 dlib.year:\\(year99\\) dlib.year:(year99) AND title:jonhy^0.223 AND creator:joao~3 AND (contents:(ticer))");
+        System.out.println(q.toString());
 
         q = new Level1QueryParser().buildQuery("lat:-38.2323232 lng:2.34432342 (dlib.year:(year99)^0.555 AND dlib.year:\"year99\"^0.555 (contents:[00000 TO 44444]) OR (contents:(ticer)))");
         System.out.println(q.toString());

@@ -110,4 +110,87 @@ public class Files
             return fileName.substring(lastDot + 1);
     }
 
+    public static String getText(File file,String encoding) throws IOException
+    {
+        StringBuffer contentBuffer = new StringBuffer();
+        try
+        {
+            // Read in template
+
+            FileInputStream fileInputStream = new FileInputStream(file);
+            InputStreamReader is = new InputStreamReader(fileInputStream,encoding);
+            BufferedReader reader = new BufferedReader(is);
+            //BufferedReader reader = new BufferedReader(new FileReader(fileName));
+
+            boolean more = true;
+
+            int totalReaded = 0;
+            while (more)
+            {
+                String line = reader.readLine();
+                if (line==null)
+                {
+                    more = false;
+                }
+                else
+                {
+                    // Add non-comment lines to the content
+                    contentBuffer.append(line);
+                    contentBuffer.append("\n");
+                    totalReaded += line.length();
+                }
+            }
+            fileInputStream.close();
+            is.close();
+            reader.close();
+        }
+        catch(IOException e)
+        {
+            throw e;
+        }
+        return contentBuffer.toString();
+    }
+
+        public static String getMaxText(File file, long maxLenght,String encoding) throws Exception
+        {
+        StringBuffer contentBuffer = new StringBuffer();
+        try{
+            // Read in template
+
+            FileInputStream fileInputStream = new FileInputStream(file);
+            InputStreamReader is = new InputStreamReader(fileInputStream,encoding);
+            BufferedReader reader = new BufferedReader(is);
+            //BufferedReader reader = new BufferedReader(new FileReader(fileName));
+
+            boolean more = true;
+
+            int totalReaded = 0;
+            while (more)
+            {
+                String line = reader.readLine();
+                if (line==null)
+                {
+                    more = false;
+                }
+                else
+                {
+                    // Add non-comment lines to the content
+                    contentBuffer.append(line);
+                    contentBuffer.append("\n");
+                    totalReaded += line.length();
+                    if(totalReaded > maxLenght)
+                        more = false;
+                }
+            }
+            fileInputStream.close();
+            is.close();
+            reader.close();
+        }
+        catch(Exception e)
+        {
+            throw e;
+        }
+        return contentBuffer.toString();
+    }
+
 }

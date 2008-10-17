@@ -211,6 +211,11 @@ public class LgteDocumentWrapper
         luceneVersion.addFields(document,fields);
     }
 
+    public static List<Field> getGeoBoxFields(RectangleForm rectangleForm)
+    {
+        return getGeoBoxFields(rectangleForm.getNorth(),rectangleForm.getSouth(),rectangleForm.getWest(), rectangleForm.getEast());
+    }
+
     /**
      * Set this document as a Geographic Box
      *

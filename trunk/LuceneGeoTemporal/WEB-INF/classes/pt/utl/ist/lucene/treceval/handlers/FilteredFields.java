@@ -17,9 +17,13 @@ public class FilteredFields
     Collection<Field> preparedFields;
 
 
-    public FilteredFields(Collection<Field> textFields)
+    public FilteredFields()
     {
-        this.preparedFields = textFields;
+    }
+
+    public FilteredFields(Collection<Field> fields)
+    {
+        this.preparedFields = fields;
     }
 
     public FilteredFields(Map<String, String> textFields)

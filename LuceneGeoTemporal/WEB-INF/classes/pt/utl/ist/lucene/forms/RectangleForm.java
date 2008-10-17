@@ -60,4 +60,26 @@ public class RectangleForm implements UnknownForm
     {
         return diagonal;
     }
+
+    public String toString()
+    {
+        return "[north:" + north  + ";west:" + west + ";south:" + south + ";east:" + east +"]";
+    }
+
+
+    public boolean isOverlap(RectangleForm anotherRectangleForm)
+    {
+        return ((anotherRectangleForm.getEast() > west && anotherRectangleForm.getEast() < east) ||
+                (anotherRectangleForm.getWest() > west && anotherRectangleForm.getWest() < east))
+                &&
+                ((anotherRectangleForm.getNorth() > south && anotherRectangleForm.getNorth() < north) ||
+                        (anotherRectangleForm.getSouth() > south && anotherRectangleForm.getSouth() < north));
+    }
+    public boolean isContained(RectangleForm anotherRectangleForm)
+    {
+        return  anotherRectangleForm.getEast() <= east &&
+                anotherRectangleForm.getWest() >= west &&
+                anotherRectangleForm.getNorth() <= north &&
+                anotherRectangleForm.getSouth() >= south;
+    }
 }

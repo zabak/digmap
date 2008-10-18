@@ -1,5 +1,7 @@
 package pt.utl.ist.lucene;
 
+import pt.utl.ist.lucene.config.ConfigProperties;
+
 /**
  * @author Jorge Machado
  * @date 15/Ago/2008
@@ -12,6 +14,8 @@ public enum FilterEnum
     time("t"),
     timeSpace("t_sp");
 
+    public static final FilterEnum defaultFilter = parse(ConfigProperties.getProperty("lgte.default.filter"));
+    
     private final String type;
 
     FilterEnum(String namespace)
@@ -29,7 +33,7 @@ public enum FilterEnum
             }
         }
 
-        return timeSpace;
+        return defaultFilter;
     }
 
     public String getValue()
@@ -45,5 +49,10 @@ public enum FilterEnum
     public boolean isTime()
     {
         return this == time || this == timeSpace;
+    }
+
+    public String toString()
+    {
+        return type;
     }
 }

@@ -28,6 +28,7 @@ public class SigmoidSpatialScoreDocComparator implements SpatialDistancesScoreDo
     private static final Logger logger = Logger.getLogger(SigmoidSpatialScoreDocComparator.class);
 
     public int radiumStrategy = ConfigProperties.getIntProperty("sigmoide.radium.strategy");
+    public boolean useOnlyBoundaryBoxes = ConfigProperties.getBooleanProperty("sigmoide.use.only.boundary.boxes");
     public double alfa;
     public double alfa2;
     public double beta;
@@ -107,12 +108,16 @@ public class SigmoidSpatialScoreDocComparator implements SpatialDistancesScoreDo
             {
                 double diagonal = NumberUtils.SortableStr2double(diagonalStr);
                 float areaScore = ((Double)GeoUtils.distancePointAreaMapExpDDmbr(distance,diagonal)).floatValue();
-                if(queryParams.getRadium() > 0)
+                if(!useOnlyBoundaryBoxes && queryParams.getRadium() > 0)
                 {
                     float sigmoidScore = ((Double)GeoUtils.sigmoideDistanceRadium(distance,queryParams.getRadiumMiles(),alfa,beta)).floatValue();
                     return sigmoidScore > areaScore? sigmoidScore : areaScore;
                 }
                 return areaScore;
+            }
+            else if(diagonalStr == null && useOnlyBoundaryBoxes)
+            {
+                logger.error(">>>>>>> Using only boundary boxes and diagonal comming NULL doc:" + scoreDoc.doc);
             }
             else if(queryParams.getRadium() > 0 && queryParams.getRadium() != Integer.MAX_VALUE)
             {

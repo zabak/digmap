@@ -3,10 +3,7 @@ package pt.utl.ist.lucene.treceval;
 import org.apache.log4j.Logger;
 import org.apache.lucene.queryParser.ParseException;
 import org.dom4j.DocumentException;
-import pt.utl.ist.lucene.LgteHits;
-import pt.utl.ist.lucene.LgteIndexSearcherWrapper;
-import pt.utl.ist.lucene.LgteQuery;
-import pt.utl.ist.lucene.LgteQueryParser;
+import pt.utl.ist.lucene.*;
 import pt.utl.ist.lucene.treceval.handlers.topics.output.OutputFormat;
 import pt.utl.ist.lucene.treceval.handlers.topics.output.Topic;
 
@@ -75,9 +72,23 @@ public class SearchTopics implements ISearchCallBack
     public void searchTopics()
     {
 
+        String filter = "-filter_" + FilterEnum.defaultFilter.toString();
+        String order = "-order_" + OrderEnum.defaultOrder.toString();
+        if(searchConfiguration.getQueryConfiguration() != null)
+        {
+            String filter2 = searchConfiguration.getQueryConfiguration().getProperty("lgte.default.filter");
+            if(filter2 != null)
+                filter = "-filter_" + filter2;
+            String order2 = searchConfiguration.getQueryConfiguration().getProperty("lgte.default.order");
+            if(order2 != null)
+                order = "-order_" + order2;
+        }
         try
         {
-            configuration.getITopicsProcessor().handle(configuration.getTopicsPath(), this, configuration.getDir(), run, configuration.getCollectionId(), configuration.getOutputDir());
+            String stem = "no";
+            if(configuration.getDir().indexOf("stem")>=0)
+                stem="yes";
+            configuration.getITopicsProcessor().handle(configuration.getTopicsPath(), this, configuration.getModel().getShortName() + "-Stemming_" + stem + "-qe_" + searchConfiguration.getQueryConfiguration().getForceQE() +filter+order, run, configuration.getCollectionId(), configuration.getOutputDir());
         }
         catch (MalformedURLException e)
         {

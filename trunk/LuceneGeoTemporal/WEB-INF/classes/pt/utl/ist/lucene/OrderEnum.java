@@ -1,5 +1,7 @@
 package pt.utl.ist.lucene;
 
+import pt.utl.ist.lucene.config.ConfigProperties;
+
 /**
  * @author Jorge Machado
  * @date 15/Ago/2008
@@ -15,6 +17,8 @@ public enum OrderEnum
     timeSpace("t_sp"),
     scoreTimeSpace("sc_t_sp");
 
+
+    public static final OrderEnum defaultOrder = parse(ConfigProperties.getProperty("lgte.default.order"));
 
 
     private final String type;
@@ -33,8 +37,7 @@ public enum OrderEnum
                 return orderEnum;
             }
         }
-
-        return scoreTimeSpace;
+        return defaultOrder;
     }
 
     public String getValue()
@@ -57,6 +60,8 @@ public enum OrderEnum
         return this == space || this == score || this == timeSpace || this == scoreTimeSpace;
     }
 
-
-
+    public String toString()
+    {
+        return type;
+    }
 }

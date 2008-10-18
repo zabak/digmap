@@ -43,8 +43,8 @@ public class QueryParams
     //Turn on Level1Query Expansion
     QEEnum qeEnum = QEEnum.defaultQE;
 
-    FilterEnum filter = FilterEnum.timeSpace;
-    OrderEnum order = OrderEnum.scoreTimeSpace;
+    FilterEnum filter = null;
+    OrderEnum order = null;
 
 
     Model model = null;
@@ -567,6 +567,13 @@ public class QueryParams
 
     public FilterEnum getFilter()
     {
+        if(filter == null)
+        {
+            if(queryConfiguration != null)
+            {
+                filter = FilterEnum.parse(queryConfiguration.getProperty("lgte.default.filter"));
+            }
+        }
         return filter;
     }
 
@@ -582,6 +589,13 @@ public class QueryParams
 
     public OrderEnum getOrder()
     {
+        if(order == null)
+        {
+            if(queryConfiguration != null)
+            {
+                order = OrderEnum.parse(queryConfiguration.getProperty("lgte.default.order"));
+            }
+        }
         return order;
     }
 

@@ -93,14 +93,17 @@ public class Level1QueryParser
                     p = buildParentisis(insideParentisis, pendingIndexField.getIndexName(),suffix);
                 else
                     p = buildParentisis(insideParentisis, index,suffix);
-                if (useIndexField && pendingIndexField != null)
+                if(p.getObjects().size() > 0) //todo new check bugs here, this was made to prevent lgte fields inside parentisis that are consumed and parentisis come empty
                 {
-                    pendingIndexField.setQuery(p);
-                    objects.add(pendingIndexField);
-                    pendingIndexField = null;
+                    if (useIndexField && pendingIndexField != null)
+                    {
+                        pendingIndexField.setQuery(p);
+                        objects.add(pendingIndexField);
+                        pendingIndexField = null;
+                    }
+                    else
+                        objects.add(p);
                 }
-                else
-                    objects.add(p);
             }
             else if (query.charAt(i) == '[' && !escape)
             {
@@ -233,26 +236,29 @@ public class Level1QueryParser
             t = getTerm(merge, pendingIndexField.getIndexName());
         else
             t = getTerm(merge, index);
-        if (useIndexField && pendingIndexField != null)
+        if (useIndexField && (pendingIndexField != null || index != null))
         {
-            if(pendingIndexField.getIndexName().equals(Globals.LUCENE_MODEL_FIELD_QUERY))
+            String field = index;
+            if(field == null)
+                field = pendingIndexField.getIndexName();
+            if(field.equals(Globals.LUCENE_MODEL_FIELD_QUERY))
             {
                 queryParams.setModel(t.getValue());
             }
-            else if(pendingIndexField.getIndexName().equals(Globals.LUCENE_QE_FIELD_QUERY))
+            else if(field.equals(Globals.LUCENE_QE_FIELD_QUERY))
             {
                 queryParams.setQEEnum(t.getValue());
             }
-            else if(pendingIndexField.getIndexName().equals(Globals.LUCENE_ORDER_FIELD_QUERY))
+            else if(field.equals(Globals.LUCENE_ORDER_FIELD_QUERY))
             {
                 queryParams.setOrder(t.getValue());
             }
-            else if(pendingIndexField.getIndexName().equals(Globals.LUCENE_FILTER_FIELD_QUERY))
+            else if(field.equals(Globals.LUCENE_FILTER_FIELD_QUERY))
             {
                 queryParams.setFilter(t.getValue());
             }
             else{
-                SpatialEnum spatialEnum = SpatialEnum.parse(pendingIndexField.getIndexName());
+                SpatialEnum spatialEnum = SpatialEnum.parse(field);
                 if (spatialEnum != null)
                 {
                     if (spatialEnum == SpatialEnum.RADIUM)
@@ -294,7 +300,7 @@ public class Level1QueryParser
                 }
                 else
                 {
-                    TimeEnum timeEnum = TimeEnum.parse(pendingIndexField.getIndexName());
+                    TimeEnum timeEnum = TimeEnum.parse(field);
                     if (timeEnum != null)
                     {
                         if (timeEnum == TimeEnum.TIME)
@@ -352,8 +358,15 @@ public class Level1QueryParser
                     }
                     else
                     {
-                        pendingIndexField.setQuery(t);
-                        objects.add(pendingIndexField);
+                        if(pendingIndexField != null)
+                        {
+                            pendingIndexField.setQuery(t);
+                            objects.add(pendingIndexField);
+                        }
+                        else
+                        {
+                            objects.add(t);
+                        }
                     }
                 }
             }
@@ -421,7 +434,13 @@ public class Level1QueryParser
 
         Level1Query q = new Level1QueryParser().buildQuery("lat:-38.2323232 lng:2.34432342 dlib.year:\\(year99\\) dlib.year:(year99) AND title:jonhy^0.223 AND creator:joao~3 AND (contents:(ticer))");
         System.out.println(q.toString());
-        System.out.println(q.getQueryParams().getLatitude());
+        q= new Level1QueryParser().buildQuery("contents:(Computers and Internet ) south:(53.703091) north:(53.805431) east:(-1.97126) west:(-2.0513)");
+        System.out.println(q.toString());
+        System.out.println(q.getQueryParams().getNorthlimit());
+        System.out.println(q.getQueryParams().getSouthlimit());
+        System.out.println(q.getQueryParams().getEastlimit());
+        System.out.println(q.getQueryParams().getWestlimit());
+
 
         q = new Level1QueryParser().buildQuery("lat:(-38.2323232) lng:2.34432342 dlib.year:\\(year99\\) dlib.year:(year99) AND title:jonhy^0.223 AND creator:joao~3 AND (contents:(ticer))");
         System.out.println(q.toString());

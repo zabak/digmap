@@ -50,7 +50,7 @@ public class TestBuilder extends TestCase
         q = new Level1QueryParser().buildQuery("site:\"jorge\" NOT (joao)");
         assertEquals(q.toString(),"site:\"jorge\" NOT (joao)");
         q = new Level1QueryParser().buildQuery("site:(jorge) ORG \"joao\"");
-        assertEquals(q.toString(),"site:(jorge) org \"joao\"");
+        assertEquals(q.toString(),"site:(jorge) ORG \"joao\"");
         q = new Level1QueryParser().buildQuery("site:(jorge) joao");
         assertEquals(q.toString(),"site:(jorge) joao");
         q = new Level1QueryParser().buildQuery("site:(jorge)joao");
@@ -61,5 +61,11 @@ public class TestBuilder extends TestCase
         assertEquals(q.toString(),"site:(jorge ana) joao");
         q = new Level1QueryParser().buildQuery("site:(\"http://purl.pt/1\") AND contents:(lusiadas) AND dc.creator:jorge AND jonhy");
         assertEquals(q.toString(),"site:(\"http://purl.pt/1\") AND contents:(lusiadas) AND dc.creator:jorge AND jonhy");
+        q = new Level1QueryParser().buildQuery("contents:(Computers and Internet ) south:(53.703091) north:(53.805431) east:(-1.97126) west:(-2.0513)");
+        assertEquals(q.toString(),"contents:(Computers and Internet)");
+        assertEquals(q.getQueryParams().getNorthlimit(),53.805431);
+        assertEquals(q.getQueryParams().getSouthlimit(),53.703091);
+        assertEquals(q.getQueryParams().getEastlimit(),-1.97126);
+        assertEquals(q.getQueryParams().getWestlimit(),-2.0513);
     }
 }

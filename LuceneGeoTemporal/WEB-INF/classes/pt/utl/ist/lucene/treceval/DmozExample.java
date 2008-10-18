@@ -34,28 +34,30 @@ public class DmozExample
 
     private static final Logger logger = Logger.getLogger(DmozExample.class);
 
+    private static final String INDEXES_PATH_NAME = "dmoz";
+
     public static void main(String [] args) throws DocumentException, IOException
     {
 
-        args = new String[2];
-        args[0] = "C:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-index";
-        args[1] = "C:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-data";
+//        args = new String[2];
+//        args[0] = "C:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-index";
+//        args[1] = "C:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-data";
 
 
         Globals.INDEX_DIR = args[0];
         Globals.DATA_DIR = args[1];
 
 
-        String collectionPath = Globals.DATA_DIR + "\\dmoz\\documents";
-        String topicsPath = Globals.DATA_DIR + "\\dmoz\\topics";
-        String outputDir = Globals.DATA_DIR + "\\dmoz\\output";
+        String collectionPath = Globals.DATA_DIR + File.separator + INDEXES_PATH_NAME + File.separator + "documents";
+        String topicsPath = Globals.DATA_DIR + File.separator + INDEXES_PATH_NAME + File.separator + "topics";
+        String outputDir = Globals.DATA_DIR + File.separator + INDEXES_PATH_NAME + File.separator +"output";
 
         logger.info("Writing indexes to:" + Globals.INDEX_DIR);
         logger.info("Reading data from:" + Globals.DATA_DIR);
 
 
         /**
-         * Lets create Cranfield Collection preprocessor
+         * Lets create DMOZ Collection preprocessor
          * We just need one field handler for TEXT field @see example
          * example:
          *
@@ -68,13 +70,13 @@ public class DmozExample
         //Global Search Index
         XmlFieldHandler xmlTextFieldHandler = new SimpleXmlFieldHandler("@id",new DmozTextFieldFilter(),"contents");
         XmlFieldHandler xmlGeoBoxFieldHandler = new SimpleXmlFieldHandler("./yPlace/boundingBox",new DmozGeoBoxFieldFilter(),"contents");
-//        XmlFieldHandler xmlGeoPointFieldHandler = new SimpleXmlFieldHandler("./centroide",new DmozGeoCentroideFieldFilter(),"contents");
+        XmlFieldHandler xmlGeoPointFieldHandler = new SimpleXmlFieldHandler("./yPlace/centroid",new DmozGeoCentroideFieldFilter(),"contents");
 
 
         List<XmlFieldHandler> xmlFieldHandlers = new ArrayList<XmlFieldHandler>();
         xmlFieldHandlers.add(xmlTextFieldHandler);
         xmlFieldHandlers.add(xmlGeoBoxFieldHandler);
-//        xmlFieldHandlers.add(xmlGeoPointFieldHandler);
+        xmlFieldHandlers.add(xmlGeoPointFieldHandler);
 
         ResourceHandler resourceHandler = new XmlResourceHandler("//ad","@id",xmlFieldHandlers);
         //we could set to topicsDirectory preprocessor a Properties object with FileExtensions Implementations of CDocumentHandler
@@ -105,26 +107,26 @@ public class DmozExample
         //Lets create our configuration indexes
         //We gone put the diferences about model, output folder name, analyser
 
-        Configuration VS = new Configuration("version1", "cran","lm", Model.VectorSpaceModel, IndexCollections.en.getAnalyzerNoStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.en.getWordList(),outputDir,maxResults);
-        Configuration LM = new Configuration("version1", "cran","lm",Model.LanguageModel , IndexCollections.en.getAnalyzerNoStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.en.getWordList(),outputDir,maxResults);
-        Configuration VS_STEMMER = new Configuration("version1", "cran","lmstem", Model.VectorSpaceModel, IndexCollections.en.getAnalyzerWithStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.en.getWordList(),outputDir,maxResults);
-        Configuration LM_STEMMER = new Configuration("version1", "cran","lmstem", Model.LanguageModel, IndexCollections.en.getAnalyzerWithStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.en.getWordList(),outputDir,maxResults);
-//        Configuration M3 = new Configuration("version1", "cran","lm", Model.BB2DFRModel, IndexCollections.en.getAnalyzerNoStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.en.getWordList(),outputDir,maxResults);
-//        Configuration M4 = new Configuration("version1", "cran","lm", Model.DLHHypergeometricDFRModel, IndexCollections.en.getAnalyzerNoStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.en.getWordList(),outputDir,maxResults);
-//        Configuration M5 = new Configuration("version1", "cran","lm", Model.IFB2DFRModel, IndexCollections.en.getAnalyzerNoStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.en.getWordList(),outputDir,maxResults);
-//        Configuration M6 = new Configuration("version1", "cran","lm", Model.InExpB2DFRModel, IndexCollections.en.getAnalyzerNoStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.en.getWordList(),outputDir,maxResults);
-//        Configuration M7 = new Configuration("version1", "cran","lm", Model.InExpC2DFRModel, IndexCollections.en.getAnalyzerNoStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.en.getWordList(),outputDir,maxResults);
-//        Configuration M8 = new Configuration("version1", "cran","lm", Model.InL2DFRModel, IndexCollections.en.getAnalyzerNoStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.en.getWordList(),outputDir,maxResults);
-//        Configuration M9 = new Configuration("version1", "cran","lm", Model.OkapiBM25Model, IndexCollections.en.getAnalyzerNoStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.en.getWordList(),outputDir,maxResults);
-//        Configuration M10 = new Configuration("version1", "cran","lm", Model.PL2DFRModel, IndexCollections.en.getAnalyzerNoStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.en.getWordList(),outputDir,maxResults);
+        Configuration VS = new Configuration("version1", INDEXES_PATH_NAME,"lm", Model.VectorSpaceModel, IndexCollections.en.getAnalyzerNoStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.en.getWordList(),outputDir,maxResults);
+        Configuration LM = new Configuration("version1", INDEXES_PATH_NAME,"lm",Model.LanguageModel , IndexCollections.en.getAnalyzerNoStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.en.getWordList(),outputDir,maxResults);
+        Configuration VS_STEMMER = new Configuration("version1", INDEXES_PATH_NAME,"lmstem", Model.VectorSpaceModel, IndexCollections.en.getAnalyzerWithStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.en.getWordList(),outputDir,maxResults);
+        Configuration LM_STEMMER = new Configuration("version1", INDEXES_PATH_NAME,"lmstem", Model.LanguageModel, IndexCollections.en.getAnalyzerWithStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.en.getWordList(),outputDir,maxResults);
+//        Configuration M3 = new Configuration("version1", INDEXES_PATH_NAME,"lm", Model.BB2DFRModel, IndexCollections.en.getAnalyzerNoStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.en.getWordList(),outputDir,maxResults);
+//        Configuration M4 = new Configuration("version1", INDEXES_PATH_NAME,"lm", Model.DLHHypergeometricDFRModel, IndexCollections.en.getAnalyzerNoStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.en.getWordList(),outputDir,maxResults);
+//        Configuration M5 = new Configuration("version1", INDEXES_PATH_NAME,"lm", Model.IFB2DFRModel, IndexCollections.en.getAnalyzerNoStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.en.getWordList(),outputDir,maxResults);
+//        Configuration M6 = new Configuration("version1", INDEXES_PATH_NAME,"lm", Model.InExpB2DFRModel, IndexCollections.en.getAnalyzerNoStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.en.getWordList(),outputDir,maxResults);
+//        Configuration M7 = new Configuration("version1", INDEXES_PATH_NAME,"lm", Model.InExpC2DFRModel, IndexCollections.en.getAnalyzerNoStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.en.getWordList(),outputDir,maxResults);
+//        Configuration M8 = new Configuration("version1", INDEXES_PATH_NAME,"lm", Model.InL2DFRModel, IndexCollections.en.getAnalyzerNoStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.en.getWordList(),outputDir,maxResults);
+//        Configuration M9 = new Configuration("version1", INDEXES_PATH_NAME"lm", Model.OkapiBM25Model, IndexCollections.en.getAnalyzerNoStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.en.getWordList(),outputDir,maxResults);
+//        Configuration M10 = new Configuration("version1", INDEXES_PATH_NAME,"lm", Model.PL2DFRModel, IndexCollections.en.getAnalyzerNoStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.en.getWordList(),outputDir,maxResults);
 
 
         List<Configuration> configurations = new ArrayList<Configuration>();
         //we just need these two configurations because the lm and lmstem indexes are the same for all probabilistic models and can be used in vector space because the diference is just an extra index with documents lenght
 
-        configurations.add(LM);
-        configurations.add(LM_STEMMER);
-        IndexCollections.indexConfiguration(configurations,Globals.DOCUMENT_ID_FIELD);
+//        configurations.add(LM);
+//        configurations.add(LM_STEMMER);
+//        IndexCollections.indexConfiguration(configurations,Globals.DOCUMENT_ID_FIELD);
 
         /***
          * Search Configurations
@@ -134,6 +136,50 @@ public class DmozExample
 
         QueryConfiguration queryConfiguration2 = new QueryConfiguration();
         queryConfiguration2.setForceQE(QEEnum.text);
+
+        QueryConfiguration queryConfiguration3 = new QueryConfiguration();
+        queryConfiguration3.setForceQE(QEEnum.lgte);
+
+
+
+        QueryConfiguration queryConfiguration4 = new QueryConfiguration();
+        queryConfiguration4.setForceQE(QEEnum.no);
+        queryConfiguration4.getQueryProperties().put("lgte.default.filter","no");
+
+        QueryConfiguration queryConfiguration5 = new QueryConfiguration();
+        queryConfiguration5.setForceQE(QEEnum.text);
+        queryConfiguration5.getQueryProperties().put("lgte.default.filter","no");
+
+        QueryConfiguration queryConfiguration6 = new QueryConfiguration();
+        queryConfiguration6.setForceQE(QEEnum.lgte);
+        queryConfiguration6.getQueryProperties().put("lgte.default.filter","no");
+
+
+
+
+
+        QueryConfiguration queryConfiguration7 = new QueryConfiguration();
+        queryConfiguration7.setForceQE(QEEnum.no);
+        queryConfiguration7.getQueryProperties().put("lgte.default.filter","no");
+        queryConfiguration7.getQueryProperties().put("lgte.default.order","sc");
+
+        QueryConfiguration queryConfiguration8 = new QueryConfiguration();
+        queryConfiguration8.setForceQE(QEEnum.text);
+        queryConfiguration8.getQueryProperties().put("lgte.default.filter","no");
+        queryConfiguration8.getQueryProperties().put("lgte.default.order","sc");
+
+
+        QueryConfiguration queryConfiguration9 = new QueryConfiguration();
+        queryConfiguration9.setForceQE(QEEnum.no);
+        queryConfiguration9.getQueryProperties().put("lgte.default.order","sc");
+
+        QueryConfiguration queryConfiguration10 = new QueryConfiguration();
+        queryConfiguration10.setForceQE(QEEnum.text);
+        queryConfiguration10.getQueryProperties().put("lgte.default.order","sc");
+
+
+
+
         List<SearchConfiguration> searchConfigurations = new ArrayList<SearchConfiguration>();
 
         searchConfigurations.add(new SearchConfiguration(queryConfiguration1, VS));
@@ -145,6 +191,48 @@ public class DmozExample
         searchConfigurations.add(new SearchConfiguration(queryConfiguration2, LM));
         searchConfigurations.add(new SearchConfiguration(queryConfiguration2, VS_STEMMER));
         searchConfigurations.add(new SearchConfiguration(queryConfiguration2, LM_STEMMER));
+
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration3, VS));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration3, LM));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration3, VS_STEMMER));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration3, LM_STEMMER));
+
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration4, VS));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration4, LM));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration4, VS_STEMMER));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration4, LM_STEMMER));
+
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration5, VS));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration5, LM));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration5, VS_STEMMER));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration5, LM_STEMMER));
+
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration6, VS));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration6, LM));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration6, VS_STEMMER));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration6, LM_STEMMER));
+
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration7, VS));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration7, LM));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration7, VS_STEMMER));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration7, LM_STEMMER));
+
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration8, VS));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration8, LM));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration8, VS_STEMMER));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration8, LM_STEMMER));
+
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration9, VS));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration9, LM));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration9, VS_STEMMER));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration9, LM_STEMMER));
+
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration10, VS));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration10, LM));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration10, VS_STEMMER));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration10, LM_STEMMER));
+
+        
 
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, M3));
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, M4));
@@ -217,6 +305,18 @@ public class DmozExample
         }
     }
 
+    static class DmozGeoCentroideFieldFilter implements FieldFilter
+    {
+        public FilteredFields filter(Node element, String fieldName)
+        {
+            Element centroide = (Element) element;
+            double latitude = Double.parseDouble(centroide.selectSingleNode("latitude").getText());
+            double longitude = Double.parseDouble(centroide.selectSingleNode("longitude").getText());
+            List<Field> fields = LgteDocumentWrapper.getGeoPointFields(latitude,longitude);
+            return new FilteredFields(fields);
+        }
+    }
+
     static class DmozGeoBoxTopicFieldFilter implements FieldFilter
     {
         public FilteredFields filter(Node element, String fieldName)
@@ -257,20 +357,22 @@ public class DmozExample
             args[0] = "C:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-index";
             args[1] = "C:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-data";
 
-
+            System.out.println("porra");
             Globals.INDEX_DIR = args[0];
             Globals.DATA_DIR = args[1];
 
-            String collectionPath = Globals.DATA_DIR + "\\dmoz\\documents";
-            String topicsPath = Globals.DATA_DIR + "\\dmoz\\topics";
-            String assessementsPath = Globals.DATA_DIR + "\\dmoz\\assessements";
+            String collectionPath = Globals.DATA_DIR + File.separator + INDEXES_PATH_NAME + File.separator + "documents";
+            String topicsPath = Globals.DATA_DIR + File.separator + INDEXES_PATH_NAME + File.separator + "topics";
+            String assessementsPath = Globals.DATA_DIR + File.separator + INDEXES_PATH_NAME + File.separator + "assessements";
 
             try
             {
                 Document dom = Dom4jUtil.parse(new File(collectionPath + File.separator + "dmoz-ads.xml"));
                 //distinct-values nao funciona no Dom4j não implementa o XPATH 2.0 penso eu
                 List<CategoryRecord> categories = getCategories(dom);
-                Collections.sort(categories,CategoryRecordsNumberComparator.getInstance());
+
+
+
 //                List<Object> selectedCategories = selectRandom(categories,25);
                 List<CategoryRecord> selectedCategories = categories.subList(0,25);
                 try
@@ -390,7 +492,6 @@ public class DmozExample
             return allLocales;
         }
 
-
         private static List<CategoryRecord> getCategories(Document dom)
         {
             XPath xPathLocales = dom.createXPath("//dmozCategories");
@@ -413,11 +514,18 @@ public class DmozExample
             System.out.println("=========================");
             System.out.println("Categories Found:");
             System.out.println("=========================");
+
+
             for(Map.Entry<String,Integer> entry: localesMap.entrySet())
             {
-                System.out.println(entry.getKey() + ": " + entry.getValue());
                 allCategories.add(new CategoryRecord(entry.getValue(),entry.getKey()));
             }
+            Collections.sort(allCategories,CategoryRecordsNumberComparator.getInstance());
+            for(CategoryRecord ceCategoryRecord: allCategories)
+            {
+                System.out.println(ceCategoryRecord.getCategory() + ":" + ceCategoryRecord.getRecords());
+            }
+
             return allCategories;
         }
 

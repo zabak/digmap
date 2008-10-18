@@ -42,5 +42,10 @@ public enum QEEnum
         return this != no;
     }
 
+    public String toString()
+    {
+        return type;
+    }
+
 
 }

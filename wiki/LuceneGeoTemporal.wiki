@@ -12,12 +12,12 @@ In a glance, the main features of LGTE are:
  * Provides a simple and efective abstraction layer on top of Lucene
  * Supports integrated retrieval and ranking with basis on thematic, temporal and geographical aspects.
  * Supports the Lucene standard retrieval model, as well as the more advanced probabilistic retrieval approaches.
- * Supports Rochio Query Expansion
+ * Supports Rochio Query Expansion.
  * Provides a framework for IR evaluation experiments (e.g. handling CLEF/TREC topics)
- * Includes a Java alternative to the trec_eval tool, capable of performing significance tests over pairs of runs
- * Includes a simple test application for searching over the [http://ilps.science.uva.nl/datafiles/braun-corpus.zip Braun Corpus] or the [http://dbappl.cs.utwente.nl/pftijah/Documentation/CranfieldDemo Cranfield Corpus]
+ * Includes a Java alternative to the trec_eval tool, capable of performing significance tests over pairs of runs.
+ * Includes a simple test application for searching over the [http://ilps.science.uva.nl/datafiles/braun-corpus.zip Braun Corpus] or the [http://dbappl.cs.utwente.nl/pftijah/Documentation/CranfieldDemo Cranfield Corpus].
 
-If you want to see LGTE running you have a [http://digmap2.ist.utl.pt:8080/lgte DEMO online here]
+If you want to see LGTE running you have a [http://digmap2.ist.utl.pt:8080/lgte DEMO online here].
 = Libraries =
 
 LGTE essentially assembles the following open-source libraries, patching them when necessary to work with our specific extensions:

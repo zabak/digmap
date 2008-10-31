@@ -39,9 +39,9 @@ public class DmozExample
     public static void main(String [] args) throws DocumentException, IOException
     {
 
-//        args = new String[2];
-//        args[0] = "C:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-index";
-//        args[1] = "C:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-data";
+        args = new String[2];
+        args[0] = "C:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-index";
+        args[1] = "C:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-data";
 
 
         Globals.INDEX_DIR = args[0];
@@ -92,9 +92,11 @@ public class DmozExample
          *     <description>what similarity laws must be obeyed when constructing aeroelastic models of heated high speed aircraft .</description>
          *  </top>
          */
+        XmlFieldHandler xmlLocaleTopicFieldHandler = new SimpleXmlFieldHandler("./locale",new SimpleFieldFilter(),"contents");
         XmlFieldHandler xmlCategoryTopicFieldHandler = new SimpleXmlFieldHandler("./category",new SimpleFieldFilter(),"contents");
         XmlFieldHandler xmlGeoBoxTopicFieldHandler = new SimpleXmlFieldHandler("./boundingBox",new DmozGeoBoxTopicFieldFilter(),"contents");
         List<XmlFieldHandler> xmlTopicFieldHandlers = new ArrayList<XmlFieldHandler>();
+        xmlTopicFieldHandlers.add(xmlLocaleTopicFieldHandler);
         xmlTopicFieldHandlers.add(xmlCategoryTopicFieldHandler);
         xmlTopicFieldHandlers.add(xmlGeoBoxTopicFieldHandler);
         ResourceHandler topicResourceHandler = new XmlResourceHandler("//topic","./num",xmlTopicFieldHandlers);
@@ -182,36 +184,36 @@ public class DmozExample
 
         List<SearchConfiguration> searchConfigurations = new ArrayList<SearchConfiguration>();
 
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, VS));
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, LM));
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, VS_STEMMER));
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, LM_STEMMER));
-
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, VS));
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, LM));
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, VS_STEMMER));
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, LM_STEMMER));
-
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration3, VS));
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration3, LM));
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration3, VS_STEMMER));
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration3, LM_STEMMER));
-
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration4, VS));
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration4, LM));
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration4, VS_STEMMER));
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration4, LM_STEMMER));
-
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration5, VS));
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration5, LM));
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration5, VS_STEMMER));
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration5, LM_STEMMER));
-
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration6, VS));
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration6, LM));
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration6, VS_STEMMER));
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration6, LM_STEMMER));
-
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, VS));
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, LM));
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, VS_STEMMER));
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, LM_STEMMER));
+//
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, VS));
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, LM));
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, VS_STEMMER));
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, LM_STEMMER));
+//
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration3, VS));
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration3, LM));
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration3, VS_STEMMER));
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration3, LM_STEMMER));
+////
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration4, VS));
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration4, LM));
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration4, VS_STEMMER));
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration4, LM_STEMMER));
+//
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration5, VS));
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration5, LM));
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration5, VS_STEMMER));
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration5, LM_STEMMER));
+//
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration6, VS));
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration6, LM));
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration6, VS_STEMMER));
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration6, LM_STEMMER));
+//
         searchConfigurations.add(new SearchConfiguration(queryConfiguration7, VS));
         searchConfigurations.add(new SearchConfiguration(queryConfiguration7, LM));
         searchConfigurations.add(new SearchConfiguration(queryConfiguration7, VS_STEMMER));
@@ -231,8 +233,8 @@ public class DmozExample
         searchConfigurations.add(new SearchConfiguration(queryConfiguration10, LM));
         searchConfigurations.add(new SearchConfiguration(queryConfiguration10, VS_STEMMER));
         searchConfigurations.add(new SearchConfiguration(queryConfiguration10, LM_STEMMER));
-
-        
+//
+//
 
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, M3));
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, M4));
@@ -386,21 +388,22 @@ public class DmozExample
                     int i = 1;
                     for(CategoryRecord selectedCategory: selectedCategories)
                     {
-                        List <RectangleForm> rectangleForms = getRectanglesInCategory(dom, selectedCategory.getCategory());
-                        RectangleForm selectedRectangleForm = (RectangleForm) selectRandom(rectangleForms,1).get(0);
+                        List <RectangleFormLocal> rectangleForms = getRectanglesInCategory(dom, selectedCategory.getCategory());
+                        RectangleFormLocal selectedRectangleForm = (RectangleFormLocal) selectRandom(rectangleForms,1).get(0);
                         System.out.println("[ " + selectedCategory.getCategory() + " : " + selectedRectangleForm + " ]");
                         topicsWriter.write("<topic>");
                         topicsWriter.write("<num>" + i + "</num>");
                         topicsWriter.write("<category>" + selectedCategory.getCategory() + "</category>");
+                        topicsWriter.write("<locale>" + selectedRectangleForm.getLocale() + "</locale>");
                         topicsWriter.write("<boundingBox>");
-                        topicsWriter.write("<north>" + selectedRectangleForm.getNorth() + "</north>");
-                        topicsWriter.write("<west>" + selectedRectangleForm.getWest() + "</west>");
-                        topicsWriter.write("<south>" + selectedRectangleForm.getSouth() + "</south>");
-                        topicsWriter.write("<east>" + selectedRectangleForm.getEast() + "</east>");
+                        topicsWriter.write("<north>" + selectedRectangleForm.getRectangleForm().getNorth() + "</north>");
+                        topicsWriter.write("<west>" + selectedRectangleForm.getRectangleForm().getWest() + "</west>");
+                        topicsWriter.write("<south>" + selectedRectangleForm.getRectangleForm().getSouth() + "</south>");
+                        topicsWriter.write("<east>" + selectedRectangleForm.getRectangleForm().getEast() + "</east>");
                         topicsWriter.write("</boundingBox>");
                         topicsWriter.write("</topic>");
 
-                        List<String> docnums = getContainedRecords(dom,selectedCategory.getCategory(),selectedRectangleForm);
+                        List<String> docnums = getContainedRecords(dom,selectedCategory.getCategory(),selectedRectangleForm.getRectangleForm());
                         for(String docnum:docnums)
                         {
                             qrelsWriter.write(i + " 0 " + docnum + " 1\n");
@@ -529,13 +532,15 @@ public class DmozExample
             return allCategories;
         }
 
-        private static List<RectangleForm> getRectanglesInCategory(Document dom, String category)
+        private static List<RectangleFormLocal> getRectanglesInCategory(Document dom, String category)
         {
-            List<RectangleForm> rectangles = new ArrayList<RectangleForm>();
-            XPath xPathLocales = dom.createXPath("//ad[contains(dmozCategories,'" + category + "')]/yPlace/boundingBox");
+            List<RectangleFormLocal> rectangles = new ArrayList<RectangleFormLocal>();
+            XPath xPathLocales = dom.createXPath("//ad[contains(dmozCategories,'" + category + "')]/yPlace");
             List<Node> nodes = xPathLocales.selectNodes(dom.getRootElement());
-            for(Node n: nodes)
+            for(Node place: nodes)
             {
+                Element name = (Element) place.selectSingleNode("name");
+                Element n = (Element) place.selectSingleNode("boundingBox");
                 Element southWest = (Element) ((Element)n).selectSingleNode("southWest");
                 Element northEast = (Element) ((Element)n).selectSingleNode("northEast");
                 double latitudeSW = Double.parseDouble(southWest.selectSingleNode("latitude").getText());
@@ -543,14 +548,15 @@ public class DmozExample
                 double latitudeNE = Double.parseDouble(northEast.selectSingleNode("latitude").getText());
                 double longitudeNE = Double.parseDouble(northEast.selectSingleNode("longitude").getText());
                 RectangleForm rectangleForm = new RectangleForm(latitudeNE,longitudeSW,latitudeSW,longitudeNE);
-                rectangles.add(rectangleForm);
+                RectangleFormLocal rectangleFormLocal = new RectangleFormLocal(rectangleForm,name.getText());
+                rectangles.add(rectangleFormLocal);
             }
             System.out.println("=========================");
             System.out.println("Rectangles Found:");
             System.out.println("=========================");
-            for(RectangleForm rectangleForm: rectangles)
+            for(RectangleFormLocal rectangleFormLocal: rectangles)
             {
-                System.out.println(rectangleForm);
+                System.out.println(rectangleFormLocal.getLocale() + ":" + rectangleFormLocal.getRectangleForm());
             }
             return rectangles;
         }
@@ -678,6 +684,39 @@ public class DmozExample
             else if(s2.records < s1.records)
                 return 1;
             return 0;
+        }
+    }
+
+    public static class RectangleFormLocal
+    {
+        RectangleForm rectangleForm;
+        String locale;
+
+
+        public RectangleFormLocal(RectangleForm rectangleForm, String locale)
+        {
+            this.rectangleForm = rectangleForm;
+            this.locale = locale;
+        }
+
+        public RectangleForm getRectangleForm()
+        {
+            return rectangleForm;
+        }
+
+        public void setRectangleForm(RectangleForm rectangleForm)
+        {
+            this.rectangleForm = rectangleForm;
+        }
+
+        public String getLocale()
+        {
+            return locale;
+        }
+
+        public void setLocale(String locale)
+        {
+            this.locale = locale;
         }
     }
 

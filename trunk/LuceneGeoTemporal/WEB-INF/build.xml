@@ -186,9 +186,27 @@
         <antcall target="copyIndexesToDataDirs"/>
     </target>
 
+    <target name="build-test-index-dmoz" depends="" description="Index a Collection and run all the topics">
+        <mkdir dir="${webapp.path}/WEB-INF/dmoz/test-data/output"/>
+        <java fork="true" classname="pt.utl.ist.lucene.treceval.DmozExample" jvmargs="-server">
+            <classpath>
+                <fileset dir="${webapp.path}/WEB-INF/lib">
+                    <include name="**.jar" />
+                    <exclude name="servlet-api.jar" />
+                    <exclude name="jsp-api.jar" />
+                </fileset>
+            </classpath>
+            <classpath path="${webapp.path}/WEB-INF/classes" />
+            <arg value="${webapp.path}/WEB-INF/test-index" />
+            <arg value="${webapp.path}/WEB-INF/test-data" />
+        </java>
+        <antcall target="copyIndexesToDataDirs"/>
+    </target>
+
     <target name="build-test-index-digmap" depends="" description="Index a Collection and run all the topics">
         <mkdir dir="${webapp.path}/WEB-INF/test-data/digmap/output"/>
         <java fork="true" classname="pt.utl.ist.lucene.treceval.DigmapExample">
+
             <classpath>
                 <fileset dir="${webapp.path}/WEB-INF/lib">
                     <include name="**.jar" />
@@ -213,6 +231,13 @@
         <antcall target="build-test-index-cran"/>
         <antcall target="evaluation-metrics-cran" />
         <antcall target="significance-tests-cran" />
+    </target>
+    
+
+    <target name="build-test-index-dmoz-evaluate" depends="compile" description="Index a Collection and run all the topics">
+        <antcall target="build-test-index-dmoz"/>
+        <antcall target="evaluation-metrics-dmoz" />
+        <antcall target="significance-tests-dmoz" />
     </target>
 
     <target name="evaluation-metrics-brauncorpus" description="Generate trec_eval results">
@@ -264,6 +289,33 @@
                     <classpath path="${webapp.path}/WEB-INF/classes" />
                     <arg value="@{runfile}" />
                     <arg value="${webapp.path}/WEB-INF/test-data/cran/assessements/cran.qrels" />
+                </java>
+            </sequential>
+        </for>
+    </target>
+
+     <target name="evaluation-metrics-dmoz" description="Generate trec_eval results">
+        <for param="runfile">
+            <path>
+                <fileset dir="${webapp.path}/WEB-INF/test-data/dmoz/output/">
+                    <include name="*.txt" />
+                    <exclude name="*-treceval-report.txt" />
+                    <exclude name="*-significance-report.txt" />
+                </fileset>
+            </path>
+            <sequential>
+                <java fork="true" classname="ireval.Main" output="@{runfile}-treceval-report.txt">
+                    <classpath>
+                        <fileset dir="${webapp.path}/WEB-INF/lib">
+                            <include name="*.jar" />
+                        </fileset>
+                        <fileset dir="${base.dir}/lib">
+                            <include name="*.jar" />
+                        </fileset>
+                    </classpath>
+                    <classpath path="${webapp.path}/WEB-INF/classes" />
+                    <arg value="@{runfile}" />
+                    <arg value="${webapp.path}/WEB-INF/test-data/dmoz/assessements/qrels" />
                 </java>
             </sequential>
         </for>
@@ -341,7 +393,47 @@
                             <classpath path="${webapp.path}/WEB-INF/classes" />
                             <arg value="@{runfile}" />
                             <arg value="@{runfile2}" />
-                            <arg value="${webapp.path}/WEB-INF/test-data/cran/assessements/qrels.ac-gls.txt" />
+                            <arg value="${webapp.path}/WEB-INF/test-data/cran/assessements/cran.qrels" />
+                        </java>
+                    </sequential>
+                </for>
+            </sequential>
+        </for>
+    </target>
+
+    <target name="significance-tests-dmoz" description="Generate trec_eval results">
+        <for param="runfile">
+            <path>
+                <fileset dir="${webapp.path}/WEB-INF/test-data/dmoz/output/">
+                    <include name="*.txt" />
+                    <exclude name="*-treceval-report.txt" />
+                    <exclude name="*-significance-report.txt" />
+                </fileset>
+            </path>
+            <sequential>
+                <for param="runfile2">
+                    <path>
+                        <fileset dir="${webapp.path}/WEB-INF/test-data/dmoz/output/">
+                            <include name="*.txt" />
+                            <exclude name="*-treceval-report.txt" />
+                            <exclude name="*-significance-report.txt" />
+                            <exclude name="@{runfile}" />
+                        </fileset>
+                    </path>
+                    <sequential>
+                        <java fork="true" classname="ireval.Main">
+                            <classpath>
+                                <fileset dir="${webapp.path}/WEB-INF/lib">
+                                    <include name="**.jar" />
+                                </fileset>
+                                <fileset dir="${base.dir}/lib">
+                                    <include name="*.jar" />
+                                </fileset>
+                            </classpath>
+                            <classpath path="${webapp.path}/WEB-INF/classes" />
+                            <arg value="@{runfile}" />
+                            <arg value="@{runfile2}" />
+                            <arg value="${webapp.path}/WEB-INF/test-data/dmoz/assessements/qrels" />
                         </java>
                     </sequential>
                 </for>

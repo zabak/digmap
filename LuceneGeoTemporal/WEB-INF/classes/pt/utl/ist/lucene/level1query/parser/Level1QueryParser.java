@@ -297,6 +297,14 @@ public class Level1QueryParser
                     {
                         queryParams.setWestlimit(t.getValue());
                     }
+                    else if(spatialEnum == SpatialEnum.EXTRA_LATITUDE)
+                    {
+                        queryParams.addExtraLatitude(field, t.getValue());
+                    }
+                    else if(spatialEnum == SpatialEnum.EXTRA_LONGITUDE)
+                    {
+                        queryParams.addExtraLongitude(field, t.getValue());
+                    }
                 }
                 else
                 {
@@ -354,6 +362,10 @@ public class Level1QueryParser
                         else if (timeEnum == TimeEnum.RADIUM_MILISECONDS)
                         {
                             queryParams.setRadiumMiliseconds(t.getValue());
+                        }
+                        else if (timeEnum == TimeEnum.EXTRA_TIME)
+                        {
+                            queryParams.addExtraTime(field, t.getValue());
                         }
                     }
                     else

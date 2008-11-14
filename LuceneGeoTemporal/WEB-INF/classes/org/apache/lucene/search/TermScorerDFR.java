@@ -116,29 +116,38 @@ final class TermScorerDFR extends Scorer  {
 			case BB2DFRModel : sim = ((tfCollection+1)/(nt+(tfn+1))) * (-Math.log1p(collSize-1)-Math.log1p(Math.E)+stirlingFormula(tfCollection+collSize-1,tfCollection+collSize-tfn-2)-stirlingFormula(tfCollection,tfCollection+tfn)); break;
 			case OkapiBM25Model : sim = Math.log((collSize - tfCollection +0.5)/(tfCollection+0.5)) *((tfDoc*(k1+1))/(tfDoc+k1*(1+b+b*(collSize/avgLen)))); break;
 		}
-		return (float)sim;
+        if(sim < 0)
+            System.out.println(">>>>>>>>>>>>>>>>>>>>>>>FATAL  : PLEASE CHECK DFR Formulas similarity come negative for doc:" + doc + " term: " + term.text());
+        return (float)sim;
 	}
 	
-	private double stirlingFormula ( double m, double n ) {
+	private double stirlingFormula ( double m, double n )
+    {
 		return (m+0.5)*Math.log1p(n/m)+(n-m)*Math.log1p(n);		
 	}
 
-	public boolean skipTo(int target) throws IOException {
+	public boolean skipTo(int target) throws IOException
+    {
 		// first scan in cache
-		for (pointer++; pointer < pointerMax; pointer++) {
-			if (!(target > docs[pointer])) {
+		for (pointer++; pointer < pointerMax; pointer++)
+        {
+			if (!(target > docs[pointer]))
+            {
 				doc = docs[pointer];
 				return true;
 			}
 		}
 		// not found in cache, seek underlying stream
 		boolean result = termDocs.skipTo(target);
-		if (result) {
+		if (result)
+        {
 			pointerMax = 1;
 			pointer = 0;
 			docs[pointer] = doc = termDocs.doc();
 			freqs[pointer] = termDocs.freq();
-		} else {
+		}
+        else
+        {
 			doc = Integer.MAX_VALUE;
 		}
 		return result;

@@ -17,6 +17,15 @@ public class RectangleForm implements UnknownForm
     private GeoPoint centroide;
     private double diagonal;
 
+    public RectangleForm(double north, double west, double south, double east, GeoPoint geoPoint)
+    {
+        this.north = north;
+        this.west = west;
+        this.south = south;
+        this.east = east;
+        diagonal = DistanceUtils.getDistanceMi(south, west, north, east);
+        centroide = geoPoint;
+    }
 
     public RectangleForm(double north, double west, double south, double east)
     {

@@ -85,7 +85,7 @@ public class TestDiferentModelsSIMPLE extends TestCase
             printQuery("jorge bruno in lisbon model:IFB2DFRModel",searcher);
             printQuery("jorge bruno in lisbon model:InL2DFRModel",searcher);
             printQuery("jorge bruno in lisbon model:PL2DFRModel",searcher);
-            printQuery("jorge bruno in lisbon model:BB2DFRModel",searcher);
+            printQuery("Jorge Bruno in lisbon model:BB2DFRModel",searcher,true);
             printQuery("jorge bruno in lisbon model:bm25",searcher);
 
 
@@ -98,11 +98,18 @@ public class TestDiferentModelsSIMPLE extends TestCase
     }
 
     private void printQuery(String query,LgteIndexSearcherWrapper searcherWrapper) throws IOException, ParseException
+
+    {
+            printQuery(query,searcherWrapper,false);
+    }
+
+    private void printQuery(String query,LgteIndexSearcherWrapper searcherWrapper,boolean ignore3) throws IOException, ParseException
     {
         LgteHits lgteHits = searcherWrapper.search(query);
         System.out.println(query);
         System.out.println(lgteHits.doc(0).get("id") + " - " + lgteHits.score(0));
         System.out.println(lgteHits.doc(1).get("id") + " - " + lgteHits.score(1));
-        System.out.println(lgteHits.doc(2).get("id") + " - " + lgteHits.score(2));
+        if(!ignore3)
+            System.out.println(lgteHits.doc(2).get("id") + " - " + lgteHits.score(2));
     }
 }

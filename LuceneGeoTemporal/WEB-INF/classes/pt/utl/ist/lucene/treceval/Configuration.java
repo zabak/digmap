@@ -43,6 +43,7 @@ public class Configuration
 
    
 
+    public boolean createIndex = true;
     public String version;
     private String dir;
     private String collectionId;
@@ -58,8 +59,14 @@ public class Configuration
     private int maxResultsPerTopic;
 
 
+    public Configuration(String collectionPath, ICollectionPreprocessor preprocessor, String outputDir)
+    {
+        this.collectionPath = collectionPath;
+        this.preprocessor = preprocessor;
+        this.outputDir = outputDir;
+    }
 
-    Configuration(String version, String collectionId,String dir, Model model, Analyzer analyzer, String collectionPath, ICollectionPreprocessor preprocessor, String topicsPath, ITopicsPreprocessor iTopicsProcessor,String defaultSearchField, HashSet stop, String outputDir, int maxResultsPerTopic)
+    public Configuration(String version, String collectionId,String dir, Model model, Analyzer analyzer, String collectionPath, ICollectionPreprocessor preprocessor, String topicsPath, ITopicsPreprocessor iTopicsProcessor,String defaultSearchField, HashSet stop, String outputDir, int maxResultsPerTopic)
     {
         this.version = version;
         this.collectionId = collectionId;
@@ -147,5 +154,15 @@ public class Configuration
     public int getMaxResultsPerTopic()
     {
         return maxResultsPerTopic;
+    }
+
+    public boolean isCreateIndex()
+    {
+        return createIndex;
+    }
+
+    public void setCreateIndex(boolean createIndex)
+    {
+        this.createIndex = createIndex;
     }
 }

@@ -38,6 +38,29 @@ public class XmlUtils
         }
     }
 
+    public static String escape(String text)
+    {
+        if(text == null)
+            return null;
+        StringBuilder stringBuilder = new StringBuilder();
+        for(int i=0;i<text.length();i++)
+        {
+            if (text.charAt(i) == '<')
+            {
+                stringBuilder.append("&lt;");
+            }
+            else if (text.charAt(i) == '>')
+            {
+                stringBuilder.append("&gt;");
+            }
+            else
+            {
+                stringBuilder.append(text.charAt(i));
+            }
+        }
+        return stringBuilder.toString();
+    }
+
     public static void main(String [] args) throws MalformedURLException, DocumentException
     {
         System.out.println(getFragment("c:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\classes\\test-data\\documents\\GLS-1620.xml","//DOC[contains(DOCNO,'GLS-01-01-04']')]",null));

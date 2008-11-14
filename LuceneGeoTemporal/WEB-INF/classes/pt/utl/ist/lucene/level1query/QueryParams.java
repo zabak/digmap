@@ -2,9 +2,13 @@ package pt.utl.ist.lucene.level1query;
 
 import org.apache.log4j.Logger;
 import pt.utl.ist.lucene.*;
+import pt.utl.ist.lucene.forms.GeoPoint;
+import pt.utl.ist.lucene.forms.RectangleForm;
 import pt.utl.ist.lucene.utils.Dates;
 
-import java.util.GregorianCalendar;
+import java.util.*;
+
+import com.pjaol.search.geo.utils.DistanceUtils;
 
 /**
  * @author Jorge Machado
@@ -24,6 +28,11 @@ public class QueryParams
     //Geographic center searchCallback point
     double latitude = QueryParams.SPATIAL_INVALID_VALUE;
     double longitude = QueryParams.SPATIAL_INVALID_VALUE;
+    Map<String,Double> extraLatitudes = new HashMap<String,Double>();
+    Map<String,Double> extraLongitudes = new HashMap<String,Double>();
+
+    Map<String,Long> extraTimes = new HashMap<String,Long>();
+
     //Geographic circle searchCallback limit
     double radium = -1;
     //Geographic searchCallback limit
@@ -50,10 +59,71 @@ public class QueryParams
     Model model = null;
 
 
+    //Computed Parameters
+    double diagonal = -1;
+    GeoPoint centroide = null;
+    RectangleForm rectangleForm = null;
+
+
     public QueryParams()
     {
     }
 
+    public double getDiagonal()
+    {
+        if(diagonal < 0)
+        {
+            if(isRadium())
+            {
+                diagonal = 2 * radium;
+            }
+            else if(isSpatialBox())
+            {
+                diagonal = DistanceUtils.orthodromicDistance(southlimit,westlimit,northlimit,eastlimit);
+            }
+            else
+            {
+                logger.warn(">>>>>>>>>>>>>>>Diagonal impossible to compute no BOX or Radium");
+            }
+        }
+        return diagonal;
+    }
+
+    public GeoPoint getCentroide()
+    {
+        if(centroide == null)
+        {
+            if(isSpatialPoint())
+            {
+                centroide = new GeoPoint(latitude,longitude);
+            }
+            else if(isSpatialBox())
+            {
+                return getRectangleForm().getCentroide();
+            }
+            else
+            {
+                logger.warn(">>>>>>>>>>>>>>>Centroide impossible to compute, no Spatial Box or Point");
+            }
+        }
+        return centroide;
+    }
+
+    public RectangleForm getRectangleForm()
+    {
+        if(rectangleForm == null)
+        {
+            if(isSpatialBox())
+            {
+                rectangleForm = new RectangleForm(northlimit, westlimit,southlimit,eastlimit);
+            }
+            else
+            {
+                logger.warn(">>>>>>>>>>>>>>>Centroide impossible to compute no Rectangle Form");
+            }
+        }
+        return rectangleForm;
+    }
 
     public QueryConfiguration getQueryConfiguration()
     {
@@ -573,6 +643,8 @@ public class QueryParams
             {
                 filter = FilterEnum.parse(queryConfiguration.getProperty("lgte.default.filter"));
             }
+            if(filter == null)
+                filter = FilterEnum.parse(null);
         }
         return filter;
     }
@@ -595,6 +667,8 @@ public class QueryParams
             {
                 order = OrderEnum.parse(queryConfiguration.getProperty("lgte.default.order"));
             }
+            if(order == null)
+                order  = OrderEnum.parse(null);
         }
         return order;
     }
@@ -624,4 +698,61 @@ public class QueryParams
     {
         this.model = Model.parse(model);
     }
+
+
+    public Map<String,Double> getExtraLongitudes()
+    {
+        return extraLongitudes;
+    }
+
+    public Map<String,Double>  getExtraLatitudes()
+    {
+        return extraLatitudes;
+    }
+
+    public void addExtraLatitude(String name,String value)
+    {
+        if (value != null)
+            try
+            {
+                double extraLatitude = Double.parseDouble(value);
+                extraLatitudes.put(name,extraLatitude);
+            }
+            catch (NumberFormatException e)
+            {
+                logger.error(e, e);
+            }
+    }
+
+    public void addExtraLongitude(String name,String value)
+    {
+        if (value != null)
+            try
+            {
+                double extraLongitude = Double.parseDouble(value);
+                extraLongitudes.put(name,extraLongitude);
+            }
+            catch (NumberFormatException e)
+            {
+                logger.error(e, e);
+            }
+    }
+
+
+    public Map<String, Long> getExtraTimes()
+    {
+        return extraTimes;
+    }
+
+    public void addExtraTime(String name,String value)
+    {
+        GregorianCalendar c1 = Dates.getGregorianCalendar(value);
+        addExtraTimeMiliseconds(name,c1.getTimeInMillis());
+    }
+
+    public void addExtraTimeMiliseconds(String name,long value)
+    {
+        extraTimes.put(name,value);
+    }
+
 }

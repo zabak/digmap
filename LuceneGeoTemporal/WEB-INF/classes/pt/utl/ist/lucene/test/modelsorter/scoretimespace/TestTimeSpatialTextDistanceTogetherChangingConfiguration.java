@@ -103,6 +103,7 @@ public class TestTimeSpatialTextDistanceTogetherChangingConfiguration extends Te
             //document 3 is very far away and will see score at about 0.5
             lgteHits = searcher.search(lgteQuery);
             assertTrue(lgteHits.length() == 4);
+            lgteHits.spatialScore(0);
             assertEquals(lgteHits.doc(0).get("id"),"2");
             assertEquals(lgteHits.doc(1).get("id"),"1");
             assertEquals(lgteHits.doc(2).get("id"),"4");

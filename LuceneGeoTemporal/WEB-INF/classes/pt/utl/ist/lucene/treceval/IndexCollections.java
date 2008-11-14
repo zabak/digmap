@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.analysis.ngram.EdgeNGramTokenFilter;
 import org.dom4j.DocumentException;
 import pt.utl.ist.lucene.LgteDocumentWrapper;
 import pt.utl.ist.lucene.LgteIndexWriter;
@@ -41,6 +42,25 @@ public class IndexCollections implements IndexFilesCallBack
     public static LgteAnalyzerManager.LanguagePackage de;
     public static LgteAnalyzerManager.LanguagePackage du;
 
+    public static LgteAnalyzerManager.LanguagePackage ptStop4gramsStem;
+    public static LgteAnalyzerManager.LanguagePackage enStop4gramsStem;
+    public static LgteAnalyzerManager.LanguagePackage frStop4gramsStem;
+    public static LgteAnalyzerManager.LanguagePackage deStop4gramsStem;
+    public static LgteAnalyzerManager.LanguagePackage duStop4gramsStem;
+
+    public static LgteAnalyzerManager.LanguagePackage ptStop5gramsStem;
+    public static LgteAnalyzerManager.LanguagePackage enStop5gramsStem;
+    public static LgteAnalyzerManager.LanguagePackage frStop5gramsStem;
+    public static LgteAnalyzerManager.LanguagePackage deStop5gramsStem;
+    public static LgteAnalyzerManager.LanguagePackage duStop5gramsStem;
+
+    public static LgteAnalyzerManager.LanguagePackage n4gramsStem;
+    public static LgteAnalyzerManager.LanguagePackage n5gramsStem;
+
+    public static LgteAnalyzerManager.LanguagePackage n3_6gramsStem;
+    public static LgteAnalyzerManager.LanguagePackage n3_6gramsFrontEdjeStem;
+
+
     /**
      * Language Packages provide Analyser with stemming and with out stemming with a given list of stopwords
      * See etc package. All stopwords will be copied to build dir in order to be independent of the platform
@@ -54,6 +74,24 @@ public class IndexCollections implements IndexFilesCallBack
             fr = LgteAnalyzerManager.getInstance().getLanguagePackage("French", "snowball-french.list");
             de = LgteAnalyzerManager.getInstance().getLanguagePackage("German", "snowball-german.list");
             du = LgteAnalyzerManager.getInstance().getLanguagePackage("Dutch", "snowball-dutch.list");
+
+            ptStop4gramsStem = LgteAnalyzerManager.getInstance().getLanguagePackage(4, "stopwords_por.txt");
+            enStop4gramsStem = LgteAnalyzerManager.getInstance().getLanguagePackage(4, "snowball-english.list");
+            frStop4gramsStem = LgteAnalyzerManager.getInstance().getLanguagePackage(4, "snowball-french.list");
+            deStop4gramsStem = LgteAnalyzerManager.getInstance().getLanguagePackage(4, "snowball-german.list");
+            duStop4gramsStem = LgteAnalyzerManager.getInstance().getLanguagePackage(4, "snowball-dutch.list");
+
+            ptStop5gramsStem = LgteAnalyzerManager.getInstance().getLanguagePackage(5, "stopwords_por.txt");
+            enStop5gramsStem = LgteAnalyzerManager.getInstance().getLanguagePackage(5, "snowball-english.list");
+            frStop5gramsStem = LgteAnalyzerManager.getInstance().getLanguagePackage(5, "snowball-french.list");
+            deStop5gramsStem = LgteAnalyzerManager.getInstance().getLanguagePackage(5, "snowball-german.list");
+            duStop5gramsStem = LgteAnalyzerManager.getInstance().getLanguagePackage(5, "snowball-dutch.list");
+
+            n4gramsStem =  LgteAnalyzerManager.getInstance().getLanguagePackage(4);
+            n5gramsStem =  LgteAnalyzerManager.getInstance().getLanguagePackage(5);
+
+            n3_6gramsStem =  LgteAnalyzerManager.getInstance().getLanguagePackage(3,6);
+            n3_6gramsFrontEdjeStem =  LgteAnalyzerManager.getInstance().getLanguagePackage(3,6, EdgeNGramTokenFilter.Side.FRONT);
         }
         catch (IOException e)
         {
@@ -93,7 +131,7 @@ public class IndexCollections implements IndexFilesCallBack
     {
         new File(c.getIndexPath()).mkdirs();
         //using LGTE writer to abstract from index Model, Temporal and Spatial details.
-        writer = new LgteIndexWriter(c.getIndexPath(), c.getAnalyzer(), true, c.getModel());
+        writer = new LgteIndexWriter(c.getIndexPath(), c.getAnalyzer(), c.isCreateIndex(), c.getModel());
         c.getPreprocessor().handle(c.getCollectionPath(), this);
         indexDocs(writer);
         docs.clear();

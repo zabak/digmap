@@ -27,8 +27,7 @@ public class SigmoidSpatialScoreDocComparator implements SpatialDistancesScoreDo
 {
     private static final Logger logger = Logger.getLogger(SigmoidSpatialScoreDocComparator.class);
 
-    public int radiumStrategy = ConfigProperties.getIntProperty("sigmoide.radium.strategy");
-    public boolean useOnlyBoundaryBoxes = ConfigProperties.getBooleanProperty("sigmoide.use.only.boundary.boxes");
+
     public double alfa;
     public double alfa2;
     public double beta;
@@ -37,14 +36,21 @@ public class SigmoidSpatialScoreDocComparator implements SpatialDistancesScoreDo
 
     //this index is directly used from lucene CacheField
     String[] diagonalIndex;
+    String[] internalCircleRadiumIndex;
 
     static String biggerDiagonalCacheKey = "biggerDiagonalCacheKey";
     static String twiceBiggerDiagonalCacheKey = "twiceBiggerDiagonalCacheKey";
 
+    static String biggerRadiumCacheKey = "biggerDiagonalCacheKey";
+
     Double biggerDiagonal = null;
     Double twiceBiggerDiagonal = null;
+    Double halfBiggerDiagonal = null;
 
-    static Double halfEarthRadium = 3000.0;
+    Double biggerInternalCircleRadium = null;
+
+    ISpatialScoreStrategy strategy = null;
+    
 
     private void initBiggerDiagonal(IndexReader reader) throws IOException
     {
@@ -70,10 +76,35 @@ public class SigmoidSpatialScoreDocComparator implements SpatialDistancesScoreDo
                     logger.info("Found bigger spatial width:" + biggerDiagonal);
                 }
                 twiceBiggerDiagonal = 2*biggerDiagonal;
+                halfBiggerDiagonal = biggerDiagonal / ((double )2);
                 logger.info("defining twice bigger spatial width:" + twiceBiggerDiagonal);
                 termEnum.close();
                 IndexReaderPersistentCache.put(biggerDiagonalCacheKey,biggerDiagonal,reader);
                 IndexReaderPersistentCache.put(twiceBiggerDiagonalCacheKey,twiceBiggerDiagonal,reader);
+            }
+        }
+
+        if(biggerInternalCircleRadium == null)
+        {
+            biggerInternalCircleRadium = (Double) IndexReaderPersistentCache.get(reader,biggerRadiumCacheKey);
+            if(biggerInternalCircleRadium == null)
+            {
+                biggerInternalCircleRadium = 0.0;
+                Term last = null;
+                TermEnum termEnum = reader.terms(new Term(Globals.LUCENE_RADIUM_INDEX,""));
+                if(termEnum.term() != null && termEnum.term().field().equals(Globals.LUCENE_RADIUM_INDEX))
+                    last = termEnum.term();
+                if(termEnum.term() != null)
+                    while(termEnum.next())
+                        if(termEnum.term().field().equals(Globals.LUCENE_RADIUM_INDEX))
+                            last = termEnum.term();
+                if(last != null)
+                {
+                    biggerInternalCircleRadium = NumberUtils.SortableStr2double(last.text());
+                    logger.info("Found bigger spatial width:" + biggerInternalCircleRadium);
+                }
+                termEnum.close();
+                IndexReaderPersistentCache.put(biggerRadiumCacheKey,biggerInternalCircleRadium,reader);
             }
         }
     }
@@ -83,6 +114,7 @@ public class SigmoidSpatialScoreDocComparator implements SpatialDistancesScoreDo
         initBiggerDiagonal(reader);
         //This line must be after initBiggerDiagonal to lucene can put vales in cache
         diagonalIndex = FieldCache.DEFAULT.getStrings(reader, Globals.LUCENE_DIAGONAL_INDEX);
+        internalCircleRadiumIndex = FieldCache.DEFAULT.getStrings(reader, Globals.LUCENE_RADIUM_INDEX); 
     }
 
     //Will not be used by us
@@ -96,43 +128,43 @@ public class SigmoidSpatialScoreDocComparator implements SpatialDistancesScoreDo
         return 0;
     }
 
-    public Comparable sortValue(ScoreDoc scoreDoc)
+    private void initStrategy()
     {
-        if(iSpatialDistancesWrapper == null || iSpatialDistancesWrapper.getSpaceDistances() == null)
-            return 1f;
-        Double distance = iSpatialDistancesWrapper.getSpaceDistance(scoreDoc.doc);
-        if(distance != null)
+        if(strategy == null)
         {
-            String diagonalStr = diagonalIndex[scoreDoc.doc];
-            if(diagonalStr != null)
+            String startegyClassName;
+            if(queryParams != null)
             {
-                double diagonal = NumberUtils.SortableStr2double(diagonalStr);
-                float areaScore = ((Double)GeoUtils.distancePointAreaMapExpDDmbr(distance,diagonal)).floatValue();
-                if(!useOnlyBoundaryBoxes && queryParams.getRadium() > 0)
-                {
-                    float sigmoidScore = ((Double)GeoUtils.sigmoideDistanceRadium(distance,queryParams.getRadiumMiles(),alfa,beta)).floatValue();
-                    return sigmoidScore > areaScore? sigmoidScore : areaScore;
-                }
-                return areaScore;
-            }
-            else if(diagonalStr == null && useOnlyBoundaryBoxes)
-            {
-                logger.error(">>>>>>> Using only boundary boxes and diagonal comming NULL doc:" + scoreDoc.doc);
-            }
-            else if(queryParams.getRadium() > 0 && queryParams.getRadium() != Integer.MAX_VALUE)
-            {
-                return ((Double)GeoUtils.sigmoideDistanceRadium(distance,queryParams.getRadiumMiles(),alfa,beta)).floatValue();
-            }
-            else if(twiceBiggerDiagonal > 0)
-            {
-                return ((Double)GeoUtils.sigmoideDistanceRadium(distance,twiceBiggerDiagonal,alfa2,beta)).floatValue();
+                startegyClassName = queryParams.getQueryConfiguration().getProperty("spatial.score.strategy");
             }
             else
             {
-                return ((Double)GeoUtils.sigmoideDistanceRadium(distance,halfEarthRadium,alfa2,beta)).floatValue();
+                startegyClassName = ConfigProperties.getProperty("spatial.score.strategy");
             }
+            try
+            {
+                strategy = (ISpatialScoreStrategy) Class.forName(startegyClassName).newInstance();
+            }
+            catch (ClassNotFoundException e)
+            {
+                logger.error(e,e);
+            }
+            catch (IllegalAccessException e)
+            {
+                logger.error(e,e);
+            }
+            catch (InstantiationException e)
+            {
+                logger.error(e,e);
+            }
+            strategy.init(biggerDiagonal,queryParams,iSpatialDistancesWrapper,diagonalIndex,internalCircleRadiumIndex);
         }
-        return 0f;
+    }
+
+    public Comparable sortValue(ScoreDoc scoreDoc)
+    {
+        initStrategy();
+        return strategy.sortValue(scoreDoc);
     }
 
     public int sortType()
@@ -158,6 +190,8 @@ public class SigmoidSpatialScoreDocComparator implements SpatialDistancesScoreDo
 
     public void addQueryParams(QueryParams queryParams)
     {
+        //restart strategy
+        strategy = null;
         this.queryParams = queryParams;
         alfa = queryParams.getQueryConfiguration().getDoubleProperty("sigmoide.distance.alfa");
         beta = queryParams.getQueryConfiguration().getDoubleProperty("sigmoide.distance.beta");

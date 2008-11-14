@@ -29,10 +29,18 @@ public class SimpleXmlFieldHandler implements XmlFieldHandler
         this.fieldName = fieldName;
     }
 
+    public SimpleXmlFieldHandler(String fieldXpath, FieldFilter fieldFilter)
+    {
+        this.fieldXpath = fieldXpath;
+        this.fieldFilter = fieldFilter;
+    }
+
+
     public FilteredFields getFields(Node element)
     {
         return fieldFilter.filter(element,fieldName);
     }
+
 
     public String getFieldXpath()
     {

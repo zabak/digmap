@@ -87,7 +87,7 @@ public class SearchTopics implements ISearchCallBack
         {
             String stem = "no";
             if(configuration.getDir().indexOf("stem")>=0)
-                stem="yes";
+                stem=configuration.getDir();
             configuration.getITopicsProcessor().handle(configuration.getTopicsPath(), this, configuration.getModel().getShortName() + "-Stemming_" + stem + "-qe_" + searchConfiguration.getQueryConfiguration().getForceQE() +filter+order, run, configuration.getCollectionId(), configuration.getOutputDir());
         }
         catch (MalformedURLException e)

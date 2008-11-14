@@ -113,4 +113,25 @@ public class Dom4jUtil
         writer.write( document );
         writer.close();
     }
+    public static void write(Element document,Writer writerW) throws IOException
+    {
+        // lets write to a file
+        XMLWriter writer = new XMLWriter(writerW);
+        writer.write( document );
+        writer.close();
+    }
+
+    public static void writeDontCloseStream(Element document,Writer writerW) throws IOException
+    {
+        // lets write to a file
+        XMLWriter writer = new XMLWriter(writerW);
+        writer.write( document );
+    }
+
+    public static void writeDontCloseStream(Element document,OutputStream stream) throws IOException
+    {
+        // lets write to a file
+        XMLWriter writer = new XMLWriter(stream);
+        writer.write( document );
+    }
 }

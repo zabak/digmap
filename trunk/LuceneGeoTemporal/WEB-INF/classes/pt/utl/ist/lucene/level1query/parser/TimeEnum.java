@@ -6,7 +6,7 @@ import pt.utl.ist.lucene.Globals;
  * @author Jorge Machado
  * @date 8/Jun/2008
  * @time 3:04:45
- * @see clef
+ * @see 
  */
 public enum TimeEnum
 {
@@ -22,7 +22,9 @@ public enum TimeEnum
     RADIUM_HOURS(Globals.LUCENE_RADIUMTIME_HOURS_FIELD_QUERY),
     RADIUM_MINUTES(Globals.LUCENE_RADIUMTIME_MINUTES_FIELD_QUERY),
     RADIUM_SECONDS(Globals.LUCENE_RADIUMTIME_SECONDS_FIELD_QUERY),
-    RADIUM_MILISECONDS(Globals.LUCENE_RADIUMTIME_MILISECONDS_FIELD_QUERY);
+    RADIUM_MILISECONDS(Globals.LUCENE_RADIUMTIME_MILISECONDS_FIELD_QUERY),
+
+    EXTRA_TIME("***");
 
 
     private String name;
@@ -41,6 +43,8 @@ public enum TimeEnum
             if(orderEnum.name.equals(name))
                 return orderEnum;
         }
+        if(name.startsWith(TIME.getName()))
+            return EXTRA_TIME;
         return null;
     }
 

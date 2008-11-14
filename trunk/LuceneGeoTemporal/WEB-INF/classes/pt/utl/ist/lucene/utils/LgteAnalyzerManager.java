@@ -1,6 +1,7 @@
 package pt.utl.ist.lucene.utils;
 
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.ngram.EdgeNGramTokenFilter;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -59,6 +60,71 @@ public class LgteAnalyzerManager
         languageCache.put(key,languagePackage);
         return languagePackage;
     }
+
+    public LanguagePackage getLanguagePackage(int grams, String stopwordsFile) throws IOException
+    {
+        String key = grams + "-" + stopwordsFile;
+        LanguagePackage languagePackage = languageCache.get(key);
+        if(languagePackage != null) return languagePackage;
+        InputStream file = LgteAnalyzerManager.class.getResourceAsStream(stopwordsFile);
+        HashSet<String> stop = new HashSet<String>();
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(file));
+        String line;
+        while((line = bufferedReader.readLine()) != null) {
+            line = line.trim();
+            if(line.length()>0) {
+                stop.add(line);
+            }
+        }
+        Object[] obj = stop.toArray();
+        String[] strs = new String[obj.length];
+        for (int i = 0; i < obj.length; i++) {
+            strs[i] = obj[i].toString();
+        }
+        Analyzer analyzer = new pt.utl.ist.lucene.analyzer.LgteAnalyzer(strs);
+        Analyzer analyzerStemming = new LgteStemAnalyzer(grams, strs);
+        languagePackage = new LanguagePackage(stop, analyzer, analyzerStemming);
+        languageCache.put(key,languagePackage);
+        return languagePackage;
+    }
+
+    public LanguagePackage getLanguagePackage(int grams) throws IOException
+    {
+        String key = grams + "";
+        LanguagePackage languagePackage = languageCache.get(key);
+        if(languagePackage != null) return languagePackage;
+
+        Analyzer analyzerStemming = new LgteStemAnalyzer(grams);
+        languagePackage = new LanguagePackage(null, null, analyzerStemming);
+        languageCache.put(key,languagePackage);
+        return languagePackage;
+    }
+
+    public LanguagePackage getLanguagePackage(int m, int n) throws IOException
+    {
+        String key = m + "-" + n;
+        LanguagePackage languagePackage = languageCache.get(key);
+        if(languagePackage != null) return languagePackage;
+
+        Analyzer analyzerStemming = new LgteStemAnalyzer(m,n);
+        languagePackage = new LanguagePackage(null, null, analyzerStemming);
+        languageCache.put(key,languagePackage);
+        return languagePackage;
+    }
+
+    public LanguagePackage getLanguagePackage(int m, int n, EdgeNGramTokenFilter.Side side) throws IOException
+    {
+        String key = m + "-" + n;
+        LanguagePackage languagePackage = languageCache.get(key);
+        if(languagePackage != null) return languagePackage;
+
+        Analyzer analyzerStemming = new LgteStemAnalyzer(m,n,side);
+        languagePackage = new LanguagePackage(null, null, analyzerStemming);
+        languageCache.put(key,languagePackage);
+        return languagePackage;
+    }
+
+    
 
     public void clear()
     {

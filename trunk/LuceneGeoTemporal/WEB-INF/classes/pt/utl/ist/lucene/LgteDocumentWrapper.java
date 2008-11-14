@@ -232,14 +232,23 @@ public class LgteDocumentWrapper
         double middleLatitude = GeoUtils.calcMiddleLatitude(north, south);
         double middleLongitude = GeoUtils.calcMiddleLongitude(west, east);
 
+        double sideLat = DistanceUtils.getDistanceMi(south,west,north,west);
+        double sideLng = DistanceUtils.getDistanceMi(south,west,south,east);
+        double smallSide = sideLat;
+        if(sideLat > sideLng)
+            smallSide = sideLng;
+        double radium = smallSide / ((double)2);
+
         List<Field> geoPointFields = getGeoPointFields(middleLatitude,middleLongitude);
 
+        geoPointFields.add(getField(Globals.LUCENE_RADIUM_ORIGINAL_INDEX,""+radium,true,false,false));
         geoPointFields.add(getField(Globals.LUCENE_DIAGONAL_ORIGINAL_INDEX,""+diagonal,true,false,false));
         geoPointFields.add(getField(Globals.LUCENE_NORTHLIMIT_ORGINAL_INDEX,""+north,true,false,false));
         geoPointFields.add(getField(Globals.LUCENE_SOUTHLIMIT_ORGINAL_INDEX,""+south,true,false,false));
         geoPointFields.add(getField(Globals.LUCENE_EASTLIMIT_ORGINAL_INDEX,""+east,true,false,false));
         geoPointFields.add(getField(Globals.LUCENE_WESTLIMIT_ORGINAL_INDEX,""+west,true,false,false));
-
+        
+        geoPointFields.add(getField(Globals.LUCENE_RADIUM_INDEX, NumberUtils.double2sortableStr(radium),false,true,false,true));
         geoPointFields.add(getField(Globals.LUCENE_DIAGONAL_INDEX, NumberUtils.double2sortableStr(diagonal),false,true,false,true));
         geoPointFields.add(getField(Globals.LUCENE_NORTHLIMIT_INDEX,NumberUtils.double2sortableStr(north),false,true,false,true));
         geoPointFields.add(getField(Globals.LUCENE_SOUTHLIMIT_INDEX,NumberUtils.double2sortableStr(south),false,true,false,true));
@@ -269,6 +278,11 @@ public class LgteDocumentWrapper
     {
         List<Field> fields = getGeoPointFields(latitude,longitude);
         addFields(fields);
+    }
+
+    public static List<Field> getGeoPointFields(GeoPoint geoPoint)
+    {
+        return getGeoPointFields(geoPoint.getLat(),geoPoint.getLng());
     }
 
     public static List<Field> getGeoPointFields(double latitude, double longitude)

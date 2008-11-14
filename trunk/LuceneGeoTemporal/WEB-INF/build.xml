@@ -25,7 +25,7 @@
         <delete dir="${build}" />
     </target>
 
-    <target name="compile" description="Compile web application" depends="clean">
+    <target name="compileClasses">
         <copy todir="${webapp.path}">
             <fileset dir="${webapp}">
                 <exclude name="${base.dir}/lib/servlet-api.jar" />
@@ -38,8 +38,8 @@
             <replacefilter token="@data.dir@" value="${base.dir}/test-data" />
         </replace>
         <jasper2 validateXml="false" uriroot="${webapp.path}" webXmlFragment="${webapp.path}/WEB-INF/generated_web.xml" addWebXmlMappings="true" outputDir="${webapp.path}/WEB-INF/classes" />
-        <mkdir dir="${webapp.path}/WEB-INF/classes" />
         <mkdir dir="${webapp.path}/WEB-INF/lib" />
+        <mkdir dir="${webapp.path}/WEB-INF/classes" />
         <javac destdir="${webapp.path}/WEB-INF/classes" optimize="off" debug="true" debuglevel="lines,vars,source" nowarn="true" deprecation="${compile.deprecation}" failonerror="false" srcdir="${webapp.path}/WEB-INF/classes" encoding="UTF-8" excludes="**/*.smap">
             <classpath>
                 <fileset dir="${webapp.path}/WEB-INF/lib">
@@ -56,6 +56,10 @@
         </javac>
         <delete file="${webapp.path}/WEB-INF/lib/servlet-api.jar" />
         <delete file="${webapp.path}/WEB-INF/lib/jsp-api.jar" />
+    </target>
+
+    <target name="compile" description="Compile web application" depends="clean">
+        <antcall target="compileClasses"/>
         <jar destfile="${webapp.path}.war" basedir="${webapp.path}" />
     </target>
 

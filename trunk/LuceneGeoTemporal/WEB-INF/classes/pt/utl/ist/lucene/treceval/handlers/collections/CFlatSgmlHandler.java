@@ -4,12 +4,14 @@ import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import pt.utl.ist.lucene.treceval.IndexFilesCallBack;
+import pt.utl.ist.lucene.treceval.Globals;
 import pt.utl.ist.lucene.treceval.handlers.ResourceHandler;
 import pt.utl.ist.lucene.treceval.util.EscapeChars;
 import pt.utl.ist.lucene.utils.Dom4jUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Properties;
 
 /**
@@ -38,12 +40,13 @@ public class CFlatSgmlHandler implements CDocumentHandler
 
     private String getXmlRootedDocument(InputStream stream) throws IOException
     {
-        byte[] buffer = new byte[1024];
+        char[] buffer = new char[1024];
         // decompress the file
         StringBuilder builder = new StringBuilder();
         builder.append("<?xml version=\"1.0\"?><docs>");
         int length;
-        while ((length = stream.read(buffer, 0, 1024)) != -1)
+        InputStreamReader r = new InputStreamReader(stream, Globals.COLLECTION_FILES_DEFAULT_ENCODING);
+        while ((length = r.read(buffer, 0, 1024)) != -1)
         {
             String newStr = EscapeChars.forXMLOnlySpecialInternal(new String(buffer, 0, length));
             builder.append(newStr);

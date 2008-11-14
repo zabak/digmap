@@ -18,7 +18,10 @@ public enum SpatialEnum
     WESTLIMIT(Globals.LUCENE_WESTLIMIT_FIELD_QUERY),
     RADIUM(Globals.LUCENE_RADIUM_FIELD_QUERY),
     RADIUM_MILES(Globals.LUCENE_RADIUM_MILES_FIELD_QUERY),
-    RADIUM_KM(Globals.LUCENE_RADIUM_KM_FIELD_QUERY);
+    RADIUM_KM(Globals.LUCENE_RADIUM_KM_FIELD_QUERY),
+
+    EXTRA_LATITUDE("***"),
+    EXTRA_LONGITUDE("***");
 
     private String name;
 
@@ -36,6 +39,10 @@ public enum SpatialEnum
             if(spatialEnum.name.equals(name))
                 return spatialEnum;
         }
+        if(name.startsWith(LATITUDE.getName()))
+            return EXTRA_LATITUDE;
+        else if(name.startsWith(LONGITUDE.getName()))
+            return EXTRA_LONGITUDE;
         return null;
     }
 

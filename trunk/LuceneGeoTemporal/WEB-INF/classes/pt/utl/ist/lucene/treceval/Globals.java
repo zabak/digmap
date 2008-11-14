@@ -12,5 +12,7 @@ public class Globals
     public static final String DOCUMENT_TITLE = "title";
     public static String DATA_DIR = pt.utl.ist.lucene.Globals.DATA_DIR;
     public static String INDEX_DIR = pt.utl.ist.lucene.Globals.INDEX_DIR;
+    public static String GZipDefaultContentType = "sgml";
+    public static String COLLECTION_FILES_DEFAULT_ENCODING = "ISO-8859-1";
 
 }

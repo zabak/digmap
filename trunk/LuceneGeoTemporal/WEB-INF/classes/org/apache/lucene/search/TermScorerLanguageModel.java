@@ -118,9 +118,7 @@ final class TermScorerLanguageModel extends Scorer {
         }
 		float tfDoc = freqs[pointer];
 		float sim =
-			(float) Math.log(
-                 1.0f + ((lambda * tfDoc * collSize) / 
-						((1.0f - lambda) * tfCollection * fieldLen)));
+			(float) Math.log(1.0f + ((lambda * tfDoc * collSize) /  ((1.0f - lambda) * tfCollection * fieldLen)));
 		sim /= log10;
 
 		return sim;

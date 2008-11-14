@@ -334,7 +334,6 @@ public class DmozExample
             fields.put("east",""+east);
             fields.put("west",""+west);
             return new FilteredFields(fields);
-
         }
     }
 

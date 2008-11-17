@@ -6,188 +6,187 @@ import java.awt.GraphicsConfiguration;
 import java.awt.Transparency;
 import java.awt.image.BufferedImage;
 import java.awt.image.renderable.ParameterBlock;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URL;
-import java.util.Properties;
+import java.util.concurrent.Future;
+
 import javax.imageio.ImageIO;
 import javax.media.jai.Interpolation;
 import javax.media.jai.JAI;
 
 public abstract class AbstractThumbnailMaker {
-	
-	protected static BufferedImage working;
-	
-	protected static final String PROPERTY_FILE = "htmlthumbnail.properties";
-	
-	protected static boolean initialized = false;
-	
-	protected static boolean nowait = false;
-	
-	protected static int timeout = 10000;
-	
-	protected static long waitTimeAfterRender = 0;
-	
-	protected static float compressionQuality = 0.95f;
-	
-	protected static String cacheDirectory = "/tmp/cache-thumbnails";
-	
-	protected static long cacheDuration = -1;
-	
-	protected String uri = null;
-	
-	protected InputStream connection = null;
-	
-	protected int width = 0, height = 0;
-	
-	protected float rotation = 0;
-	
-	protected byte transparency = 0;
-	
-	protected float transparencyWidth1 = 101;
-	
-	protected float transparencyWidth2 = 101;
-	
-	protected float transparencyHeight1 = 101;
-	
-	protected float transparencyHeight2 = 101;
-	
-	public AbstractThumbnailMaker(String uri, InputStream connection, int w, int h, byte t) {
-		this(uri,connection,w,h,t,0);
+	protected ThumbnailManager thumbnailManager = ThumbnailManager.INSTANCE;
+	protected ThumbnailConfig config = ThumbnailConfig.INSTANCE;
+	protected Cache cache = Cache.INSTANCE;
+	protected ThumbnailParams params = null;
+
+	public ThumbnailParams getParams() {
+		return params;
 	}
-	
-	public AbstractThumbnailMaker(String uri, InputStream connection, int w, int h, byte t, float rotation) {
-		this(uri,connection,w,h,t,101,101,101,101,0);
+
+	public void setParams(ThumbnailParams params) {
+		this.params = params;
 	}
-	
-	public AbstractThumbnailMaker(String uri, InputStream connection, int w, int h, byte t, float transparencyWidth1, float transparencyWidth2, float transparencyHeight1, float transparencyHeight2, float rotation) {
-		init();
-		this.uri = uri;
-		this.connection = connection;
-		this.width = w;
-		this.height = h;
-		this.transparency = t;
-		this.rotation = rotation;
-		this.transparencyWidth1 = transparencyWidth1;
-		this.transparencyWidth2 = transparencyWidth2;
-		this.transparencyHeight1 = transparencyHeight1;
-		this.transparencyHeight2 = transparencyHeight2;
-		if (transparency==0) transparency = (byte)255;
-		if (width==0 && height==0) width = 255;
+
+	public void makeAndUpdate(OutputStream out) throws Exception {
+		makeAndUpdate(out, params.uri);
 	}
 	
 	public void makeAndUpdate(OutputStream out, String url) throws Exception {
-		BufferedImage image = generateImage(false,nowait);
-		if (image == null) return;
-		try { putInCache(url,width,height,image,true); } catch ( Exception e ) { }
-		ImageIO.write(image, "png", out);
+		ThumbResult thumbResult = generateImage(false, config.nowait);
+
+		if (thumbResult == null || thumbResult.isEmpty()) {
+			return;
+		}
+		try {
+			if (thumbResult.getImage() != null) {
+				cache.putInCache(url, params.width, params.height, thumbResult.getImage(), true);
+			}
+		} catch (Exception e) {
+			// ignore
+		}
+		writeImageToOutput(out, thumbResult);
 	}
-	
+
+	private void writeImageToOutput(OutputStream out, ThumbResult result) throws IOException {
+		OutputStream bufferedOut = (out instanceof BufferedOutputStream ? out : new BufferedOutputStream(out));
+		
+		if (result.getImage() != null) {
+			ImageIO.write(result.getImage(), "png", bufferedOut);
+		} else {
+			InputStream inputStream = new BufferedInputStream(new FileInputStream(result.getImageFile()));
+			int c;
+			while ((c = inputStream.read()) != -1) {
+				bufferedOut.write(c);
+			}
+		}
+		bufferedOut.flush();
+	}
+
 	public void make(boolean useCache, OutputStream out) throws Exception {
-		BufferedImage image = generateImage(useCache, nowait);
-		if (image == null) return;
-		ImageIO.write(image, "png", out);
+		make(useCache, config.nowait, out);
 	}
 
 	public void make(boolean useCache, File file) throws Exception {
-		OutputStream out = new FileOutputStream(file);
-		make(useCache,nowait,out);
+		OutputStream out = new BufferedOutputStream(new FileOutputStream(file));
+		make(useCache, config.nowait, out);
+		out.flush();
 		out.close();
 	}
-	
+
 	public void make(boolean useCache, boolean nowait, OutputStream out) throws Exception {
-		BufferedImage image = generateImage(useCache, nowait);
-		if (image == null) return;
-		ImageIO.write(image, "png", out);
+		ThumbResult thumbResult = generateImage(useCache, nowait);
+		if (thumbResult == null || thumbResult.isEmpty()) {
+			return;
+		}
+		writeImageToOutput(out, thumbResult);
 	}
 
 	public void make(boolean useCache, boolean nowait, File file) throws Exception {
 		OutputStream out = new FileOutputStream(file);
-		make(useCache,nowait,out);
+		make(useCache, nowait, out);
 		out.close();
 	}
-	
-	protected static synchronized void init() {
-		if (initialized) return;
-		Properties properties = new Properties();
-		try {
-			working = ImageIO.read(new URL("http://127.0.0.1:8080/nail.map/Working.png"));
-			InputStream in = AbstractThumbnailMaker.class.getClassLoader().getResourceAsStream(PROPERTY_FILE);
-			properties.load(in);
-			in.close();
-			nowait = Boolean.parseBoolean(properties.getProperty("nail.map.nowait"));
-			timeout = Integer.parseInt(properties.getProperty("nail.map.timeout"));
-			waitTimeAfterRender = Long.parseLong(properties.getProperty("nail.map.waitTimeAfterRender"));
-			cacheDirectory = properties.getProperty("cache.path");
-			String durationStr = properties.getProperty("cache.duration");
-			String qualityStr = properties.getProperty("nail.map.compressionQuality");
-			if(cacheDirectory.endsWith(File.separator)) cacheDirectory = cacheDirectory.substring(0,cacheDirectory.length()-1);
-			if (qualityStr != null) compressionQuality = Float.parseFloat(qualityStr);
-			if (durationStr != null) cacheDuration = Long.parseLong(durationStr);
-			(new File(cacheDirectory)).mkdir();
-		} catch (Exception e) {
-			System.err.println("Unable to load properties for the thumbnails service. Using default.");
-		}
-		initialized = true;
-	}
-	
+
 	protected abstract BufferedImage getImage() throws Exception;
-	
-	protected BufferedImage generateImage(boolean useCache, int tempWidth, int tempHeight, byte tempTransparency) throws Exception {
-		return generateImage(useCache, nowait, tempWidth, tempHeight, tempTransparency);
-	}
-	
-	protected BufferedImage generateImage(boolean useCache, boolean nowait, int tempWidth, int tempHeight, byte tempTransparency) throws Exception {
-		int realWidth = width;
-		int realHeight = height;
-		byte realTransparency = transparency;
-		width = tempWidth;
-		height = tempHeight;
-		transparency = tempTransparency;
-		BufferedImage image = generateImage(useCache,nowait);
-		width = realWidth;
-		height = realHeight;
-		transparency = realTransparency;
-		return image;
-	}
-	
-	private BufferedImage generateImage(boolean useCache) throws Exception {
-		return generateImage(useCache,nowait);
+
+	protected ThumbResult generateImage(boolean useCache, int tempWidth, int tempHeight, byte tempTransparency)
+			throws Exception {
+		return generateImage(useCache, config.nowait, tempWidth, tempHeight, tempTransparency);
 	}
 
-	private BufferedImage generateImage(boolean useCache, boolean nowait) throws Exception {
+	protected ThumbResult generateImage(boolean useCache, boolean nowait, int tempWidth, int tempHeight,
+			byte tempTransparency) throws Exception {
+		int realWidth = params.width;
+		int realHeight = params.height;
+		byte realTransparency = params.transparency;
+		params.width = tempWidth;
+		params.height = tempHeight;
+		params.transparency = tempTransparency;
+		ThumbResult result = generateImage(useCache, nowait);
+		params.width = realWidth;
+		params.height = realHeight;
+		params.transparency = realTransparency;
+		return result;
+	}
+
+	protected ThumbResult generateImage(boolean useCache) throws Exception {
+		return generateImage(useCache, config.nowait);
+	}
+
+	private ThumbResult generateImage(boolean useCache, boolean nowait) throws Exception {
 		BufferedImage image = null;
-		boolean incache = false;
-		boolean addtransparency = true;
-		try { if(useCache) incache = ((image = getFromCache(uri,width,height))!=null); } catch (Exception e) { }
-		try { if(!incache || image==null) {
-			if(!nowait || !useCache) image = getImage(); else {
-				AsynchronosGenerator.getInstance().addRequest(this);
-				image = scaleImage(working);
-				addtransparency = false;
+		File imageFile = null;
+		
+		boolean useRotation = (params.rotation != 0 || params.rotation != Float.MAX_VALUE);
+		boolean useTransparency = (params.transparency > 0 && params.transparency < 255);
+		boolean postProcessImage = useRotation || useTransparency;
+		
+		try {
+			if (useCache) {
+				imageFile = cache.getImageFile(params.uri, params.width, params.height);
+				if (!imageFile.exists()) {
+					imageFile = null;
+				}
 			}
-		} } catch (Exception e) { }
-		try { if(!nowait && !incache && image!=null) putInCache(uri,width,height,image,false); } catch (Exception ex) { }
-		if(addtransparency) return transparencyAndRotateImage(image);
-		else return image;
+		} catch (Exception e) {
+			// ignore
+		}
+
+		try {
+			if (image == null && imageFile == null) {
+				boolean sync = !nowait;
+				Future<ThumbResult> executionResult = thumbnailManager.execute(this, sync, useCache);
+				
+				if (!nowait) {
+					ThumbResult thumbResult = executionResult.get();
+					image = thumbResult.getImage();
+					imageFile = thumbResult.getImageFile();
+				}
+				else {
+					image = scaleImage(config.working);
+					postProcessImage = false;
+				}
+			}
+		} catch (Exception e) {
+			// ignore
+		}
+		
+		if (postProcessImage) {
+			if (image == null && imageFile != null) {
+				image = ImageUtils.load(imageFile).getAsBufferedImage();
+			}
+			if (image != null) {
+				image = transparencyAndRotateImage(image);
+			}
+		}
+		return new ThumbResult(image, imageFile);
 	}
 
 	protected int getAutoHeight(BufferedImage bimage) {
-		return (int) (width * ((float) bimage.getHeight() / (float) bimage.getWidth()));
+		return (int) (params.width * ((float) bimage.getHeight() / (float) bimage.getWidth()));
 	}
-	
+
 	protected int getAutoWidth(BufferedImage bimage) {
-		return (int) (height * ((float) bimage.getWidth() / (float) bimage.getHeight()));
+		return (int) (params.height * ((float) bimage.getWidth() / (float) bimage.getHeight()));
 	}
-	
+
 	protected BufferedImage scaleImage(BufferedImage bimage) {
-		int height = (this.height == 0) ? getAutoHeight(bimage) : this.height;
-		int width = (this.width == 0) ? getAutoWidth(bimage) : this.width;
+		int width = 0;
+		int height = 0;
+		if (params.width == 0 && params.height == 0) {
+			width = bimage.getWidth();
+			height = bimage.getHeight();
+		} else {
+			height = (params.height == 0) ? getAutoHeight(bimage) : params.height;
+			width = (params.width == 0) ? getAutoWidth(bimage) : params.width;
+		}
 		if ((width != bimage.getWidth()) || (height != bimage.getHeight())) {
 			GraphicsConfiguration gc = bimage.createGraphics().getDeviceConfiguration();
 			BufferedImage out = gc.createCompatibleImage(width, height, Transparency.TRANSLUCENT);
@@ -199,12 +198,13 @@ public abstract class AbstractThumbnailMaker {
 		}
 		return bimage;
 	}
-	
-	protected BufferedImage rotateImage (BufferedImage img ) {
-		if (rotation==Float.MAX_VALUE || rotation == 0) return img;
-		float angle = (float)Math.toRadians(rotation);
-		float centerX = img.getWidth() / 2; 
-		float centerY = img.getHeight() / 2;  
+
+	protected BufferedImage rotateImage(BufferedImage img) {
+		if (params.rotation == Float.MAX_VALUE || params.rotation == 0)
+			return img;
+		float angle = (float) Math.toRadians(params.rotation);
+		float centerX = img.getWidth() / 2;
+		float centerY = img.getHeight() / 2;
 		ParameterBlock pb = new ParameterBlock();
 		pb.addSource(img);
 		pb.add(centerX);
@@ -213,61 +213,46 @@ public abstract class AbstractThumbnailMaker {
 		pb.add(Interpolation.getInstance(Interpolation.INTERP_NEAREST));
 		return JAI.create("rotate", pb).getAsBufferedImage();
 	}
-	
-	protected BufferedImage transparencyAndRotateImage ( BufferedImage img ) {
+
+	protected BufferedImage transparencyAndRotateImage(BufferedImage img) {
 		return rotateImage(addTransparency(img));
 	}
-	
-	protected BufferedImage addTransparency (BufferedImage img ) {
-		if (transparency==255) return img;
-		if(transparencyWidth1 <= transparencyWidth2 && 
-		   transparencyHeight1 <= transparencyHeight2 &&
-		   transparencyWidth1 <= 100 &&
-		   transparencyWidth2 <= 100 &&
-		   transparencyHeight1 <=100 &&
-		   transparencyHeight2 <=100) {	
-			int x1 = (int)(img.getWidth() * transparencyWidth1 / 100.0);
-			int x2 = (int)(img.getWidth() * transparencyWidth2 / 100.0);
-			int y1 = (int)(img.getHeight() * transparencyHeight1 / 100.0);
-			int y2 = (int)(img.getHeight() * transparencyHeight2 / 100.0);
+
+	protected BufferedImage addTransparency(BufferedImage img) {
+		if (params.transparency == 255) {
+			return img;
+		}
+
+		if (params.transparencyWidth1 <= params.transparencyWidth2
+				&& params.transparencyHeight1 <= params.transparencyHeight2 && params.transparencyWidth1 <= 100
+				&& params.transparencyWidth2 <= 100 && params.transparencyHeight1 <= 100
+				&& params.transparencyHeight2 <= 100) {
+			int x1 = (int) (img.getWidth() * params.transparencyWidth1 / 100.0);
+			int x2 = (int) (img.getWidth() * params.transparencyWidth2 / 100.0);
+			int y1 = (int) (img.getHeight() * params.transparencyHeight1 / 100.0);
+			int y2 = (int) (img.getHeight() * params.transparencyHeight2 / 100.0);
 			int rgb[] = new int[img.getWidth() * img.getHeight()];
+
 			img.getRGB(0, 0, img.getWidth(), img.getHeight(), rgb, 0, img.getWidth());
-			int _alpha = (transparency & 0xFF) << 24;
-			for(int i = 0; i < rgb.length; i++) rgb[i] = (rgb[i] & 0xFFFFFF) | _alpha;
-			img.setRGB(0,0,img.getWidth(),img.getHeight(), rgb, 0, img.getWidth());
-			for (int i=x1; i<x2; i++) for (int j=y1; j<y2; j++) img.setRGB(i, j, (img.getRGB(i, j) & 0xFFFFFF) | (0xFF << 24));
+			int _alpha = (params.transparency & 0xFF) << 24;
+			for (int i = 0; i < rgb.length; i++) {
+				rgb[i] = (rgb[i] & 0xFFFFFF) | _alpha;
+			}
+
+			img.setRGB(0, 0, img.getWidth(), img.getHeight(), rgb, 0, img.getWidth());
+			for (int i = x1; i < x2; i++) {
+				for (int j = y1; j < y2; j++) {
+					img.setRGB(i, j, (img.getRGB(i, j) & 0xFFFFFF) | (0xFF << 24));
+				}
+			}
 		} else {
 			int rgb[] = new int[img.getWidth() * img.getHeight()];
 			img.getRGB(0, 0, img.getWidth(), img.getHeight(), rgb, 0, img.getWidth());
-			int _alpha = (transparency & 0xFF) << 24;
-			for(int i = 0; i < rgb.length; i++) rgb[i] = (rgb[i] & 0xFFFFFF) | _alpha;
-			img.setRGB(0,0,img.getWidth(),img.getHeight(), rgb, 0, img.getWidth());
+			int _alpha = (params.transparency & 0xFF) << 24;
+			for (int i = 0; i < rgb.length; i++)
+				rgb[i] = (rgb[i] & 0xFFFFFF) | _alpha;
+			img.setRGB(0, 0, img.getWidth(), img.getHeight(), rgb, 0, img.getWidth());
 		}
 		return img;
 	}
-	
-	protected BufferedImage getFromCache ( String uri, int width, int height ) throws Exception {
-		String file = "0000" + (uri + width + height).hashCode();
-		String dir1 = file.substring(file.length()-2);
-		String dir2 = file.substring(file.length()-4,file.length()-2);
-		file = cacheDirectory+File.separator+dir1+File.separator+dir2+File.separator+file.substring(0,file.length()-4);
-		(new File(cacheDirectory+File.separator+dir1)).mkdir();
-		(new File(cacheDirectory+File.separator+dir1+File.separator+dir2)).mkdir();
-		long duration = (new DataInputStream(new FileInputStream(file+".duration"))).readLong();
-		if (duration!=-1 && duration<System.currentTimeMillis()) return null;
-		return ImageIO.read(new FileInputStream(file+".png"));
-	}
-	
-	protected synchronized void putInCache ( String uri, int width, int height, BufferedImage img, boolean forever ) throws Exception {
-		String file = "0000" + (uri + width + height).hashCode();
-		String dir1 = file.substring(file.length()-2);
-		String dir2 = file.substring(file.length()-4,file.length()-2);
-		file = cacheDirectory+File.separator+dir1+File.separator+dir2+File.separator+file.substring(0,file.length()-4);
-		(new File(cacheDirectory+File.separator+dir1)).mkdir();
-		(new File(cacheDirectory+File.separator+dir1+File.separator+dir2)).mkdir();
-		if(forever || cacheDuration<=0) (new DataOutputStream(new FileOutputStream(file+".duration"))).writeLong(-1);
-		else (new DataOutputStream(new FileOutputStream(file+".duration"))).writeLong(System.currentTimeMillis()+cacheDuration);
-		ImageIO.write(img,"png",new FileOutputStream(file+".png"));
-	}
-	
 }

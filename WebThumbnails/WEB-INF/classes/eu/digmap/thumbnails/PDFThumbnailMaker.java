@@ -17,20 +17,8 @@ public class PDFThumbnailMaker extends AbstractThumbnailMaker {
 	protected static final int PDF_RENDER_PAGE = 1;
 	protected static final int TEMP_COPY_BUFFER_SIZE = 8192;
 		
-	public PDFThumbnailMaker(String uri, InputStream connection, int width, int height, byte t) {
-		super(uri, connection, width, height, t);
-	}
-	
-	public PDFThumbnailMaker(String uri, InputStream connection, int width, int height, byte t, float rotation) {
-		super(uri, connection, width, height, t, rotation);
-	}
-	
-	public PDFThumbnailMaker(String uri, InputStream connection, int width, int height, byte t,  float transparencyWidth1, float transparencyWidth2, float transparencyHeight1, float transparencyHeight2, float rotation) {
-		super(uri, connection, width, height, t, transparencyWidth1, transparencyWidth2, transparencyHeight1, transparencyHeight2, rotation);
-	}
-		
 	protected BufferedImage getImage() throws Exception {
-		InputStream in = connection;
+		InputStream in = params.connection;
 		PDF pdf = (PDF) Behavior.getInstance("AdobePDF", "AdobePDF", null, null, null);	
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		byte[] buffer = new byte[TEMP_COPY_BUFFER_SIZE];

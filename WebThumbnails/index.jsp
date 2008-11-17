@@ -100,15 +100,22 @@
 		} catch(Exception e) {
 			response.sendError(500,"Service error: "+e.toString());
 		}
-	} if (url != null && url.equals("heatmap")) {		
+	} 
+	
+	else if (url != null && url.equals("heatmap")) {		
 		int width = request.getParameter("width")==null ?  0 : (new Integer(request.getParameter("width"))).intValue();
 		int height = request.getParameter("width")==null ? 0 : (new Integer(request.getParameter("height"))).intValue();
 		String data = request.getParameter("data");
 		response.setContentType("image/png");
 		OutputStream os = response.getOutputStream();
-		new HeatMapThumbnailMaker(url, width, height, (byte) 125, data).make(false, os);
+
+		HeatThumbnailParams params = new HeatThumbnailParams(url, width, height, (byte) 125, data);
+		HeatMapThumbnailMaker thumbnailMaker = new HeatMapThumbnailMaker();
+		thumbnailMaker.setParams(params);
+		thumbnailMaker.make(false, os);
 		os.close();
-	} else if (url != null && (url.equals("simplemap") || url.equals("reliefmap") || url.equals("oldmap") || url.equals("satellitemap") || url.equals("lightmap"))) {
+	} 
+	else if (url != null && (url.equals("simplemap") || url.equals("reliefmap") || url.equals("oldmap") || url.equals("satellitemap") || url.equals("lightmap"))) {
 		int width = request.getParameter("width")==null ?  0 : (new Integer(request.getParameter("width"))).intValue();
 		int height = request.getParameter("height")==null ?  0 : (new Integer(request.getParameter("height"))).intValue();
 		byte transparency = (byte)0;
@@ -137,9 +144,13 @@
 		float lon7 = request.getParameter("lon7")==null ? Float.MAX_VALUE : (new Float(request.getParameter("lon7"))).floatValue();
 		response.setContentType("image/png");
 		OutputStream os = response.getOutputStream();
-		new MapThumbnailMaker(url, width, height, transparency, lat, lon, lat1, lon1, lat2, lon2, lat3, lon3, cradius, lat4, lon4, lat5, lon5, lat6, lon6, lat7, lon7, radius).make(false, os);
+		MapThumbnailParams params = new MapThumbnailParams(url, width, height, transparency, lat, lon, lat1, lon1, lat2, lon2, lat3, lon3, cradius, lat4, lon4, lat5, lon5, lat6, lon6, lat7, lon7, radius);
+		MapThumbnailMaker thumbnailMaker = new MapThumbnailMaker();
+		thumbnailMaker.setParams(params);
+		thumbnailMaker.make(false, os);
 		os.close();
-	} else if (url != null && url.length() != 0) {
+	} 
+	else if (url != null && url.length() != 0) {
 		int width = request.getParameter("width")==null ?  0 : (new Integer(request.getParameter("width"))).intValue();
 		int height = request.getParameter("height")==null ?  0 : (new Integer(request.getParameter("height"))).intValue();
 		float rotation = request.getParameter("rotation")==null ?  0 : (new Float(request.getParameter("rotation"))).floatValue();
@@ -157,12 +168,17 @@
 		String replaceurl = request.getParameter("replaceurl");
 		response.setContentType("image/png");
 		OutputStream os = response.getOutputStream();
+		ThumbnailParams params = new ThumbnailParams(url, null, width, height, transparency, transparencyWidth1, transparencyWidth2, transparencyHeight1, transparencyHeight2, rotation);
+		AbstractThumbnailMaker thumbnailMaker = ThumbnailMakerFactory.getThumbnailMaker(params);
 		if (replaceurl == null || replaceurl.length() == 0) {
-			if(request.getParameter("nowait")!=null) ThumbnailMakerFactory.getThumbnailMaker(url, width, height, transparency, transparencyWidth1, transparencyWidth2, transparencyHeight1, transparencyHeight2, rotation).make(true, new Boolean(request.getParameter("nowait")).booleanValue(), os);
-			else ThumbnailMakerFactory.getThumbnailMaker(url, width, height, transparency, transparencyWidth1, transparencyWidth2, transparencyHeight1, transparencyHeight2, rotation).make(true, os);
+			if(request.getParameter("nowait")!=null) 
+				thumbnailMaker.make(true, new Boolean(request.getParameter("nowait")).booleanValue(), os);
+			else 
+				thumbnailMaker.make(true, os);
 		} else {
-			if (replaceurl.indexOf("://") == -1) replaceurl = "http://" + replaceurl;
-			ThumbnailMakerFactory.getThumbnailMaker(url, width, height, transparency, transparencyWidth1, transparencyWidth2, transparencyHeight1, transparencyHeight2, rotation).makeAndUpdate(os, replaceurl);
+			if (replaceurl.indexOf("://") == -1) 
+				replaceurl = "http://" + replaceurl;
+			thumbnailMaker.makeAndUpdate(os, replaceurl);
 		}
 		os.close();
 	} else if (MultipartFormDataRequest.isMultipartFormData(request)) {
@@ -187,12 +203,22 @@
 				String replaceurl = mrequest.getParameter("replaceurl");
 				response.setContentType("image/png");
 				OutputStream os = response.getOutputStream();
+				
+				ThumbnailParams params = new ThumbnailParams(file.getFileName(),file.getInpuStream(), width, height, transparency, transparencyWidth1, transparencyWidth2, transparencyHeight1, transparencyHeight2, rotation);
+				AbstractThumbnailMaker thumbnailMaker = new ImageThumbnailMaker();
+				thumbnailMaker.setParams(params);
+				
 				if (replaceurl == null || replaceurl.length() == 0) {
-					if(request.getParameter("nowait")!=null) new ImageThumbnailMaker(file.getFileName(),file.getInpuStream(), width, height, transparency, transparencyWidth1, transparencyWidth2, transparencyHeight1, transparencyHeight2, rotation).make(true, new Boolean(request.getParameter("nowait")).booleanValue(), os);
-					new ImageThumbnailMaker(file.getFileName(),file.getInpuStream(), width, height, transparency, transparencyWidth1, transparencyWidth2, transparencyHeight1, transparencyHeight2, rotation).make(true, os);
+					boolean nowait = 
+						request.getParameter("nowait") != null 
+						? new Boolean(request.getParameter("nowait")).booleanValue() 
+						: true;
+					thumbnailMaker.make(true, nowait, os);
 				} else {
-					if (replaceurl.indexOf("://") == -1) replaceurl = "http://" + replaceurl;
-					new ImageThumbnailMaker(file.getFileName(),file.getInpuStream(), width, height, transparency, transparencyWidth1, transparencyWidth2, transparencyHeight1, transparencyHeight2, rotation).makeAndUpdate(os, replaceurl);
+					if (replaceurl.indexOf("://") == -1) {
+						replaceurl = "http://" + replaceurl;
+					}
+					thumbnailMaker.makeAndUpdate(os, replaceurl);
 				}
 				os.close();
 			}

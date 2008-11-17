@@ -3,28 +3,26 @@ package eu.digmap.thumbnails;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
-public class HeatMapThumbnailMaker extends ImageThumbnailMaker {
+public class HeatMapThumbnailMaker extends AbstractThumbnailMaker {
 		
-	public double[][] data = HeatMapPanel.generateRandomData();
+	private HeatThumbnailParams params = null;
 	
-	public HeatMapThumbnailMaker(String url, int width, int height, byte t) {
-		super(null,null,width,height,t);
+	public HeatThumbnailParams getParams() {
+		return params;
 	}
-	
-	public HeatMapThumbnailMaker(String url, int width, int height, byte t, String data) {
-		this(url,width,height,t);
-		this.data=HeatMapPanel.generateData(data);
+
+	public void setParams(HeatThumbnailParams params) {
+		super.setParams(params);
+		this.params = params;
 	}
-	    
+
 	protected BufferedImage getImage() throws IOException {
-        HeatMapPanel panel = new HeatMapPanel(data, HeatMapPanel.GRADIENT_WHITE_TO_RED);
+        HeatMapPanel panel = new HeatMapPanel(params.data, HeatMapPanel.GRADIENT_WHITE_TO_RED);
         panel.setCoordinateBounds(0, 360, 0, 180);
-        panel.setSize(width,height);  
+        panel.setSize(params.width,params.height);  
         panel.setVisible(true);
 		panel.setOpaque(false);
-		BufferedImage bimage = panel.bufferedImage;
-		bimage = scaleImage(bimage);
-		return bimage;
+		return panel.bufferedImage;
 	}
  	
 }

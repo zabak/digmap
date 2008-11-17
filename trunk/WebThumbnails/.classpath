@@ -11,14 +11,8 @@
 	<classpathentry kind="lib" path="WEB-INF/lib/j3d_deegreeversion.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/j3dcore.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/j3dutils.jar"/>
-	<classpathentry kind="lib" path="WEB-INF/lib/jai_codec.jar"/>
-	<classpathentry kind="lib" path="WEB-INF/lib/jai_core.jar"/>
-	<classpathentry kind="lib" path="WEB-INF/lib/jasper-compiler.jar"/>
-	<classpathentry kind="lib" path="WEB-INF/lib/jasper-runtime.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/js.jar"/>
-	<classpathentry kind="lib" path="WEB-INF/lib/jsp-api.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/resolver.jar"/>
-	<classpathentry kind="lib" path="WEB-INF/lib/servlet-api.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/uploadbean.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/dvi.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/log4j.jar"/>
@@ -30,5 +24,11 @@
 	<classpathentry kind="lib" path="WEB-INF/lib/batik-util.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/batik-xml.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/jCharts.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/dep-libs/jasper-compiler.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/dep-libs/jasper-runtime.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/dep-libs/jsp-api.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/dep-libs/servlet-api.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/lib/jai_codec.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/lib/jai_core.jar"/>
 	<classpathentry kind="output" path="WEB-INF/classes"/>
 </classpath>

@@ -23,6 +23,7 @@
 	
 	<path id="deployer.classpath">
 		<fileset dir="${basedir}/lib"><include name="*.jar" /></fileset>
+		<fileset dir="${basedir}/dep-libs"><include name="*.jar" /></fileset>
 	</path>
 
 	<!-- Configure the custom Ant tasks for the Manager application -->
@@ -52,6 +53,9 @@
 					<exclude name="jsp-api.jar" />
 				</fileset>
 				<fileset dir="${basedir}/lib">
+					<include name="*.jar" />
+				</fileset>
+				<fileset dir="${basedir}/dep-libs">
 					<include name="*.jar" />
 				</fileset>
 			</classpath>

@@ -32,19 +32,19 @@ public class AsynchronousGenerator {
 
     void process(AbstractThumbnailMaker obj) {
 		try {
-			System.out.println("Generating thumbnail for " + obj.params.uri);
+//			System.out.println("Generating thumbnail for " + obj.params.uri);
 			BufferedImage fullImage = cache.getFromCache(obj.params.uri, 0, 0);
 			if (fullImage == null) {
 				fullImage = obj.getImage();
 				cache.putInCache(obj.params.uri, 0, 0, fullImage, false);
 			} else {
-				System.err.println("using full image from cache in async");
+//				System.err.println("using full image from cache in async");
 			}
 			cache.putInCache(obj.params.uri, obj.params.width, obj.params.height, obj.scaleImage(fullImage), false);
 			
-			System.out.println( "" + fullImage != null );
+//			System.out.println( "" + fullImage != null );
 		} catch ( Exception e ) { 
-			e.printStackTrace();
+//			e.printStackTrace();
 		}
     }
   }

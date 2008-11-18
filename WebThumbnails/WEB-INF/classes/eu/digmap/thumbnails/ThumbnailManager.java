@@ -15,10 +15,7 @@ import org.apache.commons.logging.LogFactory;
 public class ThumbnailManager {
 	protected Log log = LogFactory.getLog(getClass());
 	
-	public static ThumbnailManager INSTANCE = new ThumbnailManager(
-			ThumbnailConfig.INSTANCE.syncTaskThreads,
-			ThumbnailConfig.INSTANCE.asyncTaskThreads
-		);
+	public static ThumbnailManager INSTANCE = initInstance();
 
 	private Cache cache = Cache.INSTANCE; 
 	private ExecutorService syncTaskExecutor;
@@ -30,6 +27,15 @@ public class ThumbnailManager {
 		this(10, 10);
 	}
 	
+	private static ThumbnailManager initInstance() {
+		System.err.printf("ThumbnailManager => Threads - sync:%s | async:%s%n", ThumbnailConfig.INSTANCE.syncTaskThreads, ThumbnailConfig.INSTANCE.asyncTaskThreads);
+		ThumbnailManager instance = new ThumbnailManager(
+				ThumbnailConfig.INSTANCE.syncTaskThreads,
+				ThumbnailConfig.INSTANCE.asyncTaskThreads
+			);
+		return instance;
+	}
+
 	public ThumbnailManager(int syncThreads, int asyncThreads) {
 		super();
 		this.syncTaskExecutor = Executors.newFixedThreadPool(syncThreads);

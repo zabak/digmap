@@ -29,7 +29,7 @@ public class ThumbnailConfig {
 		
 		Properties properties = new Properties();
 		try {
-			ClassLoader classLoader = ThumbnailConfig.class.getClassLoader();
+			ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 			URL webInfClassesPlaceholderUrl = classLoader.getResource(PROPERTY_FILE);
 			File webInfClassesPlaceholderFile = new File(webInfClassesPlaceholderUrl.getPath()).getParentFile();
 			config.webappRoot = new File(webInfClassesPlaceholderFile, "../..").getCanonicalFile();

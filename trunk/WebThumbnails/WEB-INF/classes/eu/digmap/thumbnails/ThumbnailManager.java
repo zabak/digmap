@@ -104,19 +104,19 @@ public class ThumbnailManager {
 			ThumbnailParams params = thumbnailMaker.params;
 			BufferedImage fullImage;
 			try {
-				System.out.println(
-						String.format("** ThumbnailWorker ** - Generating thumbnail (sync: %s, cache: %s) for '%s'",
-								sync,
-								useCache,
-								params.uri
-							)
-					);
+//				System.out.println(
+//						String.format("** ThumbnailWorker ** - Generating thumbnail (sync: %s, cache: %s) for '%s'",
+//								sync,
+//								useCache,
+//								params.uri
+//							)
+//					);
 				fullImage = useCache ? cache.getFromCache(params.uri, 0, 0) : null;
 				if (fullImage == null) {
 					fullImage = thumbnailMaker.getImage();
 					cache.putInCache(params.uri, 0, 0, fullImage, false);
 				} else {
-					System.err.println("** ThumbnailWorker ** - Using full image from cache");
+//					System.err.println("** ThumbnailWorker ** - Using full image from cache");
 				}
 				cache.putInCache(params.uri, params.width, params.height, thumbnailMaker.scaleImage(fullImage), false);
 				File imageFile = cache.getImageFile(params.uri, params.width, params.height);

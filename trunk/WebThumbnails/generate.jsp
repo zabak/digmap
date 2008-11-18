@@ -19,7 +19,8 @@
 					byte transparency = Byte.parseByte(params.length>3 ? params[3] : "255" );
 					float rotation = Float.parseFloat( params.length>4 ? params[4] : "0" );
 					ByteArrayOutputStream trash = new ByteArrayOutputStream();
-					ThumbnailMakerFactory.getThumbnailMaker(url, width, height, transparency, rotation).make(true, true, trash);	
+					ThumbnailParams tparams = new ThumbnailParams(url, null, width, height, transparency, rotation);
+					ThumbnailMakerFactory.getThumbnailMaker(tparams).make(true, true, trash);	
 				} catch ( Exception e ) { }
 			} catch ( Exception e2 ) { }
 		}

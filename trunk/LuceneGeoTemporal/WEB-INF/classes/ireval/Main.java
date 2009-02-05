@@ -127,7 +127,7 @@ public class Main {
     
     public static SetRetrievalEvaluator create( TreeMap< String, ArrayList<Document> > allRankings, TreeMap< String, ArrayList<Judgment> > allJudgments ) {
         // Map query numbers into Integer to get proper sorting.
-        TreeMap< Integer, RetrievalEvaluator > evaluators = new TreeMap<Integer, RetrievalEvaluator>();
+        TreeMap< String, RetrievalEvaluator > evaluators = new TreeMap<String, RetrievalEvaluator>();
         
         for( String query : allRankings.keySet() ) {
             ArrayList<Judgment> judgments = allJudgments.get( query );
@@ -138,7 +138,8 @@ public class Main {
             }
             
             RetrievalEvaluator evaluator = new RetrievalEvaluator( query, ranking, judgments );
-            evaluators.put( Integer.valueOf(query), evaluator );
+            System.out.println(query);
+            evaluators.put( query, evaluator );
         }
         
         return new SetRetrievalEvaluator( evaluators.values() );
@@ -240,6 +241,7 @@ public class Main {
     }
     
     public static void main( String[] args ) throws IOException {
+        
         try {
             if( args.length == 3 ) {
                 TreeMap< String, ArrayList<Document> > baselineRanking = loadRanking( args[0] );

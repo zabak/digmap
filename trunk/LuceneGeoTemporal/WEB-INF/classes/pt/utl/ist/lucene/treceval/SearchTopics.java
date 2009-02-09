@@ -42,7 +42,7 @@ public class SearchTopics implements ISearchCallBack
         this.run = run;
         this.searchConfiguration = searchConfiguration;
         configuration = searchConfiguration.getConfiguration();
-        indexSearcher = new LgteIndexSearcherWrapper(configuration.getModel(), configuration.getIndexPath());
+        indexSearcher = new LgteIndexSearcherWrapper(configuration.getModel(), configuration.getIndexPath(),searchConfiguration.getQueryConfiguration().getQueryProperties());
     }
 
 
@@ -151,7 +151,7 @@ public class SearchTopics implements ISearchCallBack
 
         for (int i = 0; i < hits.length() && i < maxResultsForOutput; i++)
         {
-            format.writeRecord(hits.doc(i).getDocument(), hits.score(i), run);
+            format.writeRecord(hits.id(i), hits.doc(i).getDocument(), hits.score(i), run);
         }
         format.writeFooter();
         logger.info("writeTime:" + (System.currentTimeMillis() - time) + " ms");

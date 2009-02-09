@@ -15,4 +15,6 @@ public class Globals
     public static String GZipDefaultContentType = "sgml";
     public static String COLLECTION_FILES_DEFAULT_ENCODING = "ISO-8859-1";
 
+    /*Parameter to be used by external LGTE classes that need the run output*/
+    public static String RUN_OUTPUT_FILE = null;
 }

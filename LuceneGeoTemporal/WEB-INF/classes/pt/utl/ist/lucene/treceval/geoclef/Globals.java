@@ -9,10 +9,10 @@ import java.util.HashMap;
  */
 public class Globals
 {
-    public static String collectionPathPt = "C:\\Servidores\\DATA\\geo\\pt";
-    public static String collectionPathEn = "C:\\Servidores\\DATA\\geo\\en";
+    public static String collectionPathPt = "D:\\Projectos\\coleccoesIR\\geoclef\\pt";
+    public static String collectionPathEn = "D:\\Projectos\\coleccoesIR\\geoclef\\en";
 
-    public static String outputGeoParseDir = "C:\\Servidores\\DATA\\geo\\geoparse";
+    public static String outputGeoParseDir = "D:\\Projectos\\coleccoesIR\\geoparse";
 
     public static HashMap<String,String> namespacesOutput = new HashMap();
     public static String localNamespace = "http://local";

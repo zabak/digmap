@@ -55,6 +55,15 @@ public class BoxQueryWithBoxDoc implements ISpatialScoreStrategy
         }
         if(distance != null)
         {
+            distance = distance - (queryDiagonal/2);
+//            queryDiagonal = queryDiagonal * 2;
+            //When boxes are under each other
+            if(distance < (double)0)
+                distance = (double)0;
+        }
+
+        if(distance != null)
+        {
             return ((Double) GeoUtils.distancePointAreaMapExpDDmbr(distance,queryDiagonal)).floatValue();
         }
         return 0f;

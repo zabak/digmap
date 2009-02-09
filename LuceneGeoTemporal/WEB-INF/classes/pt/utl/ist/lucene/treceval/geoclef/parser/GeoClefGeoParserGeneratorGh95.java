@@ -3,15 +3,8 @@ package pt.utl.ist.lucene.treceval.geoclef.parser;
 import org.apache.log4j.Logger;
 import org.dom4j.*;
 import pt.utl.ist.lucene.treceval.handlers.*;
-import pt.utl.ist.lucene.treceval.handlers.collections.CDirectory;
-import pt.utl.ist.lucene.treceval.GeoClefExample;
-import pt.utl.ist.lucene.treceval.Globals;
-import pt.utl.ist.lucene.treceval.Configuration;
-import pt.utl.ist.lucene.treceval.RunCollections;
-import pt.utl.ist.lucene.treceval.geoclef.parser.missingdocs.GeoClefMissingDocsGenerator;
 
 import java.io.IOException;
-import java.io.File;
 import java.util.*;
 
 /**
@@ -22,13 +15,15 @@ import java.util.*;
 public class GeoClefGeoParserGeneratorGh95
 {
 
-    private static final Logger logger = Logger.getLogger(GeoClefExample.class);
+    private static final Logger logger = Logger.getLogger(GeoClefGeoParserGeneratorGh95.class);
 
     /**
      * Number of Files to skip if already done
      */
     public static int skipFiles = 0;
+    public static int stopFiles = 2000;
 
+    public static String server = "http://localhost:8080/geoparser";
 
     /**
      * Import every files from GeoParser
@@ -44,11 +39,16 @@ public class GeoClefGeoParserGeneratorGh95
         //Import every files from GeoParser
 //        GeoClefGeoParserGenerator.run(pt.utl.ist.lucene.treceval.geoclef.Globals.collectionPathEn + "\\gh-95",pt.utl.ist.lucene.treceval.geoclef.Globals.outputGeoParseDir + "\\gh95",new Gh95FieldFilter(), skipFiles);
         //Generate a new Collection file just with missing files
+//        new GeoParseFileNameNormalizer().normalize(pt.utl.ist.lucene.treceval.geoclef.Globals.outputGeoParseDir  + "\\gh95");
 //        GeoClefMissingDocsGenerator.run("//DOC","DOCNO",pt.utl.ist.lucene.treceval.geoclef.Globals.outputGeoParseDir + File.separator + "gh95","ISO-8859-1",pt.utl.ist.lucene.treceval.geoclef.Globals.collectionPathEn + "\\gh-95");
         //Run Again and output to missing dir
-        GeoClefGeoParserGenerator.run(pt.utl.ist.lucene.treceval.geoclef.Globals.outputGeoParseDir  + "\\gh95" + "-missing-collection-docs",pt.utl.ist.lucene.treceval.geoclef.Globals.outputGeoParseDir  + "\\gh95-missing",new Gh95FieldFilter(),skipFiles);
+
+
+//        GeoClefGeoParserGenerator.run(pt.utl.ist.lucene.treceval.geoclef.Globals.outputGeoParseDir  + "\\gh95" + "-missing-collection-docs",pt.utl.ist.lucene.treceval.geoclef.Globals.outputGeoParseDir  + "\\gh95-missing",new Gh95FieldFilter(),skipFiles);
+
+
         //Normalize Missing Dir
-//        new GeoParseFileNameNormalizer().normalize(pt.utl.ist.lucene.treceval.geoclef.Globals.outputGeoParseDir  + "\\gh95-missing");
+//      new GeoParseFileNameNormalizer().normalize(pt.utl.ist.lucene.treceval.geoclef.Globals.outputGeoParseDir  + "\\gh95-missing");
     }
 
 
@@ -72,9 +72,19 @@ public class GeoClefGeoParserGeneratorGh95
     {
         public FilteredFields filter(Node element, String fieldName)
         {
+            System.out.print(".");
+            if(GeoParserOutputFileMonitor.counter % GeoParserOutputFileMonitor.numberOfRecordsInFile == 0)
+            {
+                logger.info("\nCrossing: geoParse" + (GeoParserOutputFileMonitor.counter  / GeoParserOutputFileMonitor.numberOfRecordsInFile) + ".xml");
+            }
             if (GeoParserOutputFileMonitor.counter / GeoParserOutputFileMonitor.numberOfRecordsInFile < skipFiles)
             {
                 GeoParserOutputFileMonitor.counter++;
+            }
+            else if(GeoParserOutputFileMonitor.counter / GeoParserOutputFileMonitor.numberOfRecordsInFile > stopFiles)
+            {
+                logger.info("\nFinishing job");
+                System.exit(0);
             }
             else
             {
@@ -124,16 +134,17 @@ public class GeoClefGeoParserGeneratorGh95
                         }
                         try
                         {
-                            Document dom = GeoParser.geoParse(strBuilder.toString(),"http://geoparser.digmap.eu/geoparser-dispatch");
+                            Document dom = GeoParser.geoParse(strBuilder.toString(),server + "/geoparser-dispatch");
                             GeoParserOutputFileMonitor.writeGeoParseElement(docno, dom.getRootElement());
+                            break;
                         }
                         catch (IOException e)
                         {
-                            logger.error("DOCNO:" + docno + " " + e.toString());
+                            logger.error("DOCNO:" + docno + " " + e.toString(),e);
                         }
                         catch (DocumentException e)
                         {
-                            logger.error("DOCNO:" + docno + " " + e.toString());
+                            logger.error("DOCNO:" + docno + " " + e.toString(),e);
                             attempts = 0;
                         }
                         attempts--;

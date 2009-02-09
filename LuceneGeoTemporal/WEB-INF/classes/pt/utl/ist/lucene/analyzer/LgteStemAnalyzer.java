@@ -24,7 +24,7 @@ import pt.utl.ist.lucene.analyzer.LgteDiacriticFilter;
  * will not be indexed at indexText) and an external list of exclusions (word that will
  * not be stemmed, but indexed).
  *
- * @author    Jo�o Kramer
+ * @author     Kramer
  */
 public class LgteStemAnalyzer extends org.apache.lucene.analysis.Analyzer
 {

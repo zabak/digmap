@@ -25,7 +25,7 @@ public class GeoParseFileNameNormalizer
                     endName[i] = '0';
                 }
                 String number = inFile.getName().substring("geoParse".length(),inFile.getName().indexOf('.'));
-                if(!number.startsWith("0"))
+                if(!number.startsWith("0") || number.length() == 1) //for geoParser0.xml
                 {
                     for(int i = 5; i >= 0 && number.length() >0;i--)
                     {

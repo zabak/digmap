@@ -5,17 +5,11 @@ import org.dom4j.*;
 
 import java.io.IOException;
 import java.io.File;
-import java.util.List;
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 
 import pt.utl.ist.lucene.treceval.handlers.*;
-import pt.utl.ist.lucene.treceval.handlers.collections.CDirectory;
 import pt.utl.ist.lucene.treceval.GeoClefExample;
-import pt.utl.ist.lucene.treceval.Globals;
-import pt.utl.ist.lucene.treceval.Configuration;
-import pt.utl.ist.lucene.treceval.RunCollections;
 import pt.utl.ist.lucene.treceval.geoclef.parser.missingdocs.GeoClefMissingDocsGenerator;
 
 /**
@@ -31,7 +25,7 @@ public class GeoClefGeoParserGeneratorFolha
     /**
      * Number of Files to skip if already done
      */
-    public static int skipFiles = 217;
+    public static int skipFiles = 0;
 
 
     /**
@@ -46,13 +40,13 @@ public class GeoClefGeoParserGeneratorFolha
     public static void main(String[] args) throws DocumentException, IOException
     {
         //Import every files from GeoParser
-        GeoClefGeoParserGenerator.run(pt.utl.ist.lucene.treceval.geoclef.Globals.collectionPathEn + "\\folha-pt",pt.utl.ist.lucene.treceval.geoclef.Globals.outputGeoParseDir + "\\folha",new FolhaFieldFilter(), skipFiles);
+//        GeoClefGeoParserGenerator.run(pt.utl.ist.lucene.treceval.geoclef.Globals.collectionPathPt + "\\folha-pt",pt.utl.ist.lucene.treceval.geoclef.Globals.outputGeoParseDir + "\\folha",new FolhaFieldFilter(), skipFiles);
         //Generate a new Collection file just with missing files
-        GeoClefMissingDocsGenerator.run("//DOC","DOCNO",pt.utl.ist.lucene.treceval.geoclef.Globals.outputGeoParseDir + File.separator + "folha","ISO-8859-1",pt.utl.ist.lucene.treceval.geoclef.Globals.collectionPathEn + "\\folha-pt");
+        GeoClefMissingDocsGenerator.run("//DOC","DOCNO",pt.utl.ist.lucene.treceval.geoclef.Globals.outputGeoParseDir + File.separator + "folha","ISO-8859-1",pt.utl.ist.lucene.treceval.geoclef.Globals.collectionPathPt + "\\folha-pt");
         //Run Again and output to missing dir
-        GeoClefGeoParserGenerator.run(pt.utl.ist.lucene.treceval.geoclef.Globals.outputGeoParseDir  + "\\folha" + "-missing-collection-docs",pt.utl.ist.lucene.treceval.geoclef.Globals.outputGeoParseDir  + "\\folha-missing",new FolhaFieldFilter(),skipFiles);
+//        GeoClefGeoParserGenerator.run(pt.utl.ist.lucene.treceval.geoclef.Globals.outputGeoParseDir  + "\\folha" + "-missing-collection-docs",pt.utl.ist.lucene.treceval.geoclef.Globals.outputGeoParseDir  + "\\folha-missing",new FolhaFieldFilter(),skipFiles);
         //Normalize Missing Dir
-        new GeoParseFileNameNormalizer().normalize(pt.utl.ist.lucene.treceval.geoclef.Globals.outputGeoParseDir  + "\\folha-missing");
+//        new GeoParseFileNameNormalizer().normalize(pt.utl.ist.lucene.treceval.geoclef.Globals.outputGeoParseDir  + "\\folha-missing");
     }
 
     /**

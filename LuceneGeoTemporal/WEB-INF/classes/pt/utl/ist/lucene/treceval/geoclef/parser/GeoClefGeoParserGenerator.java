@@ -2,23 +2,16 @@ package pt.utl.ist.lucene.treceval.geoclef.parser;
 
 import org.apache.log4j.Logger;
 import org.dom4j.DocumentException;
-import org.dom4j.Node;
-import org.dom4j.Element;
-import org.dom4j.Document;
 import pt.utl.ist.lucene.treceval.GeoClefExample;
 import pt.utl.ist.lucene.treceval.Globals;
 import pt.utl.ist.lucene.treceval.Configuration;
 import pt.utl.ist.lucene.treceval.RunCollections;
-import pt.utl.ist.lucene.treceval.geoclef.parser.missingdocs.GeoClefMissingDocsGenerator;
 import pt.utl.ist.lucene.treceval.handlers.*;
 import pt.utl.ist.lucene.treceval.handlers.collections.CDirectory;
 
 import java.io.IOException;
-import java.io.File;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Map;
-import java.util.HashMap;
 
 /**
  * @author Jorge Machado

@@ -2,14 +2,13 @@ package pt.utl.ist.lucene.treceval.geoclef.parser;
 
 import org.apache.log4j.Logger;
 import org.dom4j.*;
-import pt.utl.ist.lucene.treceval.GeoClefExample;
-import pt.utl.ist.lucene.treceval.handlers.FieldFilter;
-import pt.utl.ist.lucene.treceval.handlers.FilteredFields;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
+
+import pt.utl.ist.lucene.treceval.handlers.*;
 
 /**
  * @author Jorge Machado
@@ -19,14 +18,14 @@ import java.util.Map;
 public class GeoClefGeoParserGeneratorLatEn
 {
 
-    private static final Logger logger = Logger.getLogger(GeoClefExample.class);
+    private static final Logger logger = Logger.getLogger(GeoClefGeoParserGeneratorLatEn.class);
 
     /**
      * Number of Files to skip if already done
      */
-    public static int skipFiles = 65;
-	public static int stopFile = 99;
-	public static String server = "http://digmap3.ist.utl.pt:8080/geoparser";
+    public static int skipFiles = 0;
+    public static int stopFile = 2000;
+    public static String server = "http://localhost:8080/geoparser";
 
 
    /**
@@ -40,31 +39,18 @@ public class GeoClefGeoParserGeneratorLatEn
      */
     public static void main(String[] args) throws DocumentException, IOException
     {
-   	    if(args.length > 0)
-		{
+        if(args.length == 2)
+        {
             skipFiles = Integer.parseInt(args[0]);
-			stopFile = skipFiles + 99;
-		}
-		if(args.length > 1)
-		{
-            server = args[1];
-		}
-		if(args.length > 2)
-		{
-			stopFile = Integer.parseInt(args[2]);
-		}
-   	    logger.info("using server: " + server + " - skip: " + skipFiles + " - stop at file: " + stopFile);
-		//Import every files from GeoParser
-        skipFiles = 65;
-        stopFile = 99;
-        GeoClefGeoParserGenerator.run(pt.utl.ist.lucene.treceval.geoclef.Globals.collectionPathEn + "\\lat-en",pt.utl.ist.lucene.treceval.geoclef.Globals.outputGeoParseDir + "\\latEn",new LatEnFieldFilter(), skipFiles);
-        skipFiles = 128;
-        stopFile = 499;
-        GeoClefGeoParserGenerator.run(pt.utl.ist.lucene.treceval.geoclef.Globals.collectionPathEn + "\\lat-en",pt.utl.ist.lucene.treceval.geoclef.Globals.outputGeoParseDir + "\\latEn",new LatEnFieldFilter(), skipFiles);
+            stopFile = Integer.parseInt(args[1]);
+        }
+        //new GeoParseFileNameNormalizer().normalize(pt.utl.ist.lucene.treceval.geoclef.Globals.outputGeoParseDir  + "\\latEn");
+        //Import every files from GeoParser
+//        GeoClefGeoParserGenerator.run(pt.utl.ist.lucene.treceval.geoclef.Globals.collectionPathEn + "\\lat-en",pt.utl.ist.lucene.treceval.geoclef.Globals.outputGeoParseDir + "\\latEn",new LatEnFieldFilter(), skipFiles);
         //Generate a new Collection file just with missing files
 //        GeoClefMissingDocsGenerator.run("//DOC","DOCNO",pt.utl.ist.lucene.treceval.geoclef.Globals.outputGeoParseDir + File.separator + "latEn","ISO-8859-1",pt.utl.ist.lucene.treceval.geoclef.Globals.collectionPathEn + "\\lat-en");
 //        //Run Again and output to missing dir
-//        GeoClefGeoParserGenerator.run(pt.utl.ist.lucene.treceval.geoclef.Globals.outputGeoParseDir  + "\\latEn" + "-missing-collection-docs",pt.utl.ist.lucene.treceval.geoclef.Globals.outputGeoParseDir  + "\\latEn-missing",new LatEnFieldFilter(),skipFiles);
+        GeoClefGeoParserGenerator.run(pt.utl.ist.lucene.treceval.geoclef.Globals.outputGeoParseDir  + "\\latEn" + "-missing-collection-docs",pt.utl.ist.lucene.treceval.geoclef.Globals.outputGeoParseDir  + "\\latEn-missing",new LatEnFieldFilter(),skipFiles);
 //        //Normalize Missing Dir
 //        new GeoParseFileNameNormalizer().normalize(pt.utl.ist.lucene.treceval.geoclef.Globals.outputGeoParseDir  + "\\latEn-missing");
     }
@@ -97,18 +83,21 @@ public class GeoClefGeoParserGeneratorLatEn
         public FilteredFields filter(Node element, String fieldName)
         {
 
-			if((GeoParserOutputFileMonitor.counter % GeoParserOutputFileMonitor.numberOfRecordsInFile) == 0)
-				logger.info("Crossing: geoParse" + (GeoParserOutputFileMonitor.counter / GeoParserOutputFileMonitor.numberOfRecordsInFile) +".xml");
+            System.out.print(".");
+            if(GeoParserOutputFileMonitor.counter % GeoParserOutputFileMonitor.numberOfRecordsInFile == 0)
+            {
+                logger.info("\nCrossing: geoParse" + (GeoParserOutputFileMonitor.counter  / GeoParserOutputFileMonitor.numberOfRecordsInFile) + ".xml");
+            }
             if (GeoParserOutputFileMonitor.counter / GeoParserOutputFileMonitor.numberOfRecordsInFile < skipFiles)
             {
                 GeoParserOutputFileMonitor.counter++;
             }
-            else if (GeoParserOutputFileMonitor.counter / GeoParserOutputFileMonitor.numberOfRecordsInFile > stopFile)
+            else if(GeoParserOutputFileMonitor.counter / GeoParserOutputFileMonitor.numberOfRecordsInFile > stopFile)
             {
-				logger.info("Finish job");
+                logger.info("\nFinishing job");
                 System.exit(0);
             }
-			else
+            else
             {
                 Element docElem = (Element) element;
 
@@ -126,7 +115,7 @@ public class GeoClefGeoParserGeneratorLatEn
                 {
 
                     String docno = docnoElem.getText();
-                    System.out.print(".");
+                    logger.debug("DOCNO:" + docno);
                     XPath xPathHeadline = docElem.createXPath("./HEADLINE//text()");
                     XPath xPathText = docElem.createXPath("./TEXT//text()");
                     List<Node> headlineElems = xPathHeadline.selectNodes(docElem);
@@ -165,11 +154,11 @@ public class GeoClefGeoParserGeneratorLatEn
                     }
                     catch (IOException e)
                     {
-                        logger.error(e, e);
+                       logger.error("DOCNO:" + docno + " " + e.toString(),e);
                     }
                     catch (DocumentException e)
                     {
-                        logger.error(e, e);
+                        logger.error("DOCNO:" + docno + " " + e.toString(),e);
                     }
                 }
             }

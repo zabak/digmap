@@ -20,8 +20,10 @@ import java.text.DecimalFormat;
 
 import org.geotools.referencing.GeodeticCalculator;
 import org.geotools.referencing.datum.DefaultEllipsoid;
+import org.apache.log4j.Logger;
 
 import com.traversetechnologies.fulcrum.math.LonLatTrig;
+
 
 public class DistanceUtils {
 
@@ -29,11 +31,19 @@ public class DistanceUtils {
 	private static final String coordPad = "000000000000";
 
 	private static DefaultEllipsoid de = DefaultEllipsoid.WGS84;
-	
-	public static double orthodromicDistance(double x1, double y1, double x2, double y2) {
-		
-		return de.orthodromicDistance(y1, x1, y2, x2);
-	 }
+
+    private static final Logger logger = Logger.getLogger(DistanceUtils.class);
+    public static double orthodromicDistance(double x1, double y1, double x2, double y2) {
+
+        try{
+            return de.orthodromicDistance(y1, x1, y2, x2);
+        }
+        catch(Exception e)
+        {
+            logger.warn("lng:" + y1 + "-lt:" + x1 + "-lng:" + y2 + "-lt:" + x2 + "    " + e);
+            return 30000;
+        }
+    }
 
     /**
      * Calc distance between lower left and top right corners

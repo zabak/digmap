@@ -40,8 +40,8 @@ public class DmozExample
     {
 
         args = new String[2];
-        args[0] = "C:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-index";
-        args[1] = "C:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-data";
+        args[0] = "D:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-index";
+        args[1] = "D:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-data";
 
 
         Globals.INDEX_DIR = args[0];
@@ -189,50 +189,50 @@ public class DmozExample
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, VS_STEMMER));
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, LM_STEMMER));
 //
-//        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, VS));
-//        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, LM));
-//        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, VS_STEMMER));
-//        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, LM_STEMMER));
-//
-//        searchConfigurations.add(new SearchConfiguration(queryConfiguration3, VS));
-//        searchConfigurations.add(new SearchConfiguration(queryConfiguration3, LM));
-//        searchConfigurations.add(new SearchConfiguration(queryConfiguration3, VS_STEMMER));
-//        searchConfigurations.add(new SearchConfiguration(queryConfiguration3, LM_STEMMER));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, VS));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, LM));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, VS_STEMMER));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, LM_STEMMER));
+
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration3, VS));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration3, LM));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration3, VS_STEMMER));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration3, LM_STEMMER));
 ////
-//        searchConfigurations.add(new SearchConfiguration(queryConfiguration4, VS));
-//        searchConfigurations.add(new SearchConfiguration(queryConfiguration4, LM));
-//        searchConfigurations.add(new SearchConfiguration(queryConfiguration4, VS_STEMMER));
-//        searchConfigurations.add(new SearchConfiguration(queryConfiguration4, LM_STEMMER));
-//
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration4, VS));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration4, LM));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration4, VS_STEMMER));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration4, LM_STEMMER));
+
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration5, VS));
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration5, LM));
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration5, VS_STEMMER));
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration5, LM_STEMMER));
-//
+
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration6, VS));
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration6, LM));
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration6, VS_STEMMER));
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration6, LM_STEMMER));
+////
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration7, VS));
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration7, LM));
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration7, VS_STEMMER));
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration7, LM_STEMMER));
 //
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration7, VS));
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration7, LM));
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration7, VS_STEMMER));
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration7, LM_STEMMER));
-
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration8, VS));
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration8, LM));
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration8, VS_STEMMER));
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration8, LM_STEMMER));
-
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration9, VS));
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration9, LM));
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration9, VS_STEMMER));
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration9, LM_STEMMER));
-
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration10, VS));
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration10, LM));
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration10, VS_STEMMER));
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration10, LM_STEMMER));
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration8, VS));
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration8, LM));
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration8, VS_STEMMER));
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration8, LM_STEMMER));
+//
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration9, VS));
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration9, LM));
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration9, VS_STEMMER));
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration9, LM_STEMMER));
+//
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration10, VS));
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration10, LM));
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration10, VS_STEMMER));
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration10, LM_STEMMER));
 //
 //
 

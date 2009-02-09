@@ -207,6 +207,22 @@
         <antcall target="copyIndexesToDataDirs"/>
     </target>
 
+    <target name="build-test-index-geoclef" depends="" description="Index a Collection and run all the topics">
+        <mkdir dir="${webapp.path}/WEB-INF/geoclef/test-data/output"/>
+        <java fork="true" classname="pt.utl.ist.lucene.treceval.geoclef.indexer.GeoClefIndexer" jvmargs="-server -Xmx1024m -Xms1024m -XX:PermSize=256m -XX:MaxPermSize=256m">
+            <classpath>
+                <fileset dir="${webapp.path}/WEB-INF/lib">
+                    <include name="**.jar" />
+                    <exclude name="servlet-api.jar" />
+                    <exclude name="jsp-api.jar" />
+                </fileset>
+            </classpath>
+            <classpath path="${webapp.path}/WEB-INF/classes" />
+            <arg value="${webapp.path}/WEB-INF/test-index" />
+            <arg value="${webapp.path}/WEB-INF/test-data" />
+        </java>
+    </target>
+
     <target name="build-test-index-digmap" depends="" description="Index a Collection and run all the topics">
         <mkdir dir="${webapp.path}/WEB-INF/test-data/digmap/output"/>
         <java fork="true" classname="pt.utl.ist.lucene.treceval.DigmapExample">
@@ -242,6 +258,11 @@
         <antcall target="build-test-index-dmoz"/>
         <antcall target="evaluation-metrics-dmoz" />
         <antcall target="significance-tests-dmoz" />
+    </target>
+
+      <target name="build-test-index-geoclef-evaluate" depends="" description="Index a Collection and run all the topics">
+        <antcall target="build-test-index-geoclef"/>
+        <antcall target="evaluation-metrics-geoclef" />
     </target>
 
     <target name="evaluation-metrics-brauncorpus" description="Generate trec_eval results">
@@ -324,6 +345,36 @@
             </sequential>
         </for>
     </target>
+
+
+    <target name="evaluation-metrics-geoclef" description="Generate trec_eval results">
+       <for param="runfile">
+           <path>
+               <fileset dir="${webapp.path}/WEB-INF/test-data/geoclef08en/output/">
+                   <include name="*.txt" />
+                   <exclude name="*-treceval-report.txt" />
+                   <exclude name="*-significance-report.txt" />
+               </fileset>
+           </path>
+           <sequential>
+               <java fork="true" classname="ireval.Main" output="@{runfile}-treceval-report.txt">
+                   <classpath>
+                       <fileset dir="${webapp.path}/WEB-INF/lib">
+                           <include name="*.jar" />
+                       </fileset>
+                       <fileset dir="${base.dir}/lib">
+                           <include name="*.jar" />
+                       </fileset>
+                   </classpath>
+                   <classpath path="${webapp.path}/WEB-INF/classes" />
+                   <arg value="@{runfile}" />
+                   <arg value="${webapp.path}/WEB-INF/test-data/geoclef08en/assessements/qrels.gen" />
+               </java>
+           </sequential>
+       </for>
+    </target>
+
+
 
     <target name="significance-tests-brauncorpus" description="Generate trec_eval results">
         <for param="runfile">
@@ -438,6 +489,46 @@
                             <arg value="@{runfile}" />
                             <arg value="@{runfile2}" />
                             <arg value="${webapp.path}/WEB-INF/test-data/dmoz/assessements/qrels" />
+                        </java>
+                    </sequential>
+                </for>
+            </sequential>
+        </for>
+    </target>
+
+    <target name="significance-tests-geoclef" description="Generate trec_eval results">
+        <for param="runfile">
+            <path>
+                <fileset dir="${webapp.path}/WEB-INF/test-data/geoclef08en/base/">
+                    <include name="*.txt" />
+                    <exclude name="*-treceval-report.txt" />
+                    <exclude name="*-significance-report.txt" />
+                </fileset>
+            </path>
+            <sequential>
+                <for param="runfile2">
+                    <path>
+                        <fileset dir="${webapp.path}/WEB-INF/test-data/geoclef08en/output/">
+                            <include name="*.txt" />
+                            <exclude name="*-treceval-report.txt" />
+                            <exclude name="*-significance-report.txt" />
+                            <exclude name="@{runfile}" />
+                        </fileset>
+                    </path>
+                    <sequential>
+                        <java fork="true" classname="ireval.Main" output="@{runfile2}-significance-report.txt">
+                            <classpath>
+                                <fileset dir="${webapp.path}/WEB-INF/lib">
+                                    <include name="**.jar" />
+                                </fileset>
+                                <fileset dir="${base.dir}/lib">
+                                    <include name="*.jar" />
+                                </fileset>
+                            </classpath>
+                            <classpath path="${webapp.path}/WEB-INF/classes" />
+                            <arg value="@{runfile}" />
+                            <arg value="@{runfile2}" />
+                            <arg value="${webapp.path}/WEB-INF/test-data/geoclef08en/assessements/qrels.gen" />
                         </java>
                     </sequential>
                 </for>

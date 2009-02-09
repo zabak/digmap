@@ -6,25 +6,19 @@ import org.xml.sax.SAXException;
 
 import java.io.File;
 import java.io.StringWriter;
-import java.io.OutputStreamWriter;
 import java.io.IOException;
 import java.util.List;
-import java.util.HashMap;
 import java.util.ArrayList;
 import java.net.MalformedURLException;
 
 import pt.utl.ist.lucene.utils.Dom4jUtil;
-import pt.utl.ist.lucene.utils.GeoUtils;
 import pt.utl.ist.lucene.treceval.geoclef.Globals;
 import pt.utl.ist.lucene.forms.UnknownForm;
 import pt.utl.ist.lucene.forms.DefaultUknownForm;
 import pt.utl.ist.lucene.forms.GeoPoint;
 import pt.utl.ist.lucene.forms.RectangleForm;
-import com.pjaol.search.geo.utils.DistanceUtils;
 import com.vividsolutions.jts.geom.*;
-import com.vividsolutions.jts.io.WKTReader;
 import com.vividsolutions.jts.io.gml2.GMLReader;
-import com.sun.org.apache.xalan.internal.lib.NodeInfo;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -72,36 +66,67 @@ public class GeoParserResultsIterator
 
     public GeoParserResult next(String docNo)
     {
+        docNo = docNo.trim();
         if(!eofs && nextRecord != null && nextRecord.getDocNo().equals(docNo))
         {
+            //FOUND DOCNO
             GeoParserResult nextRecordOut = nextRecord;
             generateNextRecord();
             return nextRecordOut;
         }
-        else if(nextRecord.getDocNo().compareTo(docNo) < 0)
+        //ACTUAL DOCNO IS LOWER WILL INCREASE THE POINTER TO NEXT RECORD
+        else if(!eofs && nextRecord.getDocNo().compareTo(docNo) < 0)
         {
+            logger.warn("Jumped record: " + nextRecord.getDocNo());
             generateNextRecord();
             while(!eofs && nextRecord != null && nextRecord.getDocNo().compareTo(docNo) < 0)
             {
+                logger.warn("Jumped record: " + nextRecord.getDocNo());
                 generateNextRecord();
             }
             if(!eofs && nextRecord != null)
             {
                 GeoParserResult nextRecordOut = nextRecord;
                 generateNextRecord();
-                return nextRecordOut;
+                if(nextRecordOut.getDocNo().equals(docNo))
+                    return nextRecordOut;
+                //REACHED A BIGGER RECORD AND WAS NOT FOUND
+                if(missingDocsIterator == null)
+                    logger.warn("MISSING_ITERATOR: Missing Record in " + nowFile.getName() + " requested: " + docNo + " reached: " + nextRecordOut.getDocNo() + " that is bigger");
+                else
+                    logger.warn("Missing Record in " + nowFile.getName() + " requested: " + docNo + " reached: " + nextRecordOut.getDocNo() + " that is bigger, will try Missing iterator");
+            }
+            else
+            {
+                //REACHED THE END OF FILE
+                if(missingDocsIterator == null)
+                    logger.warn("END OF MISSING_ITERATOR: Missing Record in " + nowFile.getName() + " requested: " + docNo);
+                else
+                    logger.warn("END OF FILE: Missing Record in " + nowFile.getName() + " requested: " + docNo + " positioned in the END will try Missing Iterator");
             }
             if(missingDocsIterator != null)
+            {
                 return missingDocsIterator.next(docNo);
+            }
             return null;
         }
+        //DOCNO NOT FOUND IN THIS FILE, ACTUAL DOCNO IS BIGGER, WILL TRY MISSING ITERATOR
         else
         {
-            if(missingDocsIterator != null)
+            if(missingDocsIterator == null)
+            {
+                logger.warn("BIGGER MISSING_ITERATOR: Missing Record in " + nowFile.getName() + " requested: " + docNo + " iterator cache record is " + nextRecord.getDocNo() + " that is bigger");
+                return null;
+            }
+            else
+            {
+                logger.warn("BIGGER Missing Record in " + nowFile.getName() + " requested: " + docNo + " iterator cache record is " + nextRecord.getDocNo() + " that is bigger - will try in Missing Iterator");
                 return missingDocsIterator.next(docNo);
-            return null;
+            }
         }
     }
+
+
     public GeoParserResult next()
     {
         if(!eofs && nextRecord != null)
@@ -163,7 +188,7 @@ public class GeoParserResultsIterator
         XPath xPathDocno = nowElement.createXPath("./@DOCNO");
         xPathDocno.setNamespaceURIs(Globals.namespacesOutput);
         Node docnoElem = xPathDocno.selectSingleNode(nowElement);
-        nextRecord.setDocNo(docnoElem.getText());
+        nextRecord.setDocNo(docnoElem.getText().trim());
 
         XPath xPathTerms = nowElement.createXPath(".//gp:PlaceName//gp:TermName");
         xPathTerms.setNamespaceURIs(Globals.namespacesOutput);

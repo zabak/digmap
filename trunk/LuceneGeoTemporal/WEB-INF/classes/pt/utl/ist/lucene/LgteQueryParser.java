@@ -38,17 +38,21 @@ public class LgteQueryParser
     }
     public static LgteQuery parseQuery(String query, LgteIndexSearcherWrapper lgteIndexSearcherWrapper) throws IOException, ParseException
     {
-        return parseQuery(query,Globals.LUCENE_DEFAULT_FIELD,LgteAnalyzer.defaultAnalyzer,lgteIndexSearcherWrapper,null, null);
+        return parseQuery(query,Globals.LUCENE_DEFAULT_FIELD,LgteAnalyzer.defaultAnalyzer,lgteIndexSearcherWrapper,null, null,null);
     }
 
     public static LgteQuery parseQuery(String query, LgteIndexSearcherWrapper lgteIndexSearcherWrapper, LgteSort sort) throws IOException, ParseException
     {
-        return parseQuery(query,Globals.LUCENE_DEFAULT_FIELD,LgteAnalyzer.defaultAnalyzer,lgteIndexSearcherWrapper,null, sort);
+        return parseQuery(query,Globals.LUCENE_DEFAULT_FIELD,LgteAnalyzer.defaultAnalyzer,lgteIndexSearcherWrapper,null, sort,null);
     }
 
     public static LgteQuery parseQuery(String query, LgteIndexSearcherWrapper lgteIndexSearcherWrapper, QueryConfiguration queryConfiguration) throws IOException, ParseException
     {
         return parseQuery(query,Globals.LUCENE_DEFAULT_FIELD,LgteAnalyzer.defaultAnalyzer,lgteIndexSearcherWrapper,queryConfiguration);
+    }
+    public static LgteQuery parseQuery(String query, LgteIndexSearcherWrapper lgteIndexSearcherWrapper, QueryConfiguration queryConfiguration, QueryParams queryParams) throws IOException, ParseException
+    {
+        return parseQuery(query,Globals.LUCENE_DEFAULT_FIELD,LgteAnalyzer.defaultAnalyzer,lgteIndexSearcherWrapper,queryConfiguration,null, queryParams);
     }
 
     public static LgteQuery parseQuery(String query, Analyzer analyzer,LgteIndexSearcherWrapper lgteIndexSearcherWrapper, QueryConfiguration queryConfiguration) throws ParseException, IOException
@@ -79,7 +83,7 @@ public class LgteQueryParser
 
     public static LgteQuery parseQuery(String query, String field, Analyzer analyzer, LgteSort sort) throws ParseException, IOException
     {
-        return parseQuery(query,field,analyzer,null,null,sort);
+        return parseQuery(query,field,analyzer,null,null,sort,null);
     }
 
     public static LgteQuery parseQuery(String query, String field, Analyzer analyzer, LgteIndexSearcherWrapper indexSearcherWrapper) throws ParseException, IOException
@@ -89,19 +93,32 @@ public class LgteQueryParser
 
     public static LgteQuery parseQuery(String query, String field, Analyzer analyzer, LgteIndexSearcherWrapper indexSearcherWrapper, QueryConfiguration queryConfiguration) throws ParseException, IOException
     {
-        return parseQuery(query, field, analyzer, indexSearcherWrapper, queryConfiguration, null);
+        return parseQuery(query, field, analyzer, indexSearcherWrapper, queryConfiguration, null,null);
     }
-    public static LgteQuery parseQuery(String query, String field, Analyzer analyzer, LgteIndexSearcherWrapper indexSearcherWrapper, QueryConfiguration queryConfiguration, LgteSort sort) throws ParseException, IOException
+    public static LgteQuery parseQuery(String query, String field, Analyzer analyzer, LgteIndexSearcherWrapper indexSearcherWrapper, QueryConfiguration queryConfiguration, LgteSort sort, QueryParams queryParams) throws ParseException, IOException
     {
-        Level1QueryParser parser = new Level1QueryParser();
-        Level1Query level1Query = parser.buildQuery(query);
-        QueryParams queryParams = level1Query.getQueryParams();
-        queryParams.setQueryConfiguration(queryConfiguration);
+        String queryStr;
+        if(queryParams == null)
+        {
+            Level1QueryParser parser = new Level1QueryParser();
+            Level1Query level1Query = parser.buildQuery(query);
+            queryParams = level1Query.getQueryParams();
+            queryStr = level1Query.toString().trim();
+        }
+        else
+        {
+            Level1QueryParser parser = new Level1QueryParser();
+            Level1Query level1Query = parser.buildQuery(query);
+            queryStr = level1Query.toString().trim();
+            queryStr = query;
+        }
+        if(queryConfiguration != null)
+            queryParams.setQueryConfiguration(queryConfiguration);
         //Set Model in Manager
         if(queryParams.getModel() != null) ModelManager.getInstance().setModel(queryParams.getModel());
 
         Query returnQuery;
-        String queryStr = level1Query.toString().trim();
+
         if(queryStr.length() == 0)
         {
             StringBuilder newQueryBuilder = new StringBuilder();
@@ -116,10 +133,10 @@ public class LgteQueryParser
                 return null;
         }
         else
-            returnQuery = luceneVersion.parseQuery(level1Query.toString(),field,analyzer);
+            returnQuery = luceneVersion.parseQuery(queryStr,field,analyzer);
         if(queryParams.getQeEnum().isQE() || (queryConfiguration != null && queryConfiguration.getForceQE().isQE()))
         {
-            returnQuery = lucQE(returnQuery, level1Query.toString(),field, analyzer, indexSearcherWrapper,queryParams, sort);
+            returnQuery = lucQE(returnQuery, queryStr,field, analyzer, indexSearcherWrapper,queryParams, sort);
         }
         return new LgteQuery(returnQuery,queryParams,analyzer);
     }

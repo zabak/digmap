@@ -1,14 +1,20 @@
 package pt.utl.ist.lucene.level1query;
 
 import org.apache.log4j.Logger;
+import org.xml.sax.SAXException;
 import pt.utl.ist.lucene.*;
 import pt.utl.ist.lucene.forms.GeoPoint;
 import pt.utl.ist.lucene.forms.RectangleForm;
+import pt.utl.ist.lucene.forms.CircleForm;
+import pt.utl.ist.lucene.forms.UnknownForm;
 import pt.utl.ist.lucene.utils.Dates;
 
 import java.util.*;
+import java.io.IOException;
 
 import com.pjaol.search.geo.utils.DistanceUtils;
+
+import javax.xml.parsers.ParserConfigurationException;
 
 /**
  * @author Jorge Machado
@@ -140,6 +146,45 @@ public class QueryParams
     public double getLatitude()
     {
         return latitude;
+    }
+
+    public void setRectangleForm(RectangleForm rectangleForm)
+    {
+        setEastlimit(rectangleForm.getEast());
+        setWestlimit(rectangleForm.getWest());
+        setSouthlimit(rectangleForm.getSouth());
+        setNorthlimit(rectangleForm.getNorth());
+        setLatitude(rectangleForm.getCentroide().getLat());
+        setLongitude(rectangleForm.getCentroide().getLng());
+    }
+
+    public void setCircleForm(CircleForm circleForm)
+    {
+        setLatitude(circleForm.getCentroide().getLat());
+        setLongitude(circleForm.getCentroide().getLng());
+        setRadiumMiles(circleForm.getRadium());
+    }
+
+    public void setGeoPoint(GeoPoint geoPoint)
+    {
+        setLatitude(geoPoint.getCentroide().getLat());
+        setLongitude(geoPoint.getCentroide().getLng());
+    }
+
+    public void setGmlPolygon(String xml) throws IOException, ParserConfigurationException, SAXException
+    {
+        UnknownForm unknownForm = LgteDocumentWrapper.getGmlPolygonUnknownForm(xml);
+        if(unknownForm instanceof RectangleForm)
+            setRectangleForm((RectangleForm) unknownForm);
+        else if(unknownForm instanceof CircleForm)
+            setCircleForm((CircleForm) unknownForm);
+        else if(unknownForm instanceof GeoPoint)
+            setGeoPoint((GeoPoint) unknownForm);
+        else
+        {
+            setGeoPoint(unknownForm.getCentroide());
+            setRadiumMiles(unknownForm.getWidth() / (double)2);
+        }
     }
 
     public void setLatitude(String latitude)
@@ -301,6 +346,26 @@ public class QueryParams
             {
                 logger.error(e, e);
             }
+    }
+
+    public void setEastlimit(double eastlimit)
+    {
+        this.eastlimit = eastlimit;
+    }
+
+    public void setWestlimit(double westlimit)
+    {
+        this.westlimit = westlimit;
+    }
+
+    public void setNorthlimit(double northlimit)
+    {
+        this.northlimit = northlimit;
+    }
+
+    public void setSouthlimit(double southlimit)
+    {
+        this.southlimit = southlimit;
     }
 
     public double getWestlimit()

@@ -12,7 +12,6 @@ import java.net.URLConnection;
 
 import pt.utl.ist.lucene.treceval.util.EscapeChars;
 import pt.utl.ist.lucene.utils.Dom4jUtil;
-import pt.utl.ist.lucene.utils.Strings;
 
 /**
  * @author Jorge Machado
@@ -40,14 +39,39 @@ public class GeoParser
         OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
         wr.write(data);
         wr.flush();
+////
+////        StringWriter sw = new StringWriter();
+////        BufferedInputStream bis = new BufferedInputStream(conn.getInputStream());
+////        BufferedReader buffered = new BufferedReader(new InputStreamReader(bis));
+////        String lineM
+////        while(buffered.readLine()
 //
-//        StringWriter sw = new StringWriter();
-//        BufferedInputStream bis = new BufferedInputStream(conn.getInputStream());
-//        BufferedReader buffered = new BufferedReader(new InputStreamReader(bis));
-//        String lineM
-//        while(buffered.readLine()
-
-
+//
+//        FileOutputStream fs = new FileOutputStream("d:/tmp.xml");
+//        int readed;
+//        byte buffer[] = new byte[1024];
+//        InputStream is =  conn.getInputStream();
+//        while((readed = is.read(buffer)) > 0)
+//        {
+//            fs.write(buffer,0,readed);
+//        }
+//        fs.flush();
+//        fs.close();
+//
+//        InputStreamReader isr = new InputStreamReader(new FileInputStream("d:/tmp.xml"),"UTF-8");
+//        BufferedReader reader = new BufferedReader(isr);
+//        String line;
+//        StringBuilder builder = new StringBuilder();
+//        while((line = reader.readLine()) != null)
+//        {
+//            builder.append(line.replace("&amp;"," ").replace("&"," ").replace(";"," "));
+//        }
+//        isr.close();
+//
+//        OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream("d:/tmp.xml"),"UTF-8");
+//        writer.write(builder.toString());
+//        fs.flush();
+//        fs.close();
         Document dom = Dom4jUtil.parse(new InputSource(conn.getInputStream()));
         wr.close();
         return dom;

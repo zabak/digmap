@@ -45,13 +45,21 @@ public class IndexSearcherLanguageModel extends IndexSearcher
             (System.getProperty("priors") != null) ? true : false;
 
     //float beta = 1.0f;
-    float beta =
-            (DataCacher.Instance().get("LM-beta") != null)
-                    ? (Float.valueOf((String) DataCacher.Instance().get("LM-beta")))
-                    .floatValue() : 1.0f;
+    float beta = -1.0f;
     float log10 = (float) Math.log(10);
     LanguageModelIndexReader lmIndexReader = null;
     boolean extendedDataRead = false;
+
+
+    private float getLmBeta()
+    {
+
+        if (beta == -1.0f)
+            beta = (DataCacher.Instance().get("LM-beta") != null)
+                    ? (Float.valueOf((String) DataCacher.Instance().get("LM-beta")))
+                    .floatValue() : 1.0f;
+        return beta;
+    }
 
     /**
      * Creates a searcher searching the index in the named directory.
@@ -96,6 +104,7 @@ public class IndexSearcherLanguageModel extends IndexSearcher
     public TopDocs search(Query query, Filter filter, final int nDocs)
             throws IOException
     {
+
         Scorer scorer = query.weight(this).scorer(reader);
         if (scorer == null)
             return new TopDocs(0, new ScoreDoc[0]);
@@ -109,6 +118,8 @@ public class IndexSearcherLanguageModel extends IndexSearcher
 
             public final void collect(int doc, float score)
             {
+
+
                 if (score > 0.0f &&              // ignore zeroed buckets
                         (bits == null || bits.get(doc)))
                 {      // skip docs not in bits
@@ -119,7 +130,7 @@ public class IndexSearcherLanguageModel extends IndexSearcher
                     if (docLen > 0)
                     {
 //                  System.out.println("add prior " + docLen + " (" + (float)Math.log(docLen) / log10 + ")");
-                        score += beta * (float) Math.log(docLen) / log10;
+                        score += getLmBeta() * (float) Math.log(docLen) / log10;
 //                  System.out.println("final: " + score);
                     }
                     else

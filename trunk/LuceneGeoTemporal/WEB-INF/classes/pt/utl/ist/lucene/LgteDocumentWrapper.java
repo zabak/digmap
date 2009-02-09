@@ -3,18 +3,26 @@ package pt.utl.ist.lucene;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.solr.util.NumberUtils;
+import org.xml.sax.SAXException;
 import com.pjaol.search.geo.utils.DistanceUtils;
+import com.vividsolutions.jts.io.gml2.GMLReader;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.Envelope;
+import com.vividsolutions.jts.geom.GeometryFactory;
 import pt.utl.ist.lucene.utils.GeoUtils;
 import pt.utl.ist.lucene.utils.MyCalendar;
 import pt.utl.ist.lucene.forms.*;
 import pt.utl.ist.lucene.versioning.LuceneVersionFactory;
 import pt.utl.ist.lucene.versioning.LuceneVersion;
+import pt.utl.ist.lucene.level1query.QueryParams;
 
+import javax.xml.parsers.ParserConfigurationException;
 import java.util.Date;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.text.SimpleDateFormat;
+import java.io.IOException;
 
 /**
  * Lucene Extenstion Document
@@ -31,8 +39,9 @@ import java.text.SimpleDateFormat;
 public class LgteDocumentWrapper
 {
 
+    static GeometryFactory fact = new GeometryFactory();
     private static LuceneVersion luceneVersion = LuceneVersionFactory.getLuceneVersion();
-
+    static double SPATIAL_INVALID_VALUE = QueryParams.SPATIAL_INVALID_VALUE;
     Document document;
 
 
@@ -114,11 +123,18 @@ public class LgteDocumentWrapper
      */
     public void addUnknownFormField(UnknownForm form)
     {
-        //Calc distance between lower left and top right corners
-        double diagonal = form.getWidth();
-        addGeoPointField(form.getCentroide());
-        addField(Globals.LUCENE_DIAGONAL_ORIGINAL_INDEX,""+diagonal,true,false,false);
-        addField(Globals.LUCENE_DIAGONAL_INDEX, NumberUtils.double2sortableStr(diagonal),false,true,false,true);
+        if(form instanceof RectangleForm)
+            addRectangleField((RectangleForm) form);
+        else if(form instanceof CircleForm)
+            addCircleField((CircleForm) form);
+        else
+        {
+            //Calc distance between lower left and top right corners
+            double diagonal = form.getWidth();
+            addGeoPointField(form.getCentroide());
+            addField(Globals.LUCENE_DIAGONAL_ORIGINAL_INDEX,""+diagonal,true,false,false);
+            addField(Globals.LUCENE_DIAGONAL_INDEX, NumberUtils.double2sortableStr(diagonal),false,true,false,true);
+        }
     }
 
     public GeoPoint getGeoPoint()
@@ -136,7 +152,7 @@ public class LgteDocumentWrapper
     {
         return getDoubleField(Globals.LUCENE_DIAGONAL_ORIGINAL_INDEX);
     }
-    
+
     /**
      * Set this document as a Geographic Circumference
      *
@@ -189,7 +205,21 @@ public class LgteDocumentWrapper
      */
     public void addRectangleField(RectangleForm form)
     {
-        addGeoBoxField(form.getNorth(),form.getSouth(),form.getWest(),form.getEast());
+        if(form.getCentroide() == null)
+            addGeoBoxField(form.getNorth(),form.getSouth(),form.getWest(),form.getEast());
+        else
+            addGeoBoxField(form.getNorth(),form.getSouth(),form.getWest(),form.getEast(),form.getCentroide().getLat(),form.getCentroide().getLng());
+
+    }
+
+    /**
+     * Set this document as a Geographic Box
+     *
+     * @param form associated with document
+     */
+    public void addCircleField(CircleForm form)
+    {
+        addCircleBoxField(form.getLat(),form.getLng(),form.getRadium());
     }
 
     /**
@@ -206,9 +236,63 @@ public class LgteDocumentWrapper
         addFields(fields);
     }
 
+    public void addGeoBoxField(double north, double south, double west, double east, double lat, double lng)
+    {
+        List<Field> fields = getGeoBoxFields(north,south,west,east,lat,lng);
+        addFields(fields);
+    }
+
     public void addFields(Collection<Field> fields)
     {
         luceneVersion.addFields(document,fields);
+    }
+
+    public void addGmlPolygonUnknownForm(String xml) throws IOException, ParserConfigurationException, SAXException
+    {
+        List<Field> fields = getGmlPolygonFields(xml);
+        addFields(fields);
+    }
+
+    public static UnknownForm getGmlPolygonUnknownForm(String xml) throws IOException, ParserConfigurationException, SAXException
+    {
+        Geometry geo = getGmlPolygonGeometry(xml);
+        Envelope envelope = geo.getEnvelopeInternal();
+        UnknownForm unknownForm;
+        if(envelope.getMinX() != envelope.getMaxX() || envelope.getMinY() != envelope.getMaxY())
+        {
+
+            unknownForm = new RectangleForm(envelope.getMaxX(),envelope.getMinY(),envelope.getMinX(),envelope.getMaxY(),new GeoPoint(geo.getCentroid().getX(), geo.getCentroid().getY()));
+        }
+        else
+        {
+            unknownForm = new GeoPoint(geo.getCentroid().getX(), geo.getCentroid().getY());
+        }
+        return unknownForm;
+    }
+
+    public static List<Field> getGmlPolygonFields(String xml) throws IOException, ParserConfigurationException, SAXException
+    {
+        Geometry geo = getGmlPolygonGeometry(xml);
+        Envelope envelope = geo.getEnvelopeInternal();
+        if(envelope.getMinX() != envelope.getMaxX() || envelope.getMinY() != envelope.getMaxY())
+        {
+            return getGeoBoxFields(new RectangleForm(envelope.getMaxX(),envelope.getMinY(),envelope.getMinX(),envelope.getMaxY(),new GeoPoint(geo.getCentroid().getX(), geo.getCentroid().getY())));
+        }
+        else
+        {
+            return getGeoPointFields(new GeoPoint(geo.getCentroid().getX(), geo.getCentroid().getY()));
+        }
+    }
+
+    private static Geometry getGmlPolygonGeometry(String xml) throws IOException, ParserConfigurationException, SAXException
+    {
+        return getGmlPolygonGeometry(xml,"gml");
+    }
+
+    private static Geometry getGmlPolygonGeometry(String xml, String gmlPrefix) throws IOException, ParserConfigurationException, SAXException
+    {
+        GMLReader reader = new GMLReader();
+        return reader.read(xml.replace("xmlns:" + gmlPrefix + "=\"http://www.opengis.net/gml\"",""), fact);
     }
 
     public static List<Field> getGeoBoxFields(RectangleForm rectangleForm)
@@ -225,12 +309,19 @@ public class LgteDocumentWrapper
      * @param east limit of resource
      * @return a list of fields
      */
-    public static List<Field> getGeoBoxFields(double north, double south, double west, double east)
+    public static List<Field> getGeoBoxFields(double north, double south, double west, double east, double lat, double lng)
     {
         //Calc distance between lower left and top right corners
         double diagonal = DistanceUtils.getDistanceMi(south, west, north, east);
-        double middleLatitude = GeoUtils.calcMiddleLatitude(north, south);
-        double middleLongitude = GeoUtils.calcMiddleLongitude(west, east);
+
+        double middleLatitude = lat;
+        double middleLongitude = lng;
+
+        if(lat == SPATIAL_INVALID_VALUE || lng == SPATIAL_INVALID_VALUE)
+        {
+            middleLatitude = GeoUtils.calcMiddleLatitude(north, south);
+            middleLongitude = GeoUtils.calcMiddleLongitude(west, east);
+        }
 
         double sideLat = DistanceUtils.getDistanceMi(south,west,north,west);
         double sideLng = DistanceUtils.getDistanceMi(south,west,south,east);
@@ -247,7 +338,7 @@ public class LgteDocumentWrapper
         geoPointFields.add(getField(Globals.LUCENE_SOUTHLIMIT_ORGINAL_INDEX,""+south,true,false,false));
         geoPointFields.add(getField(Globals.LUCENE_EASTLIMIT_ORGINAL_INDEX,""+east,true,false,false));
         geoPointFields.add(getField(Globals.LUCENE_WESTLIMIT_ORGINAL_INDEX,""+west,true,false,false));
-        
+
         geoPointFields.add(getField(Globals.LUCENE_RADIUM_INDEX, NumberUtils.double2sortableStr(radium),false,true,false,true));
         geoPointFields.add(getField(Globals.LUCENE_DIAGONAL_INDEX, NumberUtils.double2sortableStr(diagonal),false,true,false,true));
         geoPointFields.add(getField(Globals.LUCENE_NORTHLIMIT_INDEX,NumberUtils.double2sortableStr(north),false,true,false,true));
@@ -259,10 +350,23 @@ public class LgteDocumentWrapper
     }
 
     /**
+     * Set this document as a Geographic Box
+     *
+     * @param north limit of resource
+     * @param south limit of resource
+     * @param west limit of resource
+     * @param east limit of resource
+     * @return a list of fields
+     */
+    public static List<Field> getGeoBoxFields(double north, double south, double west, double east)
+    {
+        return getGeoBoxFields(north,south,west,east,SPATIAL_INVALID_VALUE,SPATIAL_INVALID_VALUE);
+    }
+
+    /**
      * Set this document as a Geographic GeoPoint
      *
-     * @param geoPoint spatial geoPoint of resource
-     */
+we     */
     public void addGeoPointField(GeoPoint geoPoint)
     {
         addGeoPointField(geoPoint.getLat(), geoPoint.getLng());

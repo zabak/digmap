@@ -3,8 +3,11 @@ package pt.utl.ist.lucene.sort.sorters.models;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.SortField;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.ilps.DataCacher;
 import pt.utl.ist.lucene.level1query.QueryParams;
 import pt.utl.ist.lucene.sort.ModelSortDocComparator;
+import pt.utl.ist.lucene.ModelManager;
+import pt.utl.ist.lucene.Model;
 
 import java.util.HashMap;
 
@@ -23,6 +26,8 @@ public class DefaultModelSortDocComparator implements ModelSortDocComparator
     protected float textFactor;
     protected QueryParams queryParams;
 
+    protected IndexReader reader;
+
     protected SpatialDistancesScoreDocComparator spatialScoreDocComparator = null;
     protected TimeDistancesScoreDocComparator timeScoreDocComparator = null;
     protected LgteScoreDocComparator textScoreDocComparator = null;
@@ -38,6 +43,8 @@ public class DefaultModelSortDocComparator implements ModelSortDocComparator
         this.spatialScoreDocComparator = spatial;
         this.timeScoreDocComparator = time;
         this.textScoreDocComparator = text;
+
+        this.reader = reader;
 
 
         this.queryParams = queryParams;
@@ -82,6 +89,12 @@ public class DefaultModelSortDocComparator implements ModelSortDocComparator
         return getTextScore(new ScoreDoc(doc,score));
     }
 
+    float log10 = (float) Math.log(10);
+    float beta =
+            (DataCacher.Instance().get("LM-beta") != null)
+                    ? (Float.valueOf((String) DataCacher.Instance().get("LM-beta")))
+                    .floatValue() : 1.0f;
+
     public float getTextScore(ScoreDoc scoreDoc)
     {
         //we need a cache for Text because text score it is the real lucene returned score, and that value will change after ranking to a normalized real value
@@ -89,6 +102,14 @@ public class DefaultModelSortDocComparator implements ModelSortDocComparator
         if(scoreCache != null)
             return scoreCache;
         scoreCache = (Float) textScoreDocComparator.sortValue(scoreDoc);
+
+        /*****
+         * Start of the rank formula need to be here
+         * it is not done for DFR models
+         */
+        if(ModelManager.getInstance().getModel() == Model.LanguageModel)
+            scoreCache += (beta * (float) Math.log(getDocLength(scoreDoc.doc))) / log10;
+
         textScoresCache.put(scoreDoc.doc,scoreCache);
         return scoreCache;
     }
@@ -126,6 +147,7 @@ public class DefaultModelSortDocComparator implements ModelSortDocComparator
             textScore1 =  getTextScore(scoreDoc);
         }
         score = merge(timeScore1,spaceScore1,textScore1);
+//        System.out.println(textScore1 + "+" + spaceScore1 + "=" + score);
         scoresCache.put(scoreDoc.doc,score);
         return score;
     }
@@ -133,11 +155,26 @@ public class DefaultModelSortDocComparator implements ModelSortDocComparator
 
     protected float merge(float time, float spatial, float text)
     {
-        return time*timeFactor + spatial*spatialFactor + text*textFactor;
+        return time*(timeFactor) + spatial*(spatialFactor) + text*(textFactor);
     }
 
     public int sortType()
     {
         return SortField.FLOAT;
+    }
+
+
+    private int getDocLength(int doc)
+    {
+        int docLen = 0;
+        try
+        {
+            docLen = reader.getDocLength(doc);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        return docLen;
     }
 }

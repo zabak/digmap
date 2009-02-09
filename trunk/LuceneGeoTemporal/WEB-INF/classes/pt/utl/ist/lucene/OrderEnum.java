@@ -57,7 +57,7 @@ public enum OrderEnum
 
     public boolean isScore()
     {
-        return this == space || this == score || this == timeSpace || this == scoreTimeSpace;
+        return this == score || this == scoreSpace || this == scoreTime || this == scoreTimeSpace;
     }
 
     public String toString()

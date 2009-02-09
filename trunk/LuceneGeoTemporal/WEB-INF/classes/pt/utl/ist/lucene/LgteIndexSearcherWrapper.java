@@ -20,6 +20,7 @@ import pt.utl.ist.lucene.versioning.LuceneVersion;
 import pt.utl.ist.lucene.versioning.LuceneVersionFactory;
 
 import java.io.IOException;
+import java.util.Properties;
 
 /**
  * @author Jorge Machado
@@ -41,6 +42,13 @@ public class LgteIndexSearcherWrapper
     {
         ModelManager.getInstance().setModel(model);
         indexSearcher = LgteIndexSearcherManager.openSearcher(model, s);
+    }
+    
+    public LgteIndexSearcherWrapper(Model model, String s, Properties modelProperties)
+            throws IOException
+    {
+        ModelManager.getInstance().setModel(model);
+        indexSearcher = LgteIndexSearcherManager.openSearcher(model, s,modelProperties);
     }
 
     public LgteIndexSearcherWrapper(Model model, Directory directory)

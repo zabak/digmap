@@ -94,7 +94,7 @@ public class TrecEvalOutputFormat implements OutputFormat
 //        }
     }
 
-    public void writeRecord(Document d, float score, String run)
+    public void writeRecord(int docId , Document d, float score, String run)
     {
         //351   0  FR940104-0-00001  1   42.38   handle-name
         try
@@ -111,6 +111,7 @@ public class TrecEvalOutputFormat implements OutputFormat
                 writer.write(" ");
                 writer.write("Q0");
                 writer.write(" ");
+//                writer.write(id.trim() + "-docID-" + docId);
                 writer.write(id.trim());
                 writer.write(" ");
                 writer.write("" + rank);

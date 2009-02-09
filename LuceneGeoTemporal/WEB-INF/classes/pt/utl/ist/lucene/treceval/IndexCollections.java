@@ -32,7 +32,7 @@ public class IndexCollections implements IndexFilesCallBack
 
     static boolean storeTermVectors = false;
     static int count = 0;
-    static int maxDocsLocalBuffer = 50000;
+    static int maxDocsLocalBuffer = 25000;
     IndexWriter writer;
     String idField;
 

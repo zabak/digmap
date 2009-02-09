@@ -7,6 +7,7 @@ import org.dom4j.Element;
 import org.dom4j.XPath;
 import org.xml.sax.InputSource;
 import pt.utl.ist.lucene.treceval.ISearchCallBack;
+import pt.utl.ist.lucene.treceval.Globals;
 import pt.utl.ist.lucene.treceval.handlers.IdMap;
 import pt.utl.ist.lucene.treceval.handlers.ResourceHandler;
 import pt.utl.ist.lucene.treceval.handlers.topics.output.OutputFormat;
@@ -61,7 +62,14 @@ public class TXmlHandler implements TDocumentHandler
         FileOutputStream outputStream;
         try
         {
-            outputStream = new FileOutputStream(outputDir + "/" + fromFile + "-" + collection + "-" + run + "-" + confId + ".txt");
+            String runName;
+            if(Globals.RUN_OUTPUT_FILE == null)
+                runName =  outputDir + "/" + run + "-" + confId + ".txt";
+            else
+                runName = Globals.RUN_OUTPUT_FILE;
+
+//            outputStream = new FileOutputStream(outputDir + "/" + fromFile + "-" + collection + "-" + run + "-" + confId + ".txt");
+            outputStream = new FileOutputStream(runName);
         }
         catch (FileNotFoundException e)
         {

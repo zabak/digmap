@@ -18,7 +18,7 @@ public interface OutputFormat
     public void init(String idField1, String idField2);
     public void setOutputStream(OutputStream outputStream);
     public void writeHeader(int totalResults);
-    public void writeRecord(Document d, float score, String run);
+    public void writeRecord(int docId, Document d, float score, String run);
     public void writeFooter();
     public void setMaxDocsToFlush(int max);
     public void setTopic(Topic topic);

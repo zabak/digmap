@@ -108,8 +108,18 @@ final class TermScorerLanguageModel extends Scorer {
 		doc = docs[pointer];
 		return true;
 	}
+    float beta = -1.0f;
+     private float getLmBeta()
+    {
 
-	public float score() throws IOException {
+        if (beta == -1.0f)
+            beta = (DataCacher.Instance().get("LM-beta") != null)
+                    ? (Float.valueOf((String) DataCacher.Instance().get("LM-beta")))
+                    .floatValue() : 1.0f;
+        return beta;
+    }
+
+    public float score() throws IOException {
 
         if (useFieldLengths) {
             fieldLen = indexReader.getFieldLength(doc, term.field());
@@ -121,7 +131,9 @@ final class TermScorerLanguageModel extends Scorer {
 			(float) Math.log(1.0f + ((lambda * tfDoc * collSize) /  ((1.0f - lambda) * tfCollection * fieldLen)));
 		sim /= log10;
 
-		return sim;
+        if(doc == 129611)
+            return   sim;
+        return sim;
 	}
 
 	public boolean skipTo(int target) throws IOException {

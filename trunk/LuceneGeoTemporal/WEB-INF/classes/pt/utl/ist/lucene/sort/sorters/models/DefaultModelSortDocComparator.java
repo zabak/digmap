@@ -89,11 +89,6 @@ public class DefaultModelSortDocComparator implements ModelSortDocComparator
         return getTextScore(new ScoreDoc(doc,score));
     }
 
-    float log10 = (float) Math.log(10);
-    float beta =
-            (DataCacher.Instance().get("LM-beta") != null)
-                    ? (Float.valueOf((String) DataCacher.Instance().get("LM-beta")))
-                    .floatValue() : 1.0f;
 
     public float getTextScore(ScoreDoc scoreDoc)
     {
@@ -101,14 +96,12 @@ public class DefaultModelSortDocComparator implements ModelSortDocComparator
         Float scoreCache = textScoresCache.get(scoreDoc.doc);
         if(scoreCache != null)
             return scoreCache;
-        scoreCache = (Float) textScoreDocComparator.sortValue(scoreDoc);
 
+        scoreCache = (Float) textScoreDocComparator.sortValue(scoreDoc);
         /*****
-         * Start of the rank formula need to be here
-         * it is not done for DFR models
+         * Call final calculations, e.g. in LanguageModel will sum Beta
          */
-        if(ModelManager.getInstance().getModel() == Model.LanguageModel)
-            scoreCache += (beta * (float) Math.log(getDocLength(scoreDoc.doc))) / log10;
+        scoreCache = ModelManager.getInstance().getModel().getDocumentFinalScorer().computeFinalScore(scoreCache,reader,getDocLength(scoreDoc.doc));
 
         textScoresCache.put(scoreDoc.doc,scoreCache);
         return scoreCache;
@@ -128,6 +121,8 @@ public class DefaultModelSortDocComparator implements ModelSortDocComparator
 
     public Comparable sortValue(ScoreDoc scoreDoc)
     {
+        if(scoreDoc.doc == 129611)
+            System.out.println("");
         Float score = scoresCache.get(scoreDoc.doc);
         if(score != null)
             return score;

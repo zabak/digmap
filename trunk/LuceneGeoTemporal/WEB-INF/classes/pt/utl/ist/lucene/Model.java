@@ -3,6 +3,10 @@ package pt.utl.ist.lucene;
 import pt.utl.ist.lucene.config.ConfigProperties;
 import pt.utl.ist.lucene.versioning.LuceneVersionFactory;
 import pt.utl.ist.lucene.versioning.VersionEnum;
+import pt.utl.ist.lucene.models.DocumentFinalScorer;
+import pt.utl.ist.lucene.models.impl.LanguageModelFinalScorer;
+import pt.utl.ist.lucene.models.impl.DoNothingFinalScorer;
+import pt.utl.ist.lucene.models.impl.LanguageModelHiemstraFinalScorer;
 import org.apache.log4j.Logger;
 
 /**
@@ -13,16 +17,18 @@ import org.apache.log4j.Logger;
 public enum Model
 {
 
-    VectorSpaceModel("VectorSpace", false,"vs"),
-    LanguageModel("LanguageModel", true,"lm"),
-    DLHHypergeometricDFRModel("DLHHypergeometricDFRModel", true,"DLHHypergeometricDFRModel"),
-    InExpC2DFRModel("InExpC2DFRModel", true,"InExpC2DFRModel"),
-    InExpB2DFRModel("InExpB2DFRModel", true,"InExpB2DFRModel"),
-    IFB2DFRModel("IFB2DFRModel", true,"IFB2DFRModel"),
-    InL2DFRModel("InL2DFRModel", true,"InL2DFRModel"),
-    PL2DFRModel("PL2DFRModel", true,"PL2DFRModel"),
-    BB2DFRModel("BB2DFRModel", true,"BB2DFRModel"),
-    OkapiBM25Model("OkapiBM25Model", true,"bm25");
+    VectorSpaceModel("VectorSpace", false,"vs",null),
+    LanguageModelHiemstra("LanguageModelHiemstra", true,"hlm", new LanguageModelHiemstraFinalScorer()),
+    LanguageModel("LanguageModel", true,"lm", new LanguageModelFinalScorer()),
+    DLHHypergeometricDFRModel("DLHHypergeometricDFRModel", true,"DLHHypergeometricDFRModel", new DoNothingFinalScorer()),
+    InExpC2DFRModel("InExpC2DFRModel", true,"InExpC2DFRModel", new DoNothingFinalScorer()),
+    InExpB2DFRModel("InExpB2DFRModel", true,"InExpB2DFRModel", new DoNothingFinalScorer()),
+    IFB2DFRModel("IFB2DFRModel", true,"IFB2DFRModel", new DoNothingFinalScorer()),
+    InL2DFRModel("InL2DFRModel", true,"InL2DFRModel", new DoNothingFinalScorer()),
+    PL2DFRModel("PL2DFRModel", true,"PL2DFRModel", new DoNothingFinalScorer()),
+    BB2DFRModel("BB2DFRModel", true,"BB2DFRModel", new DoNothingFinalScorer()),
+    OkapiBM25Model("OkapiBM25Model", true,"bm25", new DoNothingFinalScorer());
+
 
 
 
@@ -44,13 +50,14 @@ public enum Model
     String name;
     boolean probabilistcModel;
     String shortName;
+    DocumentFinalScorer documentFinalScorer;
 
-
-    private Model(String name, boolean isProbabilistic, String shortName)
+    private Model(String name, boolean isProbabilistic, String shortName, DocumentFinalScorer documentFinalScorer)
     {
         this.name = name;
         this.probabilistcModel = isProbabilistic;
         this.shortName = shortName;
+        this.documentFinalScorer = documentFinalScorer;
     }
 
     public static Model parse(String name)
@@ -80,5 +87,10 @@ public enum Model
     public boolean isProbabilistcModel()
     {
         return probabilistcModel;
+    }
+
+    public DocumentFinalScorer getDocumentFinalScorer()
+    {
+        return documentFinalScorer;
     }
 }

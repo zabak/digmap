@@ -31,6 +31,7 @@ import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.Scorer;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
+import pt.utl.ist.lucene.Model;
 
 /**
  * Search using a language model.
@@ -38,67 +39,29 @@ import org.apache.lucene.store.Directory;
  * <p>inherits everything from IndexSearcher, except the
  * search() method which adds the language length prior.
  */
-public class IndexSearcherLanguageModel extends IndexSearcher
+public class IndexSearcherLanguageModel extends ProbabilisticIndexSearcher
 {
 
     boolean usePriors =
             (System.getProperty("priors") != null) ? true : false;
 
-    //float beta = 1.0f;
-    float beta = -1.0f;
-    float log10 = (float) Math.log(10);
-    LanguageModelIndexReader lmIndexReader = null;
-    boolean extendedDataRead = false;
-
-
-    private float getLmBeta()
-    {
-
-        if (beta == -1.0f)
-            beta = (DataCacher.Instance().get("LM-beta") != null)
-                    ? (Float.valueOf((String) DataCacher.Instance().get("LM-beta")))
-                    .floatValue() : 1.0f;
-        return beta;
-    }
-
-    /**
-     * Creates a searcher searching the index in the named directory.
-     */
-    public IndexSearcherLanguageModel(String path) throws IOException
+    public IndexSearcherLanguageModel(String path)
+            throws IOException
     {
         super(path);
-        if (lmIndexReader == null)
-        {
-            lmIndexReader = new LanguageModelIndexReader(reader);
-        }
     }
 
-    /**
-     * Creates a searcher searching the index in the provided directory.
-     */
-    public IndexSearcherLanguageModel(Directory directory) throws IOException
+    public IndexSearcherLanguageModel(Directory directory)
+            throws IOException
     {
         super(directory);
-        if (lmIndexReader == null)
-        {
-            lmIndexReader = new LanguageModelIndexReader(reader);
-        }
     }
 
-    /**
-     * Creates a searcher searching the provided index.
-     */
     public IndexSearcherLanguageModel(IndexReader r)
     {
         super(r);
-        if (lmIndexReader == null)
-        {
-            lmIndexReader = new LanguageModelIndexReader(reader);
-        }
-
-        System.err.println("");
-
     }
+
 
     // inherit javadoc
     public TopDocs search(Query query, Filter filter, final int nDocs)
@@ -129,8 +92,10 @@ public class IndexSearcherLanguageModel extends IndexSearcher
                     float prior = 1.0f;
                     if (docLen > 0)
                     {
+
 //                  System.out.println("add prior " + docLen + " (" + (float)Math.log(docLen) / log10 + ")");
-                        score += getLmBeta() * (float) Math.log(docLen) / log10;
+                    //Changed in LGTE by Jorge Machado @see pt.utl.ist.lucene.models
+                    score = Model.LanguageModel.getDocumentFinalScorer().computeFinalScore(score,reader,docLen);
 //                  System.out.println("final: " + score);
                     }
                     else
@@ -214,33 +179,6 @@ public class IndexSearcherLanguageModel extends IndexSearcher
         if (scorer == null)
             return;
         scorer.score(collector);
-    }
-
-    /**
-     * @param directory path to index directory
-     */
-    public void storeExtendedData(String directory)
-    {
-        lmIndexReader.storeExtendedData(directory);
-    }
-
-    /**
-     */
-    public LanguageModelIndexReader getLangModelReader()
-    {
-        return lmIndexReader;
-    }
-
-    /**
-     * @param directory path to index directory
-     */
-    public void readExtendedDate(String directory)
-    {
-        if (!extendedDataRead)
-        {
-            lmIndexReader.readExtendedData(directory);
-            extendedDataRead = true;
-        }
     }
 
 }

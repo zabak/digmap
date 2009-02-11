@@ -1,9 +1,6 @@
 package pt.utl.ist.lucene;
 
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.DefaultSimilarity;
-import org.apache.lucene.search.IndexSearcherLanguageModel;
-import org.apache.lucene.search.LangModelSimilarity;
+import org.apache.lucene.search.*;
 import org.apache.lucene.index.LanguageModelIndexReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.ilps.DataCacher;
@@ -187,7 +184,10 @@ public class LgteIndexSearcherManager
     {
         if(model.isProbabilistcModel())
         {
-            return new IndexSearcherLanguageModel(reader);
+            if(model == Model.LanguageModel)
+                return new IndexSearcherLanguageModel(reader);
+            else
+                return new ProbabilisticCleanIndexSearcher(reader);
         }
         else if(model == Model.VectorSpaceModel)
         {
@@ -204,7 +204,10 @@ public class LgteIndexSearcherManager
     {
         if(model.isProbabilistcModel())
         {
-            return new IndexSearcherLanguageModel(dir);
+            if(model == Model.LanguageModel)
+                return new IndexSearcherLanguageModel(dir);
+            else
+                return new ProbabilisticCleanIndexSearcher(dir);
         }
         else if(model == Model.VectorSpaceModel)
         {
@@ -221,7 +224,10 @@ public class LgteIndexSearcherManager
     {
         if(model.isProbabilistcModel())
         {
-            return new IndexSearcherLanguageModel(dir);
+            if(model == Model.LanguageModel)
+                return new IndexSearcherLanguageModel(dir);
+            else
+                return new ProbabilisticCleanIndexSearcher(dir);
         }
         else if(model == Model.VectorSpaceModel)
         {
@@ -238,7 +244,10 @@ public class LgteIndexSearcherManager
     {
         if(model.isProbabilistcModel())
         {
-            return new IndexSearcherLanguageModel(openReader(dir,model));
+            if(model == Model.LanguageModel)
+                return new IndexSearcherLanguageModel(openReader(dir,model));
+            else
+                return new ProbabilisticCleanIndexSearcher(openReader(dir,model));
         }
         else if(model == Model.VectorSpaceModel)
         {
@@ -262,7 +271,7 @@ public class LgteIndexSearcherManager
             System.setProperty("RetrievalModel", model.getName());
             if(!extentData)
             {
-                ((IndexSearcherLanguageModel) indexSearcher).readExtendedDate(Globals.TMP_DIR);
+                ((ProbabilisticIndexSearcher) indexSearcher).readExtendedDate(Globals.TMP_DIR);
                 extentData = true;
             }
             initDataCacher(modelProperties);

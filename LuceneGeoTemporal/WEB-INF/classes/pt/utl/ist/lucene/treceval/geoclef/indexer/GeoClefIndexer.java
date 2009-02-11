@@ -45,7 +45,7 @@ public class GeoClefIndexer
     public static String TEXT_FACTOR = "0.2";
     public static String SPATIAL_FACTOR = "0.8";
 
-    static boolean usaNarrativa = true;
+    static boolean usaNarrativa = false;
 
     //if null will test all with treckEval
 //    public static String[] testTopics = null;
@@ -375,11 +375,12 @@ public class GeoClefIndexer
         Configuration VS_GEO_UNION = new Configuration("version1", collectionUnionName, "lm", Model.VectorSpaceModel, languagePackage.getAnalyzerNoStemming(), null, null, topicsPath, topicsDirectory, "contents", languagePackage.getWordList(), outputPath, maxResults);
         Configuration VS_STEMMER_GEO_UNION = new Configuration("version1", collectionUnionName, "lmstem", Model.VectorSpaceModel, languagePackage.getAnalyzerWithStemming(), null, null, topicsPath, topicsDirectory, "contents", languagePackage.getWordList(), outputPath, maxResults);
         Configuration BM25_STEMMER_GEO_UNION = new Configuration("version1", collectionUnionName, "lmstem", Model.OkapiBM25Model, languagePackage.getAnalyzerWithStemming(), null, null, topicsPath, topicsDirectory, "contents", languagePackage.getWordList(), outputPath, maxResults);
+        Configuration HIEMSTRA_STEMMER_GEO_UNION = new Configuration("version1", collectionUnionName, "lmstem", Model.LanguageModelHiemstra, languagePackage.getAnalyzerWithStemming(), null, null, topicsPath, topicsDirectory, "contents", languagePackage.getWordList(), outputPath, maxResults);
 //
 //
         QueryConfiguration queryConfiguration1 = new QueryConfiguration();
 
-        queryConfiguration1.setForceQE(QEEnum.text);
+        queryConfiguration1.setForceQE(QEEnum.no);
         queryConfiguration1.getQueryProperties().put("lgte.default.filter", "no");
         queryConfiguration1.getQueryProperties().put("spatial.score.strategy", "pt.utl.ist.lucene.sort.sorters.models.comparators.strategy.BoxQueryWithBoxDoc");
         queryConfiguration1.getQueryProperties().put("lgte.default.order", "sc");
@@ -402,7 +403,7 @@ public class GeoClefIndexer
 
 
         QueryConfiguration queryConfiguration4 = new QueryConfiguration();
-        queryConfiguration4.setForceQE(QEEnum.text);
+        queryConfiguration4.setForceQE(QEEnum.no);
         queryConfiguration4.getQueryProperties().put("lgte.default.filter", "no");
         queryConfiguration4.getQueryProperties().put("spatial.score.strategy", "pt.utl.ist.lucene.sort.sorters.models.comparators.strategy.BoxQueryWithBoxDoc");
         queryConfiguration4.getQueryProperties().put("lgte.default.order", "sc_sp");
@@ -431,9 +432,10 @@ public class GeoClefIndexer
 
 
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, VS_GEO_UNION));
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, VS_STEMMER_GEO_UNION));
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, VS_STEMMER_GEO_UNION));
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, LM_GEO_UNION));
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, LM_STEMMER_GEO_UNION));
+          searchConfigurations.add(new SearchConfiguration(queryConfiguration1, HIEMSTRA_STEMMER_GEO_UNION));
+//          searchConfigurations.add(new SearchConfiguration(queryConfiguration1, LM_STEMMER_GEO_UNION));
 //
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, VS_GEO_UNION));
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, VS_STEMMER_GEO_UNION));

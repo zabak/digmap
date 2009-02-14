@@ -434,8 +434,8 @@ public class GeoClefIndexer
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, VS_GEO_UNION));
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, VS_STEMMER_GEO_UNION));
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, LM_GEO_UNION));
-          searchConfigurations.add(new SearchConfiguration(queryConfiguration1, HIEMSTRA_STEMMER_GEO_UNION));
-//          searchConfigurations.add(new SearchConfiguration(queryConfiguration1, LM_STEMMER_GEO_UNION));
+//          searchConfigurations.add(new SearchConfiguration(queryConfiguration1, BM25_STEMMER_GEO_UNION));
+          searchConfigurations.add(new SearchConfiguration(queryConfiguration1, LM_STEMMER_GEO_UNION));
 //
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, VS_GEO_UNION));
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, VS_STEMMER_GEO_UNION));
@@ -452,6 +452,7 @@ public class GeoClefIndexer
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration4, VS_STEMMER_GEO_UNION));
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration4, LM_GEO_UNION));
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration4, LM_STEMMER_GEO_UNION));
+          searchConfigurations.add(new SearchConfiguration(queryConfiguration4, BM25_STEMMER_GEO_UNION));
 ////
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration5, VS_GEO_UNION));
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration5, VS_STEMMER_GEO_UNION));

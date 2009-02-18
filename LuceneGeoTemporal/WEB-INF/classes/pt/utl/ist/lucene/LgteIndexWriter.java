@@ -11,6 +11,7 @@ import org.apache.lucene.store.Directory;
 import pt.utl.ist.lucene.analyzer.LgteAnalyzer;
 import pt.utl.ist.lucene.versioning.LuceneVersionFactory;
 import pt.utl.ist.lucene.versioning.LuceneVersion;
+import pt.utl.ist.lucene.context.Context;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -177,4 +178,6 @@ public class LgteIndexWriter extends IndexWriter
     {
         super.addDocument(documentWrapper.getDocument(), analyzer);
     }
+
+    
 }

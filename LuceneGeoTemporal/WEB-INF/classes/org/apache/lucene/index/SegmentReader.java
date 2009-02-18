@@ -242,7 +242,7 @@ final class SegmentReader extends IndexReader {
   }
 
   public final TermDocs termDocs() throws IOException {
-    return new SegmentTermDocs(this);
+    return new SegmentTermContextDistanceDocs(this);
   }
 
   public final TermPositions termPositions() throws IOException {

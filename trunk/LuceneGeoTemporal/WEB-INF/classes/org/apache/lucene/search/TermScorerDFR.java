@@ -98,7 +98,7 @@ final class TermScorerDFR extends Scorer  {
         {
             tokenNumber = indexReader.getCollectionTokenNumber();
             totalFreqs = indexReader.getTotalDocFreqs();
-             avgLen = tokenNumber/totalFreqs;
+            avgLen = tokenNumber/totalFreqs;
             collSize = indexReader.getTotalDocFreqs();
         }
     }

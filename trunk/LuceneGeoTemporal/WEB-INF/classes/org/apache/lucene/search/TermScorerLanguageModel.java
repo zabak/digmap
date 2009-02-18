@@ -19,10 +19,7 @@ package org.apache.lucene.search;
 import java.io.IOException;
 
 import org.apache.lucene.ilps.DataCacher;
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.LanguageModelIndexReader;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.index.TermDocs;
+import org.apache.lucene.index.*;
 
 final class TermScorerLanguageModel extends Scorer {
 	private Weight weight;
@@ -40,7 +37,8 @@ final class TermScorerLanguageModel extends Scorer {
 
 	private final int[] docs = new int[32]; // buffered doc numbers
 	private final int[] freqs = new int[32]; // buffered term freqs
-	private int pointer;
+    private int[][] freqsDist;
+    private int pointer;
 	private int pointerMax;
 	private Term term;
 	private float log10 = (float) Math.log(10);
@@ -97,7 +95,8 @@ final class TermScorerLanguageModel extends Scorer {
 		pointer++;
 		if (pointer >= pointerMax) {
 			pointerMax = termDocs.read(docs, freqs); // refill buffer
-			if (pointerMax != 0) {
+            freqsDist = ((SegmentTermContextDistanceDocs)termDocs).getFreqsDist();
+            if (pointerMax != 0) {
 				pointer = 0;
 			} else {
 				termDocs.close(); // close stream
@@ -121,6 +120,7 @@ final class TermScorerLanguageModel extends Scorer {
 
     public float score() throws IOException {
 
+        int contextSize = indexReader.getFieldLength(doc, term.field() + "$");
         if (useFieldLengths) {
             fieldLen = indexReader.getFieldLength(doc, term.field());
         } else {
@@ -131,8 +131,7 @@ final class TermScorerLanguageModel extends Scorer {
 			(float) Math.log(1.0f + ((lambda * tfDoc * collSize) /  ((1.0f - lambda) * tfCollection * fieldLen)));
 		sim /= log10;
 
-        if(doc == 129611)
-            return   sim;
+
         return sim;
 	}
 

@@ -121,8 +121,6 @@ public class DefaultModelSortDocComparator implements ModelSortDocComparator
 
     public Comparable sortValue(ScoreDoc scoreDoc)
     {
-        if(scoreDoc.doc == 129611)
-            System.out.println("");
         Float score = scoresCache.get(scoreDoc.doc);
         if(score != null)
             return score;

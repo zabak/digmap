@@ -5,10 +5,12 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.index.TermDocs;
+import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.RAMDirectory;
-import pt.utl.ist.lucene.analyzer.LgteNothingAnalyzer;
+import pt.utl.ist.lucene.analyzer.LgteWhiteSpacesAnalyzer;
 import pt.utl.ist.lucene.context.Context;
 import pt.utl.ist.lucene.context.ContextNode;
 
@@ -24,6 +26,7 @@ public class LgteContextIndexWriter extends LgteIndexWriter
 {
     private static final Logger logger = Logger.getLogger(LgteContextIndexWriter.class);
     String path;
+
 
     public LgteContextIndexWriter(String s, Analyzer analyzer, boolean b)
             throws IOException
@@ -115,13 +118,19 @@ public class LgteContextIndexWriter extends LgteIndexWriter
 
     public String CONTEXT_RAW_CID = "r_cid";
     public String CONTEXT_RAW_FROM_INDEX = "r_from";
-    public String CONTEXT_RAW_DEST_INDEX = "r_dest";
+    public String CONTEXT_RAW_TO_INDEX = "r_to";
     public String CONTEXT_RAW_DIST_INDEX = "r_dist";
+    public String CONTEXT_RAW_FROM_TO_INDEX = "r_from_to";
+    public String CONTEXT_RAW_DIRECT_FROM_INDEX = "r_direct_link_from";
+    public String CONTEXT_RAW_DIRECT_TO_INDEX = "r_direct_link_to";
 
-    public String CONTEXT_CID = "cid";
+    public String CONTEXT_CID = "cid_seq";
     public String CONTEXT_FROM_INDEX = "from";
-    public String CONTEXT_DEST_INDEX = "dest";
+    public String CONTEXT_TO_INDEX = "to";
     public String CONTEXT_DIST_INDEX = "dist";
+    public String CONTEXT_FROM_DEST_INDEX = "from_to";
+    public String CONTEXT_DIRECT_FROM_INDEX = "direct_link_from";
+    public String CONTEXT_DIRECT_TO_INDEX = "direct_link_to";
 
     private int maxCID = -1;
 
@@ -143,12 +152,12 @@ public class LgteContextIndexWriter extends LgteIndexWriter
                     contextFolder.mkdirs();
                 }
                 try{
-                    contextWriterProxy = new IndexWriter(contextFolder, new LgteNothingAnalyzer(), false);
+                    contextWriterProxy = new IndexWriter(contextFolder, new LgteWhiteSpacesAnalyzer(), false);
                 }
                 catch(FileNotFoundException e)
                 {
                     logger.info("Context Index don't exist yest, creating: " + contextFolder.getAbsolutePath());
-                    contextWriterProxy = new IndexWriter(contextFolder, new LgteNothingAnalyzer(), true);
+                    contextWriterProxy = new IndexWriter(contextFolder, new LgteWhiteSpacesAnalyzer(), true);
                 }
             }
 
@@ -177,16 +186,20 @@ public class LgteContextIndexWriter extends LgteIndexWriter
     public void deleteContexts() throws IOException
     {
         File contextFolder = new File(path + CONTEXT_RELATIVE_PATH);
+        if(contextWriterProxy != null)
+            contextWriterProxy.close();
         if(!contextFolder.exists())
         {
             logger.info("Context folder don't exist yest, creating: " + contextFolder.getAbsolutePath());
+            contextFolder.mkdirs();
         }
+
 //        File documentContextFolder = new File(path + DOCUMENTS_CONTEXT_RELATIVE_PATH);
 //        if(!documentContextFolder.exists())
 //        {
 //            logger.info("DocumentContextFolder folder don't exist yest, creating: " + documentContextFolder.getAbsolutePath());
 //        }
-        contextWriterProxy = new IndexWriter(contextFolder, new LgteNothingAnalyzer(), true);
+        contextWriterProxy = new IndexWriter(contextFolder, new LgteWhiteSpacesAnalyzer(), true);
 //        documentContextWriterProxy = new IndexWriter(documentContextFolder, new LgteNothingAnalyzer(), true);
     }
 
@@ -274,15 +287,21 @@ public class LgteContextIndexWriter extends LgteIndexWriter
             {
                 for(Map.Entry<ContextNode,Integer> entry: fromNode.getDistancesVector().entrySet())
                 {
-                    ContextNode destNode = entry.getKey();
+                    ContextNode toNode = entry.getKey();
                     Integer distance = entry.getValue();
                     if(distance >= 0 && distance < Integer.MAX_VALUE)
                     {
                         Document raw = new Document();
                         raw.add(new Field(CONTEXT_RAW_CID,"" + cid,true,true,false,true));
                         raw.add(new Field(CONTEXT_RAW_FROM_INDEX,"" + fromNode.getDocId(),true,true,false,true));
-                        raw.add(new Field(CONTEXT_RAW_DEST_INDEX,"" + destNode,true,true,false,true));
+                        raw.add(new Field(CONTEXT_RAW_TO_INDEX,"" + toNode.getDocId(),true,true,false,true));
                         raw.add(new Field(CONTEXT_RAW_DIST_INDEX,"" + distance,true,true,false,true));
+                        raw.add(new Field(CONTEXT_RAW_FROM_TO_INDEX,"" + fromNode.getDocId() + " " + toNode.getDocId(),true,true,false,true));
+                        if(distance == 1)
+                        {
+                            raw.add(new Field(CONTEXT_RAW_DIRECT_FROM_INDEX,"" + fromNode.getDocId() ,true,true,false,true));
+                            raw.add(new Field(CONTEXT_RAW_DIRECT_TO_INDEX,"" + toNode.getDocId() ,true,true,false,true));
+                        }
                         contextWriterProxy.addDocument(raw);
                     }
                 }

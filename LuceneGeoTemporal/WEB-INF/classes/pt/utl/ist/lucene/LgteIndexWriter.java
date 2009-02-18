@@ -2,21 +2,20 @@ package pt.utl.ist.lucene;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.*;
 import org.apache.lucene.search.DefaultSimilarity;
 import org.apache.lucene.search.IndexSearcherLanguageModel;
 import org.apache.lucene.search.LangModelSimilarity;
 import org.apache.lucene.store.Directory;
+import org.apache.lucene.document.Document;
 import pt.utl.ist.lucene.analyzer.LgteAnalyzer;
 import pt.utl.ist.lucene.versioning.LuceneVersionFactory;
 import pt.utl.ist.lucene.versioning.LuceneVersion;
 import pt.utl.ist.lucene.context.Context;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * @author Jorge Machado
@@ -26,6 +25,10 @@ import java.io.PrintWriter;
 public class LgteIndexWriter extends IndexWriter
 {
 
+
+    private static String docId_txt = "/docid.txt";
+    List<Integer> deleteted = new ArrayList<Integer>();
+    List<Term> deleteteTermDocs = new ArrayList<Term>();
 
     private static LuceneVersion luceneVersion = LuceneVersionFactory.getLuceneVersion();
     private static final Logger logger = Logger.getLogger(LgteIndexWriter.class);
@@ -125,30 +128,71 @@ public class LgteIndexWriter extends IndexWriter
         }
     }
 
+    private void deleteWaiting() throws IOException
+    {
+        IndexReader reader;
+        if (directory != null)
+            reader = IndexReader.open(directory);
+        else if (file != null)
+            reader = IndexReader.open(file);
+        else
+            reader = IndexReader.open(indexPath);
+        for (Integer deletedDoc : deleteted)
+            reader.delete(deletedDoc);
+        deleteted.clear();
+        TermDocs termDocs = reader.termDocs();
+        for (Term t : deleteteTermDocs)
+        {
+            termDocs.seek(t);
+            if (termDocs.next())
+            {
+                int previous = termDocs.doc();
+                while (termDocs.next())
+                {
+                    reader.delete(previous);
+                    previous = termDocs.doc();
+                }
+            }
+        }
+        termDocs.close();
+        deleteteTermDocs.clear();
+        reader.close();
+    }
+
+    private void optimizeOpeningNewIndex() throws IOException
+    {
+        IndexWriter writer;
+        if (directory != null)
+            writer = new IndexWriter(directory, super.getAnalyzer(), false);
+        else if (file != null)
+            writer = new IndexWriter(file, super.getAnalyzer(), false);
+        else
+            writer = new IndexWriter(indexPath, super.getAnalyzer(), false);
+        writer.optimize();
+        writer.close();
+    }
+
     public void close() throws IOException
     {
-        optimize();
         super.close();
+        deleteWaiting();
+        optimizeOpeningNewIndex();
+
         if (storeTermVectors)
         {
             // store some cached data
-            if (indexPath == null)
-            {
-                indexPath = Globals.TMP_DIR;
-                new File(indexPath).mkdirs();
-            }
-            IndexSearcherLanguageModel searcher = new IndexSearcherLanguageModel(indexPath);
+            IndexSearcherLanguageModel searcher = new IndexSearcherLanguageModel(getIndexPath());
             searcher.storeExtendedData(indexPath);
         }
 
         // write docid to internal id mapping
-        String docidFile = indexPath + "/docid.txt";
+        String docidFile = indexPath + docId_txt;
         logger.info("Writing docid file to " + docidFile);
         FileWriter outFile = new FileWriter(docidFile);
         PrintWriter fileOutput = new PrintWriter(outFile);
 
-        IndexReader reader;
 
+        IndexReader reader;
         if (directory != null)
             reader = IndexReader.open(directory);
         else if (file != null)
@@ -179,5 +223,106 @@ public class LgteIndexWriter extends IndexWriter
         super.addDocument(documentWrapper.getDocument(), analyzer);
     }
 
-    
+    public void deleteDocument(int docId)
+    {
+        deleteted.add(docId);
+    }
+
+    public void deleteDocument(Term term)
+    {
+        logger.warn("This method is not safe: Will put deleted document in memory to delete at the end, will delete only first n-1 ocurrences to dont delete the added document");
+        deleteteTermDocs.add(term);
+    }
+
+    public void deleteDocument(Term[] terms)
+    {
+        logger.warn("This method is not safe: Will put deleted document in memory to delete at the end, will delete only first n-1 ocurrences to dont delete the added document");
+        if (terms != null)
+            for (Term t : terms)
+                deleteteTermDocs.add(t);
+    }
+
+    public void updateDocument(int docId, Document doc) throws IOException
+    {
+        deleteDocument(docId);
+        addDocument(doc);
+    }
+
+    public void updateDocument(Term term, Document doc) throws IOException
+    {
+        logger.warn("This method is not safe: Will put deleted document in memory to delete at the end, will delete only first n-1 ocurrences to dont delete the added document");
+        deleteteTermDocs.add(term);
+        addDocument(doc);
+    }
+
+    public void updateDocument(Term term, Document doc, Analyzer analyzer) throws IOException
+    {
+        logger.warn("This method is not safe: Will put deleted document in memory to delete at the end, will delete only first n-1 ocurrences to dont delete the added document");
+        deleteteTermDocs.add(term);
+        addDocument(doc, analyzer);
+    }
+
+    private String getIndexPath()
+    {
+        if (indexPath == null && file == null)
+        {
+            indexPath = Globals.TMP_DIR;
+            new File(indexPath).mkdirs();
+        }
+        else if (indexPath == null)
+        {
+            indexPath = file.getAbsolutePath();
+        }
+        return indexPath;
+    }
+    public DocIdDocNoIterator getDocIdDocNoIterator() throws FileNotFoundException
+    {
+        return new DocIdDocNoIterator(getIndexPath());
+    }
+
+    public static class DocIdDocNoIterator
+    {
+
+        BufferedReader reader;
+
+        public DocIdDocNoIterator(String indexPath) throws FileNotFoundException
+        {
+            reader = new BufferedReader(new FileReader(indexPath + docId_txt));
+        }
+
+        int docId;
+        String docNo;
+
+        public boolean next() throws IOException
+        {
+            String line;
+            if ((line = reader.readLine()) != null && line.trim().length() > 0)
+            {
+                String[] docsIdDocNo = line.split(" ");
+                docId = Integer.parseInt(docsIdDocNo[0]);
+                docNo = docsIdDocNo[1];
+                return true;
+            }
+            return false;
+        }
+
+
+        public int getDocId()
+        {
+            return docId;
+        }
+
+        public String getDocNo()
+        {
+            return docNo;
+        }
+
+        public void close() throws IOException
+        {
+            reader.close();
+        }
+
+    }
+
+
 }

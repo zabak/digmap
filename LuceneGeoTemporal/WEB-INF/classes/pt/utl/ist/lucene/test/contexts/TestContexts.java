@@ -11,6 +11,7 @@ import java.io.IOException;
 import com.pjaol.search.geo.utils.InvalidGeoException;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.Term;
 import org.apache.lucene.document.Document;
 
 /**
@@ -34,8 +35,10 @@ public class TestContexts extends TestCase
 
     protected void setUp() throws IOException, ParseException
     {
-        LgteContextIndexWriter writer = new LgteContextIndexWriter(path,true, Model.LanguageModel);
+        LgteContextIndexWriter writer = new LgteContextIndexWriter(path,false, Model.LanguageModel);
+        writer.deleteContexts();
         Context context = new Context(Globals.DOCUMENT_ID_FIELD);
+
 
 
         LgteDocumentWrapper doc1 = new LgteDocumentWrapper();
@@ -123,11 +126,15 @@ public class TestContexts extends TestCase
 //        doc4.indexText("contents$in","1");
 //        doc4.storeUtokenized("contents$top1","true");
 
+        writer.updateDocument(new Term(Globals.DOCUMENT_ID_FIELD, "4"),doc4.getDocument());
+        writer.updateDocument(new Term(Globals.DOCUMENT_ID_FIELD, "1"),doc1.getDocument());
+        writer.updateDocument(new Term(Globals.DOCUMENT_ID_FIELD, "2"),doc2.getDocument());
+        writer.updateDocument(new Term(Globals.DOCUMENT_ID_FIELD, "3"),doc3.getDocument());
 
-        writer.addDocument(doc1);
-        writer.addDocument(doc2);
-        writer.addDocument(doc3);
-        writer.addDocument(doc4);
+//        writer.addDocument(doc1);
+//        writer.addDocument(doc2);
+//        writer.addDocument(doc3);
+//        writer.addDocument(doc4);
 
         writer.addContext(context);
 

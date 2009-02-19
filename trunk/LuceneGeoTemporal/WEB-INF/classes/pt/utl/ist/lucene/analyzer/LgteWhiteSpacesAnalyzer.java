@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.*;
 import org.apache.lucene.analysis.standard.StandardTokenizer;
 import org.apache.lucene.analysis.standard.StandardFilter;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.analysis.de.WordlistLoader;
 
 import java.io.IOException;
@@ -29,9 +30,14 @@ public class LgteWhiteSpacesAnalyzer extends org.apache.lucene.analysis.Analyzer
 
 
 
+    public LgteWhiteSpacesAnalyzer( ) throws IOException
+    {
+        System.out.println("");
+    }
+
     public final TokenStream tokenStream(String fieldName, Reader reader)
     {
-        return new WhitespaceAnalyzer().tokenStream(fieldName,reader);
+        return new WhitespaceTokenizer(reader);
     }
 
 

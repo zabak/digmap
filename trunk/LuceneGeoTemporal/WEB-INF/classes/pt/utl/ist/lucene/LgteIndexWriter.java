@@ -27,8 +27,6 @@ public class LgteIndexWriter extends IndexWriter
 
 
     private static String docId_txt = "/docid.txt";
-    List<Integer> deleteted = new ArrayList<Integer>();
-    List<Term> deleteteTermDocs = new ArrayList<Term>();
 
     private static LuceneVersion luceneVersion = LuceneVersionFactory.getLuceneVersion();
     private static final Logger logger = Logger.getLogger(LgteIndexWriter.class);
@@ -128,36 +126,7 @@ public class LgteIndexWriter extends IndexWriter
         }
     }
 
-    private void deleteWaiting() throws IOException
-    {
-        IndexReader reader;
-        if (directory != null)
-            reader = IndexReader.open(directory);
-        else if (file != null)
-            reader = IndexReader.open(file);
-        else
-            reader = IndexReader.open(indexPath);
-        for (Integer deletedDoc : deleteted)
-            reader.delete(deletedDoc);
-        deleteted.clear();
-        TermDocs termDocs = reader.termDocs();
-        for (Term t : deleteteTermDocs)
-        {
-            termDocs.seek(t);
-            if (termDocs.next())
-            {
-                int previous = termDocs.doc();
-                while (termDocs.next())
-                {
-                    reader.delete(previous);
-                    previous = termDocs.doc();
-                }
-            }
-        }
-        termDocs.close();
-        deleteteTermDocs.clear();
-        reader.close();
-    }
+
 
     private void optimizeOpeningNewIndex() throws IOException
     {
@@ -175,7 +144,6 @@ public class LgteIndexWriter extends IndexWriter
     public void close() throws IOException
     {
         super.close();
-        deleteWaiting();
         optimizeOpeningNewIndex();
 
         if (storeTermVectors)
@@ -213,54 +181,7 @@ public class LgteIndexWriter extends IndexWriter
         reader.close();
     }
 
-    public void addDocument(LgteDocumentWrapper documentWrapper) throws IOException
-    {
-        super.addDocument(documentWrapper.getDocument());
-    }
 
-    public void addDocument(LgteDocumentWrapper documentWrapper, Analyzer analyzer) throws IOException
-    {
-        super.addDocument(documentWrapper.getDocument(), analyzer);
-    }
-
-    public void deleteDocument(int docId)
-    {
-        deleteted.add(docId);
-    }
-
-    public void deleteDocument(Term term)
-    {
-        logger.warn("This method is not safe: Will put deleted document in memory to delete at the end, will delete only first n-1 ocurrences to dont delete the added document");
-        deleteteTermDocs.add(term);
-    }
-
-    public void deleteDocument(Term[] terms)
-    {
-        logger.warn("This method is not safe: Will put deleted document in memory to delete at the end, will delete only first n-1 ocurrences to dont delete the added document");
-        if (terms != null)
-            for (Term t : terms)
-                deleteteTermDocs.add(t);
-    }
-
-    public void updateDocument(int docId, Document doc) throws IOException
-    {
-        deleteDocument(docId);
-        addDocument(doc);
-    }
-
-    public void updateDocument(Term term, Document doc) throws IOException
-    {
-        logger.warn("This method is not safe: Will put deleted document in memory to delete at the end, will delete only first n-1 ocurrences to dont delete the added document");
-        deleteteTermDocs.add(term);
-        addDocument(doc);
-    }
-
-    public void updateDocument(Term term, Document doc, Analyzer analyzer) throws IOException
-    {
-        logger.warn("This method is not safe: Will put deleted document in memory to delete at the end, will delete only first n-1 ocurrences to dont delete the added document");
-        deleteteTermDocs.add(term);
-        addDocument(doc, analyzer);
-    }
 
     private String getIndexPath()
     {
@@ -321,8 +242,18 @@ public class LgteIndexWriter extends IndexWriter
         {
             reader.close();
         }
-
     }
+
+    public void addDocument(LgteDocumentWrapper documentWrapper) throws IOException
+    {
+        addDocument(documentWrapper.getDocument());
+    }
+
+    public void addDocument(LgteDocumentWrapper documentWrapper, Analyzer analyzer) throws IOException
+    {
+        addDocument(documentWrapper.getDocument(), analyzer);
+    }
+
 
 
 }

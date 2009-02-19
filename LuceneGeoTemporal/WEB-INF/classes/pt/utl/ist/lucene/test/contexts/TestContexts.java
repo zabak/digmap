@@ -4,15 +4,12 @@ import junit.framework.TestCase;
 import pt.utl.ist.lucene.*;
 import pt.utl.ist.lucene.context.Context;
 import pt.utl.ist.lucene.context.ContextNode;
-import pt.utl.ist.lucene.utils.Files;
 
 import java.io.IOException;
 
 import com.pjaol.search.geo.utils.InvalidGeoException;
 import org.apache.lucene.queryParser.ParseException;
-import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
-import org.apache.lucene.document.Document;
 
 /**
  *
@@ -35,7 +32,7 @@ public class TestContexts extends TestCase
 
     protected void setUp() throws IOException, ParseException
     {
-        LgteContextIndexWriter writer = new LgteContextIndexWriter(path,false, Model.LanguageModel);
+        LgteContextIndexWriter writer = new LgteContextIndexWriter(path,true, Model.LanguageModel);
         writer.deleteContexts();
         Context context = new Context(Globals.DOCUMENT_ID_FIELD);
 
@@ -126,15 +123,15 @@ public class TestContexts extends TestCase
 //        doc4.indexText("contents$in","1");
 //        doc4.storeUtokenized("contents$top1","true");
 
-        writer.updateDocument(new Term(Globals.DOCUMENT_ID_FIELD, "4"),doc4.getDocument());
-        writer.updateDocument(new Term(Globals.DOCUMENT_ID_FIELD, "1"),doc1.getDocument());
-        writer.updateDocument(new Term(Globals.DOCUMENT_ID_FIELD, "2"),doc2.getDocument());
-        writer.updateDocument(new Term(Globals.DOCUMENT_ID_FIELD, "3"),doc3.getDocument());
+//        writer.updateDocument(new Term(Globals.DOCUMENT_ID_FIELD, "4"),doc4.getDocument());
+//        writer.updateDocument(new Term(Globals.DOCUMENT_ID_FIELD, "1"),doc1.getDocument());
+//        writer.updateDocument(new Term(Globals.DOCUMENT_ID_FIELD, "2"),doc2.getDocument());
+//        writer.updateDocument(new Term(Globals.DOCUMENT_ID_FIELD, "3"),doc3.getDocument());
 
-//        writer.addDocument(doc1);
-//        writer.addDocument(doc2);
-//        writer.addDocument(doc3);
-//        writer.addDocument(doc4);
+        writer.addDocument(doc1);
+        writer.addDocument(doc2);
+        writer.addDocument(doc3);
+        writer.addDocument(doc4);
 
         writer.addContext(context);
 
@@ -145,7 +142,7 @@ public class TestContexts extends TestCase
     protected void tearDown() throws Exception
     {
 //        Files.delDirsE(path);
-//        Files.delDirsE(path + LgteContextIndexWriter.CONTEXT_RELATIVE_PATH);
+//        Files.delDirsE(path + LgteContextIndexWriter.CONTEXT_RAW_RELATIVE_PATH);
 //        Files.delDirsE(path + LgteContextIndexWriter.DOCUMENTS_CONTEXT_RELATIVE_PATH);
     }
 

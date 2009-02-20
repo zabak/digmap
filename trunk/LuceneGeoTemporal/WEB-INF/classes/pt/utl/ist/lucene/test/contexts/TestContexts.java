@@ -45,7 +45,7 @@ public class TestContexts extends TestCase
 
         LgteDocumentWrapper doc2 = new LgteDocumentWrapper();
         doc2.indexText(Globals.DOCUMENT_ID_FIELD, "2");
-        doc2.indexText("contents","LGTE LGTE: Lucene Geo-Temporal Extensions Framework");
+        doc2.indexText("contents","LGTE: Lucene Geo-Temporal Extensions Framework");
         ContextNode node2 = context.createInternalNode("2");
         context.addBiDirectionalLink(topNode,node2);
 
@@ -57,7 +57,7 @@ public class TestContexts extends TestCase
 
         LgteDocumentWrapper doc4 = new LgteDocumentWrapper();
         doc4.indexText(Globals.DOCUMENT_ID_FIELD, "4");
-        doc4.indexText("contents","LGTE LGTE: Lucene Geo-Temporal Extensions Framework");
+        doc4.indexText("contents","Curricuum");
         ContextNode node4 = context.createInternalNode("4");
         context.addBiDirectionalLink(topNode,node4);
 

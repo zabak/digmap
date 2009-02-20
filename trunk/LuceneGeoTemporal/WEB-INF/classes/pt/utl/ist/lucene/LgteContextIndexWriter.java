@@ -14,6 +14,7 @@ import org.apache.lucene.store.RAMDirectory;
 import pt.utl.ist.lucene.analyzer.LgteWhiteSpacesAnalyzer;
 import pt.utl.ist.lucene.context.Context;
 import pt.utl.ist.lucene.context.ContextNode;
+import pt.utl.ist.lucene.utils.Files;
 
 import java.io.*;
 import java.util.Map;
@@ -115,10 +116,11 @@ public class LgteContextIndexWriter extends LgteIndexWriter
     //    IndexWriter documentContextWriterProxy = null;
     public static final String CONTEXT_RAW_RELATIVE_PATH = "ContextsRaw";
     public static final String CONTEXT_INDEXES_RELATIVE_PATH = "ContextsIndexes";
-    //    public static final String DOCUMENTS_CONTEXT_RELATIVE_PATH = "DocumentsContext";
+    public static final String DOCUMENTS_CONTEXT_TEMPORATY_PATH = "DocsWithContexts";
     public static final String CID_CONTEXT_FILE = "Contexts/maxcid.txt";
 
 
+    public String CONTEXT_RAW_FIELD = "r_field";
     public String CONTEXT_RAW_CID = "r_cid";
     public String CONTEXT_RAW_FROM_INDEX = "r_from";
     public String CONTEXT_RAW_TO_INDEX = "r_to";
@@ -212,6 +214,7 @@ public class LgteContextIndexWriter extends LgteIndexWriter
      *
      * @param context to index
      * @return context ID
+     * @throws java.io.IOException on write error
      */
     public synchronized long addContext(Context context) throws IOException
     {
@@ -287,8 +290,10 @@ public class LgteContextIndexWriter extends LgteIndexWriter
     /**
      * index a context in context index
      *
-     * @param c
-     * @param cid
+     * @param c context
+     * @param cid to index
+     *
+     * @throws java.io.IOException on write error
      */
     private void indexContext(Context c, int cid) throws IOException
     {
@@ -303,6 +308,7 @@ public class LgteContextIndexWriter extends LgteIndexWriter
                     if (distance >= 0 && distance < Integer.MAX_VALUE)
                     {
                         Document raw = new Document();
+                        raw.add(new Field(CONTEXT_RAW_FIELD, "" + c.getField(), true, true, false, true));
                         raw.add(new Field(CONTEXT_RAW_CID, "" + cid, true, true, false, true));
                         raw.add(new Field(CONTEXT_RAW_FROM_INDEX, "" + fromNode.getDocId(), true, true, false, true));
                         raw.add(new Field(CONTEXT_RAW_TO_INDEX, "" + toNode.getDocId(), true, true, false, true));
@@ -320,8 +326,20 @@ public class LgteContextIndexWriter extends LgteIndexWriter
         }
     }
 
+    /**
+     *
+     * This method augment context lines creating keys to real document id's using docNo
+     * will create an index field for each raw field using real ids in original lucene index
+     *
+     * @param from index folder to iterate
+     * @param to index folder of augmented index
+     * @param field to iterate
+     * @throws IOException on index errors
+     *
+     */
     public void generateIdIndexes(String from, String to, String field) throws IOException
     {
+
         DocIdDocNoIterator idDocNoIterator = getDocIdDocNoIterator();
         File contextIdIndexesFolder = new File(path + to);
         if (!contextIdIndexesFolder.exists())
@@ -331,7 +349,6 @@ public class LgteContextIndexWriter extends LgteIndexWriter
         }
 
         IndexReader readerContextRaw = IndexReader.open(path + from);
-        boolean[] cidChecked = new boolean[readerContextRaw.maxDoc()];
         IndexWriter contextWriterIndexesProxy = new IndexWriter(contextIdIndexesFolder, new LgteWhiteSpacesAnalyzer(), true);
         TermDocs termDocs = readerContextRaw.termDocs();
         while(idDocNoIterator.next())
@@ -391,11 +408,6 @@ public class LgteContextIndexWriter extends LgteIndexWriter
                     else
                         raw.add(new Field(CONTEXT_DIRECT_TO_INDEX, "" + doc, true, true, false, true));
                 }
-
-                //check if was already in index
-
-
-
                 contextWriterIndexesProxy.addDocument(raw);
             }
         }
@@ -403,10 +415,146 @@ public class LgteContextIndexWriter extends LgteIndexWriter
         contextWriterIndexesProxy.optimize();
         contextWriterIndexesProxy.close();
         readerContextRaw.close();
+        idDocNoIterator.close();
+    }
 
-//        IndexReader readerDocuments = IndexReader.open(path);
-//        readerDocuments.close();
 
+    /**
+     * The objective of this method is to augment documents with context fields organized by distance from the source node
+     * At the end each context found should produce a new field with all text in context documents found
+     * At the end each context found should produce in affected documents a contextfield$0 with the original text
+     * e.g.
+     *   before
+     *   doc1  (contents: A E I) (authors: A B C)
+     *   doc2  (contents: O) (authors: D E F)
+     *   doc3  (contents: U) (authors: G)
+     *
+     *   doc1 <-(contents (CONTEXT_1))-> doc2
+     *   doc1 <-(contents (CONTEXT_2))-> doc3
+     *
+     *   after method
+     *   in document 1 context 1 will get relative ID = 0 and context 2 will get relative id 1
+     *   in document 2 context 1 will get relative ID = 0
+     *   in document 3 context 2 will get relative ID = 0
+     *   in document 1 context 2 will get relative ID = 1
+     *
+     *   Will be created indexes relative to context (cid_seq in contextLines) and distance (dist in context lines) from source:
+     *
+     *   index [field] will keep all text from all documents in all contexts in some field
+     *   index [field]$0 will keep original text of document
+     *   indexes format  [field]$$[relativeContext]$[distance]
+     *
+     *   doc1  (contents: A E I O U) (contents$0: A E I) (contents$$0$1: O) (contents$$1$1: U) (authors: A B C )
+     *   doc2  (contents: O A E I) (contents$0: O) (contents$$0$1: A E I) (authors: D E F)
+     *   doc3  (contents: U A E I) (contents$0: U) (contents$$0$1: A E I) (authors: G)
+     *
+     * This method iterate all the documents in collection
+     *    0 - for each document t
+     *          1 - the method load all context entries where document is a from node
+     *            1.1 - For each from arrow
+     *              1.1.1 - If not exist is created a bucket to merge all fields from target documents to create index [field]
+     *                      the fields started by [field]$$ are removed from the document
+     *                      Field $0 or field is loaded and field$0 is initialized and added to bucket
+     *              1.1.2 - Target context document found in line is loaded
+     *              1.1.3 - lookup for contextField$0 or contextField in target document
+     *              1.1.4 - Add found field to bucket contextField separated with a '\n' in the end
+     *              1.1.5 - Add a field [field]$$[cid_seq]$[dist] with text present in target doc contextField
+     *          2 - For each context in bucket
+     *              create in document a field [field] for each line in field bucket
+     *          3 - add new document to new index
+     *          4 - Replace index with new index 
+     * @throws IOException onm index IO errors
+     */
+    public void indexContextsInDocuments() throws IOException
+    {
+        DocIdDocNoIterator idDocNoIterator = getDocIdDocNoIterator();
+        IndexReader docsReader = IndexReader.open(path);
+        IndexReader readerContextRaw = IndexReader.open(path + CONTEXT_INDEXES_RELATIVE_PATH);
+        LgteIndexWriter writer = new LgteIndexWriter(path + DOCUMENTS_CONTEXT_TEMPORATY_PATH,getAnalyzer(),false);
+
+        // 0 - for each document t
+        TermDocs termDocs = readerContextRaw.termDocs();
+        while(idDocNoIterator.next())
+        {
+            int doc = idDocNoIterator.getDocId();
+            String docNo = idDocNoIterator.getDocNo();
+            Document document = docsReader.document(doc);
+            Map<String,StringBuilder> docContextBucket = new HashMap<String,StringBuilder>();
+            termDocs.seek(new Term(CONTEXT_FROM_INDEX,docNo));
+
+            // 1 - the method load all context entries where document is a from node
+            while(termDocs.next())
+            {
+                // 1.1 - For each from arrow
+                Document raw = readerContextRaw.document(termDocs.doc());
+                String contextField = raw.get(CONTEXT_RAW_FIELD);
+                StringBuilder contextBucket = docContextBucket.get(contextField);
+                if(contextBucket == null)
+                {
+                    // 1.1.1 - If not exist is created a bucket to merge all fields from target documents to create index [field]
+                    contextBucket = new StringBuilder();
+                    docContextBucket.put(contextField,contextBucket);
+                    //         The fields started by [field]$$ are removed from the document
+                    document.removeFields(contextField + "$$");
+                    //         Field $0 or field is loaded and field$0 is initialized and added to bucket
+                    String field0 = document.get(contextField + "$0");
+                    if(field0 == null)
+                    {
+                        logger.info("Adding context first time to document " + docNo + " in field " + contextField + " ..setting " + contextField + "$0");
+                        field0 = document.get(contextField);
+                        document.add(new Field(contextField + "$0",field0,true,true,true,true));
+
+                    }
+                    logger.debug("removing " + contextField + " in document " + docNo + " ...will keep text in Bucket");
+                    document.removeField(contextField);
+
+                    logger.debug("appending " + contextField + " in bucket of " + docNo + " with field " + contextField);
+                    contextBucket.append(field0).append('\n');
+                }
+
+                // 1.1.2 - Target context document found in line is loaded
+                int targetDocId = Integer.parseInt(raw.get(CONTEXT_TO_INDEX));
+                Document targetDoc = docsReader.document(targetDocId);
+
+                // 1.1.3 - lookup for contextField$0 or contextField in target document
+                String targetContextField0 = targetDoc.get(contextField + "$0");
+                if(targetContextField0 == null)
+                    targetContextField0 = targetDoc.get(contextField);
+
+                //1.1.4 - Add found field to bucket contextField separated with a '\n' in the end
+                contextBucket.append(targetContextField0).append('\n');
+
+                //1.1.5 - Add a field [field]$$[cid_seq]$[dist] with text present in target doc contextField
+                String cid_seq = raw.get(CONTEXT_CID);
+                String dist = raw.get(CONTEXT_DIST_INDEX);
+                document.add(new Field(contextField + "$$" + cid_seq + "$" + dist,targetContextField0,true,true,true,true));
+            }
+            // 2 - For each context in bucket
+            //     create in document a field [field] for each line in field bucket
+            for(Map.Entry<String,StringBuilder> field:  docContextBucket.entrySet())
+            {
+                BufferedReader reader = new BufferedReader(new StringReader(field.getValue().toString()));
+                String line0;
+                while((line0=reader.readLine()) != null)
+                {
+                    document.add(new Field(field.getKey(),line0,true,true,true,true));
+                }
+                reader.close();
+            }
+
+            // 3 - add new document to new index
+            writer.addDocument(document);
+        }
+
+        idDocNoIterator.close();
+        docsReader.close();
+        readerContextRaw.close();
+        writer.optimize();
+        writer.close();
+        
+        // 4 - Replace index with new index
+        Files.delDirsE(path);
+        Files.copyDirectory(new File(path + DOCUMENTS_CONTEXT_TEMPORATY_PATH), new File(path));
     }
 
 

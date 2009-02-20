@@ -20,10 +20,18 @@ public class Context
     ContextNode topNode;
     RoutesMap routesMap;
     String idField;
+    String field;
 
-    public Context(String idField)
+    public Context(String idField, String field)
     {
         this.idField = idField;
+        this.field = field;
+    }
+
+
+    public String getField()
+    {
+        return field;
     }
 
     public ContextNode getTopNode()

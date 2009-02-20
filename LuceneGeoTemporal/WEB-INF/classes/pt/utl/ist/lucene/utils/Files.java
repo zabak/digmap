@@ -17,7 +17,9 @@ public class Files
 
     private static Files instance;
 
-    private Files(){}
+    private Files()
+    {
+    }
 
     static
     {
@@ -28,6 +30,7 @@ public class Files
     {
         return instance;
     }
+
     /**
      * Delete a dir and all internal files and dir's
      *
@@ -40,7 +43,7 @@ public class Files
 
         File f = new File(startPath);
 
-        if(!f.exists())
+        if (!f.exists())
         {
             return -1;
         }
@@ -49,10 +52,12 @@ public class Files
 
             File aux;
             File[] files = f.listFiles();
-            for (File file : files) {
+            for (File file : files)
+            {
 
                 aux = file;
-                if (aux.list() == null) {
+                if (aux.list() == null)
+                {
                     logger.info("Deleting file: " + startPath + "/" + aux.getName());
                     if (!aux.delete())
                     {
@@ -61,7 +66,8 @@ public class Files
                         aux.deleteOnExit();
                     }
                 }
-                else {
+                else
+                {
                     if (result >= 0)
                         result = delDirsE(startPath + "/" + aux.getName());
                     else
@@ -69,7 +75,7 @@ public class Files
                 }
             }
             logger.warn("Deleting Dir: " + startPath + "/" + f.getName());
-            if(!f.delete())
+            if (!f.delete())
             {
                 logger.info("Can't deleting file: " + startPath);
                 f.deleteOnExit();
@@ -79,6 +85,53 @@ public class Files
         return result;
     }
 
+
+    public static boolean copyDirectory(File srcPath, File dstPath)
+            throws IOException
+    {
+
+        if (srcPath.isDirectory())
+        {
+            if (!dstPath.exists())
+            {
+                dstPath.mkdir();
+            }
+            String files[] = srcPath.list();
+            for (String file : files)
+            {
+                copyDirectory(new File(srcPath, file), new File(dstPath, file));
+            }
+        }
+
+        else
+        {
+            if (!srcPath.exists())
+            {
+                logger.error("File or directory does not exist.");
+                return false;
+            }
+            else
+
+            {
+                InputStream in = new FileInputStream(srcPath);
+                OutputStream out = new FileOutputStream(dstPath);
+                // Transfer bytes from in to out
+                byte[] buf = new byte[1024];
+                int len;
+                while ((len = in.read(buf)) > 0)
+                {
+
+                    out.write(buf, 0, len);
+
+                }
+                in.close();
+                out.close();
+            }
+        }
+        logger.info("Directory " + srcPath + " copied to " + dstPath);
+        return true;
+    }
+
     public HashSet<String> readWords(String path) throws IOException
     {
         InputStream file = getClass().getClassLoader().getResourceAsStream(path);
@@ -86,31 +139,31 @@ public class Files
         String line;
 
         HashSet<String> set = new HashSet();
-        while((line = bufferedReader.readLine()) != null)
+        while ((line = bufferedReader.readLine()) != null)
         {
             line = line.trim();
-            if(line.length()>0)
+            if (line.length() > 0)
             {
                 set.add(line);
             }
         }
         return set;
     }
-    
+
     public static String getExtension(String fileName)
     {
-        if(fileName == null)
+        if (fileName == null)
             return "";
         int lastDot = fileName.lastIndexOf('.');
-        if(lastDot < 0)
+        if (lastDot < 0)
             return "";
-        else if(fileName.length() - lastDot <= 1)
+        else if (fileName.length() - lastDot <= 1)
             return "";
         else
             return fileName.substring(lastDot + 1);
     }
 
-    public static String getText(File file,String encoding) throws IOException
+    public static String getText(File file, String encoding) throws IOException
     {
         StringBuffer contentBuffer = new StringBuffer();
         try
@@ -118,7 +171,7 @@ public class Files
             // Read in template
 
             FileInputStream fileInputStream = new FileInputStream(file);
-            InputStreamReader is = new InputStreamReader(fileInputStream,encoding);
+            InputStreamReader is = new InputStreamReader(fileInputStream, encoding);
             BufferedReader reader = new BufferedReader(is);
             //BufferedReader reader = new BufferedReader(new FileReader(fileName));
 
@@ -128,7 +181,7 @@ public class Files
             while (more)
             {
                 String line = reader.readLine();
-                if (line==null)
+                if (line == null)
                 {
                     more = false;
                 }
@@ -144,21 +197,22 @@ public class Files
             is.close();
             reader.close();
         }
-        catch(IOException e)
+        catch (IOException e)
         {
             throw e;
         }
         return contentBuffer.toString();
     }
 
-        public static String getMaxText(File file, long maxLenght,String encoding) throws Exception
-        {
+    public static String getMaxText(File file, long maxLenght, String encoding) throws Exception
+    {
         StringBuffer contentBuffer = new StringBuffer();
-        try{
+        try
+        {
             // Read in template
 
             FileInputStream fileInputStream = new FileInputStream(file);
-            InputStreamReader is = new InputStreamReader(fileInputStream,encoding);
+            InputStreamReader is = new InputStreamReader(fileInputStream, encoding);
             BufferedReader reader = new BufferedReader(is);
             //BufferedReader reader = new BufferedReader(new FileReader(fileName));
 
@@ -168,7 +222,7 @@ public class Files
             while (more)
             {
                 String line = reader.readLine();
-                if (line==null)
+                if (line == null)
                 {
                     more = false;
                 }
@@ -178,7 +232,7 @@ public class Files
                     contentBuffer.append(line);
                     contentBuffer.append("\n");
                     totalReaded += line.length();
-                    if(totalReaded > maxLenght)
+                    if (totalReaded > maxLenght)
                         more = false;
                 }
             }
@@ -186,7 +240,7 @@ public class Files
             is.close();
             reader.close();
         }
-        catch(Exception e)
+        catch (Exception e)
         {
             throw e;
         }

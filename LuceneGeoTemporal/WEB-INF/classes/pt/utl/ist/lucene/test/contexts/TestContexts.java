@@ -34,7 +34,7 @@ public class TestContexts extends TestCase
     {
         LgteContextIndexWriter writer = new LgteContextIndexWriter(path,true, Model.LanguageModel);
         writer.deleteContexts();
-        Context context = new Context(Globals.DOCUMENT_ID_FIELD);
+        Context context = new Context(Globals.DOCUMENT_ID_FIELD,"contents");
 
 
 

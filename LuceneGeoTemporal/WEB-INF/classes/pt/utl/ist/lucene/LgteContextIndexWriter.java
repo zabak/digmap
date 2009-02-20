@@ -285,6 +285,7 @@ public class LgteContextIndexWriter extends LgteIndexWriter
 //            documentContextWriterProxy.close();
         generateIdIndexes(CONTEXT_RAW_RELATIVE_PATH,CONTEXT_INDEXES_RELATIVE_PATH + "from", CONTEXT_RAW_FROM_INDEX);
         generateIdIndexes(CONTEXT_INDEXES_RELATIVE_PATH + "from",CONTEXT_INDEXES_RELATIVE_PATH,CONTEXT_RAW_TO_INDEX);
+        indexContextsInDocuments();
     }
 
     /**
@@ -453,7 +454,7 @@ public class LgteContextIndexWriter extends LgteIndexWriter
      *          1 - the method load all context entries where document is a from node
      *            1.1 - For each from arrow
      *              1.1.1 - If not exist is created a bucket to merge all fields from target documents to create index [field]
-     *                      the fields started by [field]$$ are removed from the document
+     *                      the fields started by [field]$$ (context distance fields) are removed from the document
      *                      Field $0 or field is loaded and field$0 is initialized and added to bucket
      *              1.1.2 - Target context document found in line is loaded
      *              1.1.3 - lookup for contextField$0 or contextField in target document
@@ -470,7 +471,8 @@ public class LgteContextIndexWriter extends LgteIndexWriter
         DocIdDocNoIterator idDocNoIterator = getDocIdDocNoIterator();
         IndexReader docsReader = IndexReader.open(path);
         IndexReader readerContextRaw = IndexReader.open(path + CONTEXT_INDEXES_RELATIVE_PATH);
-        LgteIndexWriter writer = new LgteIndexWriter(path + DOCUMENTS_CONTEXT_TEMPORATY_PATH,getAnalyzer(),false);
+        new File(path + DOCUMENTS_CONTEXT_TEMPORATY_PATH).mkdirs();
+        LgteIndexWriter writer = new LgteIndexWriter(path + DOCUMENTS_CONTEXT_TEMPORATY_PATH,getAnalyzer(),true);
 
         // 0 - for each document t
         TermDocs termDocs = readerContextRaw.termDocs();
@@ -480,36 +482,43 @@ public class LgteContextIndexWriter extends LgteIndexWriter
             String docNo = idDocNoIterator.getDocNo();
             Document document = docsReader.document(doc);
             Map<String,StringBuilder> docContextBucket = new HashMap<String,StringBuilder>();
-            termDocs.seek(new Term(CONTEXT_FROM_INDEX,docNo));
+
+            //lets obtain all lines for term with doc id in from field
+            termDocs.seek(new Term(CONTEXT_FROM_INDEX,"" + doc));
 
             // 1 - the method load all context entries where document is a from node
             while(termDocs.next())
             {
                 // 1.1 - For each from arrow
                 Document raw = readerContextRaw.document(termDocs.doc());
+                //lets obtain the context field e.g. contents (a context in contents field) 
                 String contextField = raw.get(CONTEXT_RAW_FIELD);
+                //lets check if other lines refered this context field
                 StringBuilder contextBucket = docContextBucket.get(contextField);
                 if(contextBucket == null)
                 {
-                    // 1.1.1 - If not exist is created a bucket to merge all fields from target documents to create index [field]
+                    // 1.1.1 - If not exist is created a bucket to merge all fields from target documents to create index [field] in this document with all contents
                     contextBucket = new StringBuilder();
                     docContextBucket.put(contextField,contextBucket);
-                    //         The fields started by [field]$$ are removed from the document
-                    document.removeFields(contextField + "$$");
+                    //         The fields started by [field]$$ (context distance fields) are removed from the document
+                    //         because all these fields will be indexed again
+                    String distanceFieldsPrefix = contextField + "$$";
+                    document.removeFields(distanceFieldsPrefix);
                     //         Field $0 or field is loaded and field$0 is initialized and added to bucket
-                    String field0 = document.get(contextField + "$0");
-                    if(field0 == null)
+                    String originalTargetTextField = contextField + "$0";
+                    String field0text = document.get(originalTargetTextField);
+                    if(field0text == null)
                     {
                         logger.info("Adding context first time to document " + docNo + " in field " + contextField + " ..setting " + contextField + "$0");
-                        field0 = document.get(contextField);
-                        document.add(new Field(contextField + "$0",field0,true,true,true,true));
+                        field0text = document.get(contextField);
+                        document.add(new Field(originalTargetTextField,field0text,true,true,true,true));
 
                     }
                     logger.debug("removing " + contextField + " in document " + docNo + " ...will keep text in Bucket");
                     document.removeField(contextField);
 
                     logger.debug("appending " + contextField + " in bucket of " + docNo + " with field " + contextField);
-                    contextBucket.append(field0).append('\n');
+                    contextBucket.append(field0text).append('\n');
                 }
 
                 // 1.1.2 - Target context document found in line is loaded
@@ -527,10 +536,11 @@ public class LgteContextIndexWriter extends LgteIndexWriter
                 //1.1.5 - Add a field [field]$$[cid_seq]$[dist] with text present in target doc contextField
                 String cid_seq = raw.get(CONTEXT_CID);
                 String dist = raw.get(CONTEXT_DIST_INDEX);
-                document.add(new Field(contextField + "$$" + cid_seq + "$" + dist,targetContextField0,true,true,true,true));
+                String contextDistanceField = contextField + "$$" + cid_seq + "$" + dist;
+                document.add(new Field(contextDistanceField,targetContextField0,true,true,true,true));
             }
-            // 2 - For each context in bucket
-            //     create in document a field [field] for each line in field bucket
+            // 2 - For each target context original text in bucket
+            //     create a new field in document
             for(Map.Entry<String,StringBuilder> field:  docContextBucket.entrySet())
             {
                 BufferedReader reader = new BufferedReader(new StringReader(field.getValue().toString()));

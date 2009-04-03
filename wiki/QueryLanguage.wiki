@@ -92,14 +92,12 @@ LGTE provides retrieval model configuration at run time using an implementation 
 Here we present several queries and a short explanation on it.
 
 {{{
- q1 := contents:(Jorge Bruno) starttime:10-2008 endtime:2008-11 
- q2 := contents:(Jorge Bruno) time:2007 radiumYears:4 
- q3 := contents:(jorge bruno in lisbon) north:39.754720 south:37.754720 west:-9.5 east:-4
+ q1 := contents:(rivers montains) starttime:1880 endtime:1880 
+ q2 := contents:(world war rails) time:1830 radiumYears:30 
+ q3 := earthquake time:1755 radiumYears:2 north:39.754720 south:37.754720 west:-9.5 east:-4
  q4 := author:(Jorge Bruno) papers time:2007 radiumYears:4 order:t filter:none qe:text
- q5 := Jorge Bruno time:2007 lat:56.162500 lng:10.144250  radiumYears:4 order:t_sp_sc  
- q6 := jorge bruno in lisbon lat:56.162500 lng:10.144250 radiumKm:250 filter:none order:sc
- q7 := jorge lisbon portalegre lat:38.78844 lng:-9.171290 radiumKm:200 qe:lgte
- q8 := jorge lisbon portalegre lat:38.78844 lng:-9.171290 radiumKm:200 qe:lgte model:bm25
+ q5 := papers ist time:2007 lat:56.162500 lng:10.144250 radiumYears:4 order:t_sp_sc  
+ q7 := restaurants portalegre lat:38.78844 lng:-9.171290 radiumKm:30 qe:lgte model:bm25
 }}}
 
 Query 1 it's a time interval query. With years ou can use diferent combinations in date format because parser find 4 digits for year and 2 digits for month and day. Another option is setting times in miliseconds (starttimeMiliseconds endtimeMiliseconds. Query 2 is a time radium query goes from 2003 to 2011 with center time in 2007. Query 3 is selecting results from the specified box limited from south to north and from west to east. Query 4 is doing the same as query 3 but is turning off the filters and setting up query expansion in textual mode. Note that turning off the filters will not prune results out of the choosed radium but the radium will be used to obtain time ranking trough our sigmoid formula. Query 5 is setting up text, spatial and time fields so ranking model will conbine the 3 dimensions (See strategies in next subsection). Query 6 is possible but is a bad combination, because is setting up order ranking to just use text model score, is setting reference points in time and space but is turning off the filters, so time and spatial fields will not be used. Query 7 is setting up a spatial search using query expansion in the same conditions used in final query, using lgte full engine. Query 8 is similar to query 7 but is setting up in runtime the model `OkapiBM25Model`, `bm25` is a short keyword that can be defined in Model enum class. 

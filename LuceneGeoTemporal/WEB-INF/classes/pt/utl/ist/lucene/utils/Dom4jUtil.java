@@ -89,6 +89,15 @@ public class Dom4jUtil
         writer.write( document );
         writer.close();
     }
+    public static void write(Document document,File fileDest) throws IOException
+    {
+        // lets write to a file
+        XMLWriter writer = new XMLWriter(
+                new FileWriter( fileDest )
+        );
+        writer.write( document );
+        writer.close();
+    }
 
     public static void writeSout(Document document) throws IOException
     {

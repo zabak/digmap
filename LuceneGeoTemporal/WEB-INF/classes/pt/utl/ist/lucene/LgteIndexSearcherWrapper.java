@@ -43,7 +43,7 @@ public class LgteIndexSearcherWrapper
         ModelManager.getInstance().setModel(model);
         indexSearcher = LgteIndexSearcherManager.openSearcher(model, s);
     }
-    
+
     public LgteIndexSearcherWrapper(Model model, String s, Properties modelProperties)
             throws IOException
     {
@@ -93,6 +93,13 @@ public class LgteIndexSearcherWrapper
     }
 
 
+
+    public LgteHits search(String query, Analyzer a) throws java.io.IOException, ParseException
+    {
+
+        LgteQuery lgteQuery = LgteQueryParser.parseQuery(query,this,a);
+        return searchAndFilter(lgteQuery);
+    }
 
     public LgteHits search(String query) throws java.io.IOException, ParseException
     {

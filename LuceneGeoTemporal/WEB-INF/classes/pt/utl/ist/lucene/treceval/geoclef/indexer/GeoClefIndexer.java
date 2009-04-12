@@ -55,6 +55,85 @@ public class GeoClefIndexer
             "10.2452/76-GC",
             "10.2452/77-GC",
             "10.2452/78-GC",
+            "10.2452/79-GC", //Timor ??
+            "10.2452/80-GC",
+            "10.2452/81-GC", //Mediterraneo muito grande a query
+            "10.2452/82-GC",
+            "10.2452/83-GC",
+            "10.2452/84-GC", // Irlanda poder-se-ha confindir as duas irlandas norte e sul
+            "10.2452/85-GC",
+            "10.2452/86-GC",
+            "10.2452/87-GC", // Nao tem coordenadas por apanharem o mundo imigrantes
+            "10.2452/88-GC", // OCDE
+            "10.2452/89-GC",
+            "10.2452/90-GC",  //Europa toda
+            "10.2452/91-GC",
+            "10.2452/92-GC",
+            "10.2452/93-GC",
+            "10.2452/94-GC",
+            "10.2452/95-GC",
+            "10.2452/96-GC",
+            "10.2452/97-GC",
+            "10.2452/98-GC",
+            "10.2452/99-GC",
+    };
+
+//    10.2452/100-GC;955
+//10.2452/76-GC;1417
+//10.2452/77-GC;7725
+//10.2452/78-GC;702
+//10.2452/79-GC;8
+//10.2452/80-GC;1555
+//10.2452/81-GC;4746
+//10.2452/82-GC;424
+//10.2452/83-GC;609
+//10.2452/84-GC;126
+//10.2452/85-GC;124
+//10.2452/86-GC;246
+//10.2452/87-GC;75715
+//10.2452/88-GC;70655
+//10.2452/89-GC;0
+//10.2452/90-GC;11685
+//10.2452/91-GC;512
+//10.2452/92-GC;14214
+//10.2452/93-GC;1277
+//10.2452/94-GC;1456
+//10.2452/95-GC;500
+//10.2452/96-GC;1292
+//10.2452/97-GC;1110
+//10.2452/98-GC;854
+//10.2452/99-GC;14247
+//10.2452/100-GC;438
+//10.2452/76-GC;1331
+//10.2452/77-GC;7169
+//10.2452/78-GC;631
+//10.2452/79-GC;11
+//10.2452/80-GC;1398
+//10.2452/81-GC;4310
+//10.2452/82-GC;330
+//10.2452/83-GC;485
+//10.2452/84-GC;919
+//10.2452/85-GC;104
+//10.2452/86-GC;242
+//10.2452/87-GC;51501
+//10.2452/88-GC;66262
+//10.2452/89-GC;0
+//10.2452/90-GC;9716
+//10.2452/91-GC;458
+//10.2452/92-GC;12890
+//10.2452/93-GC;1198
+//10.2452/94-GC;1324
+//10.2452/95-GC;445
+//10.2452/96-GC;643
+//10.2452/97-GC;968
+//10.2452/98-GC;778
+//10.2452/99-GC;12508
+
+    public static String[] testTopicsOK = {
+            "10.2452/100-GC",
+            "10.2452/76-GC",
+            "10.2452/77-GC",
+            "10.2452/78-GC",
 //            "10.2452/79-GC", //Timor ??
             "10.2452/80-GC",
 //            "10.2452/81-GC", //Mediterraneo muito grande a query
@@ -383,7 +462,7 @@ public class GeoClefIndexer
         queryConfiguration1.setForceQE(QEEnum.no);
         queryConfiguration1.getQueryProperties().put("lgte.default.filter", "no");
         queryConfiguration1.getQueryProperties().put("spatial.score.strategy", "pt.utl.ist.lucene.sort.sorters.models.comparators.strategy.BoxQueryWithBoxDoc");
-        queryConfiguration1.getQueryProperties().put("lgte.default.order", "sc");
+        queryConfiguration1.getQueryProperties().put("lgte.default.order", "sc_sp");
         queryConfiguration1.getQueryProperties().put("LM-lambda",LM_LAMBDA);
 //        queryConfiguration1.getQueryProperties().put("score.model","pt.utl.ist.lucene.sort.sorters.models.PiModelSortDocComparator")  ;
 ////
@@ -435,7 +514,7 @@ public class GeoClefIndexer
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, VS_STEMMER_GEO_UNION));
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, LM_GEO_UNION));
 //          searchConfigurations.add(new SearchConfiguration(queryConfiguration1, BM25_STEMMER_GEO_UNION));
-          searchConfigurations.add(new SearchConfiguration(queryConfiguration1, LM_STEMMER_GEO_UNION));
+          searchConfigurations.add(new SearchConfiguration(queryConfiguration4, LM_STEMMER_GEO_UNION));
 //
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, VS_GEO_UNION));
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, VS_STEMMER_GEO_UNION));
@@ -452,7 +531,7 @@ public class GeoClefIndexer
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration4, VS_STEMMER_GEO_UNION));
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration4, LM_GEO_UNION));
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration4, LM_STEMMER_GEO_UNION));
-          searchConfigurations.add(new SearchConfiguration(queryConfiguration4, BM25_STEMMER_GEO_UNION));
+//          searchConfigurations.add(new SearchConfiguration(queryConfiguration4, BM25_STEMMER_GEO_UNION));
 ////
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration5, VS_GEO_UNION));
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration5, VS_STEMMER_GEO_UNION));
@@ -652,7 +731,10 @@ public class GeoClefIndexer
     {
         public Map<String, String> getText(Element docElem, String docno, String fieldName)
         {
+
             Map<String, String> fields = new HashMap<String, String>();
+//            fields.put("GEO_DOC_LE","YES");
+//            return fields;
             Element headlineElem = (Element) docElem.selectSingleNode("HEADLINE");
             String headline = "";
             if (headlineElem != null)
@@ -701,6 +783,8 @@ public class GeoClefIndexer
         public Map<String, String> getText(Element docElem, String docno, String fieldName)
         {
             Map<String, String> fields = new HashMap<String, String>();
+//            fields.put("GEO_DOC_LE","YES");
+//            return fields;
             XPath xPathHeadline = docElem.createXPath("./HEADLINE//text()");
             XPath xPathText = docElem.createXPath("./TEXT//text()");
             List<Node> headlineElems = xPathHeadline.selectNodes(docElem);

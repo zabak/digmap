@@ -17,7 +17,7 @@ import org.apache.log4j.Logger;
 public enum Model
 {
 
-    VectorSpaceModel("VectorSpace", false,"vs",null),
+    VectorSpaceModel("VectorSpace", false,"vs",new DoNothingFinalScorer()),
     LanguageModelHiemstra("LanguageModelHiemstra", true,"hlm", new LanguageModelHiemstraFinalScorer()),
     LanguageModel("LanguageModel", true,"lm", new LanguageModelFinalScorer()),
     DLHHypergeometricDFRModel("DLHHypergeometricDFRModel", true,"DLHHypergeometricDFRModel", new DoNothingFinalScorer()),

@@ -2,6 +2,7 @@ package pt.utl.ist.lucene.treceval.handlers.topics.output.impl;
 
 import pt.utl.ist.lucene.treceval.handlers.topics.output.OutputFormat;
 import pt.utl.ist.lucene.treceval.handlers.topics.output.Topic;
+import pt.utl.ist.lucene.utils.QueryUtils;
 
 import java.util.Map;
 
@@ -28,14 +29,10 @@ public class FieldsTopic implements Topic
         StringBuilder builder = new StringBuilder();
         for(Map.Entry<String,String> entry: map.entrySet())
         {
+            String escapedQuery = QueryUtils.escapeSpecialChars(entry.getValue());
             builder.append(entry.getKey())
                     .append(":(")
-                    .append(entry.getValue()
-                            .replace("(","\\(")
-                            .replace(")","\\)")
-                            .replace("[","\\[")
-                            .replace("]","\\]"
-                            .replace(":","\\:")))
+                    .append(escapedQuery)
                     .append(") ");
         }
         query = builder.toString();

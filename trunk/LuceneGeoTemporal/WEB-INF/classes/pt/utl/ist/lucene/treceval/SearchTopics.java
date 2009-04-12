@@ -8,6 +8,7 @@ import pt.utl.ist.lucene.treceval.handlers.topics.output.OutputFormat;
 import pt.utl.ist.lucene.treceval.handlers.topics.output.Topic;
 
 import java.io.IOException;
+import java.io.FileWriter;
 import java.net.MalformedURLException;
 import java.util.List;
 
@@ -46,6 +47,9 @@ public class SearchTopics implements ISearchCallBack
     }
 
 
+    static FileWriter topicTotalResults;
+
+
     /**
      * Static service to search in a list of Configurations
      *
@@ -55,6 +59,9 @@ public class SearchTopics implements ISearchCallBack
      */
     public static void search(List<SearchConfiguration> searchConfigurations) throws IOException, DocumentException
     {
+
+        topicTotalResults = new FileWriter("D:/topicTotalResults.csv");
+        topicTotalResults.write("topic;total;s>=0.99;s>=0.98;s>=0.95;s>=0.9;s>=0.8;s>=0.5;\n");
         int runId = 1;
         for (SearchConfiguration c : searchConfigurations)
         {
@@ -63,6 +70,8 @@ public class SearchTopics implements ISearchCallBack
             searchTopics.close();
             runId++;
         }
+        topicTotalResults.close();
+
     }
 
     /**
@@ -108,7 +117,7 @@ public class SearchTopics implements ISearchCallBack
     public void searchCallback(Topic t)
     {
         String query = t.getQuery();
-        logger.info("Topic Query:" + query.trim().replace('\n', ' ').replace('\r', ' '));
+        logger.info("Topic Query " + t.getIdentifier() + ":" + query.trim().replace('\n', ' ').replace('\r', ' '));
 
         try
         {
@@ -122,6 +131,32 @@ public class SearchTopics implements ISearchCallBack
                     searchConfiguration.getQueryConfiguration());
 
             LgteHits hits = indexSearcher.search(lgteQuery);
+
+            int total0_99 = 0;
+            int total0_98 = 0;
+            int total0_95 = 0;
+            int total0_9 = 0;
+            int total0_8 = 0;
+            int total0_5 = 0;
+            for(int i = 0; i < hits.length();i++)
+            {
+                if(hits.spatialScore(i) >= 0.99f)
+                    total0_99++;
+                if(hits.spatialScore(i) >= 0.98f)
+                    total0_98++;
+                if(hits.spatialScore(i) > 0.95f)
+                    total0_95++;
+                if(hits.spatialScore(i) > 0.9f)
+                    total0_9++;
+                if(hits.spatialScore(i) > 0.8f)
+                    total0_8++;
+                if(hits.spatialScore(i) > 0.5f)
+                    total0_5++;
+            }
+
+            topicTotalResults.write(t.getIdentifier() + ";" + hits.length() + ";" + total0_99 + ";" + total0_98+ ";" + total0_95+ ";" + total0_9+ ";" + total0_8+ ";" + total0_5+ ";\n");
+            topicTotalResults.flush();
+
 
             OutputFormat outputFormat = t.getOutputFormat();
 

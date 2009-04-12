@@ -36,6 +36,12 @@ public class LgteQueryParser
     {
         return parseQuery(query,LgteAnalyzer.defaultAnalyzer);
     }
+    
+    public static LgteQuery parseQuery(String query, LgteIndexSearcherWrapper lgteIndexSearcherWrapper, Analyzer a) throws IOException, ParseException
+    {
+        return parseQuery(query,Globals.LUCENE_DEFAULT_FIELD,a,lgteIndexSearcherWrapper,null, null,null);
+    }
+
     public static LgteQuery parseQuery(String query, LgteIndexSearcherWrapper lgteIndexSearcherWrapper) throws IOException, ParseException
     {
         return parseQuery(query,Globals.LUCENE_DEFAULT_FIELD,LgteAnalyzer.defaultAnalyzer,lgteIndexSearcherWrapper,null, null,null);

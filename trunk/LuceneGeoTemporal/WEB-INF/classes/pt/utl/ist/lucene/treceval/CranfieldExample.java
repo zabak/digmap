@@ -1,6 +1,8 @@
 package pt.utl.ist.lucene.treceval;
 
 import org.apache.log4j.Logger;
+import org.apache.lucene.search.MultiSearcher;
+import org.apache.lucene.search.IndexSearcher;
 import org.dom4j.DocumentException;
 import org.dom4j.Node;
 
@@ -34,8 +36,8 @@ public class CranfieldExample
     {
 
         args = new String[2];
-        args[0] = "C:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-index";
-        args[1] = "C:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-data";
+        args[0] = "D:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-index";
+        args[1] = "D:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-data";
 
 
         Globals.INDEX_DIR = args[0];
@@ -135,6 +137,7 @@ public class CranfieldExample
         Configuration VS_STEMMER_CRAN = new Configuration("version1", "cran","lmstem", Model.VectorSpaceModel, IndexCollections.en.getAnalyzerWithStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.en.getWordList(),outputDir,maxResults);
         Configuration LM_STEMMER_CRAN = new Configuration("version1", "cran","lmstem", Model.LanguageModel, IndexCollections.en.getAnalyzerWithStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.en.getWordList(),outputDir,maxResults);
 
+        Configuration VS_3_5GRAMS_CRAN = new Configuration("version1", "cran","lmstem3_5grams", Model.VectorSpaceModel, IndexCollections.n2_6gramsStem.getAnalyzerWithStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", null,outputDir,maxResults);
 //        Configuration VS_3_6GRAMS_CRAN = new Configuration("version1", "cran","lmstem3_6grams", Model.VectorSpaceModel, IndexCollections.n3_6gramsStem.getAnalyzerWithStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", null,outputDir,maxResults);
 //        Configuration LM_3_6GRAMS_CRAN = new Configuration("version1", "cran","lmstem3_6grams", Model.LanguageModel, IndexCollections.n3_6gramsStem.getAnalyzerWithStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", null,outputDir,maxResults);
 //
@@ -161,34 +164,41 @@ public class CranfieldExample
 
 //        configurations.add(VS_3_6GRAMS_CRAN);
 //        configurations.add(LM_3_6GRAMS_FRONT_CRAN);
-        configurations.add(LM_CRAN);
-        configurations.add(LM_STEMMER_CRAN);
+
+//        configurations.add(LM_CRAN);
+  //      configurations.add(LM_STEMMER_CRAN);
+        configurations.add(VS_3_5GRAMS_CRAN);
 
         IndexCollections.indexConfiguration(configurations,Globals.DOCUMENT_ID_FIELD);
 
+//        MultiSearcher ms = new MultiSearcher(IndexSearcher)
         /***
          * Search Configurations
          */
         QueryConfiguration queryConfiguration1 = new QueryConfiguration();
         queryConfiguration1.setForceQE(QEEnum.no);
+        queryConfiguration1.getQueryProperties().setProperty("lgte.default.order", "sc");
+
 
         QueryConfiguration queryConfiguration2 = new QueryConfiguration();
         queryConfiguration2.setForceQE(QEEnum.text);
+        queryConfiguration2.getQueryProperties().setProperty("lgte.default.order", "sc");
         List<SearchConfiguration> searchConfigurations = new ArrayList<SearchConfiguration>();
 
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, VS_CRAN));
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, LM_CRAN));
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, VS_STEMMER_CRAN));
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, LM_STEMMER_CRAN));
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, VS_CRAN));
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, LM_CRAN));
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, VS_STEMMER_CRAN));
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, LM_STEMMER_CRAN));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, VS_3_5GRAMS_CRAN));
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, VS_3_6GRAMS_CRAN));
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, LM_3_6GRAMS_CRAN));
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, VS_3_6GRAMS_FRONT_CRAN));
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, LM_3_6GRAMS_FRONT_CRAN));
 
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, VS_CRAN));
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, LM_CRAN));
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, VS_STEMMER_CRAN));
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, LM_STEMMER_CRAN));
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, VS_CRAN));
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, LM_CRAN));
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, VS_STEMMER_CRAN));
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, LM_STEMMER_CRAN));
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, VS_3_6GRAMS_CRAN));
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, LM_3_6GRAMS_CRAN));
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, VS_3_6GRAMS_FRONT_CRAN));

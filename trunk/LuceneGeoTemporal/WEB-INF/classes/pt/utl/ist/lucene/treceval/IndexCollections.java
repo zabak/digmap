@@ -57,6 +57,8 @@ public class IndexCollections implements IndexFilesCallBack
     public static LgteAnalyzerManager.LanguagePackage n4gramsStem;
     public static LgteAnalyzerManager.LanguagePackage n5gramsStem;
 
+    public static LgteAnalyzerManager.LanguagePackage n2_6gramsStem;
+    public static LgteAnalyzerManager.LanguagePackage n3_5gramsStem;
     public static LgteAnalyzerManager.LanguagePackage n3_6gramsStem;
     public static LgteAnalyzerManager.LanguagePackage n3_6gramsFrontEdjeStem;
 
@@ -92,6 +94,9 @@ public class IndexCollections implements IndexFilesCallBack
 
             n3_6gramsStem =  LgteAnalyzerManager.getInstance().getLanguagePackage(3,6);
             n3_6gramsFrontEdjeStem =  LgteAnalyzerManager.getInstance().getLanguagePackage(3,6, EdgeNGramTokenFilter.Side.FRONT);
+
+            n3_5gramsStem =  LgteAnalyzerManager.getInstance().getLanguagePackage(3,5);
+            n2_6gramsStem =  LgteAnalyzerManager.getInstance().getLanguagePackage(2,6);
         }
         catch (IOException e)
         {

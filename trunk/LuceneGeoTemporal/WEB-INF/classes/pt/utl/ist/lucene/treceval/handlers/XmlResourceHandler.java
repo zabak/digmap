@@ -101,10 +101,11 @@ public class XmlResourceHandler implements ResourceHandler
                     for(Map.Entry<String,String> entry:fields.getTextFields().entrySet())
                     {
                         String old = textFields.get(entry.getKey());
+                        String newOne = entry.getValue();
                         if(old == null)
-                            textFields.put(entry.getKey(),entry.getValue());
+                            textFields.put(entry.getKey(),newOne);
                         else
-                            textFields.put(entry.getKey(),old + ' ' + entry.getValue());
+                            textFields.put(entry.getKey(),old + ' ' + newOne);
                     }
                 }
                 //StoredFields

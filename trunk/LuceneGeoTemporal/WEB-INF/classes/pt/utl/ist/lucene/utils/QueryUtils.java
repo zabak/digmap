@@ -76,4 +76,33 @@ public class QueryUtils
     {
         return "[" + start + " TO " + end + "]";
     }
+
+    /**
+     * Escape special characteres from lucene query Strings with a slash "\"
+     * examples of cleaned chars:  [ > \[
+     * @param queryTxt
+     * @return
+     */
+    public static String escapeSpecialChars(String queryTxt)
+    {
+        StringBuilder strBuilder = new StringBuilder();
+        for(int i = 0; i < queryTxt.length();i++)
+        {
+            char c = queryTxt.charAt(i);
+            switch(c)
+            {
+                case '(':strBuilder.append("\\(");break;
+                case ')':strBuilder.append("\\)");break;
+                case '?':strBuilder.append("\\?");break;
+                case ':':strBuilder.append("\\:");break;
+                case '[':strBuilder.append("\\[");break;
+                case ']':strBuilder.append("\\]");break;
+                case '-':strBuilder.append("\\-");break;
+                case '+':strBuilder.append("\\+");break;
+                case '~':strBuilder.append("\\~");break;
+                default: strBuilder.append(c);
+            }
+        }
+        return strBuilder.toString();
+    }
 }

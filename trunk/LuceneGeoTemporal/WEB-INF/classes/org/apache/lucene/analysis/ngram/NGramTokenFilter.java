@@ -86,6 +86,8 @@ public class NGramTokenFilter extends TokenFilter {
 
     private void ngram(Token token) {
 //        char[] termBuffer = token.termText().toCharArray();
+        Token tokWord = new Token(token.termText(),0,token.endOffset(),token.type());
+        ngrams.add(tokWord);
         int termLength = token.termText().length();
         int gramSize = minGram;
         while (gramSize <= maxGram) {

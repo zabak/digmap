@@ -48,7 +48,10 @@ public class CDirectory implements ICollectionPreprocessor
             try
             {
                 InputStream fileInputStream = new FileInputStream(f);
-                documentHandler.handle(fileInputStream, collectionPath.substring(Globals.DATA_DIR.length()) + File.separator + f.getName(), resourceHandler,callBack, fileTypesPlugins);
+                if(collectionPath.startsWith(Globals.DATA_DIR))
+                    documentHandler.handle(fileInputStream, collectionPath.substring(Globals.DATA_DIR.length()) + File.separator + f.getName(), resourceHandler,callBack, fileTypesPlugins);
+                else
+                    documentHandler.handle(fileInputStream, collectionPath + File.separator + f.getName(), resourceHandler,callBack, fileTypesPlugins);
                 fileInputStream.close();
             }
             catch (FileNotFoundException e)

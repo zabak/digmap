@@ -1,6 +1,6 @@
-package pt.utl.ist.lucene.models.impl;
+package pt.utl.ist.lucene.priors.impl;
 
-import pt.utl.ist.lucene.models.DocumentFinalScorer;
+import pt.utl.ist.lucene.priors.DocumentPriors;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.LanguageModelIndexReader;
 import org.apache.log4j.Logger;
@@ -12,9 +12,9 @@ import java.io.IOException;
  * @date 9/Fev/2009
  * @time 19:37:41
  */
-public class LanguageModelHiemstraFinalScorer implements DocumentFinalScorer
+public class LanguageModelHiemstraPriors implements DocumentPriors
 {
-    private static Logger logger = Logger.getLogger(LanguageModelHiemstraFinalScorer.class);
+    private static Logger logger = Logger.getLogger(LanguageModelHiemstraPriors.class);
 
     private float collSize = -1;
 

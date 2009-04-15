@@ -89,7 +89,7 @@ public class DmozExample
          *  Example
          *  <top>
          *     <num>1</num>
-         *     <description>what similarity laws must be obeyed when constructing aeroelastic models of heated high speed aircraft .</description>
+         *     <description>what similarity laws must be obeyed when constructing aeroelastic priors of heated high speed aircraft .</description>
          *  </top>
          */
         XmlFieldHandler xmlLocaleTopicFieldHandler = new SimpleXmlFieldHandler("./locale",new SimpleFieldFilter(),"contents");
@@ -124,7 +124,7 @@ public class DmozExample
 
 
         List<Configuration> configurations = new ArrayList<Configuration>();
-        //we just need these two configurations because the lm and lmstem indexes are the same for all probabilistic models and can be used in vector space because the diference is just an extra index with documents lenght
+        //we just need these two configurations because the lm and lmstem indexes are the same for all probabilistic priors and can be used in vector space because the diference is just an extra index with documents lenght
 
 //        configurations.add(LM);
 //        configurations.add(LM_STEMMER);

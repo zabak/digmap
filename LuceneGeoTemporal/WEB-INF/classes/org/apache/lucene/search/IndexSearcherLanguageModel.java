@@ -20,12 +20,10 @@ import java.io.IOException;
 import java.util.BitSet;
 
 import org.apache.lucene.ilps.DataCacher;
-import org.apache.lucene.index.LanguageModelIndexReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.search.Filter;
 import org.apache.lucene.search.HitCollector;
 import org.apache.lucene.search.HitQueue;
-import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.Scorer;
@@ -94,7 +92,7 @@ public class IndexSearcherLanguageModel extends ProbabilisticIndexSearcher
                     {
 
 //                  System.out.println("add prior " + docLen + " (" + (float)Math.log(docLen) / log10 + ")");
-                    //Changed in LGTE by Jorge Machado @see pt.utl.ist.lucene.models
+                    //Changed in LGTE by Jorge Machado @see pt.utl.ist.lucene.priors
                     score = Model.LanguageModel.getDocumentFinalScorer().computeFinalScore(score,reader,docLen);
 //                  System.out.println("final: " + score);
                     }

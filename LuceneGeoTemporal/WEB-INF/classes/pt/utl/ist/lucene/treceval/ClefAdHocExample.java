@@ -14,7 +14,6 @@ import pt.utl.ist.lucene.treceval.handlers.topics.output.impl.TrecEvalOutputForm
 import pt.utl.ist.lucene.treceval.handlers.topics.ITopicsPreprocessor;
 import pt.utl.ist.lucene.treceval.handlers.topics.TDirectory;
 import pt.utl.ist.lucene.treceval.handlers.collections.CDirectory;
-import pt.utl.ist.lucene.treceval.dublincore.DcFieldEnum;
 import pt.utl.ist.lucene.Model;
 import pt.utl.ist.lucene.QueryConfiguration;
 import pt.utl.ist.lucene.QEEnum;
@@ -158,38 +157,33 @@ public class ClefAdHocExample
         Configuration VS_STEMMER_ADHOC = new Configuration("version1", "clef2008AdHoc","lmstem", Model.VectorSpaceModel, IndexCollections.en.getAnalyzerWithStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.en.getWordList(),outputDir,maxResults);
         Configuration LM_STEMMER_ADHOC = new Configuration("version1", "clef2008AdHoc","lmstem", Model.LanguageModel, IndexCollections.en.getAnalyzerWithStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.en.getWordList(),outputDir,maxResults);
 
-        Configuration VS_3_5GRAMS_CRAN = new Configuration("version1", "clef2008AdHoc","lmstem3_5grams", Model.VectorSpaceModel, IndexCollections.n2_6gramsStem.getAnalyzerWithStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", null,outputDir,maxResults);
+//        Configuration VS_3_5GRAMS_CRAN = new Configuration("version1", "clef2008AdHoc","lmstem3_5grams", Model.VectorSpaceModel, IndexCollections.n2_6gramsStem.getAnalyzerWithStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", null,outputDir,maxResults);
         List<Configuration> configurations = new ArrayList<Configuration>();
-        //we just need these two configurations because the lm and lmstem indexes are the same for all probabilistic models and can be used in vector space because the diference is just an extra index with documents lenght
+        //we just need these two configurations because the lm and lmstem indexes are the same for all probabilistic priors and can be used in vector space because the diference is just an extra index with documents lenght
 
         configurations.add(LM_ADHOC);
         configurations.add(LM_STEMMER_ADHOC);
-//        configurations.add(VS_3_6GRAMS_CRAN);
-//        configurations.add(LM_3_6GRAMS_FRONT_CRAN);
 
-//        configurations.add(LM_CRAN);
-        //      configurations.add(LM_STEMMER_CRAN);
-//        configurations.add(VS_3_5GRAMS_CRAN);
 
-        IndexCollections.indexConfiguration(configurations,Globals.DOCUMENT_ID_FIELD);
+//        IndexCollections.indexConfiguration(configurations,Globals.DOCUMENT_ID_FIELD);
 
 
 //        /***
 //         * Search Configurations
 //         */
-//        QueryConfiguration queryConfiguration1 = new QueryConfiguration();
-//        queryConfiguration1.setForceQE(QEEnum.no);
-//        queryConfiguration1.getQueryProperties().setProperty("lgte.default.order", "sc");
-//
-//        List<SearchConfiguration> searchConfigurations = new ArrayList<SearchConfiguration>();
-//
-//        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, VS_ADHOC));
+        QueryConfiguration queryConfiguration1 = new QueryConfiguration();
+        queryConfiguration1.setForceQE(QEEnum.no);
+        queryConfiguration1.getQueryProperties().setProperty("lgte.default.order", "sc");
+
+        List<SearchConfiguration> searchConfigurations = new ArrayList<SearchConfiguration>();
+
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, VS_ADHOC));
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, VS_STEMMER_ADHOC));
-//        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, LM_ADHOC));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, LM_ADHOC));
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, LM_STEMMER_ADHOC));
 //
 //        //Search Topics Runs to submission
-//        SearchTopics.search(searchConfigurations);
+        SearchTopics.search(searchConfigurations);
     }
 
 }

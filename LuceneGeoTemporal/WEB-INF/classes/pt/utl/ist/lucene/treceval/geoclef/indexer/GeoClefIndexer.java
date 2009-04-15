@@ -461,50 +461,50 @@ public class GeoClefIndexer
 
         queryConfiguration1.setForceQE(QEEnum.no);
         queryConfiguration1.getQueryProperties().put("lgte.default.filter", "no");
-        queryConfiguration1.getQueryProperties().put("spatial.score.strategy", "pt.utl.ist.lucene.sort.sorters.models.comparators.strategy.BoxQueryWithBoxDoc");
+        queryConfiguration1.getQueryProperties().put("spatial.score.strategy", "pt.utl.ist.lucene.sort.sorters.priors.comparators.strategy.BoxQueryWithBoxDoc");
         queryConfiguration1.getQueryProperties().put("lgte.default.order", "sc_sp");
         queryConfiguration1.getQueryProperties().put("LM-lambda",LM_LAMBDA);
-//        queryConfiguration1.getQueryProperties().put("score.model","pt.utl.ist.lucene.sort.sorters.models.PiModelSortDocComparator")  ;
+//        queryConfiguration1.getQueryProperties().put("score.model","pt.utl.ist.lucene.sort.sorters.priors.PiModelSortDocComparator")  ;
 ////
 //        QueryConfiguration queryConfiguration2 = new QueryConfiguration();
 //        queryConfiguration2.setForceQE(QEEnum.text);
 //        queryConfiguration2.getQueryProperties().put("lgte.default.filter", "no");
-//        queryConfiguration2.getQueryProperties().put("spatial.score.strategy", "pt.utl.ist.lucene.sort.sorters.models.comparators.strategy.BoxQueryWithBoxDoc");
+//        queryConfiguration2.getQueryProperties().put("spatial.score.strategy", "pt.utl.ist.lucene.sort.sorters.priors.comparators.strategy.BoxQueryWithBoxDoc");
 //        queryConfiguration2.getQueryProperties().put("lgte.default.order", "sc");
-//        queryConfiguration2.getQueryProperties().put("score.model","pt.utl.ist.lucene.sort.sorters.models.PiModelSortDocComparator") ;
+//        queryConfiguration2.getQueryProperties().put("score.model","pt.utl.ist.lucene.sort.sorters.priors.PiModelSortDocComparator") ;
 //
 //        QueryConfiguration queryConfiguration3 = new QueryConfiguration();
 //        queryConfiguration3.setForceQE(QEEnum.lgte);
 //        queryConfiguration3.getQueryProperties().put("lgte.default.filter", "no");
-//        queryConfiguration3.getQueryProperties().put("spatial.score.strategy", "pt.utl.ist.lucene.sort.sorters.models.comparators.strategy.BoxQueryWithBoxDoc");
+//        queryConfiguration3.getQueryProperties().put("spatial.score.strategy", "pt.utl.ist.lucene.sort.sorters.priors.comparators.strategy.BoxQueryWithBoxDoc");
 //        queryConfiguration3.getQueryProperties().put("lgte.default.order", "sc");
-//        queryConfiguration3.getQueryProperties().put("score.model","pt.utl.ist.lucene.sort.sorters.models.PiModelSortDocComparator");
+//        queryConfiguration3.getQueryProperties().put("score.model","pt.utl.ist.lucene.sort.sorters.priors.PiModelSortDocComparator");
 
 
         QueryConfiguration queryConfiguration4 = new QueryConfiguration();
         queryConfiguration4.setForceQE(QEEnum.no);
         queryConfiguration4.getQueryProperties().put("lgte.default.filter", "no");
-        queryConfiguration4.getQueryProperties().put("spatial.score.strategy", "pt.utl.ist.lucene.sort.sorters.models.comparators.strategy.BoxQueryWithBoxDoc");
+        queryConfiguration4.getQueryProperties().put("spatial.score.strategy", "pt.utl.ist.lucene.sort.sorters.priors.comparators.strategy.BoxQueryWithBoxDoc");
         queryConfiguration4.getQueryProperties().put("lgte.default.order", "sc_sp");
         queryConfiguration4.getQueryProperties().put("default.model.spatial.factor",SPATIAL_FACTOR);
         queryConfiguration4.getQueryProperties().put("default.model.text.factor",TEXT_FACTOR);
         queryConfiguration4.getQueryProperties().put("LM-lambda",LM_LAMBDA);
-//        queryConfiguration4.getQueryProperties().put("score.model","pt.utl.ist.lucene.sort.sorters.models.PiModelSortDocComparator");
+//        queryConfiguration4.getQueryProperties().put("score.model","pt.utl.ist.lucene.sort.sorters.priors.PiModelSortDocComparator");
 
 
 //        QueryConfiguration queryConfiguration5 = new QueryConfiguration();
 //        queryConfiguration5.setForceQE(QEEnum.text);
 //        queryConfiguration5.getQueryProperties().put("lgte.default.filter", "no");
-//        queryConfiguration5.getQueryProperties().put("spatial.score.strategy", "pt.utl.ist.lucene.sort.sorters.models.comparators.strategy.BoxQueryWithBoxDoc");
+//        queryConfiguration5.getQueryProperties().put("spatial.score.strategy", "pt.utl.ist.lucene.sort.sorters.priors.comparators.strategy.BoxQueryWithBoxDoc");
 //        queryConfiguration5.getQueryProperties().put("lgte.default.order", "sc_sp");
-//        queryConfiguration5.getQueryProperties().put("score.model","pt.utl.ist.lucene.sort.sorters.models.PiModelSortDocComparator")    ;
+//        queryConfiguration5.getQueryProperties().put("score.model","pt.utl.ist.lucene.sort.sorters.priors.PiModelSortDocComparator")    ;
 
 //        QueryConfiguration queryConfiguration6 = new QueryConfiguration();
 //        queryConfiguration6.setForceQE(QEEnum.lgte);
 //        queryConfiguration6.getQueryProperties().put("lgte.default.filter", "no");
-//        queryConfiguration6.getQueryProperties().put("spatial.score.strategy", "pt.utl.ist.lucene.sort.sorters.models.comparators.strategy.BoxQueryWithBoxDoc");
+//        queryConfiguration6.getQueryProperties().put("spatial.score.strategy", "pt.utl.ist.lucene.sort.sorters.priors.comparators.strategy.BoxQueryWithBoxDoc");
 //        queryConfiguration6.getQueryProperties().put("lgte.default.order", "sc_sp");
-//        queryConfiguration6.getQueryProperties().put("score.model","pt.utl.ist.lucene.sort.sorters.models.PiModelSortDocComparator")   ;
+//        queryConfiguration6.getQueryProperties().put("score.model","pt.utl.ist.lucene.sort.sorters.priors.PiModelSortDocComparator")   ;
 
 
         List<SearchConfiguration> searchConfigurations = new ArrayList<SearchConfiguration>();

@@ -1,6 +1,6 @@
-package pt.utl.ist.lucene.models.impl;
+package pt.utl.ist.lucene.priors.impl;
 
-import pt.utl.ist.lucene.models.DocumentFinalScorer;
+import pt.utl.ist.lucene.priors.DocumentPriors;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.ilps.DataCacher;
 
@@ -9,7 +9,7 @@ import org.apache.lucene.ilps.DataCacher;
  * @date 9/Fev/2009
  * @time 19:34:31
  */
-public class LanguageModelFinalScorer implements DocumentFinalScorer
+public class LanguageModelPriors implements DocumentPriors
 {
     float beta = -1.0f;
     float log10 = (float) Math.log(10);

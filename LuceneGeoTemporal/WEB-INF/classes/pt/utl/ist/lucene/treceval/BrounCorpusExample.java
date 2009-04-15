@@ -114,7 +114,7 @@ public class BrounCorpusExample
 
 
         List<Configuration> configurations = new ArrayList<Configuration>();
-        //we just need these four configurations because the lm and lmstem indexes are the same for all probabilistic models
+        //we just need these four configurations because the lm and lmstem indexes are the same for all probabilistic priors
         configurations.add(VS_BC);
         configurations.add(LM_BC);
         configurations.add(VS_STEMMER_BC);

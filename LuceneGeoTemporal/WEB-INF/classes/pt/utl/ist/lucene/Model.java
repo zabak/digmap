@@ -3,10 +3,10 @@ package pt.utl.ist.lucene;
 import pt.utl.ist.lucene.config.ConfigProperties;
 import pt.utl.ist.lucene.versioning.LuceneVersionFactory;
 import pt.utl.ist.lucene.versioning.VersionEnum;
-import pt.utl.ist.lucene.models.DocumentFinalScorer;
-import pt.utl.ist.lucene.models.impl.LanguageModelFinalScorer;
-import pt.utl.ist.lucene.models.impl.DoNothingFinalScorer;
-import pt.utl.ist.lucene.models.impl.LanguageModelHiemstraFinalScorer;
+import pt.utl.ist.lucene.priors.DocumentPriors;
+import pt.utl.ist.lucene.priors.impl.LanguageModelPriors;
+import pt.utl.ist.lucene.priors.impl.DoNothingPriors;
+import pt.utl.ist.lucene.priors.impl.LanguageModelHiemstraPriors;
 import org.apache.log4j.Logger;
 
 /**
@@ -17,17 +17,17 @@ import org.apache.log4j.Logger;
 public enum Model
 {
 
-    VectorSpaceModel("VectorSpace", false,"vs",new DoNothingFinalScorer()),
-    LanguageModelHiemstra("LanguageModelHiemstra", true,"hlm", new LanguageModelHiemstraFinalScorer()),
-    LanguageModel("LanguageModel", true,"lm", new LanguageModelFinalScorer()),
-    DLHHypergeometricDFRModel("DLHHypergeometricDFRModel", true,"DLHHypergeometricDFRModel", new DoNothingFinalScorer()),
-    InExpC2DFRModel("InExpC2DFRModel", true,"InExpC2DFRModel", new DoNothingFinalScorer()),
-    InExpB2DFRModel("InExpB2DFRModel", true,"InExpB2DFRModel", new DoNothingFinalScorer()),
-    IFB2DFRModel("IFB2DFRModel", true,"IFB2DFRModel", new DoNothingFinalScorer()),
-    InL2DFRModel("InL2DFRModel", true,"InL2DFRModel", new DoNothingFinalScorer()),
-    PL2DFRModel("PL2DFRModel", true,"PL2DFRModel", new DoNothingFinalScorer()),
-    BB2DFRModel("BB2DFRModel", true,"BB2DFRModel", new DoNothingFinalScorer()),
-    OkapiBM25Model("OkapiBM25Model", true,"bm25", new DoNothingFinalScorer());
+    VectorSpaceModel("VectorSpace", false,"vs",new DoNothingPriors()),
+    LanguageModelHiemstra("LanguageModelHiemstra", true,"hlm", new LanguageModelHiemstraPriors()),
+    LanguageModel("LanguageModel", true,"lm", new LanguageModelPriors()),
+    DLHHypergeometricDFRModel("DLHHypergeometricDFRModel", true,"DLHHypergeometricDFRModel", new DoNothingPriors()),
+    InExpC2DFRModel("InExpC2DFRModel", true,"InExpC2DFRModel", new DoNothingPriors()),
+    InExpB2DFRModel("InExpB2DFRModel", true,"InExpB2DFRModel", new DoNothingPriors()),
+    IFB2DFRModel("IFB2DFRModel", true,"IFB2DFRModel", new DoNothingPriors()),
+    InL2DFRModel("InL2DFRModel", true,"InL2DFRModel", new DoNothingPriors()),
+    PL2DFRModel("PL2DFRModel", true,"PL2DFRModel", new DoNothingPriors()),
+    BB2DFRModel("BB2DFRModel", true,"BB2DFRModel", new DoNothingPriors()),
+    OkapiBM25Model("OkapiBM25Model", true,"bm25", new DoNothingPriors());
 
 
 
@@ -50,14 +50,14 @@ public enum Model
     String name;
     boolean probabilistcModel;
     String shortName;
-    DocumentFinalScorer documentFinalScorer;
+    DocumentPriors documentPriors;
 
-    private Model(String name, boolean isProbabilistic, String shortName, DocumentFinalScorer documentFinalScorer)
+    private Model(String name, boolean isProbabilistic, String shortName, DocumentPriors documentPriors)
     {
         this.name = name;
         this.probabilistcModel = isProbabilistic;
         this.shortName = shortName;
-        this.documentFinalScorer = documentFinalScorer;
+        this.documentPriors = documentPriors;
     }
 
     public static Model parse(String name)
@@ -89,8 +89,8 @@ public enum Model
         return probabilistcModel;
     }
 
-    public DocumentFinalScorer getDocumentFinalScorer()
+    public DocumentPriors getDocumentFinalScorer()
     {
-        return documentFinalScorer;
+        return documentPriors;
     }
 }

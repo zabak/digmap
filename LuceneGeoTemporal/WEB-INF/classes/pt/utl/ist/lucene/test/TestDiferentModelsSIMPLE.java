@@ -22,7 +22,7 @@ public class TestDiferentModelsSIMPLE extends TestCase
 {
 
     /**
-     * You can use the diferent Probabilistic Models creating the index just once with any one of the probabilist models
+     * You can use the diferent Probabilistic Models creating the index just once with any one of the probabilist priors
      *
      */
     private String path = Globals.INDEX_DIR + "/" + getClass().getName();

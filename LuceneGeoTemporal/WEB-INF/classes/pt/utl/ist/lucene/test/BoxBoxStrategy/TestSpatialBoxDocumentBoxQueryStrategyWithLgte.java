@@ -3,15 +3,11 @@ package pt.utl.ist.lucene.test.BoxBoxStrategy;
 import junit.framework.TestCase;
 import pt.utl.ist.lucene.*;
 import pt.utl.ist.lucene.level1query.QueryParams;
-import pt.utl.ist.lucene.sort.sorters.SpatialDistanceSortSource;
-import pt.utl.ist.lucene.sort.LgteSort;
 import pt.utl.ist.lucene.utils.Files;
 
 import java.io.IOException;
-import java.util.Properties;
 
 import com.pjaol.search.geo.utils.InvalidGeoException;
-import org.apache.lucene.search.SortField;
 import org.apache.lucene.queryParser.ParseException;
 import org.xml.sax.SAXException;
 
@@ -106,7 +102,7 @@ public class TestSpatialBoxDocumentBoxQueryStrategyWithLgte extends TestCase
         String query = "contents:(jorge bruno shoping)";
         QueryParams queryParams = new QueryParams();
         QueryConfiguration queryConfiguration = new QueryConfiguration();
-        queryConfiguration.getQueryProperties().put("spatial.score.strategy", "pt.utl.ist.lucene.sort.sorters.models.comparators.strategy.BoxQueryWithBoxDoc");
+        queryConfiguration.getQueryProperties().put("spatial.score.strategy", "pt.utl.ist.lucene.sort.sorters.priors.comparators.strategy.BoxQueryWithBoxDoc");
         queryParams.setGmlPolygon(portalegreCenterPolygon);
         queryParams.setFilter(FilterEnum.no);
         queryParams.setOrder(OrderEnum.scoreSpace);

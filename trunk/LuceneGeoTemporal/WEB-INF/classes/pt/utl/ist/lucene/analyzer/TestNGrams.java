@@ -3,7 +3,6 @@ package pt.utl.ist.lucene.analyzer;
 import junit.framework.TestCase;
 import pt.utl.ist.lucene.*;
 import pt.utl.ist.lucene.utils.Files;
-import pt.utl.ist.lucene.utils.LgteAnalyzerManager;
 
 import java.io.IOException;
 

@@ -1,4 +1,4 @@
-package pt.utl.ist.lucene.models;
+package pt.utl.ist.lucene.priors;
 
 import org.apache.lucene.index.IndexReader;
 
@@ -7,7 +7,7 @@ import org.apache.lucene.index.IndexReader;
  * @date 9/Fev/2009
  * @time 17:54:55
  */
-public interface DocumentFinalScorer
+public interface DocumentPriors
 {
     public float computeFinalScore(float sumOfTermsScores, IndexReader reader, int docLen);
 }

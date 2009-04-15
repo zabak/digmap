@@ -97,7 +97,7 @@ public class TestTimeDistanceWithLgteModelOrderScore extends TestCase
             assertTrue(year0 == 2007);
             assertEquals(lgteHits.doc(0).get("contents"),"Jorge Machado and Bruno Martins last year help TEXT FIRST DOCUMENT");
 
-            //Scores are diferent in diferent models
+            //Scores are diferent in diferent priors
             if(Model.defaultModel== Model.VectorSpaceModel)
             {
                 //doc 1

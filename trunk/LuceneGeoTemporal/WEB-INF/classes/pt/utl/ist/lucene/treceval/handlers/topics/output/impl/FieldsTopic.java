@@ -2,6 +2,7 @@ package pt.utl.ist.lucene.treceval.handlers.topics.output.impl;
 
 import pt.utl.ist.lucene.treceval.handlers.topics.output.OutputFormat;
 import pt.utl.ist.lucene.treceval.handlers.topics.output.Topic;
+import pt.utl.ist.lucene.treceval.SearchConfiguration;
 import pt.utl.ist.lucene.utils.QueryUtils;
 
 import java.util.Map;
@@ -21,7 +22,7 @@ public class FieldsTopic implements Topic
     OutputFormat outputFormat;
 
 
-    public FieldsTopic(String identifier, Map<String,String> map, OutputFormat outputFormat)
+    public FieldsTopic(String identifier, Map<String,String> map, OutputFormat outputFormat, SearchConfiguration.TopicsConfiguration topicsConfiguration)
     {
         this.identifier = identifier;
         this.outputFormat = outputFormat;
@@ -30,12 +31,31 @@ public class FieldsTopic implements Topic
         for(Map.Entry<String,String> entry: map.entrySet())
         {
             String escapedQuery = QueryUtils.escapeSpecialChars(entry.getValue());
-            builder.append(entry.getKey())
-                    .append(":(")
-                    .append(escapedQuery)
-                    .append(") ");
+
+            if(topicsConfiguration != null && topicsConfiguration.getFieldBoost() != null)
+            {
+                addField(builder,entry.getKey(),escapedQuery);
+                Float boost = topicsConfiguration.getFieldBoost().get(entry.getKey());
+                if(boost != null)
+                {
+                    builder.append("^").append(boost);
+                }
+            }
+            else if(topicsConfiguration == null)
+            {
+                addField(builder,entry.getKey(),escapedQuery);
+            }
+            builder.append(" ");
         }
         query = builder.toString();
+    }
+
+    private void addField(StringBuilder builder, String field, String query)
+    {
+        builder.append(field)
+                .append(":(")
+                .append(query)
+                .append(")");
     }
 
 

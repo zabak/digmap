@@ -80,6 +80,7 @@ public class QueryExpansion
     private Properties prop;
     private Analyzer analyzer;
     private Searcher searcher;
+    private Similarity modelSimilarity;
     private Similarity similarity;
     private Vector<TermQuery> expandedTerms;
     private static Logger logger = Logger.getLogger( "com.hrstc.lucene.queryexpansion.QueryExpansion" );
@@ -95,7 +96,8 @@ public class QueryExpansion
     {
         this.analyzer = analyzer;
         this.searcher = searcher;
-        this.similarity = similarity;
+        this.modelSimilarity = similarity;
+        this.similarity = Similarity.getDefault();
         this.prop = prop;
     }
 
@@ -208,6 +210,7 @@ public class QueryExpansion
         // Adjust term features of the docs with alpha * level1query; and beta; and assign weights/boost to terms (tf*idf)
         Query expandedQuery = adjust( docsTermVector, queryStr, alpha, beta, decay, docNum, termNum );
 
+
         return expandedQuery;
     }
 
@@ -284,23 +287,40 @@ public class QueryExpansion
 
         // Create Level1Query String
         StringBuffer qBuf = new StringBuffer();
+        double sumBoosts = 0.0;
+        List<TermQuery> terms = new ArrayList<TermQuery>();
+        double max = termQueries.elementAt(0).getBoost();
         for ( int i = 0; i < termCount; i++ )
         {
             TermQuery termQuery = termQueries.elementAt(i);
+            if(termQuery.getBoost() > 0)
+            {
+                sumBoosts +=  termQuery.getBoost();
+                terms.add(termQuery);
+            }
+        }
+
+        for (TermQuery termQuery: terms )
+        {
             Term term = termQuery.getTerm();
 
             //Jorge: only will be considered boost greater than 0.00001 this is the threshold
-            float boost = (termQuery.getBoost()) * 10000;   
+            float boost = termQuery.getBoost();
+//            float normalizedBoost = (float) (boost * 1 / max);
 
-            
-            if(termQuery.getBoost() > 0)
+            float normalizedBoost = boost;
+
+            if(normalizedBoost > 0)
             {
 //                qBuf.append( term.text() + "^" + (termQuery.getBoost()*10000) + " " );
-                if((boost + "").indexOf("E-") < 0)
-                    qBuf.append( term.text() + "^" + boost + " " );
+                if((normalizedBoost + "").indexOf("E-") < 0)
+                    qBuf.append( term.text() + "^" + normalizedBoost + " " );
                 else
-                    System.out.println("$$$$$$$$$BAD BOOST:" + term.text() + "^" + boost);
-                logger.finest( term + " : " + termQuery.getBoost() );
+                {
+                    System.out.println("$$$$$$$$$BAD BOOST:" + term.text() + "^" + boost + " normalized = " + normalizedBoost);
+                    System.exit(-1);
+                }
+                logger.finest( term + " : " + normalizedBoost );
             }
         }
 
@@ -331,6 +351,7 @@ public class QueryExpansion
         {
             Document doc = hits.elementAt( i );
             // Get text of the document and append it
+
             StringBuffer docTxtBuffer = new StringBuffer();
             String[] docTxtFlds = doc.getValues( Defs.FLD_TEXT );
             for ( int j = 0; j < docTxtFlds.length; j++ )
@@ -340,7 +361,7 @@ public class QueryExpansion
 
             // Create termVector and add it to vector
             QueryTermVector docTerms = new QueryTermVector( docTxtBuffer.toString(), analyzer );
-            docsTerms.add(docTerms );
+            docsTerms.add(docTerms);
         }
 
         return docsTerms;
@@ -368,6 +389,8 @@ public class QueryExpansion
      * @param docsTerms
      * @param factor - adjustment factor ( ex. alpha or beta )
      */
+
+    //JORGE MACHADO - Para Calcular a Entropia é aqui
     public Vector<TermQuery> setBoost( Vector<QueryTermVector> docsTerms, float factor, float decayFactor )
             throws IOException
     {

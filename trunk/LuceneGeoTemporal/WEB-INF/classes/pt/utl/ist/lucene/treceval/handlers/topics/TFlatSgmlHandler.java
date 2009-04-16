@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import pt.utl.ist.lucene.treceval.ISearchCallBack;
+import pt.utl.ist.lucene.treceval.SearchConfiguration;
 import pt.utl.ist.lucene.treceval.handlers.ResourceHandler;
 import pt.utl.ist.lucene.treceval.handlers.collections.CXmlHandler;
 import pt.utl.ist.lucene.treceval.handlers.topics.output.OutputFormatFactory;
@@ -24,13 +25,13 @@ public class TFlatSgmlHandler implements TDocumentHandler
     private static final Logger logger = Logger.getLogger(CXmlHandler.class);
 
 
-    public void handle(OutputFormatFactory factory,InputStream stream,String fromFile, ResourceHandler handler, ISearchCallBack callBack, Properties filehandlers, String confId, String run, String collection, String outputDir) throws IOException
+    public void handle(OutputFormatFactory factory,InputStream stream,String fromFile, ResourceHandler handler, ISearchCallBack callBack, Properties filehandlers, String confId, String run, String collection, String outputDir, SearchConfiguration.TopicsConfiguration topicsConfiguration) throws IOException
     {
         String xml = getXmlRootedDocument(stream);
         try
         {
             Document dom = Dom4jUtil.parse(xml);
-            new TXmlHandler().run(factory, dom,fromFile,handler,callBack,confId,run,collection,outputDir);
+            new TXmlHandler().run(factory, dom,fromFile,handler,callBack,confId,run,collection,outputDir,topicsConfiguration);
         }
         catch (DocumentException e)
         {

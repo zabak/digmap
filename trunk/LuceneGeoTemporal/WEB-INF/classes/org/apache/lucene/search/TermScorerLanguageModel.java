@@ -132,7 +132,7 @@ final class TermScorerLanguageModel extends Scorer {
 		sim /= log10;
 
 
-        return sim;
+        return sim * weight.getQuery().getBoost();
 	}
 
 	public boolean skipTo(int target) throws IOException {

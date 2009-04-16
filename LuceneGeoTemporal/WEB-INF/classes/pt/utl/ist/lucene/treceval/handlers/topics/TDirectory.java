@@ -1,6 +1,7 @@
 package pt.utl.ist.lucene.treceval.handlers.topics;
 
 import pt.utl.ist.lucene.treceval.ISearchCallBack;
+import pt.utl.ist.lucene.treceval.SearchConfiguration;
 import pt.utl.ist.lucene.treceval.handlers.topics.output.OutputFormatFactory;
 import pt.utl.ist.lucene.treceval.handlers.ResourceHandler;
 import org.apache.log4j.Logger;
@@ -32,7 +33,7 @@ public class TDirectory implements ITopicsPreprocessor
     }
 
 
-    public void handle(String collectionPath, ISearchCallBack callBack, String confId, String run,String collection,String outputDir) throws MalformedURLException, DocumentException
+    public void handle(String collectionPath, ISearchCallBack callBack, String confId, String run,String collection,String outputDir, SearchConfiguration.TopicsConfiguration topicsConfiguration) throws MalformedURLException, DocumentException
     {
 
         File dir = new File(collectionPath);
@@ -45,7 +46,7 @@ public class TDirectory implements ITopicsPreprocessor
             try
             {
                 InputStream fileInputStream = new FileInputStream(f);
-                documentHandler.handle(outputFormatFactory,fileInputStream,f.getName(),resourceHandler,callBack, fileTypesPlugins,confId,run,collection,outputDir);
+                documentHandler.handle(outputFormatFactory,fileInputStream,f.getName(),resourceHandler,callBack, fileTypesPlugins,confId,run,collection,outputDir, topicsConfiguration);
                 fileInputStream.close();
             }
             catch (FileNotFoundException e)

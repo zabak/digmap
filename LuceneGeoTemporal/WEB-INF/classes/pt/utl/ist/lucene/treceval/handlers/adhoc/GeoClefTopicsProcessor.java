@@ -4,6 +4,7 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import pt.utl.ist.lucene.treceval.ISearchCallBack;
+import pt.utl.ist.lucene.treceval.SearchConfiguration;
 import pt.utl.ist.lucene.treceval.handlers.topics.ITopicsPreprocessor;
 import pt.utl.ist.lucene.treceval.handlers.topics.output.Topic;
 import pt.utl.ist.lucene.treceval.handlers.topics.output.impl.DefaultTopic;
@@ -36,7 +37,7 @@ public class GeoClefTopicsProcessor implements ITopicsPreprocessor
         this.lang = lang;
     }
 
-    public void handle(String path, ISearchCallBack callBack, String confId, String run,String collection,String outputDir) throws MalformedURLException, DocumentException
+    public void handle(String path, ISearchCallBack callBack, String confId, String run,String collection,String outputDir, SearchConfiguration.TopicsConfiguration topicsConfiguration) throws MalformedURLException, DocumentException
     {
         File dir = new File(path);
         File[] files = dir.listFiles();

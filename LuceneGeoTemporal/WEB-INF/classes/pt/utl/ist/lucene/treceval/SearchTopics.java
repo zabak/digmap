@@ -30,6 +30,7 @@ public class SearchTopics implements ISearchCallBack
     private String run;
 
 
+
     /**
      * constructor
      *
@@ -37,6 +38,7 @@ public class SearchTopics implements ISearchCallBack
      * @param run           name of the handle
      * @throws IOException opening indexes
      */
+
     public SearchTopics(SearchConfiguration searchConfiguration, String run) throws IOException
     {
         this.maxResultsForOutput = searchConfiguration.getConfiguration().getMaxResultsPerTopic();
@@ -74,6 +76,8 @@ public class SearchTopics implements ISearchCallBack
 
     }
 
+
+
     /**
      * In the same fashion used in IndexCollections we will set a TopicsPreprocessor
      * witch will process each topic and send it back with callback method to be writen in output
@@ -97,7 +101,7 @@ public class SearchTopics implements ISearchCallBack
             String stem = "no";
             if(configuration.getDir().indexOf("stem")>=0)
                 stem=configuration.getDir();
-            configuration.getITopicsProcessor().handle(configuration.getTopicsPath(), this, configuration.getModel().getShortName() + "-Stemming_" + stem + "-qe_" + searchConfiguration.getQueryConfiguration().getForceQE() +filter+order, run, configuration.getCollectionId(), configuration.getOutputDir());
+            configuration.getITopicsProcessor().handle(configuration.getTopicsPath(), this, configuration.getModel().getShortName() + "-Stemming_" + stem + "-qe_" + searchConfiguration.getQueryConfiguration().getForceQE() +filter+order, run, configuration.getCollectionId(), configuration.getOutputDir(), searchConfiguration.getTopicsConfiguration());
         }
         catch (MalformedURLException e)
         {

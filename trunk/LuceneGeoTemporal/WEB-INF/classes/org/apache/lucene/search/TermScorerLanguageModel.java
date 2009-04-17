@@ -107,19 +107,11 @@ final class TermScorerLanguageModel extends Scorer {
 		doc = docs[pointer];
 		return true;
 	}
-    float beta = -1.0f;
-     private float getLmBeta()
-    {
-
-        if (beta == -1.0f)
-            beta = (DataCacher.Instance().get("LM-beta") != null)
-                    ? (Float.valueOf((String) DataCacher.Instance().get("LM-beta")))
-                    .floatValue() : 1.0f;
-        return beta;
-    }
 
     public float score() throws IOException {
 
+        if(term.field().equals("contents"))
+            System.out.println("");
         int contextSize = indexReader.getFieldLength(doc, term.field() + "$");
         if (useFieldLengths) {
             fieldLen = indexReader.getFieldLength(doc, term.field());

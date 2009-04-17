@@ -1,0 +1,186 @@
+<GeoCLEF-2006-topics-in-Portuguese-final-Apr-28-2006>
+ <?xml version="1.0" encoding="iso-8859-1" ?> 
+<top>
+<num>GC026</num>
+<PT-title> Regiões vinícolas à beira de rios na Europa</PT-title>  
+<PT-desc> Documentos sobre regiões produtoras de vinho nas margens de rios europeus. </PT-desc>  
+<PT-narr> Os documentos relevantes descrevem uma região vinícola localizada nas margens de rios em países europeus. Para ser relevante, o documento deve mencionar tanto a região como o rio. </PT-narr> 
+</top>
+
+<top>
+<num>GC027</num>
+<PT-title> Cidades a menos de 100 quilómetros de Francoforte </PT-title>  
+<PT-desc> Documentos sobre cidades num raio de 100 quilómetros de Frankfurt, no oeste da Alemanha. </PT-desc>  
+<PT-narr> Documentos relevantes devem mencionar cidades a uma distância inferior a 100 quilómetros de Francoforte (ou Frankfurt am Main), na Alemanha.  O documento é relevante se descrever a cidade ou um acontecimento nessa cidade. Notícias sobre a própria cidade de Francoforte não são relevantes.  
+(As coordenadas geográficas de Francoforte são: latitude 50,11222 graus norte, longitude 8,68194 este.)
+</PT-narr> 
+</top>
+
+<top>
+<num>GC028</num>
+<PT-title> Tempestades de neve na América do Norte</PT-title> 
+<PT-desc> Encontrar documentos sobre tempestades de neve ocorrendo na parte norte do continente americano </PT-desc> 
+<PT-narr> Os documentos relevantes mencionam casos de tempestades de neve e os seus efeitos na América do Norte. Documentos sobre outras tempestades não são relevantes. (Os países da América do Norte são: o Canadá, os Estados Unidos da América e o México.) </PT-narr> 
+</top>
+
+<top>
+<num>GC029</num>
+<PT-title> Comércio de diamantes em Angola e na África do Sul </PT-title> 
+<PT-desc> Documentos sobre o comércio de diamantes em Angola e na África do Sul </PT-desc> 
+<PT-narr> São relevantes os documentos sobre o comércio de diamantes nestes dois países e as consequências deste, tais como contrabando, instabilidade política e económica, etc. </PT-narr> 
+</top>
+
+<top>
+<num>GC030</num>
+<PT-title> Carros armadilhados em Madrid e arredores</PT-title> 
+<PT-desc> Documentos relevantes contêm notícias sobre carros contendo bombas dentro ou perto de Madrid. </PT-desc> 
+<PT-narr> Os documentos são relevantes se mencionarem casos de carros armadilhados ocorrendo na capital espanhola e nos seus arredores. </PT-narr> 
+</top>
+
+<top>
+<num>GC031</num>
+<PT-title> Combates e embargo no norte do Iraque </PT-title> 
+<PT-desc> Documentos sobre combates ou sobre o embargo no norte do Iraque </PT-desc> 
+<PT-narr> Os documentos relevantes versam sobre os combates e os efeitos do embargo dos anos 90 na parte norte do Iraque. Documentos sobre acontecimentos noutras partes do Iraque não são relevantes. </PT-narr> 
+</top>
+
+<top>
+<num>GC032</num>
+<PT-title> Movimento para a independência do Québec </PT-title> 
+<PT-desc> Documentos sobre o movimento independentista na província canadiana do Québeque. </PT-desc> 
+<PT-narr> Os documentos relevantes referem-se a acontecimentos relacionados com o movimento de independência na província canadiana do Québeque (ou Quebec), localizados no próprio Quebec. Referendos sobre o assunto são claramente relevantes. </PT-narr> 
+</top>
+
+<top>
+<num>GC033</num>
+<PT-title> Competições desportivas internacionais no Ruhr </PT-title> 
+<PT-desc> Encontrar infromação sobre campeonatos mundiais e torneios internacionais na região do Ruhr. </PT-desc> 
+<PT-narr> Documentos relevantes mencionam o tipo ou nome da competição, a cidade, e possíveis resultados. São irrelevantes documentos onde apenas parte da competição decorre na região do Ruhr, tais como etapas da Volta a França ou jogos da Liga dos Campeões ou da Taça UEFA. </PT-narr>
+</top> 
+
+<top>
+<num> GC034 </num>
+<PT-title> Malária nos trópicos </PT-title> 
+<PT-desc> Encontrar informação sobre surtos de malária nas regiões tropicais, assim como vacinação preventiva contra a doença. </PT-desc> 
+<PT-narr> Documentos relevantes mencionam casos de malária nas regiões tropicais e possíveis medidas preventivas como a oportunidade de vacinação contra a doença. Não são relevantes notícias acerca da contaminação de um único indivíduo. (Os trópicos são definidos como a região entre o Trópico de Cancer (latitude: 23,5º norte) e o Trópico de Capricórnio (23,5 graus sul).) </PT-narr>
+</top> 
+
+<top>
+<num> GC035 </num>
+<PT-title> Empréstimos ao antigo Bloco de Leste </PT-title> 
+<PT-desc> Procurar documentos que descrevam ajuda financeira, na forma de empréstimos pelo Fundo Monetário Internacional ou pelo Banco Mundial, a países pertencentes ao antigo Bloco de Leste ou ao Pacto de Varsóvia. </PT-desc> 
+<PT-narr> Documentos relevantes mencionam acordos sobre empréstimos, condições ou consequências desses empréstimos. Por países de Leste entendem-se os países europeus signatários do Pacto de Varsóvia e os estados que lhes sucederam no tempo, excluindo a Alemanha e a ex-União Soviética. (Os países europeus sucessores dos países do antigo bloco de Leste são: a Roménia, a Bulgária, a Hungria, a Chéquia, a Eslováquia e a Polónia.) </PT-narr>
+</top> 
+
+<top>
+<num> GC036 </num>
+<PT-title> Indústria automóvel no Mar do Japão </PT-title> 
+<PT-desc> Quais as cidades ribeirinhas do Mar do Japão com indústria automóvel ou fábricas de carros? </PT-desc> 
+<PT-narr> Documentos relevantes mencionam a indústria automóvel localizada em cidades situadas nas costas do Mar do Japão (conhecido na Coreia como Mar Oriental), podendo referir-se a acontecimentos económicos e sociais tais como joint-ventures ou greves, ocorridas ou planeadas. (Os países banhados pelo Mar do Japão são: o Japão, a Coreia do Norte, a Coreia do Sul, a China e a Rússia.)
+</PT-narr>
+</top> 
+
+<top>
+<num> GC037 </num>
+<PT-title> Arqueologia no Médio Oriente </PT-title> 
+<PT-desc> Procurar informação sobre escavações e descobertas arqueológicas no Médio Oriente. </PT-desc> 
+<PT-narr> Documentos relevantes relatam a ocorrência de descobertas, nalguma cidade, país ou região do Médio Oriente, também conhecido por Próximo Oriente. (Os países do Médio Oriente são: o Irão, o Iraque, a Turquia, o Egipto, o Líbano, a Arábia Saudita, a Jordânia, o Iémen, o Qatar, o Bahrain, Israel e a Palestina, Oman, o Kuwait, a Síria, os Emiratos Árabes Unidos e o Chipre.) </PT-narr>
+</top> 
+
+<top>
+<num> GC038 </num>
+<PT-title> Eclipses solares or lunares no sudoeste asiático </PT-title> 
+<PT-desc> Documentos descrevendo a ocorrência, total ou parcial, de eclipses do sol ou da lua no sul da ásia. </PT-desc> 
+<PT-narr> Documentos relevantes indicam o tipo de eclipse e a região onde este pode ser observado. Episódios de viagens feitas a esses locais para observar o eclipse também são relevantes. (Os países do sudoeste asiático são: a Birmânia / Myanmar, a Tailândia, a Malásia, Singapura, o Laos, o Cambodja, o Vietname, Timor Leste, a Indonésia, Brunei e as Filipinas.)
+</PT-narr>
+</top>
+
+<top>
+<num> GC039 </num>
+<PT-title> Tropas russas no sul do Cáucaso </PT-title> 
+<PT-desc> Informação sobre tropas ou bases russas na região a sul do Grande Cáucaso. </PT-desc> 
+<PT-narr> Documentos relevantes falam de tropas russas baseadas na  região, ou enviadas ou retiradas desta. Não são relevantes documentos sobre acções envolvendo tropas de outras nacionalidades, mesmo que envolvam mediação russa. (As regiões incluídas no sul do Cáucaso são: a Arménia, a Geórgia, a Ossetia e Nagorno-Karabakh.)
+</PT-narr>
+</top> 
+
+<top>
+<num> GC040 </num>
+<PT-title> Cidades perto de vulcões activos </PT-title> 
+<PT-desc> Encontrar localidades ameaçadas por erupções vulcânicas. </PT-desc> 
+<PT-narr> Os documentos relevantes têm de mencionar o nome das cidades, aldeias ou outras povoações perto de um vulcão em erupção activa ou iminente. Não são relevantes os documentos que não mencionem o perigo ou as consequências deste para uma cidade concreta, tais como a necessidade de evacuações preventivas, mas que apenas afirmem que um determinado vulcão vai ter uma erupção ou que uma dada região tem vulcões em actividade. </PT-narr>
+</top>
+
+<top>
+<num>GC041</num>
+<PT-title> Naufrágios no Oceano Atlântico </PT-title> 
+<PT-desc> Documentos sobre naufrágios que ocorreram no Oceano Atlântico. </PT-desc> 
+<PT-narr> Os documentos relevantes devem documentar naufrágios em qualquer parte do Atlântico ou das suas costas, actuais ou passados.  </PT-narr> 
+</top>
+
+<top>
+<num>GC042</num>
+<PT-title> Eleições regionais no norte da Alemanha </PT-title> 
+<PT-desc> Documentos sobre eleições regionais no norte da Alemanha. </PT-desc> 
+<PT-narr> Os documentos são relevantes se relatarem a campanha ou os resultados da eleição para os parlamentos de qualquer estado do norte da Alemanha. Apenas eleições regionais são relevantes; eleições municipais, nacionais ou europeias não interessam. (O norte da Alemanha inclui os seguintes estados: Schleswig-Holstein, Bremen, Hamburgo, Baixa-Saxónia, Meckleburgo-Pomerânia Ocidental, Brandeburgo, Berlim e Saxónia-Anhalt.)
+</PT-narr> 
+</top>
+
+<top>
+<num>GC043</num>
+<PT-title> Pesquisa científica em universidades da Nova Inglaterra </PT-title> 
+<PT-desc> Documentos sobre investigação científica desenvolvida em universidades da Nova Inglaterra.</PT-desc> 
+<PT-narr> Os documentos são válidos se relatarem investigação específica levada a cabo em universidades da Nova Inglaterra, no passado ou no presente. Pesquisa considerada fraudulenta também é relevante. (Os estados da Nova Inglaterra são: Connecticut, Rhode Island, Massachusetts, Vermont, New Hampshire ou Nova Hampshire, e o Maine.) </PT-narr> 
+</top>
+
+<top>
+<num>GC044</num>
+<PT-title> Venda de armas na antiga Jugoslávia </PT-title> 
+<PT-desc> Documentos sobre a venda de armas nos países da ex-Jugoslávia. </PT-desc> 
+<PT-narr> Os documentos relevantes devem falar de vendas de armas aos países que sucederam à antiga Jugoslávia, que ocorreram nesses mesmos países. Estas vendas podem ou não ser legais, e terem sido feitas a qualquer tipo de entidade nesses estados, não apenas ao governo. (Os países resultantes da Jugoslávia são: a Sérvia, a Bósnia e Herzegovina, o Montenegro, a Eslovénia, a Croácia e a Macedónia, também designada por República da Macedónia. A Sérvia e o Montenegro eram designados República Federal da Jugoslávia no período 1992-2004. )</PT-narr> 
+</top>
+
+<top>
+<num>GC045</num>
+<PT-title> Turismo no Nordeste brasileiro </PT-title> 
+<PT-desc> Documentos sobre o turismo no Nordeste brasileiro </PT-desc> 
+<PT-narr> São de interesse documentos sobre o turismo no Nordeste do Brasil, incluindo locais de interesse, factos sobre a indústria turística, e discussão de motivos para fazer ou não férias na região. (Os estados do Nordeste brasileiro são: Alagoas, Bahia, Ceará, Maranhão, Paraíba, Pernambuco, Piauí, Rio Grande do Norte, e Sergipe.) </PT-narr> 
+</top>
+
+<top>
+<num>GC046</num>
+<PT-title> Fogos florestais no norte de Portugal </PT-title> 
+<PT-desc> Documentos sobre fogos em florestas portuguesas no norte de Portugal </PT-desc> 
+<PT-narr> Os documentos devem mencionar a ocorrência de fogos nas florestas do norte de Portugal, assim como a luta contra estes e o seu rescaldo. (O norte de Portugal corresponde aos distritos de Viana do Castelo, Braga, Porto, Vila Real e Bragança, tradicionalmente conhecidos como as províncias de Minho, do Douro Litoral e de Trás-os-Montes e Alto Douro.)
+</PT-narr> 
+</top>
+
+<top>
+<num>GC047</num>
+<PT-title> Jogos da Liga dos Campeões no Mediterrâneo </PT-title> 
+<PT-desc> Documentos sobre jogos da Liga dos Campeões em cidades costeiras do Mediterrâneo  </PT-desc> 
+<PT-narr> Os documentos relevantes devem incluir pelo menos uma breve descrição de um jogo a contar para a Liga dos Campeões que seja jogado numa cidade na costa do Mediterrâneo ou de um dos seus braços. (Os países europeus banhados pelo Mediterrâneo são: a Espanha, a França, o Mónaco, a Itália, Malta, a Eslovénia, a Croácia, a Bósnia e Herzegovina, o Montenegro/Jugoslávia, a Albânia, a Grécia, a Turquia e o Chipre.) </PT-narr> 
+</top>
+
+<top>
+<num>GC048</num>
+<PT-title> Pescas na Terra Nova e na Gronelândia </PT-title> 
+<PT-desc> Documentos sobre pescas nas águas da Terra Nova e da Gronelândia </PT-desc> 
+<PT-narr> Os documentos relevantes devem documentar a pesca em águas gronelandesas ou perto da ilha canadiana da Terra Nova, assim como os problemas económicos, ecológicos ou legais a ela associados. </PT-narr>
+</top>
+
+<top>
+<num>GC049</num>
+<PT-title> A ETA em França </PT-title> 
+<PT-desc> Documentos sobre as actividades da ETA em França </PT-desc> 
+<PT-narr> Os documentos são relevantes se tratarem das actividades do grupo terrorista basco ETA em França, de natureza paramilitary, financeira, política ou qualquer outra. </PT-narr> 
+</top>
+
+<top>
+<num>GC050</num>
+<PT-title> Cidades ao longo do Danúbio e do Reno </PT-title> 
+<PT-desc> Documentos descrevendo cidades nas margens do Danúbio ou do Reno. </PT-desc> 
+<PT-narr> Os documentos relevantes devem conter pelo menos uma breve descrição das cidades pelas quais os rios Danúbio ou Reno passam. (O Reno atravessa os seguintes países: Suíça, Liechtenstein, Alemanha, Áustria, França e Países-Baixos, enquanto o Danúbio passa pela Alemanha, Áustria, Eslováquia, Hungria, Croácia, Sérvia, Roménia, Bulgária e Ucrânia.)
+ </PT-narr> 
+</top>
+
+</GeoCLEF-2006-topics-in-Portuguese-final-Apr-28-2006>

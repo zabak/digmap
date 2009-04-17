@@ -36,7 +36,7 @@
         <mkdir dir="${webapp.path}/WEB-INF/classes" />
         <javac destdir="${webapp.path}/WEB-INF/classes" optimize="off" debug="true" debuglevel="lines,vars,source" nowarn="true" deprecation="${compile.deprecation}" failonerror="true" srcdir="${webapp.path}/WEB-INF/classes" encoding="UTF-8" excludes="**/*.smap">
             <classpath>
-                <fileset dir="${webapp.path}/WEB-INF/lib">
+                <fileset dir="${base.dir}/lib">
                     <include name="**.jar" />
                     <exclude name="servlet-api.jar" />
                     <exclude name="jsp-api.jar" />
@@ -67,7 +67,7 @@
         <mkdir dir="${webapp.path}/WEB-INF/classes" />
         <javac destdir="${webapp.path}/WEB-INF/classes" optimize="off" debug="true" debuglevel="lines,vars,source" nowarn="true" deprecation="${compile.deprecation}" failonerror="false" srcdir="${webapp.path}/WEB-INF/classes" encoding="UTF-8" excludes="**/*.smap">
             <classpath>
-                <fileset dir="${webapp.path}/WEB-INF/lib">
+                <fileset dir="${base.dir}/WEB-INF/lib">
                     <include name="**.jar" />
                     <exclude name="servlet-api.jar" />
                     <exclude name="jsp-api.jar" />
@@ -118,7 +118,7 @@
         <javadoc destdir="${webapp.path}/WEB-INF/javadoc">
             <sourcepath path="${webapp.path}/WEB-INF/classes" />
             <classpath>
-                <fileset dir="${webapp.path}/WEB-INF/lib">
+                <fileset dir="${base.dir}/WEB-INF/lib">
                     <include name="**.jar" />
                     <exclude name="servlet-api.jar" />
                     <exclude name="jsp-api.jar" />
@@ -133,7 +133,7 @@
     <target name="test" depends="" description="Unit Tests and Examples">
         <junit showoutput="true" haltonerror="true" printsummary="true">
             <classpath path="${webapp.path}/WEB-INF/classes">
-                <fileset dir="${webapp.path}/WEB-INF/lib">
+                <fileset dir="${base.dir}/lib">
                     <include name="**.jar" />
                     <exclude name="servlet-api.jar" />
                     <exclude name="jsp-api.jar" />
@@ -185,7 +185,7 @@
         <mkdir dir="${webapp.path}/WEB-INF/brauncorpus/test-data/output"/>
         <java fork="true" classname="pt.utl.ist.lucene.treceval.BrounCorpusExample">
             <classpath>
-                <fileset dir="${webapp.path}/WEB-INF/lib">
+                <fileset dir="${base.dir}/lib">
                     <include name="**.jar" />
                     <exclude name="servlet-api.jar" />
                     <exclude name="jsp-api.jar" />
@@ -202,7 +202,7 @@
         <mkdir dir="${webapp.path}/WEB-INF/cran/test-data/output"/>
         <java fork="true" classname="pt.utl.ist.lucene.treceval.CranfieldExample">
             <classpath>
-                <fileset dir="${webapp.path}/WEB-INF/lib">
+                <fileset dir="${base.dir}/lib">
                     <include name="**.jar" />
                     <exclude name="servlet-api.jar" />
                     <exclude name="jsp-api.jar" />
@@ -219,7 +219,7 @@
         <mkdir dir="${webapp.path}/WEB-INF/dmoz/test-data/output"/>
         <java fork="true" classname="pt.utl.ist.lucene.treceval.DmozExample" jvmargs="-server">
             <classpath>
-                <fileset dir="${webapp.path}/WEB-INF/lib">
+                <fileset dir="${base.dir}/lib">
                     <include name="**.jar" />
                     <exclude name="servlet-api.jar" />
                     <exclude name="jsp-api.jar" />
@@ -236,7 +236,7 @@
         <mkdir dir="${webapp.path}/WEB-INF/geoclef/test-data/output"/>
         <java fork="true" classname="pt.utl.ist.lucene.treceval.geoclef.indexer.GeoClefIndexer" jvmargs="-server -Xmx1024m -Xms1024m -XX:PermSize=256m -XX:MaxPermSize=256m">
             <classpath>
-                <fileset dir="${webapp.path}/WEB-INF/lib">
+                <fileset dir="${base.dir}/lib">
                     <include name="**.jar" />
                     <exclude name="servlet-api.jar" />
                     <exclude name="jsp-api.jar" />
@@ -253,7 +253,7 @@
         <java fork="true" classname="pt.utl.ist.lucene.treceval.DigmapExample">
 
             <classpath>
-                <fileset dir="${webapp.path}/WEB-INF/lib">
+                <fileset dir="${base.dir}/lib">
                     <include name="**.jar" />
                     <exclude name="servlet-api.jar" />
                     <exclude name="jsp-api.jar" />
@@ -304,7 +304,7 @@
             <sequential>
                 <java fork="true" classname="ireval.Main" output="@{runfile}-treceval-report.txt">
                     <classpath>
-                        <fileset dir="${webapp.path}/WEB-INF/lib">
+                        <fileset dir="${base.dir}/lib">
                             <include name="*.jar" />
                         </fileset>
                         <fileset dir="${base.dir}/lib">
@@ -331,7 +331,7 @@
             <sequential>
                 <java fork="true" classname="ireval.Main" output="@{runfile}-treceval-report.txt">
                     <classpath>
-                        <fileset dir="${webapp.path}/WEB-INF/lib">
+                        <fileset dir="${base.dir}/lib">
                             <include name="*.jar" />
                         </fileset>
                         <fileset dir="${base.dir}/lib">
@@ -359,7 +359,7 @@
             <sequential>
                 <java fork="true" classname="ireval.Main" output="@{runfile}-treceval-report.txt">
                     <classpath>
-                        <fileset dir="${webapp.path}/WEB-INF/lib">
+                        <fileset dir="${base.dir}/lib">
                             <include name="*.jar" />
                         </fileset>
                         <fileset dir="${base.dir}/lib">
@@ -387,7 +387,7 @@
             <sequential>
                 <java fork="true" classname="ireval.Main" output="@{runfile}-treceval-report.txt">
                     <classpath>
-                        <fileset dir="${webapp.path}/WEB-INF/lib">
+                        <fileset dir="${base.dir}/lib">
                             <include name="*.jar" />
                         </fileset>
                         <fileset dir="${base.dir}/lib">
@@ -414,7 +414,7 @@
             <sequential>
                 <java fork="true" classname="ireval.Main" output="@{runfile}-treceval-report.txt">
                     <classpath>
-                        <fileset dir="${webapp.path}/WEB-INF/lib">
+                        <fileset dir="${base.dir}/lib">
                             <include name="*.jar" />
                         </fileset>
                         <fileset dir="${base.dir}/lib">
@@ -439,7 +439,7 @@
             <sequential>
                 <java fork="true" classname="ireval.Main" output="@{runfile}-treceval-report.txt">
                     <classpath>
-                        <fileset dir="${webapp.path}/WEB-INF/lib">
+                        <fileset dir="${base.dir}/lib">
                             <include name="*.jar" />
                         </fileset>
                         <fileset dir="${base.dir}/lib">
@@ -464,7 +464,7 @@
             <sequential>
                 <java fork="true" classname="ireval.Main" output="@{runfile}-treceval-report.txt">
                     <classpath>
-                        <fileset dir="${webapp.path}/WEB-INF/lib">
+                        <fileset dir="${base.dir}/lib">
                             <include name="*.jar" />
                         </fileset>
                         <fileset dir="${base.dir}/lib">
@@ -503,7 +503,7 @@
                     <sequential>
                         <java fork="true" classname="ireval.Main">
                             <classpath>
-                                <fileset dir="${webapp.path}/WEB-INF/lib">
+                                <fileset dir="${base.dir}/lib">
                                     <include name="**.jar" />
                                 </fileset>
                                 <fileset dir="${base.dir}/lib">
@@ -546,7 +546,7 @@
                     <sequential>
                         <java fork="true" classname="ireval.Main">
                             <classpath>
-                                <fileset dir="${webapp.path}/WEB-INF/lib">
+                                <fileset dir="${base.dir}/lib">
                                     <include name="**.jar" />
                                 </fileset>
                                 <fileset dir="${base.dir}/lib">
@@ -586,7 +586,7 @@
                     <sequential>
                         <java fork="true" classname="ireval.Main">
                             <classpath>
-                                <fileset dir="${webapp.path}/WEB-INF/lib">
+                                <fileset dir="${base.dir}/lib">
                                     <include name="**.jar" />
                                 </fileset>
                                 <fileset dir="${base.dir}/lib">
@@ -626,7 +626,7 @@
                     <sequential>
                         <java fork="true" classname="ireval.Main" output="@{runfile2}-significance-report.txt">
                             <classpath>
-                                <fileset dir="${webapp.path}/WEB-INF/lib">
+                                <fileset dir="${base.dir}/lib">
                                     <include name="**.jar" />
                                 </fileset>
                                 <fileset dir="${base.dir}/lib">
@@ -668,7 +668,7 @@
                     <sequential>
                         <java fork="true" classname="ireval.Main" output="@{runfile2}-significance-report.txt">
                             <classpath>
-                                <fileset dir="${webapp.path}/WEB-INF/lib">
+                                <fileset dir="${base.dir}/lib">
                                     <include name="**.jar" />
                                 </fileset>
                                 <fileset dir="${base.dir}/lib">
@@ -706,7 +706,7 @@
                     <sequential>
                         <java fork="true" classname="ireval.Main" output="@{runfile2}-significance-report.txt">
                             <classpath>
-                                <fileset dir="${webapp.path}/WEB-INF/lib">
+                                <fileset dir="${base.dir}/lib">
                                     <include name="**.jar" />
                                 </fileset>
                                 <fileset dir="${base.dir}/lib">
@@ -744,7 +744,7 @@
                     <sequential>
                         <java fork="true" classname="ireval.Main" output="@{runfile2}-significance-report.txt">
                             <classpath>
-                                <fileset dir="${webapp.path}/WEB-INF/lib">
+                                <fileset dir="${base.dir}/lib">
                                     <include name="**.jar" />
                                 </fileset>
                                 <fileset dir="${base.dir}/lib">

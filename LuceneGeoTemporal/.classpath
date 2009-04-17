@@ -59,5 +59,11 @@
 	<classpathentry kind="lib" path="WEB-INF/lib/carrot2-launcher.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/spellcheker.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/commons-cli-1.0.jar"/>
-	<classpathentry kind="output" path="WEB-INF/classes"/>
+	<classpathentry kind="lib" path="C:/WORKSPACE_JM/APPS/lgte/WEB-INF/lib/mallet.jar"/>
+	<classpathentry kind="lib" path="C:/WORKSPACE_JM/APPS/lgte/WEB-INF/lib/mallet-deps.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/lib/acme.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/lib/jts-1.8.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/lib/jtsio-1.8.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/lib/nmafCore.jar"/>
+	<classpathentry kind="output" path="WEB-INF/build/webapp/lgte/WEB-INF/classes"/>
 </classpath>

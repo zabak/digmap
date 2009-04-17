@@ -1,8 +1,9 @@
 package pt.utl.ist.lucene.treceval.handlers.topics;
 
 import org.dom4j.DocumentException;
+
+import pt.utl.ist.lucene.QueryConfiguration;
 import pt.utl.ist.lucene.treceval.ISearchCallBack;
-import pt.utl.ist.lucene.treceval.SearchConfiguration;
 
 import java.net.MalformedURLException;
 
@@ -14,5 +15,5 @@ import java.net.MalformedURLException;
  */
 public interface ITopicsPreprocessor
 {
-    public void handle(String collectionPath, ISearchCallBack callBack, String confId, String run,String collection,String outputDir, SearchConfiguration.TopicsConfiguration topicsConfiguration) throws MalformedURLException, DocumentException;
+    public void handle(String collectionPath, ISearchCallBack callBack, String confId, String run,String collection,String outputDir, QueryConfiguration topicsConfiguration) throws MalformedURLException, DocumentException;
 }

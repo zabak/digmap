@@ -140,14 +140,12 @@ public class ClefAdHocExample
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, LM_ADHOC));
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, LM_STEMMER_ADHOC));
 
-        SearchConfiguration.TopicsConfiguration topicsConfiguration = new SearchConfiguration.TopicsConfiguration();
-        topicsConfiguration.setFieldBoost(new HashMap<String,Float>());
-        topicsConfiguration.getFieldBoost().put("contents",0.53f);
-        topicsConfiguration.getFieldBoost().put("contentsN5",0.14f);
-        topicsConfiguration.getFieldBoost().put("contentsN4",0.11f);
-        topicsConfiguration.getFieldBoost().put("contentsN3",0.11f);
-        topicsConfiguration.getFieldBoost().put("contentsN2",0.11f);
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration1,LM_2_6GRAMS_CRAN,topicsConfiguration ));
+        queryConfiguration1.getQueryProperties().setProperty("field.boost.contents","0.53f");
+        queryConfiguration1.getQueryProperties().setProperty("field.boost.contentsN5","0.14f");
+        queryConfiguration1.getQueryProperties().setProperty("field.boost.contentsN4","0.11f");
+        queryConfiguration1.getQueryProperties().setProperty("field.boost.contentsN3","0.11f");
+        queryConfiguration1.getQueryProperties().setProperty("field.boost.contentsN2","0.11f");
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration1,LM_2_6GRAMS_CRAN ));
 
 //        //Search Topics Runs to submission
 //        SearchTopics.search(searchConfigurations);

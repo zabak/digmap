@@ -12,6 +12,5 @@ public interface IQuery
     public String toString();
 
     public String toStringHighLight();
-
-
+    
 }

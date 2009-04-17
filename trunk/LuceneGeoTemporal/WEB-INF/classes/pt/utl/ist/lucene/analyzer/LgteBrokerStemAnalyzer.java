@@ -37,6 +37,13 @@ public class LgteBrokerStemAnalyzer extends org.apache.lucene.analysis.Analyzer
 
     public final TokenStream tokenStream(String fieldName, Reader reader)
     {
+//    	try{
         return analizers.get(fieldName).tokenStream(fieldName,reader);
+//    	}catch(Exception e)
+//    	{
+//    		System.out.println(fieldName);
+//    		System.out.println(e.toString());
+//    		return null;
+//    	}
     }
 }

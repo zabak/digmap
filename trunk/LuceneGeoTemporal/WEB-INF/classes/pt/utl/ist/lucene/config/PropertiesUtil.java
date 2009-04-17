@@ -2,6 +2,13 @@ package pt.utl.ist.lucene.config;
 
 import org.apache.log4j.Logger;
 
+import pt.utl.ist.lucene.utils.StringComparator;
+
+import java.util.List;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
 import java.util.Properties;
 
 /**
@@ -158,4 +165,94 @@ public class PropertiesUtil
 
         return boolValue;
     }
+     
+     /**
+     *
+     * @param p properties in use
+     * @param propertyPrefix to find
+     * @return a list of all property names hat starts with the given prefix
+     *
+     */
+    public static List<String> getListPropertiesSuffix(Properties p, String propertyPrefix)
+    {
+
+        List<String> props = new ArrayList<String>();
+        Enumeration<?> enumE;
+       
+        enumE = p.propertyNames();
+        while (enumE.hasMoreElements())
+        {
+            String propertyName = (String)enumE.nextElement();
+            if (propertyName.startsWith(propertyPrefix))
+            {
+                props.add(propertyName.substring(propertyPrefix.length()));
+            }
+        }
+        Collections.sort(props, StringComparator.getInstance());
+        return props;
+    }
+     
+     /**
+     *
+     * @param p properties in use
+     * @param propertyPrefix to find
+     * @return a list of all property names hat starts with the given prefix
+     *
+     */
+    public static List<String> getListProperties(Properties p, String propertyPrefix)
+    {
+
+        List<String> props = new ArrayList<String>();
+        Enumeration<?> enumE;
+       
+        enumE = p.propertyNames();
+        while (enumE.hasMoreElements())
+        {
+            String propertyName = (String)enumE.nextElement();
+            if (propertyName.startsWith(propertyPrefix))
+            {
+                props.add(propertyName);
+            }
+        }
+        Collections.sort(props, StringComparator.getInstance());
+        return props;
+    }
+
+    /**
+     * @param p to use
+     * @param propertyPrefix to find
+     * @return a list of values
+     */
+    public static List<String> getListValuesOrderedByPropertyName(Properties p, String propertyPrefix)
+    {
+        List<String> props = new ArrayList<String>();
+        List<String> properties = getListProperties(p,propertyPrefix);
+        for (Object property1 : properties)
+        {
+            String property = (String) property1;
+            props.add(p.getProperty(property));
+        }
+        return props;
+    }
+
+    /**
+     * @param p to use
+     * @param propertyPrefix to find
+     * @return a list of values
+     */
+    public static List<String> getListValuesOrderedByValue(Properties p, String propertyPrefix)
+    {
+        List<String> props = new ArrayList<String>();
+        List<String> properties = getListProperties(p,propertyPrefix);
+        for (Object property1 : properties)
+        {
+            String property = (String) property1;
+            props.add(p.getProperty(property));
+        }
+        Collections.sort(props,StringComparator.getInstance());
+        return props;
+    }
+
+
+
 }

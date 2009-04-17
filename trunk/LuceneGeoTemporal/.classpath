@@ -3,7 +3,6 @@
 	<classpathentry kind="src" path="WEB-INF/classes"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/googleapi.jar"/>
-	<classpathentry kind="lib" path="WEB-INF/lib/ipls.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/junit.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/analyzers-dev.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/db.jar"/>

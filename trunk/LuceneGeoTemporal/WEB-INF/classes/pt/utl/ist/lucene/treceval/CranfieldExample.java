@@ -30,8 +30,8 @@ public class CranfieldExample
     {
 
         args = new String[2];
-        args[0] = "D:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-index";
-        args[1] = "D:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-data";
+        args[0] = "C:\\WORKSPACE_JM\\APPS\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-index";
+        args[1] = "C:\\WORKSPACE_JM\\APPS\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-data";
 
 
         Globals.INDEX_DIR = args[0];
@@ -160,8 +160,8 @@ public class CranfieldExample
 //        configurations.add(LM_3_6GRAMS_FRONT_CRAN);
 
 //        configurations.add(LM_CRAN);
-  //      configurations.add(LM_STEMMER_CRAN);
-        configurations.add(VS_3_5GRAMS_CRAN);
+        configurations.add(LM_STEMMER_CRAN);
+        //configurations.add(VS_3_5GRAMS_CRAN);
 
         IndexCollections.indexConfiguration(configurations,Globals.DOCUMENT_ID_FIELD);
 
@@ -182,8 +182,8 @@ public class CranfieldExample
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, VS_CRAN));
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, LM_CRAN));
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, VS_STEMMER_CRAN));
-//        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, LM_STEMMER_CRAN));
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, VS_3_5GRAMS_CRAN));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, LM_STEMMER_CRAN));
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, VS_3_5GRAMS_CRAN));
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, VS_3_6GRAMS_CRAN));
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, LM_3_6GRAMS_CRAN));
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, VS_3_6GRAMS_FRONT_CRAN));

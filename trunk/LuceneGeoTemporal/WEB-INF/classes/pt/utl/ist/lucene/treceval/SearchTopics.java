@@ -49,7 +49,7 @@ public class SearchTopics implements ISearchCallBack
     }
 
 
-    static FileWriter topicTotalResults;
+    //static FileWriter topicTotalResults;
 
 
     /**
@@ -62,8 +62,8 @@ public class SearchTopics implements ISearchCallBack
     public static void search(List<SearchConfiguration> searchConfigurations) throws IOException, DocumentException
     {
 
-        topicTotalResults = new FileWriter("D:/topicTotalResults.csv");
-        topicTotalResults.write("topic;total;s>=0.99;s>=0.98;s>=0.95;s>=0.9;s>=0.8;s>=0.5;\n");
+        //topicTotalResults = new FileWriter("D:/topicTotalResults.csv");
+        //topicTotalResults.write("topic;total;s>=0.99;s>=0.98;s>=0.95;s>=0.9;s>=0.8;s>=0.5;\n");
         int runId = 1;
         for (SearchConfiguration c : searchConfigurations)
         {
@@ -72,7 +72,7 @@ public class SearchTopics implements ISearchCallBack
             searchTopics.close();
             runId++;
         }
-        topicTotalResults.close();
+        //topicTotalResults.close();
 
     }
 
@@ -158,8 +158,8 @@ public class SearchTopics implements ISearchCallBack
                     total0_5++;
             }
 
-            topicTotalResults.write(t.getIdentifier() + ";" + hits.length() + ";" + total0_99 + ";" + total0_98+ ";" + total0_95+ ";" + total0_9+ ";" + total0_8+ ";" + total0_5+ ";\n");
-            topicTotalResults.flush();
+            //topicTotalResults.write(t.getIdentifier() + ";" + hits.length() + ";" + total0_99 + ";" + total0_98+ ";" + total0_95+ ";" + total0_9+ ";" + total0_8+ ";" + total0_5+ ";\n");
+            //topicTotalResults.flush();
 
 
             OutputFormat outputFormat = t.getOutputFormat();

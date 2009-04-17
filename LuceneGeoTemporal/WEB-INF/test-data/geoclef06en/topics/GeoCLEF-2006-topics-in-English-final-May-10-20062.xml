@@ -1,0 +1,197 @@
+<GeoCLEF-2006-topics-in-English-May-10-2006>
+ <?xml version="1.0" encoding="iso-8859-1" ?> 
+<top>
+  <num>GC026</num>
+  <EN-title>Wine regions around rivers in Europe</EN-title> 
+  <EN-desc>Documents about wine regions along the banks of European rivers</EN-desc> 
+  <EN-narr>Relevant documents describe a wine region along a major river in European countries. To be relevant the document must name the region and the river.</EN-narr>
+ </top>
+ <top>
+  <num>GC027</num>
+  <EN-title>Cities within 100km of Frankfurt</EN-title> 
+  <EN-desc>Documents about cities within 100 kilometers of the city of Frankfurt in Western Germany</EN-desc> 
+  <EN-narr>Relevant documents discuss cities within 100 kilometers of Frankfurt am Main Germany, latitude 50.11222, longitude 8.68194.  To be relevant the document must describe the city or an event in that city. Stories about Frankfurt itself are not relevant</EN-narr>
+ </top>
+<top>
+<num>GC028</num>
+<EN-title>Snowstorms in North America</EN-title>
+<EN-desc>Documents about snowstorms occurring in the north part of the American continent</EN-desc>
+<EN-narr>Relevant documents state cases of snowstorms and their effects in North America.  Countries are Canada, United States of America and Mexico.  Documents about other kinds of storms are not relevant (e.g. rainstorm, thunderstorm, electric storm, windstorm)</EN-narr>
+</top>
+<top>
+<num>GC029</num>
+<EN-title>Diamond trade in Angola and South Africa</EN-title>
+<EN-desc>Documents regarding diamond trade in Angola and South Africa</EN-desc>
+<EN-narr>Relevant documents are about diamond trading in these two countries and its consequences (e.g. smuggling, economic and political instability)</EN-narr>
+</top>
+<top>
+<num>GC030</num>
+<EN-title>Car bombings near Madrid</EN-title>
+<EN-desc>Documents about car bombings occurring near Madrid</EN-desc>
+<EN-narr>Relevant documents treat cases of car bombings occurring in the capital of Spain and its outskirts</EN-narr>
+</top>
+<top>
+<num>GC031</num>
+<EN-title>Combats and embargo in the northern part of Iraq</EN-title>
+<EN-desc>Documents telling about combats or embargo in the northern part of Iraq</EN-desc>
+<EN-narr>Relevant documents are about combats and effects of the 90s embargo in the northern part of Iraq. Documents about these facts happening in other parts of Iraq are not relevant</EN-narr>
+</top>
+<top>
+<num>GC032</num>
+<EN-title>Independence movement in Quebec</EN-title>
+<EN-desc>Documents about actions in Quebec for the independence of this Canadian province</EN-desc>
+<EN-narr>Relevant documents treat matters related to Quebec independence movement (e.g. referendums) which take place in Quebec</EN-narr>
+</top>
+<top>
+<num>GC033</num>
+<EN-title> International sports competitions in the Ruhr area</EN-title>
+<EN-desc> World Championships and international tournaments in 
+the Ruhr area</EN-desc>
+<EN-narr> Relevant documents state the type or name of the competition, 
+the city and possibly results. Irrelevant are documents where only part of the competition takes place in the Ruhr area of Germany, e.g. Tour de France, 
+Champions League or UEFA-Cup games.</EN-narr> 
+</top> 
+<top>
+<num> GC034 </num>
+<EN-title> Malaria in the tropics </EN-title>
+<EN-desc> Malaria outbreaks in tropical regions and preventive 
+vaccination </EN-desc> 
+<EN-narr> Relevant documents state cases of malaria in tropical regions
+and possible preventive measures like chances to vaccinate against the
+disease. Outbreaks must be of epidemic scope. Tropics are defined as the region between the Tropic of Capricorn, latitude 23.5 degrees South and the Tropic of Cancer, latitude 23.5 degrees North.  Not relevant are documents about a single person's infection.  </EN-narr> 
+</top> 
+<top>
+<num> GC035 </num>
+<EN-title> Credits to the former Eastern Bloc </EN-title>
+<EN-desc> Financial aid in form of credits by the International
+Monetary Fund or the World Bank to countries formerly belonging to 
+the "Eastern Bloc" aka the Warsaw Pact, except the republics of the former USSR</EN-desc> 
+<EN-narr> Relevant documents cite agreements on credits, conditions or
+consequences of these loans. The Eastern Bloc is defined as countries 
+under strong Soviet influence (so synonymous with Warsaw Pact) throughout
+the whole Cold War.   Excluded are former USSR republics.  Thus the countries are Bulgaria, Hungary, Czech Republic, Slovakia, Poland and Romania.  Thus not all communist or socialist countries are considered relevant.</EN-narr> 
+</top> 
+<top>
+<num> GC036 </num>
+<EN-title> Automotive industry around the Sea of Japan </EN-title> 
+<EN-desc> Coastal cities on the Sea of Japan with automotive industry or 
+factories </EN-desc> 
+<EN-narr> Relevant documents report on automotive industry or factories in 
+cities on the shore of the Sea of Japan (also named East Sea (of Korea)) 
+including economic or social events happening there like planned joint-ventures
+or strikes. In addition to Japan, the countries of North Korea, South Korea and Russia are also on the Sea of Japan.</EN-narr>
+</top> 
+<top>
+<num> GC037 </num>
+<EN-title> Archeology in the Middle East </EN-title> 
+<EN-desc> Excavations and archeological finds in the Middle East 
+</EN-desc> 
+<EN-narr> Relevant documents report recent finds in some town, city, region or country of the Middle East, i.e. in Iran, Iraq, Turkey, Egypt, Lebanon, Saudi Arabia, Jordan, Yemen, Qatar, Kuwait, Bahrain, Israel, Oman, Syria, United Arab Emirates, Cyprus, West Bank, or the Gaza Strip</EN-narr>
+</top> 
+<top>
+<num> GC038 </num>
+<EN-title> Solar or lunar eclipse in Southeast Asia </EN-title> 
+<EN-desc> Total or partial solar or lunar eclipses in Southeast Asia 
+</EN-desc> 
+<EN-narr> Relevant documents state the type of eclipse and the region or country 
+of occurrence, possibly also stories about people travelling to see it.  Countries of Southeast Asia are Brunei, Cambodia, East Timor, Indonesia, Laos, Malaysia, Myanmar, Philippines, Singapore, Thailand and Vietnam.
+</EN-narr>
+</top>
+<top>
+<num> GC039 </num>
+<EN-title> Russian troops in the southern Caucasus </EN-title> 
+<EN-desc> Russian soldiers, armies or military bases in the Caucasus region 
+south of the Caucasus Mountains </EN-desc> 
+<EN-narr> Relevant documents report on Russian troops based at, moved to or 
+removed from the region. Also agreements on one of these actions or combats 
+are relevant. Relevant countries are: Azerbaijan, Armenia, Georgia, Ossetia,
+Nagorno-Karabakh. Irrelevant are documents citing actions between troops of 
+nationality different from Russian (with Russian mediation between the two.) 
+</EN-narr>
+</top> 
+<top>
+<num> GC040 </num>
+<EN-title> Cities near active volcanoes </EN-title> 
+<EN-desc> Cities, towns or villages threatened by the eruption of a volcano 
+</EN-desc> 
+<EN-narr> Relevant documents cite the name of the cities, towns, villages that 
+are near an active volcano which recently had an eruption or could erupt soon. 
+Irrelevant are reports which do not state the danger (i.e. for example necessary
+preventive evacuations) or the consequences for specific cities , but just 
+tell that a particular volcano (in some country) is going to erupt, has erupted or that 
+a region has active volcanoes. </EN-narr>
+</top>
+
+<top>
+<num>GC041</num>
+<EN-title>Shipwrecks in the Atlantic Ocean</EN-title>
+<EN-desc>Documents about shipwrecks in the Atlantic Ocean</EN-desc>
+<EN-narr>Relevant documents should document shipwreckings in any part of the Atlantic Ocean or its coasts.</EN-narr>
+</top>
+
+<top>
+<num>GC042</num>
+<EN-title>Regional elections in Northern Germany</EN-title>
+<EN-desc>Documents about regional elections in Northern Germany</EN-desc>
+<EN-narr>Relevant documents are those reporting the campaign or results for the state parliaments of any of the regions of Northern Germany. The states of northern Germany are commonly Bremen, Hamburg, Lower Saxony, Mecklenburg-Western Pomerania and Schleswig-Holstein. Only regional elections are relevant; municipal, national and European elections are not.</EN-narr>
+</top>
+
+<top>
+<num>GC043</num>
+<EN-title>Scientific research in New England Universities</EN-title>
+<EN-desc>Documents about scientific research in New England universities</EN-desc>
+<EN-narr>Valid documents should report specific scientific research or breakthroughs occurring in universities of New England. Both current and past research are relevant. Research regarded as bogus or fraudulent is also relevant.  New England states are: Connecticut, Rhode Island, Massachusetts, Vermont, New Hampshire, Maine. </EN-narr>
+</top>
+
+<top>
+<num>GC044</num>
+<EN-title>Arms sales in former Yugoslavia</EN-title>
+<EN-desc>Documents about arms sales in former Yugoslavia</EN-desc>
+<EN-narr>Relevant documents should report on arms sales that took place in the successor countries of the former Yugoslavia. These sales can be legal or not, and to any kind of entity in these states, not only the government itself. Relevant countries are: Slovenia, Macedonia, Croatia, Serbia and Montenegro, and Bosnia and Herzegovina.
+</EN-narr>
+</top>
+
+<top>
+<num>GC045</num>
+<EN-title>Tourism in Northeast Brazil</EN-title>
+<EN-desc>Documents about tourism in Northeastern Brazil</EN-desc>
+<EN-narr>Of interest are documents reporting on tourism in Northeastern Brazil, including places of interest, the tourism industry and/or the reasons for taking or not a holiday there.  The states of northeast Brazil are Alagoas, Bahia, Ceará, Maranhão, Paraíba, Pernambuco, Piauí, Rio Grande do Norte and Sergipe.</EN-narr>
+</top>
+
+<top>
+<num>GC046</num>
+<EN-title>Forest fires in Northern Portugal</EN-title>
+<EN-desc>Documents about forest fires in Northern Portugal</EN-desc>
+<EN-narr>Documents should report the ocurrence, fight against, or aftermath of forest fires in Northern Portugal.  The regions covered are Minho, Douro Litoral, Trás-os-Montes and Alto Douro, corresponding to the districts of Viana do Castelo, Braga, Porto (or Oporto), Vila Real and Bragança.
+</EN-narr>
+</top>
+
+<top>
+<num>GC047</num>
+<EN-title>Champions League games near the Mediterranean </EN-title>
+<EN-desc>Documents about Champion League games played in European cities bordering the Mediterranean </EN-desc>
+<EN-narr>Relevant documents should include at least a short description of a European Champions League game played in a European city bordering the Mediterranean Sea or any of its minor seas. European countries along the Mediterranean Sea are Spain, France, Monaco, Italy, the island state of Malta, Slovenia, Croatia, Bosnia and Herzegovina, Serbia and Montenegro, Albania, Greece, Turkey, and the island of Cyprus.</EN-narr>
+</top>
+
+<top>
+<num>GC048</num>
+<EN-title>Fishing in Newfoundland and Greenland</EN-title>
+<EN-desc>Documents about fisheries around Newfoundland and Greenland</EN-desc>
+<EN-narr>Relevant documents should document fisheries and economical, ecological or legal problems associated with it, around Greenland and the Canadian island of Newfoundland. </EN-narr>
+</top>
+
+<top>
+<num>GC049</num>
+<EN-title>ETA in France</EN-title>
+<EN-desc>Documents about ETA activities in France</EN-desc>
+<EN-narr>Relevant documents should document the activities of the Basque terrorist group ETA in France, of a paramilitary, financial, political nature or others. </EN-narr>
+</top>
+
+<top>
+<num>GC050</num>
+<EN-title>Cities along the Danube and the Rhine</EN-title>
+<EN-desc>Documents describe cities in the shadow of the Danube or the Rhine</EN-desc>
+<EN-narr>Relevant documents should contain at least a short description of cities through which the rivers Danube and Rhine pass, providing evidence for it. The Danube flows through nine countries (Germany, Austria, Slovakia, Hungary, Croatia, Serbia, Bulgaria, Romania, and Ukraine).  Countries along the Rhine are Liechtenstein, Austria, Germany, France, the Netherlands and Switzerland. </EN-narr>
+</top>
+</GeoCLEF-2006-topics-in-English-May-10-2006>
+

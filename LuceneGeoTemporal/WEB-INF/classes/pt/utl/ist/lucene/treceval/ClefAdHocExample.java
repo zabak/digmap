@@ -44,7 +44,7 @@ public class ClefAdHocExample
 
 
 //        String collectionPath = Globals.DATA_DIR + "\\clef2008AdHoc\\documents";
-        String collectionPath = "F:\\coleccoesIR\\CLEFAdHoc\\telCollection\\teste";
+        String collectionPath = "F:\\coleccoesIR\\CLEFAdHoc\\telCollection\\bl";
         String topicsPath = Globals.DATA_DIR + "\\clef2008AdHoc\\topics\\bl";
         String outputDir = Globals.DATA_DIR + "\\clef2008AdHoc\\output\\bl";
 
@@ -81,11 +81,12 @@ public class ClefAdHocExample
                 <description>Trouver des livres ou des publications sur l'invasion et l'occupation de la Grande-Bretagne par les Romains.</description>
             </topic>
          */
-        XmlFieldHandler xmlTitleTopicFieldHandler = new SimpleXmlFieldHandler("./title",new MultipleFieldFilter(3),"contents");
-        XmlFieldHandler xmlDescTopicFieldHandler = new SimpleXmlFieldHandler("./description",new SimpleFieldFilter(),"contents");
         List<XmlFieldHandler> xmlTopicFieldHandlers = new ArrayList<XmlFieldHandler>();
-        xmlTopicFieldHandlers.add(xmlTitleTopicFieldHandler);
-        xmlTopicFieldHandlers.add(xmlDescTopicFieldHandler);
+        addTopics(xmlTopicFieldHandlers,"contents");
+        addTopics(xmlTopicFieldHandlers,"contentsN2");
+        addTopics(xmlTopicFieldHandlers,"contentsN3");
+        addTopics(xmlTopicFieldHandlers,"contentsN4");
+        addTopics(xmlTopicFieldHandlers,"contentsN5");
         ResourceHandler topicResourceHandler = new XmlResourceHandler("//topic","./identifier",xmlTopicFieldHandlers);
         TrecEvalOutputFormatFactory factory =  new TrecEvalOutputFormatFactory(Globals.DOCUMENT_ID_FIELD);
         ITopicsPreprocessor topicsDirectory = new TDirectory(topicResourceHandler,factory);
@@ -120,7 +121,7 @@ public class ClefAdHocExample
         configurations.add(LM_2_6GRAMS_CRAN);
 
 
-//        IndexCollections.indexConfiguration(configurations,Globals.DOCUMENT_ID_FIELD);
+        IndexCollections.indexConfiguration(configurations,Globals.DOCUMENT_ID_FIELD);
 
 
 //        /***
@@ -144,12 +145,20 @@ public class ClefAdHocExample
         topicsConfiguration.getFieldBoost().put("contentsN4",0.11f);
         topicsConfiguration.getFieldBoost().put("contentsN3",0.11f);
         topicsConfiguration.getFieldBoost().put("contentsN2",0.11f);
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration1,VS_2_6GRAMS_CRAN ));
-//
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration1,LM_2_6GRAMS_CRAN,topicsConfiguration ));
+
 //        //Search Topics Runs to submission
-        SearchTopics.search(searchConfigurations);
+//        SearchTopics.search(searchConfigurations);
     }
 
+
+    private static void addTopics(List<XmlFieldHandler> xmlTopicFieldHandlers, String field)
+    {
+        XmlFieldHandler xmlTitleTopicFieldHandler = new SimpleXmlFieldHandler("./title",new MultipleFieldFilter(3),field);
+        XmlFieldHandler xmlDescTopicFieldHandler = new SimpleXmlFieldHandler("./description",new SimpleFieldFilter(),field);
+        xmlTopicFieldHandlers.add(xmlTitleTopicFieldHandler);
+        xmlTopicFieldHandlers.add(xmlDescTopicFieldHandler);
+    }
 
     private static void addFields(List<XmlFieldHandler> xmlFieldHandlers, String field)
     {

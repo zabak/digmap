@@ -1,10 +1,15 @@
 package pt.utl.ist.lucene.treceval.handlers.topics.output.impl;
 
+import org.apache.log4j.Logger;
+import org.apache.lucene.analysis.standard.StandardTokenizer;
+import org.apache.lucene.analysis.Token;
+import pt.utl.ist.lucene.treceval.SearchConfiguration;
 import pt.utl.ist.lucene.treceval.handlers.topics.output.OutputFormat;
 import pt.utl.ist.lucene.treceval.handlers.topics.output.Topic;
-import pt.utl.ist.lucene.treceval.SearchConfiguration;
 import pt.utl.ist.lucene.utils.QueryUtils;
 
+import java.io.IOException;
+import java.io.StringReader;
 import java.util.Map;
 
 /**
@@ -16,6 +21,8 @@ import java.util.Map;
  */
 public class FieldsTopic implements Topic
 {
+
+    private static final Logger logger = Logger.getLogger(FieldsTopic.class);
 
     String identifier;
     String query;
@@ -34,18 +41,39 @@ public class FieldsTopic implements Topic
 
             if(topicsConfiguration != null && topicsConfiguration.getFieldBoost() != null)
             {
-                addField(builder,entry.getKey(),escapedQuery);
+
+
+
                 Float boost = topicsConfiguration.getFieldBoost().get(entry.getKey());
                 if(boost != null)
                 {
-                    builder.append("^").append(boost);
+                    StandardTokenizer tokenizer = new StandardTokenizer(new StringReader(escapedQuery));
+
+                    Token t;
+                    try
+                    {
+                        while((t = tokenizer.next()) != null)
+                        {
+                            builder.append(entry.getKey()).append(":").append(t.termText()).append("^").append(boost).append(" ");
+                        }
+                    }
+                    catch (IOException e)
+                    {
+                        logger.error(e,e);
+                    }
+                }
+                else
+                {
+                    addField(builder,entry.getKey(),escapedQuery);
+                    builder.append(" ");
                 }
             }
             else if(topicsConfiguration == null)
             {
                 addField(builder,entry.getKey(),escapedQuery);
+                builder.append(" ");
             }
-            builder.append(" ");
+
         }
         query = builder.toString();
     }

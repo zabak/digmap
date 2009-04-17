@@ -1,17 +1,22 @@
 package pt.utl.ist.lucene.treceval;
 
 import org.apache.log4j.Logger;
+import org.apache.lucene.analysis.Analyzer;
 import org.dom4j.DocumentException;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
 
+import pt.utl.ist.lucene.analyzer.LgteBrokerStemAnalyzer;
 import pt.utl.ist.lucene.treceval.handlers.*;
 import pt.utl.ist.lucene.treceval.handlers.topics.output.impl.TrecEvalOutputFormatFactory;
 import pt.utl.ist.lucene.treceval.handlers.topics.ITopicsPreprocessor;
 import pt.utl.ist.lucene.treceval.handlers.topics.TDirectory;
 import pt.utl.ist.lucene.treceval.handlers.collections.CDirectory;
+import pt.utl.ist.lucene.utils.LgteAnalyzerManager;
 import pt.utl.ist.lucene.Model;
 import pt.utl.ist.lucene.QueryConfiguration;
 import pt.utl.ist.lucene.QEEnum;
@@ -74,35 +79,30 @@ public class CranfieldExample
          *
          * for details @see ICollectionPreprocessor Architecture Diagrams @ LGTE website
          */
-
-        //Global Search Index
-        XmlFieldHandler xmlTextGlobalFieldHandler = new SimpleXmlFieldHandler("./TEXT",new SimpleFieldFilter(),"contents");
-        XmlFieldHandler xmlTitleGlobalFieldHandler = new SimpleXmlFieldHandler("./TITLE",new MultipleFieldFilter(2),"contents");
-        XmlFieldHandler xmlAuthorGlobalFieldHandler = new SimpleXmlFieldHandler("./AUTHOR",new MultipleFieldFilter(2),"contents");
-
-        //Special Indexes for Advanced Search
+        //The handlers will be the same in 6 different fields, each one associated with different analyzers
+        //The fields suffixed with NX will have XGrams Tokenizers
+        List<XmlFieldHandler> xmlFieldHandlers = new ArrayList<XmlFieldHandler>();
+        addFields(xmlFieldHandlers, "contents");
+        addFields(xmlFieldHandlers, "contentsN2");
+        addFields(xmlFieldHandlers, "contentsN3");
+        addFields(xmlFieldHandlers, "contentsN4");
+        addFields(xmlFieldHandlers, "contentsN5");
+        addFields(xmlFieldHandlers, "contentsN6");
+        //Special Indexes for Advanced Search        
         XmlFieldHandler xmlAuthorFieldHandler = new SimpleXmlFieldHandler("./AUTHOR",new SimpleFieldFilter(),"author");
         XmlFieldHandler xmlTitleFieldHandler = new SimpleXmlFieldHandler("./TITLE",new SimpleFieldFilter(),pt.utl.ist.lucene.treceval.Globals.DOCUMENT_TITLE);
-
-        //Index to store all fields with out repetitions to be used in summary
-        XmlFieldHandler xmlContentSummaryTitleStoreFieldHandler = new SimpleXmlFieldHandler("./TITLE",new SimpleStoreFieldFilter(),"contentStore");
-        XmlFieldHandler xmlContentSummaryAuthorStoreFieldHandler = new SimpleXmlFieldHandler("./AUTHOR",new SimpleStoreFieldFilter(),"contentStore");
-        XmlFieldHandler xmlContentSummaryTextStoreFieldHandler = new SimpleXmlFieldHandler("./TEXT",new SimpleStoreFieldFilter(),"contentStore");
-
-        List<XmlFieldHandler> xmlFieldHandlers = new ArrayList<XmlFieldHandler>();
-        xmlFieldHandlers.add(xmlTextGlobalFieldHandler);
-        xmlFieldHandlers.add(xmlTitleGlobalFieldHandler);
-        xmlFieldHandlers.add(xmlAuthorGlobalFieldHandler);
         xmlFieldHandlers.add(xmlAuthorFieldHandler);
         xmlFieldHandlers.add(xmlTitleFieldHandler);
-        xmlFieldHandlers.add(xmlContentSummaryTitleStoreFieldHandler);
-        xmlFieldHandlers.add(xmlContentSummaryAuthorStoreFieldHandler);
-        xmlFieldHandlers.add(xmlContentSummaryTextStoreFieldHandler);
 
         ResourceHandler resourceHandler = new XmlResourceHandler("//DOC","DOCNO",xmlFieldHandlers);
         //we could set to topicsDirectory preprocessor a Properties object with FileExtensions Implementations of CDocumentHandler
         CDirectory collectionsDirectory = new CDirectory(resourceHandler,null);
 
+        
+        
+        /*******************************************
+        //TOPICS
+        ********************************************/
         /**
          * Now let's create a Topics processor
          * The principle is the same, we need a directoryHandler
@@ -120,28 +120,35 @@ public class CranfieldExample
         TrecEvalOutputFormatFactory factory =  new TrecEvalOutputFormatFactory(Globals.DOCUMENT_ID_FIELD);
         ITopicsPreprocessor topicsDirectory = new TDirectory(topicResourceHandler,factory);
 
+        
+        
+        /*******************************************
+        //Configurations
+        ********************************************/
         //maxResults in output File per topic;
         int maxResults = 500;
 
-        //Lets create our configuration indexes
-        //We gone put the diferences about model, output folder name, analyser
-
+        //Lets create our configurations
+        //We gone put the differences about model, output folder name, analyzer, etc
         Configuration VS_CRAN = new Configuration("version1", "cran","lm", Model.VectorSpaceModel, IndexCollections.en.getAnalyzerNoStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.en.getWordList(),outputDir,maxResults);
         Configuration LM_CRAN = new Configuration("version1", "cran","lm",Model.LanguageModel , IndexCollections.en.getAnalyzerNoStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.en.getWordList(),outputDir,maxResults);
         Configuration VS_STEMMER_CRAN = new Configuration("version1", "cran","lmstem", Model.VectorSpaceModel, IndexCollections.en.getAnalyzerWithStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.en.getWordList(),outputDir,maxResults);
         Configuration LM_STEMMER_CRAN = new Configuration("version1", "cran","lmstem", Model.LanguageModel, IndexCollections.en.getAnalyzerWithStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.en.getWordList(),outputDir,maxResults);
 
-        Configuration VS_3_5GRAMS_CRAN = new Configuration("version1", "cran","lmstem3_5grams", Model.VectorSpaceModel, IndexCollections.n2_6gramsStem.getAnalyzerWithStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", null,outputDir,maxResults);
-//        Configuration VS_3_6GRAMS_CRAN = new Configuration("version1", "cran","lmstem3_6grams", Model.VectorSpaceModel, IndexCollections.n3_6gramsStem.getAnalyzerWithStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", null,outputDir,maxResults);
-//        Configuration LM_3_6GRAMS_CRAN = new Configuration("version1", "cran","lmstem3_6grams", Model.LanguageModel, IndexCollections.n3_6gramsStem.getAnalyzerWithStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", null,outputDir,maxResults);
-//
-//        Configuration VS_3_6GRAMS_FRONT_CRAN = new Configuration("version1", "cran","lmstem3_6gramsFront", Model.VectorSpaceModel, IndexCollections.n3_6gramsFrontEdjeStem.getAnalyzerWithStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", null,outputDir,maxResults);
-//        Configuration LM_3_6GRAMS_FRONT_CRAN = new Configuration("version1", "cran","lmstem3_6gramsFront", Model.LanguageModel, IndexCollections.n3_6gramsFrontEdjeStem.getAnalyzerWithStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", null,outputDir,maxResults);
-
-
-
-//        Configuration VS_4GRAMS_CRAN = new Configuration("version1", "cran","lmstem4grams", Model.VectorSpaceModel, IndexCollections.enStop4gramsStem.getAnalyzerWithStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", null,outputDir,maxResults);
-//        Configuration LM_4GRAMS_CRAN = new Configuration("version1", "cran","lmstem4grams", Model.LanguageModel, IndexCollections.enStop4gramsStem.getAnalyzerWithStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", null,outputDir,maxResults);
+        //We will create now one broker analizer with different analizers to handle different fields
+        //The objective is to stem our text fields differently in each index field
+        Map<String, Analyzer> ngramsAnalizers = new HashMap<String,Analyzer>();
+        ngramsAnalizers.put("contents",IndexCollections.en.getAnalyzerNoStemming());
+        ngramsAnalizers.put("author",IndexCollections.en.getAnalyzerNoStemming());
+        ngramsAnalizers.put(pt.utl.ist.lucene.treceval.Globals.DOCUMENT_TITLE,IndexCollections.en.getAnalyzerNoStemming());
+        ngramsAnalizers.put("contentsN2", LgteAnalyzerManager.getInstance().getLanguagePackage(2,2).getAnalyzerWithStemming());
+        ngramsAnalizers.put("contentsN3", LgteAnalyzerManager.getInstance().getLanguagePackage(3,3).getAnalyzerWithStemming());
+        ngramsAnalizers.put("contentsN4", LgteAnalyzerManager.getInstance().getLanguagePackage(4,4).getAnalyzerWithStemming());
+        ngramsAnalizers.put("contentsN5", LgteAnalyzerManager.getInstance().getLanguagePackage(5,5).getAnalyzerWithStemming());
+        ngramsAnalizers.put("contentsN6", LgteAnalyzerManager.getInstance().getLanguagePackage(6,6).getAnalyzerWithStemming());
+        LgteBrokerStemAnalyzer lgteBrokerStemAnalyzer = new LgteBrokerStemAnalyzer(ngramsAnalizers);
+        Configuration VS_2_6GRAMS_CRAN = new Configuration("version1", "cran","lmstem2_6grams", Model.VectorSpaceModel, lgteBrokerStemAnalyzer,collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", null,outputDir,maxResults);
+        Configuration LM_2_6GRAMS_CRAN = new Configuration("version1", "cran","lmstem2_6grams", Model.LanguageModel, lgteBrokerStemAnalyzer,collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", null,outputDir,maxResults);
 
 //        Configuration M3 = new Configuration("version1", "cran","lm", Model.BB2DFRModel, IndexCollections.en.getAnalyzerNoStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.en.getWordList(),outputDir,maxResults);
 //        Configuration M4 = new Configuration("version1", "cran","lm", Model.DLHHypergeometricDFRModel, IndexCollections.en.getAnalyzerNoStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.en.getWordList(),outputDir,maxResults);
@@ -153,19 +160,16 @@ public class CranfieldExample
 //        Configuration M10 = new Configuration("version1", "cran","lm", Model.PL2DFRModel, IndexCollections.en.getAnalyzerNoStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.en.getWordList(),outputDir,maxResults);
 
 
+        
         List<Configuration> configurations = new ArrayList<Configuration>();
-        //we just need these two configurations because the lm and lmstem indexes are the same for all probabilistic priors and can be used in vector space because the diference is just an extra index with documents lenght
-
-//        configurations.add(VS_3_6GRAMS_CRAN);
-//        configurations.add(LM_3_6GRAMS_FRONT_CRAN);
-
-//        configurations.add(LM_CRAN);
+        //we just need these three configurations because the indexes are the same for all probabilistic models and can be used in vector space because the difference is just an extra index with documents lenghts
+        configurations.add(LM_CRAN);
         configurations.add(LM_STEMMER_CRAN);
-        //configurations.add(VS_3_5GRAMS_CRAN);
+        configurations.add(LM_2_6GRAMS_CRAN);
 
         IndexCollections.indexConfiguration(configurations,Globals.DOCUMENT_ID_FIELD);
-
-//        MultiSearcher ms = new MultiSearcher(IndexSearcher)
+        
+        
         /***
          * Search Configurations
          */
@@ -182,17 +186,24 @@ public class CranfieldExample
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, VS_CRAN));
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, LM_CRAN));
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, VS_STEMMER_CRAN));
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, LM_STEMMER_CRAN));
-//        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, VS_3_5GRAMS_CRAN));
-//        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, VS_3_6GRAMS_CRAN));
-//        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, LM_3_6GRAMS_CRAN));
-//        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, VS_3_6GRAMS_FRONT_CRAN));
-//        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, LM_3_6GRAMS_FRONT_CRAN));
+//       searchConfigurations.add(new SearchConfiguration(queryConfiguration1, LM_STEMMER_CRAN));
+        
+        //Note that we are not using 6 grams yet 
+        SearchConfiguration.TopicsConfiguration topicsConfiguration = new SearchConfiguration.TopicsConfiguration();
+        topicsConfiguration.setFieldBoost(new HashMap<String,Float>());
+        topicsConfiguration.getFieldBoost().put("contents",0.53f);
+        topicsConfiguration.getFieldBoost().put("contentsN5",0.14f);
+        topicsConfiguration.getFieldBoost().put("contentsN4",0.11f);
+        topicsConfiguration.getFieldBoost().put("contentsN3",0.11f);
+        topicsConfiguration.getFieldBoost().put("contentsN2",0.11f);
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, VS_2_6GRAMS_CRAN,topicsConfiguration));
 
-//        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, VS_CRAN));
-//        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, LM_CRAN));
-//        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, VS_STEMMER_CRAN));
-//        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, LM_STEMMER_CRAN));
+//        
+
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, VS_CRAN));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, LM_CRAN));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, VS_STEMMER_CRAN));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, LM_STEMMER_CRAN));
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, VS_3_6GRAMS_CRAN));
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, LM_3_6GRAMS_CRAN));
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, VS_3_6GRAMS_FRONT_CRAN));
@@ -213,4 +224,24 @@ public class CranfieldExample
         SearchTopics.search(searchConfigurations);
     }
 
+    public static void addFields(List<XmlFieldHandler> xmlFieldHandlers, String field)
+    {
+    	 XmlFieldHandler xmlTextGlobalFieldHandler = new SimpleXmlFieldHandler("./TEXT",new SimpleFieldFilter(),field);
+         XmlFieldHandler xmlTitleGlobalFieldHandler = new SimpleXmlFieldHandler("./TITLE",new MultipleFieldFilter(2),field);
+         XmlFieldHandler xmlAuthorGlobalFieldHandler = new SimpleXmlFieldHandler("./AUTHOR",new MultipleFieldFilter(2),field);
+
+         //Index to store all fields with out repetitions to be used in summary
+         XmlFieldHandler xmlContentSummaryTitleStoreFieldHandler = new SimpleXmlFieldHandler("./TITLE",new SimpleStoreFieldFilter(),"contentStore");
+         XmlFieldHandler xmlContentSummaryAuthorStoreFieldHandler = new SimpleXmlFieldHandler("./AUTHOR",new SimpleStoreFieldFilter(),"contentStore");
+         XmlFieldHandler xmlContentSummaryTextStoreFieldHandler = new SimpleXmlFieldHandler("./TEXT",new SimpleStoreFieldFilter(),"contentStore");
+
+         xmlFieldHandlers.add(xmlTextGlobalFieldHandler);
+         xmlFieldHandlers.add(xmlTitleGlobalFieldHandler);
+         xmlFieldHandlers.add(xmlAuthorGlobalFieldHandler);
+         
+         xmlFieldHandlers.add(xmlContentSummaryTitleStoreFieldHandler);
+         xmlFieldHandlers.add(xmlContentSummaryAuthorStoreFieldHandler);
+         xmlFieldHandlers.add(xmlContentSummaryTextStoreFieldHandler);
+
+    }
 }

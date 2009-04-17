@@ -77,10 +77,12 @@ public class ClefAdHocExample
          *
            <topic lang="fr">
                 <identifier>10.2452/451-AH</identifier>
-                <title>L'armée romaine en Grande-Bretagne</title>
+                <title>L'armï¿½e romaine en Grande-Bretagne</title>
                 <description>Trouver des livres ou des publications sur l'invasion et l'occupation de la Grande-Bretagne par les Romains.</description>
             </topic>
          */
+        //The handlers will be the same in 6 different fields, each one associated with different analyzers
+        //The fields suffixed with NX will have XGrams Tokenizers
         List<XmlFieldHandler> xmlTopicFieldHandlers = new ArrayList<XmlFieldHandler>();
         addTopics(xmlTopicFieldHandlers,"contents");
         addTopics(xmlTopicFieldHandlers,"contentsN2");

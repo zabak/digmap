@@ -6,6 +6,8 @@ import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.XPath;
 import org.xml.sax.InputSource;
+
+import pt.utl.ist.lucene.QueryConfiguration;
 import pt.utl.ist.lucene.treceval.ISearchCallBack;
 import pt.utl.ist.lucene.treceval.Globals;
 import pt.utl.ist.lucene.treceval.SearchConfiguration;
@@ -36,7 +38,7 @@ public class TXmlHandler implements TDocumentHandler
 {
     private static final Logger logger = Logger.getLogger(TXmlHandler.class);
 
-    public void handle(OutputFormatFactory factory, InputStream stream, String fromFile, ResourceHandler handler, ISearchCallBack callBack, Properties filehandlers, String confId, String run, String collection, String outputDir, SearchConfiguration.TopicsConfiguration topicsConfiguration) throws IOException
+    public void handle(OutputFormatFactory factory, InputStream stream, String fromFile, ResourceHandler handler, ISearchCallBack callBack, Properties filehandlers, String confId, String run, String collection, String outputDir, QueryConfiguration topicsConfiguration) throws IOException
     {
         InputSource source = new InputSource(stream);
         try
@@ -58,7 +60,7 @@ public class TXmlHandler implements TDocumentHandler
         }
     }
 
-    public void run(OutputFormatFactory factory, Document dom, String fromFile, ResourceHandler handler, ISearchCallBack callBack, String confId, String run, String collection, String outputDir, SearchConfiguration.TopicsConfiguration topicsConfiguration) throws IOException
+    public void run(OutputFormatFactory factory, Document dom, String fromFile, ResourceHandler handler, ISearchCallBack callBack, String confId, String run, String collection, String outputDir, QueryConfiguration topicsConfiguration) throws IOException
     {
         FileOutputStream outputStream;
         try

@@ -1,5 +1,6 @@
 package pt.utl.ist.lucene.treceval.handlers.topics;
 
+import pt.utl.ist.lucene.QueryConfiguration;
 import pt.utl.ist.lucene.treceval.handlers.ResourceHandler;
 import pt.utl.ist.lucene.treceval.ISearchCallBack;
 import pt.utl.ist.lucene.treceval.SearchConfiguration;
@@ -16,5 +17,5 @@ import java.util.Properties;
  */
 public interface TDocumentHandler
 {
-    public void handle(OutputFormatFactory factory, InputStream stream, String fromFile, ResourceHandler handler, ISearchCallBack callBack, Properties filehandlers, String confId, String run,String collection, String outputDir, SearchConfiguration.TopicsConfiguration topicsConfiguration) throws IOException;
+    public void handle(OutputFormatFactory factory, InputStream stream, String fromFile, ResourceHandler handler, ISearchCallBack callBack, Properties filehandlers, String confId, String run,String collection, String outputDir, QueryConfiguration topicsConfiguration) throws IOException;
 }

@@ -3,6 +3,11 @@ package pt.utl.ist.lucene.treceval.handlers.topics.output.impl;
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.standard.StandardTokenizer;
 import org.apache.lucene.analysis.Token;
+
+import com.sun.xml.internal.fastinfoset.sax.Properties;
+
+import pt.utl.ist.lucene.QueryConfiguration;
+import pt.utl.ist.lucene.config.PropertiesUtil;
 import pt.utl.ist.lucene.treceval.SearchConfiguration;
 import pt.utl.ist.lucene.treceval.handlers.topics.output.OutputFormat;
 import pt.utl.ist.lucene.treceval.handlers.topics.output.Topic;
@@ -10,6 +15,7 @@ import pt.utl.ist.lucene.utils.QueryUtils;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -29,7 +35,7 @@ public class FieldsTopic implements Topic
     OutputFormat outputFormat;
 
 
-    public FieldsTopic(String identifier, Map<String,String> map, OutputFormat outputFormat, SearchConfiguration.TopicsConfiguration topicsConfiguration)
+    public FieldsTopic(String identifier, Map<String,String> map, OutputFormat outputFormat, QueryConfiguration queryConfiguration)
     {
         this.identifier = identifier;
         this.outputFormat = outputFormat;
@@ -39,16 +45,14 @@ public class FieldsTopic implements Topic
         {
             String escapedQuery = QueryUtils.escapeSpecialChars(entry.getValue());
 
-            if(topicsConfiguration != null && topicsConfiguration.getFieldBoost() != null)
+            /*In cases that we have boosted fields we will split the query and build a term independent query with the boost fields*/
+            if(queryConfiguration != null && queryConfiguration.getQueryProperties() != null)
             {
-
-
-
-                Float boost = topicsConfiguration.getFieldBoost().get(entry.getKey());
-                if(boost != null)
+            	String boostStr = queryConfiguration.getQueryProperties().getProperty("field.boost." + entry.getKey());
+                if(boostStr != null)
                 {
+                	Float boost =  Float.parseFloat(boostStr);
                     StandardTokenizer tokenizer = new StandardTokenizer(new StringReader(escapedQuery));
-
                     Token t;
                     try
                     {
@@ -68,7 +72,7 @@ public class FieldsTopic implements Topic
                     builder.append(" ");
                 }
             }
-            else if(topicsConfiguration == null)
+            else if(queryConfiguration == null)
             {
                 addField(builder,entry.getKey(),escapedQuery);
                 builder.append(" ");

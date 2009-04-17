@@ -13,21 +13,13 @@ public class SearchConfiguration
 {
     QueryConfiguration queryConfiguration;
     Configuration configuration;
-    TopicsConfiguration topicsConfiguration = null;
-
+    
 
     public SearchConfiguration(QueryConfiguration queryConfiguration, Configuration configuration)
     {
         this.queryConfiguration = queryConfiguration;
         this.configuration = configuration;
     }
-
-    public SearchConfiguration(QueryConfiguration queryConfiguration, Configuration configuration, TopicsConfiguration topicsConfiguration)
-    {
-        this(queryConfiguration,configuration);
-        this.topicsConfiguration = topicsConfiguration;
-    }
-
 
     public QueryConfiguration getQueryConfiguration()
     {
@@ -37,31 +29,5 @@ public class SearchConfiguration
     public Configuration getConfiguration()
     {
         return configuration;
-    }
-
-
-    public TopicsConfiguration getTopicsConfiguration()
-    {
-        return topicsConfiguration;
-    }
-
-    public void setTopicsConfiguration(TopicsConfiguration topicsConfiguration)
-    {
-        this.topicsConfiguration = topicsConfiguration;
-    }
-
-    public static class TopicsConfiguration
-    {
-        Map<String,Float> fieldBoost;
-
-        public Map<String, Float> getFieldBoost()
-        {
-            return fieldBoost;
-        }
-
-        public void setFieldBoost(Map<String, Float> fieldBoost)
-        {
-            this.fieldBoost = fieldBoost;
-        }
     }
 }

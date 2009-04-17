@@ -19,6 +19,7 @@ import pt.utl.ist.lucene.versioning.LuceneVersion;
 import pt.utl.ist.lucene.versioning.LuceneVersionFactory;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -215,23 +216,31 @@ public class LgteQueryParser
     private static void initConfiguration(QueryConfiguration queryConfiguration)
     {
         Properties properties = queryConfiguration.getQueryProperties();
-        if(properties.getProperty("QE.method") == null)
-            properties.setProperty("QE.method",ConfigProperties.getProperty("QE.method"));
-
-        if(properties.getProperty("QE.decay") == null)
-            properties.setProperty("QE.decay",ConfigProperties.getProperty("QE.decay"));
-
-        if(properties.getProperty("QE.doc.num") == null)
-            properties.setProperty("QE.doc.num",ConfigProperties.getProperty("QE.doc.num"));
-
-        if(properties.getProperty("QE.term.num") == null)
-            properties.setProperty("QE.term.num",ConfigProperties.getProperty("QE.term.num"));
-
-        if(properties.getProperty("rocchio.alpha") == null)
-            properties.setProperty("rocchio.alpha",ConfigProperties.getProperty("rocchio.alpha"));
-
-        if(properties.getProperty("rocchio.beta") == null)
-            properties.setProperty("rocchio.beta",ConfigProperties.getProperty("rocchio.beta"));
+        List<String> props =  ConfigProperties.getListProperties("");
+        for(String prop: props)
+        {
+        	if(properties.getProperty(prop) == null)
+        	{
+        		properties.setProperty(prop,ConfigProperties.getProperty(prop));
+        	}
+        }
+//        if(properties.getProperty("QE.method") == null)
+//            properties.setProperty("QE.method",ConfigProperties.getProperty("QE.method"));
+//
+//        if(properties.getProperty("QE.decay") == null)
+//            properties.setProperty("QE.decay",ConfigProperties.getProperty("QE.decay"));
+//
+//        if(properties.getProperty("QE.doc.num") == null)
+//            properties.setProperty("QE.doc.num",ConfigProperties.getProperty("QE.doc.num"));
+//
+//        if(properties.getProperty("QE.term.num") == null)
+//            properties.setProperty("QE.term.num",ConfigProperties.getProperty("QE.term.num"));
+//
+//        if(properties.getProperty("rocchio.alpha") == null)
+//            properties.setProperty("rocchio.alpha",ConfigProperties.getProperty("rocchio.alpha"));
+//
+//        if(properties.getProperty("rocchio.beta") == null)
+//            properties.setProperty("rocchio.beta",ConfigProperties.getProperty("rocchio.beta"));
     }
 
 }

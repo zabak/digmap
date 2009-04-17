@@ -66,11 +66,14 @@ final class TermScorerVectorSpace extends Scorer {
   }
 
   public float score() throws IOException {
+	  
     int f = freqs[pointer];
     float raw =                                   // compute tf(f)*weight
       f < SCORE_CACHE_SIZE			  // check cache
       ? scoreCache[f]                             // cache hit
       : getSimilarity().tf(f)*weightValue;        // cache miss
+      
+//      float boost = ((TermQueryVectorSpace)(weight.getQuery())).getBoost();//LGTE Jorge Machado
     return raw * Similarity.decodeNorm(norms[doc]); // normalize for field
   }
 

@@ -3,6 +3,8 @@ package pt.utl.ist.lucene.treceval.handlers.topics;
 import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
+
+import pt.utl.ist.lucene.QueryConfiguration;
 import pt.utl.ist.lucene.treceval.ISearchCallBack;
 import pt.utl.ist.lucene.treceval.SearchConfiguration;
 import pt.utl.ist.lucene.treceval.handlers.ResourceHandler;
@@ -25,7 +27,7 @@ public class TFlatSgmlHandler implements TDocumentHandler
     private static final Logger logger = Logger.getLogger(CXmlHandler.class);
 
 
-    public void handle(OutputFormatFactory factory,InputStream stream,String fromFile, ResourceHandler handler, ISearchCallBack callBack, Properties filehandlers, String confId, String run, String collection, String outputDir, SearchConfiguration.TopicsConfiguration topicsConfiguration) throws IOException
+    public void handle(OutputFormatFactory factory,InputStream stream,String fromFile, ResourceHandler handler, ISearchCallBack callBack, Properties filehandlers, String confId, String run, String collection, String outputDir, QueryConfiguration topicsConfiguration) throws IOException
     {
         String xml = getXmlRootedDocument(stream);
         try

@@ -1,6 +1,8 @@
 package pt.utl.ist.lucene.treceval.handlers.topics;
 
 import org.apache.log4j.Logger;
+
+import pt.utl.ist.lucene.QueryConfiguration;
 import pt.utl.ist.lucene.treceval.ISearchCallBack;
 import pt.utl.ist.lucene.treceval.SearchConfiguration;
 import pt.utl.ist.lucene.treceval.handlers.topics.output.OutputFormatFactory;
@@ -24,7 +26,7 @@ public class TZipHandler implements TDocumentHandler
 {
     private static Logger logger = Logger.getLogger(CDirectory.class);
 
-    public void handle(OutputFormatFactory factory, InputStream stream, String fromFile, ResourceHandler handler, ISearchCallBack callBack, Properties filehandlers, String confId, String run,String collection, String outputDir, SearchConfiguration.TopicsConfiguration topicsConfiguration) throws IOException
+    public void handle(OutputFormatFactory factory, InputStream stream, String fromFile, ResourceHandler handler, ISearchCallBack callBack, Properties filehandlers, String confId, String run,String collection, String outputDir, QueryConfiguration topicsConfiguration) throws IOException
     {
         ZipInputStream zipInputStream = new ZipInputStream(stream);
         ZipEntry ze;

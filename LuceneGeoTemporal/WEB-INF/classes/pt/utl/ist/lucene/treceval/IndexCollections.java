@@ -74,7 +74,7 @@ public class IndexCollections implements IndexFilesCallBack
             pt = LgteAnalyzerManager.getInstance().getLanguagePackage("Portuguese", "stopwords_por.txt");
             en = LgteAnalyzerManager.getInstance().getLanguagePackage("English", "snowball-english.list");
             fr = LgteAnalyzerManager.getInstance().getLanguagePackage("French", "snowball-french.list");
-            de = LgteAnalyzerManager.getInstance().getLanguagePackage("German", "snowball-german.list");
+            de = LgteAnalyzerManager.getInstance().getLanguagePackage("German2", "snowball-german.list");
             du = LgteAnalyzerManager.getInstance().getLanguagePackage("Dutch", "snowball-dutch.list");
 
             ptStop4gramsStem = LgteAnalyzerManager.getInstance().getLanguagePackage(4, "stopwords_por.txt");

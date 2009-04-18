@@ -29,9 +29,26 @@ import pt.utl.ist.lucene.analyzer.LgteBrokerStemAnalyzer;
 public class ClefAdHocExample
 {
 
+    public static String country = "bl";
+    public static LgteAnalyzerManager.LanguagePackage lang;
+
     private static final Logger logger = Logger.getLogger(ClefAdHocExample.class);
 
     public static void main(String [] args) throws DocumentException, IOException
+    {
+//        country = "bl";
+//        lang  = IndexCollections.en;
+//        compute(args);
+
+        country = "bnf";
+        lang  = IndexCollections.fr;
+        compute(args);
+
+        country = "onb";
+        lang  = IndexCollections.de;
+        compute(args);
+    }
+    public static void compute(String [] args) throws DocumentException, IOException
     {
 
         args = new String[2];
@@ -44,9 +61,9 @@ public class ClefAdHocExample
 
 
 //        String collectionPath = Globals.DATA_DIR + "\\clef2008AdHoc\\documents";
-        String collectionPath = "F:\\coleccoesIR\\CLEFAdHoc\\telCollection\\bl";
-        String topicsPath = Globals.DATA_DIR + "\\clef2008AdHoc\\topics\\bl";
-        String outputDir = Globals.DATA_DIR + "\\clef2008AdHoc\\output\\bl";
+        String collectionPath = "F:\\coleccoesIR\\CLEFAdHoc\\telCollection\\" + country;
+        String topicsPath = Globals.DATA_DIR + "\\clef2008AdHoc\\topics\\" + country;
+        String outputDir = Globals.DATA_DIR + "\\clef2008AdHoc\\output\\" + country;
 
         logger.info("Writing indexes to:" + Globals.INDEX_DIR);
         logger.info("Reading data from:" + Globals.DATA_DIR);
@@ -77,7 +94,7 @@ public class ClefAdHocExample
          *
            <topic lang="fr">
                 <identifier>10.2452/451-AH</identifier>
-                <title>L'arm�e romaine en Grande-Bretagne</title>
+                <title>L'arme romaine en Grande-Bretagne</title>
                 <description>Trouver des livres ou des publications sur l'invasion et l'occupation de la Grande-Bretagne par les Romains.</description>
             </topic>
          */
@@ -100,27 +117,27 @@ public class ClefAdHocExample
         //We gone put the diferences about model, output folder name, analyser
 
 
-        Configuration VS_ADHOC = new Configuration("version1", "clef2008AdHoc","lm", Model.VectorSpaceModel, IndexCollections.en.getAnalyzerNoStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.en.getWordList(),outputDir,maxResults);
-        Configuration LM_ADHOC = new Configuration("version1", "clef2008AdHoc","lm",Model.LanguageModel , IndexCollections.en.getAnalyzerNoStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.en.getWordList(),outputDir,maxResults);
-        Configuration VS_STEMMER_ADHOC = new Configuration("version1", "clef2008AdHoc","lmstem", Model.VectorSpaceModel, IndexCollections.en.getAnalyzerWithStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.en.getWordList(),outputDir,maxResults);
-        Configuration LM_STEMMER_ADHOC = new Configuration("version1", "clef2008AdHoc","lmstem", Model.LanguageModel, IndexCollections.en.getAnalyzerWithStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.en.getWordList(),outputDir,maxResults);
+        Configuration VS_ADHOC = new Configuration("version1", "clef2008AdHoc" + country,"lm", Model.VectorSpaceModel, lang.getAnalyzerNoStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", lang.getWordList(),outputDir,maxResults);
+        Configuration LM_ADHOC = new Configuration("version1", "clef2008AdHoc" + country,"lm",Model.LanguageModel , lang.getAnalyzerNoStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", lang.getWordList(),outputDir,maxResults);
+        Configuration VS_STEMMER_ADHOC = new Configuration("version1", "clef2008AdHoc" + country,"lmstem", Model.VectorSpaceModel, lang.getAnalyzerWithStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", lang.getWordList(),outputDir,maxResults);
+        Configuration LM_STEMMER_ADHOC = new Configuration("version1", "clef2008AdHoc" + country,"lmstem", Model.LanguageModel, lang.getAnalyzerWithStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", lang.getWordList(),outputDir,maxResults);
 
         Map<String, Analyzer> ngramsAnalizers = new HashMap<String,Analyzer>();
-        ngramsAnalizers.put("contents",IndexCollections.en.getAnalyzerNoStemming());
+        ngramsAnalizers.put("contents",lang.getAnalyzerNoStemming());
         ngramsAnalizers.put("contentsN2", LgteAnalyzerManager.getInstance().getLanguagePackage(2,2).getAnalyzerWithStemming());
         ngramsAnalizers.put("contentsN3", LgteAnalyzerManager.getInstance().getLanguagePackage(3,3).getAnalyzerWithStemming());
         ngramsAnalizers.put("contentsN4", LgteAnalyzerManager.getInstance().getLanguagePackage(4,4).getAnalyzerWithStemming());
         ngramsAnalizers.put("contentsN5", LgteAnalyzerManager.getInstance().getLanguagePackage(5,5).getAnalyzerWithStemming());
         ngramsAnalizers.put("contentsN6", LgteAnalyzerManager.getInstance().getLanguagePackage(6,6).getAnalyzerWithStemming());
         LgteBrokerStemAnalyzer lgteBrokerStemAnalyzer = new LgteBrokerStemAnalyzer(ngramsAnalizers);
-        Configuration VS_2_6GRAMS_CRAN = new Configuration("version1", "clef2008AdHoc","lmstem2_6grams", Model.VectorSpaceModel, lgteBrokerStemAnalyzer,collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", null,outputDir,maxResults);
-        Configuration LM_2_6GRAMS_CRAN = new Configuration("version1", "clef2008AdHoc","lmstem2_6grams", Model.LanguageModel, lgteBrokerStemAnalyzer,collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", null,outputDir,maxResults);
+        Configuration VS_2_6GRAMS_CRAN = new Configuration("version1", "clef2008AdHoc" + country,"lmstem2_6grams", Model.VectorSpaceModel, lgteBrokerStemAnalyzer,collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", null,outputDir,maxResults);
+        Configuration LM_2_6GRAMS_CRAN = new Configuration("version1", "clef2008AdHoc" + country,"lmstem2_6grams", Model.LanguageModel, lgteBrokerStemAnalyzer,collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", null,outputDir,maxResults);
 
 
         List<Configuration> configurations = new ArrayList<Configuration>();
 //        configurations.add(LM_ADHOC);
-//        configurations.add(LM_STEMMER_ADHOC);
-        configurations.add(LM_2_6GRAMS_CRAN);
+        configurations.add(LM_STEMMER_ADHOC);
+//        configurations.add(LM_2_6GRAMS_CRAN);
 
 
         IndexCollections.indexConfiguration(configurations,Globals.DOCUMENT_ID_FIELD);

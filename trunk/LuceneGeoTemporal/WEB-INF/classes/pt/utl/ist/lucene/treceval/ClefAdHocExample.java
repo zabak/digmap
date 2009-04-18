@@ -52,8 +52,8 @@ public class ClefAdHocExample
     {
 
         args = new String[2];
-        args[0] = "F:\\INDEXES";
-        args[1] = "D:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-data";
+        args[0] = "C:\\WORKSPACE\\DATA\\INDEXES";
+        args[1] = "C:\\WORKSPACE_JM\\APPS\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-data";
 
 
         Globals.INDEX_DIR = args[0];
@@ -61,7 +61,7 @@ public class ClefAdHocExample
 
 
 //        String collectionPath = Globals.DATA_DIR + "\\clef2008AdHoc\\documents";
-        String collectionPath = "F:\\coleccoesIR\\CLEFAdHoc\\telCollection\\" + country;
+        String collectionPath = "C:\\WORKSPACE_JM\\DATA\\COLLECTIONS\\telCollection\\" + country;
         String topicsPath = Globals.DATA_DIR + "\\clef2008AdHoc\\topics\\" + country;
         String outputDir = Globals.DATA_DIR + "\\clef2008AdHoc\\output\\" + country;
 
@@ -135,9 +135,9 @@ public class ClefAdHocExample
 
 
         List<Configuration> configurations = new ArrayList<Configuration>();
-//        configurations.add(LM_ADHOC);
+        configurations.add(LM_ADHOC);
         configurations.add(LM_STEMMER_ADHOC);
-//        configurations.add(LM_2_6GRAMS_CRAN);
+        configurations.add(LM_2_6GRAMS_CRAN);
 
 
         IndexCollections.indexConfiguration(configurations,Globals.DOCUMENT_ID_FIELD);

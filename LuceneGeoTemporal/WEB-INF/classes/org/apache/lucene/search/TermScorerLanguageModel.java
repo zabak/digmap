@@ -110,8 +110,6 @@ final class TermScorerLanguageModel extends Scorer {
 
     public float score() throws IOException {
 
-        if(term.field().equals("contents"))
-            System.out.println("");
         int contextSize = indexReader.getFieldLength(doc, term.field() + "$");
         if (useFieldLengths) {
             fieldLen = indexReader.getFieldLength(doc, term.field());

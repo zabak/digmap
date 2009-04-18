@@ -52,7 +52,7 @@ public class ClefAdHocExample
     {
 
         args = new String[2];
-        args[0] = "C:\\WORKSPACE\\DATA\\INDEXES";
+        args[0] = "C:\\WORKSPACE_JM\\DATA\\INDEXES";
         args[1] = "C:\\WORKSPACE_JM\\APPS\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-data";
 
 
@@ -71,57 +71,82 @@ public class ClefAdHocExample
 
         /**
          *
-
+         *  Collections Configuration
          */
-        List<XmlFieldHandler> xmlFieldHandlers = new ArrayList<XmlFieldHandler>();
-        addFields(xmlFieldHandlers,"contents");
-        addFields(xmlFieldHandlers,"contentsN2");
-        addFields(xmlFieldHandlers,"contentsN3");
-        addFields(xmlFieldHandlers,"contentsN4");
-        addFields(xmlFieldHandlers,"contentsN5");
-        addFields(xmlFieldHandlers,"contentsN6");
 
         Map<String,String> namespaces = new HashMap<String,String>();
         namespaces.put("oai_dc", "http://www.openarchives.org/OAI/2.0/oai_dc/");
         namespaces.put("mods","http://www.loc.gov/mods");
         namespaces.put("dc", "http://purl.org/dc/elements/1.1/");
         namespaces.put("dcterms", "http://purl.org/dc/terms/");
+        
+        /*Regular Indexes*/
+        List<XmlFieldHandler> xmlFieldHandlers = new ArrayList<XmlFieldHandler>();
+        addFields(xmlFieldHandlers,"contents");
         ResourceHandler resourceHandler = new XmlResourceHandler("//record","./header/id","./id",xmlFieldHandlers,namespaces);
-        //we could set to topicsDirectory preprocessor a Properties object with FileExtensions Implementations of CDocumentHandler
         CDirectory collectionsDirectory = new CDirectory(resourceHandler,null);
+        
+        /*N-Grams*/
+        List<XmlFieldHandler> xmlFieldHandlersNG = new ArrayList<XmlFieldHandler>();
+        addFields(xmlFieldHandlersNG,"contents");
+        addFields(xmlFieldHandlersNG,"contentsN2");
+        addFields(xmlFieldHandlersNG,"contentsN3");
+        addFields(xmlFieldHandlersNG,"contentsN4");
+        addFields(xmlFieldHandlersNG,"contentsN5");
+        addFields(xmlFieldHandlersNG,"contentsN6");
+        ResourceHandler resourceHandlerNG = new XmlResourceHandler("//record","./header/id","./id",xmlFieldHandlersNG,namespaces);
+        //we could set to topicsDirectory preprocessor a Properties object with FileExtensions Implementations of CDocumentHandler
+        CDirectory collectionsDirectoryNG = new CDirectory(resourceHandlerNG,null);
 
-        /**
+        /*****************************************************
          *
-           <topic lang="fr">
-                <identifier>10.2452/451-AH</identifier>
-                <title>L'arme romaine en Grande-Bretagne</title>
-                <description>Trouver des livres ou des publications sur l'invasion et l'occupation de la Grande-Bretagne par les Romains.</description>
-            </topic>
-         */
-        //The handlers will be the same in 6 different fields, each one associated with different analyzers
-        //The fields suffixed with NX will have XGrams Tokenizers
+         *  Topics Configuration
+         *
+         *
+         * <topic lang="fr">
+         *       <identifier>10.2452/451-AH</identifier>
+         *       <title>L'arme romaine en Grande-Bretagne</title>
+         *       <description>Trouver des livres ou des publications sur l'invasion et l'occupation de la Grande-Bretagne par les Romains.</description>
+         *   </topic>
+         ******************************************************/
+        
+        //Regular Indexes
         List<XmlFieldHandler> xmlTopicFieldHandlers = new ArrayList<XmlFieldHandler>();
         addTopics(xmlTopicFieldHandlers,"contents");
-        addTopics(xmlTopicFieldHandlers,"contentsN2");
-        addTopics(xmlTopicFieldHandlers,"contentsN3");
-        addTopics(xmlTopicFieldHandlers,"contentsN4");
-        addTopics(xmlTopicFieldHandlers,"contentsN5");
         ResourceHandler topicResourceHandler = new XmlResourceHandler("//topic","./identifier",xmlTopicFieldHandlers);
         TrecEvalOutputFormatFactory factory =  new TrecEvalOutputFormatFactory(Globals.DOCUMENT_ID_FIELD);
         ITopicsPreprocessor topicsDirectory = new TDirectory(topicResourceHandler,factory);
+        
+        //N-Grams
+        //The handlers will be the same in 6 different fields, each one associated with different analyzers
+        //The fields suffixed with NX will have XGrams Tokenizers        
+        List<XmlFieldHandler> xmlTopicFieldHandlersNG = new ArrayList<XmlFieldHandler>();
+        addTopics(xmlTopicFieldHandlersNG,"contents");
+        addTopics(xmlTopicFieldHandlersNG,"contentsN2");
+        addTopics(xmlTopicFieldHandlersNG,"contentsN3");
+        addTopics(xmlTopicFieldHandlersNG,"contentsN4");
+        addTopics(xmlTopicFieldHandlersNG,"contentsN5");
+        ResourceHandler topicResourceHandlerNG = new XmlResourceHandler("//topic","./identifier",xmlTopicFieldHandlersNG);
+        TrecEvalOutputFormatFactory factoryNG =  new TrecEvalOutputFormatFactory(Globals.DOCUMENT_ID_FIELD);
+        ITopicsPreprocessor topicsDirectoryNG = new TDirectory(topicResourceHandlerNG,factoryNG);
+        
+        
 
+        /*****************
+         * 
+         * Configurations
+         *  
+         */
         //maxResults in output File per topic;
         int maxResults = 1000;
 
-        //Lets create our configuration indexes
-        //We gone put the diferences about model, output folder name, analyser
-
-
+        //Regular Indexes
         Configuration VS_ADHOC = new Configuration("version1", "clef2008AdHoc" + country,"lm", Model.VectorSpaceModel, lang.getAnalyzerNoStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", lang.getWordList(),outputDir,maxResults);
         Configuration LM_ADHOC = new Configuration("version1", "clef2008AdHoc" + country,"lm",Model.LanguageModel , lang.getAnalyzerNoStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", lang.getWordList(),outputDir,maxResults);
         Configuration VS_STEMMER_ADHOC = new Configuration("version1", "clef2008AdHoc" + country,"lmstem", Model.VectorSpaceModel, lang.getAnalyzerWithStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", lang.getWordList(),outputDir,maxResults);
         Configuration LM_STEMMER_ADHOC = new Configuration("version1", "clef2008AdHoc" + country,"lmstem", Model.LanguageModel, lang.getAnalyzerWithStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", lang.getWordList(),outputDir,maxResults);
 
+        //N-Grams will use one broker analyzer where each index will be created using different grams
         Map<String, Analyzer> ngramsAnalizers = new HashMap<String,Analyzer>();
         ngramsAnalizers.put("contents",lang.getAnalyzerNoStemming());
         ngramsAnalizers.put("contentsN2", LgteAnalyzerManager.getInstance().getLanguagePackage(2,2).getAnalyzerWithStemming());
@@ -130,8 +155,8 @@ public class ClefAdHocExample
         ngramsAnalizers.put("contentsN5", LgteAnalyzerManager.getInstance().getLanguagePackage(5,5).getAnalyzerWithStemming());
         ngramsAnalizers.put("contentsN6", LgteAnalyzerManager.getInstance().getLanguagePackage(6,6).getAnalyzerWithStemming());
         LgteBrokerStemAnalyzer lgteBrokerStemAnalyzer = new LgteBrokerStemAnalyzer(ngramsAnalizers);
-        Configuration VS_2_6GRAMS_CRAN = new Configuration("version1", "clef2008AdHoc" + country,"lmstem2_6grams", Model.VectorSpaceModel, lgteBrokerStemAnalyzer,collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", null,outputDir,maxResults);
-        Configuration LM_2_6GRAMS_CRAN = new Configuration("version1", "clef2008AdHoc" + country,"lmstem2_6grams", Model.LanguageModel, lgteBrokerStemAnalyzer,collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", null,outputDir,maxResults);
+        Configuration VS_2_6GRAMS_CRAN = new Configuration("version1", "clef2008AdHoc" + country,"lmstem2_6grams", Model.VectorSpaceModel, lgteBrokerStemAnalyzer,collectionPath,collectionsDirectoryNG,topicsPath, topicsDirectoryNG,"contents", null,outputDir,maxResults);
+        Configuration LM_2_6GRAMS_CRAN = new Configuration("version1", "clef2008AdHoc" + country,"lmstem2_6grams", Model.LanguageModel, lgteBrokerStemAnalyzer,collectionPath,collectionsDirectoryNG,topicsPath, topicsDirectoryNG,"contents", null,outputDir,maxResults);
 
 
         List<Configuration> configurations = new ArrayList<Configuration>();

@@ -48,17 +48,17 @@ public class Dom4jUtil
 
             public void warning(SAXParseException exception) throws SAXException
             {
-                System.out.println(exception);
+                //System.out.println(exception);
             }
 
             public void error(SAXParseException exception) throws SAXException
             {
-                System.out.println(exception);
+                //System.out.println(exception);
             }
 
             public void fatalError(SAXParseException exception) throws SAXException
             {
-                System.out.println(exception);
+                //System.out.println(exception);
             }
         });
     }

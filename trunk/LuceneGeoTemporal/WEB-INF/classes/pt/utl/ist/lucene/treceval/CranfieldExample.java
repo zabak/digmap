@@ -174,7 +174,7 @@ public class CranfieldExample
         //we just need these three configurations because the indexes are the same for all probabilistic models and can be used in vector space because the difference is just an extra index with documents lenghts
 //        configurations.add(LM_CRAN);
 //        configurations.add(LM_STEMMER_CRAN);
-//        configurations.add(LM_2_6GRAMS_CRAN);
+        configurations.add(LM_2_6GRAMS_CRAN);
 
         IndexCollections.indexConfiguration(configurations,Globals.DOCUMENT_ID_FIELD);
         
@@ -217,8 +217,8 @@ public class CranfieldExample
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, LM_CRAN));
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, VS_STEMMER_CRAN));
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, LM_STEMMER_CRAN));
-//        searchConfigurations.add(new SearchConfiguration(queryConfiguration1_grams, VS_2_6GRAMS_CRAN));
-//        searchConfigurations.add(new SearchConfiguration(queryConfiguration1_grams, LM_2_6GRAMS_CRAN));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration1_grams, VS_2_6GRAMS_CRAN));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration1_grams, LM_2_6GRAMS_CRAN));
 
         
         
@@ -226,8 +226,8 @@ public class CranfieldExample
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, LM_CRAN));
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, VS_STEMMER_CRAN));
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, LM_STEMMER_CRAN));
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration2_grams, VS_2_6GRAMS_CRAN));
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration2_grams, LM_2_6GRAMS_CRAN));
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration2_grams, VS_2_6GRAMS_CRAN));
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration2_grams, LM_2_6GRAMS_CRAN));
 
     
 

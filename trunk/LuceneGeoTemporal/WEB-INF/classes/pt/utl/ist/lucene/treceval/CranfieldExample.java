@@ -120,16 +120,24 @@ public class CranfieldExample
         List<XmlFieldHandler> xmlTopicFieldHandlers = new ArrayList<XmlFieldHandler>();
 
         xmlTopicFieldHandlers.add(new SimpleXmlFieldHandler("./description",new SimpleFieldFilter(),"contents"));
-        xmlTopicFieldHandlers.add(new SimpleXmlFieldHandler("./description",new SimpleFieldFilter(),"contentsN5"));
-        xmlTopicFieldHandlers.add(new SimpleXmlFieldHandler("./description",new SimpleFieldFilter(),"contentsN4"));
-        xmlTopicFieldHandlers.add(new SimpleXmlFieldHandler("./description",new SimpleFieldFilter(),"contentsN3"));
-        xmlTopicFieldHandlers.add(new SimpleXmlFieldHandler("./description",new SimpleFieldFilter(),"contentsN2"));
 
         ResourceHandler topicResourceHandler = new XmlResourceHandler("//top","./num",xmlTopicFieldHandlers);
         TrecEvalOutputFormatFactory factory =  new TrecEvalOutputFormatFactory(Globals.DOCUMENT_ID_FIELD);
         ITopicsPreprocessor topicsDirectory = new TDirectory(topicResourceHandler,factory);
 
-        
+
+        List<XmlFieldHandler> xmlTopicFieldHandlersGrams = new ArrayList<XmlFieldHandler>();
+
+        xmlTopicFieldHandlersGrams.add(new SimpleXmlFieldHandler("./description",new SimpleFieldFilter(),"contents"));
+        xmlTopicFieldHandlersGrams.add(new SimpleXmlFieldHandler("./description",new SimpleFieldFilter(),"contentsN5"));
+        xmlTopicFieldHandlersGrams.add(new SimpleXmlFieldHandler("./description",new SimpleFieldFilter(),"contentsN4"));
+        xmlTopicFieldHandlersGrams.add(new SimpleXmlFieldHandler("./description",new SimpleFieldFilter(),"contentsN3"));
+        xmlTopicFieldHandlersGrams.add(new SimpleXmlFieldHandler("./description",new SimpleFieldFilter(),"contentsN2"));
+
+        ResourceHandler topicResourceHandlerGrams = new XmlResourceHandler("//top","./num",xmlTopicFieldHandlersGrams);
+        TrecEvalOutputFormatFactory factoryGrams =  new TrecEvalOutputFormatFactory(Globals.DOCUMENT_ID_FIELD);
+        ITopicsPreprocessor topicsDirectoryGrams = new TDirectory(topicResourceHandlerGrams,factoryGrams);
+
         
         /*******************************************
         //Configurations
@@ -156,8 +164,8 @@ public class CranfieldExample
         ngramsAnalizers.put("contentsN5", LgteAnalyzerManager.getInstance().getLanguagePackage(5,5,EdgeNGramTokenFilter.Side.FRONT).getAnalyzerWithStemming());
         ngramsAnalizers.put("contentsN6", LgteAnalyzerManager.getInstance().getLanguagePackage(6,6,EdgeNGramTokenFilter.Side.FRONT).getAnalyzerWithStemming());
         LgteBrokerStemAnalyzer lgteBrokerStemAnalyzer = new LgteBrokerStemAnalyzer(ngramsAnalizers);
-        Configuration VS_2_6GRAMS_CRAN = new Configuration("version1", "cran","lmstem2_6grams", Model.VectorSpaceModel, lgteBrokerStemAnalyzer,collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", null,outputDir,maxResults);
-        Configuration LM_2_6GRAMS_CRAN = new Configuration("version1", "cran","lmstem2_6grams", Model.LanguageModel, lgteBrokerStemAnalyzer,collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", null,outputDir,maxResults);
+        Configuration VS_2_6GRAMS_CRAN = new Configuration("version1", "cran","lmstem2_6grams", Model.VectorSpaceModel, lgteBrokerStemAnalyzer,collectionPath,collectionsDirectory,topicsPath, topicsDirectoryGrams,"contents", null,outputDir,maxResults);
+        Configuration LM_2_6GRAMS_CRAN = new Configuration("version1", "cran","lmstem2_6grams", Model.LanguageModel, lgteBrokerStemAnalyzer,collectionPath,collectionsDirectory,topicsPath, topicsDirectoryGrams,"contents", null,outputDir,maxResults);
 
 //        Configuration M3 = new Configuration("version1", "cran","lm", Model.BB2DFRModel, IndexCollections.en.getAnalyzerNoStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.en.getWordList(),outputDir,maxResults);
 //        Configuration M4 = new Configuration("version1", "cran","lm", Model.DLHHypergeometricDFRModel, IndexCollections.en.getAnalyzerNoStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.en.getWordList(),outputDir,maxResults);
@@ -176,7 +184,7 @@ public class CranfieldExample
 //        configurations.add(LM_STEMMER_CRAN);
         configurations.add(LM_2_6GRAMS_CRAN);
 
-        IndexCollections.indexConfiguration(configurations,Globals.DOCUMENT_ID_FIELD);
+//        IndexCollections.indexConfiguration(configurations,Globals.DOCUMENT_ID_FIELD);
         
         
         /***
@@ -199,6 +207,7 @@ public class CranfieldExample
         QueryConfiguration queryConfiguration2 = new QueryConfiguration();
         queryConfiguration2.setForceQE(QEEnum.text);
         queryConfiguration2.getQueryProperties().setProperty("lgte.default.order", "sc");
+        queryConfiguration2.getQueryProperties().setProperty("field.boost.contents","1.0f");
         
         QueryConfiguration queryConfiguration2_grams = new QueryConfiguration();
         queryConfiguration2_grams.setForceQE(QEEnum.text);
@@ -217,13 +226,13 @@ public class CranfieldExample
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, LM_CRAN));
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, VS_STEMMER_CRAN));
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, LM_STEMMER_CRAN));
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration1_grams, VS_2_6GRAMS_CRAN));
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration1_grams, LM_2_6GRAMS_CRAN));
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration1_grams, VS_2_6GRAMS_CRAN));
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration1_grams, LM_2_6GRAMS_CRAN));
 
         
         
-//        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, VS_CRAN));
-//        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, LM_CRAN));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, VS_CRAN));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, LM_CRAN));
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, VS_STEMMER_CRAN));
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, LM_STEMMER_CRAN));
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration2_grams, VS_2_6GRAMS_CRAN));
@@ -262,6 +271,5 @@ public class CranfieldExample
          xmlFieldHandlers.add(xmlContentSummaryTitleStoreFieldHandler);
          xmlFieldHandlers.add(xmlContentSummaryAuthorStoreFieldHandler);
          xmlFieldHandlers.add(xmlContentSummaryTextStoreFieldHandler);
-
     }
 }

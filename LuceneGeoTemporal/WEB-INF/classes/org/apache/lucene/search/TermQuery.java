@@ -53,8 +53,8 @@ public class TermQuery extends Query
 
         switch ( model ) {
             case VectorSpaceModel: termQueryImpl = new TermQueryVectorSpace(term); break;
-            case LanguageModel: termQueryImpl = new TermQueryLanguageModel(term) ; break;
-            case LanguageModelHiemstra: termQueryImpl = new TermQueryLanguageModelHiemstra(term) ; break;
+            case LanguageModel: termQueryImpl = new TermQueryProbabilisticModel(term) ; break;
+            case LanguageModelHiemstra: termQueryImpl = new TermQueryProbabilisticModel(term) ; break;
             case DLHHypergeometricDFRModel:
             case InExpC2DFRModel :
             case InExpB2DFRModel :
@@ -63,7 +63,7 @@ public class TermQuery extends Query
             case PL2DFRModel :
             case BB2DFRModel :
             case OkapiBM25Model :
-            default:termQueryImpl = new TermQueryDFR(term,model);
+            default:termQueryImpl = new TermQueryProbabilisticModel(term);
         }
     }
 

@@ -58,7 +58,7 @@ final class TermScorerLanguageModel extends Scorer {
 		this.norms = norms;
 		this.weightValue = weight.getValue();
 		this.indexReader = new LanguageModelIndexReader(reader);
-		this.term = ((TermQueryLanguageModel) weight.getQuery()).getTerm();
+		this.term = ((TermQueryProbabilisticModel) weight.getQuery()).getTerm();
 		
 		// Get data for the collection model
 		String collectionModel =
@@ -122,7 +122,7 @@ final class TermScorerLanguageModel extends Scorer {
 		sim /= log10;
 
 
-        return sim * weight.getQuery().getBoost();
+        return sim * weightValue;
 	}
 
 	public boolean skipTo(int target) throws IOException {

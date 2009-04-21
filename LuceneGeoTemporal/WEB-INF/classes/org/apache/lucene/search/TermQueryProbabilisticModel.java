@@ -9,37 +9,36 @@ import java.io.IOException;
 /** A Query that matches documents containing a term.
   This may be combined with other terms with a {@link org.apache.lucene.search.BooleanQuery}.
   */
-public class TermQueryLanguageModelHiemstra extends TermQueryImpl {
+public class TermQueryProbabilisticModel extends TermQueryImpl {
 
   private Term term;
 
   private class TermWeight implements Weight {
     private Searcher searcher;
     private float value;
-    private float idf;
-    private float queryNorm;
-    private float queryWeight;
+    private float queryWeight = 1.0f;
 
     public TermWeight(Searcher searcher) {
       this.searcher = searcher;
     }
 
-    public String toString() { return "weight(" + TermQueryLanguageModelHiemstra.this + ")"; }
+    public String toString() { return "weight(" + TermQueryProbabilisticModel.this + ")"; }
 
-    public Query getQuery() { return TermQueryLanguageModelHiemstra.this; }
+    public Query getQuery() { return TermQueryProbabilisticModel.this; }
     public float getValue() { return value; }
 
     public float sumOfSquaredWeights() throws IOException
     {
-      idf = getSimilarity(searcher).idf(term, searcher); // compute idf
-      queryWeight = idf * getBoost();             // compute query weight
-      return queryWeight * queryWeight;           // square it
+//      idf = getSimilarity(searcher).idf(term, searcher); // compute idf
+//      queryWeight = idf * getBoost();             // compute query weight
+//      return queryWeight * queryWeight;           // square it
+        return 1.0f;
     }
 
-    public void normalize(float queryNorm) {
-      this.queryNorm = queryNorm;
+    public void normalize(float queryNorm)
+    {
       queryWeight *= queryNorm;                   // normalize query weight
-      value = queryWeight * idf;                  // idf for document
+      value = queryWeight * getBoost();                  // idf for document
     }
 
     public Scorer scorer(IndexReader reader) throws IOException {
@@ -48,7 +47,7 @@ public class TermQueryLanguageModelHiemstra extends TermQueryImpl {
       if (termDocs == null)
         return null;
 
-      return new TermScorerLanguageModelHiemstra(this, termDocs, getSimilarity(searcher),
+      return new TermScorerLanguageModel(this, termDocs, getSimilarity(searcher),
                             reader.norms(term.field()), reader);
     }
 
@@ -58,8 +57,8 @@ public class TermQueryLanguageModelHiemstra extends TermQueryImpl {
       Explanation result = new Explanation();
       result.setDescription("weight("+getQuery()+" in "+doc+"), product of:");
 
-      Explanation idfExpl =
-        new Explanation(idf, "idf(docFreq=" + searcher.docFreq(term) + ")");
+//      Explanation idfExpl =
+//        new Explanation(idf, "idf(docFreq=" + searcher.docFreq(term) + ")");
 
       // explain query weight
       Explanation queryExpl = new Explanation();
@@ -68,14 +67,15 @@ public class TermQueryLanguageModelHiemstra extends TermQueryImpl {
       Explanation boostExpl = new Explanation(getBoost(), "boost");
       if (getBoost() != 1.0f)
         queryExpl.addDetail(boostExpl);
-      queryExpl.addDetail(idfExpl);
+//      queryExpl.addDetail(idfExpl);
 
-      Explanation queryNormExpl = new Explanation(queryNorm,"queryNorm");
-      queryExpl.addDetail(queryNormExpl);
+//      Explanation queryNormExpl = new Explanation(queryNorm,"queryNorm");
+//      queryExpl.addDetail(queryNormExpl);
 
-      queryExpl.setValue(boostExpl.getValue() *
-                         idfExpl.getValue() *
-                         queryNormExpl.getValue());
+      queryExpl.setValue(boostExpl.getValue() //*
+//                         idfExpl.getValue() *
+//                         queryNormExpl.getValue()
+                        );
 
       result.addDetail(queryExpl);
 
@@ -87,7 +87,7 @@ public class TermQueryLanguageModelHiemstra extends TermQueryImpl {
 
       Explanation tfExpl = scorer(reader).explain(doc);
       fieldExpl.addDetail(tfExpl);
-      fieldExpl.addDetail(idfExpl);
+//      fieldExpl.addDetail(idfExpl);
 
       Explanation fieldNormExpl = new Explanation();
       byte[] fieldNorms = reader.norms(field);
@@ -98,7 +98,7 @@ public class TermQueryLanguageModelHiemstra extends TermQueryImpl {
       fieldExpl.addDetail(fieldNormExpl);
 
       fieldExpl.setValue(tfExpl.getValue() *
-                         idfExpl.getValue() *
+//                         idfExpl.getValue() *
                          fieldNormExpl.getValue());
 
       result.addDetail(fieldExpl);
@@ -114,7 +114,7 @@ public class TermQueryLanguageModelHiemstra extends TermQueryImpl {
   }
 
   /** Constructs a query for the term <code>t</code>. */
-  public TermQueryLanguageModelHiemstra(Term t) {
+  public TermQueryProbabilisticModel(Term t) {
 	term = t;
   }
 
@@ -122,7 +122,7 @@ public class TermQueryLanguageModelHiemstra extends TermQueryImpl {
   public Term getTerm() { return term; }
 
   protected Weight createWeight(Searcher searcher) {
-    return new TermQueryLanguageModelHiemstra.TermWeight(searcher);
+    return new TermQueryProbabilisticModel.TermWeight(searcher);
   }
 
   /** Prints a user-readable version of this query. */
@@ -142,9 +142,9 @@ public class TermQueryLanguageModelHiemstra extends TermQueryImpl {
 
   /** Returns true iff <code>o</code> is equal to this. */
   public boolean equals(Object o) {
-    if (!(o instanceof TermQueryLanguageModelHiemstra))
+    if (!(o instanceof TermQueryProbabilisticModel))
       return false;
-	TermQueryLanguageModelHiemstra other = (TermQueryLanguageModelHiemstra)o;
+	TermQueryProbabilisticModel other = (TermQueryProbabilisticModel)o;
     return (this.getBoost() == other.getBoost())
       && this.term.equals(other.term);
   }

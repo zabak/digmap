@@ -881,17 +881,6 @@ public class QueryParser implements QueryParserConstants {
       // avoid boosting null queries, such as those caused by stop words
       if (q != null) {
         q.setBoost(f);
-          /**
-           * LGTE Jorge Machado
-           */
-          if(q instanceof BooleanQuery && ModelManager.getInstance().getModel() != Model.VectorSpaceModel)
-          {
-              BooleanQuery b = (BooleanQuery) q;
-              for(BooleanClause bc: b.getClauses())
-              {
-                  bc.query.setBoost(f);
-              }
-          }
       }
     }
     {if (true) return q;}

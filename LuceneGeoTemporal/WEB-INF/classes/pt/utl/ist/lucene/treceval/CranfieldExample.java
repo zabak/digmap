@@ -34,9 +34,11 @@ public class CranfieldExample
     public static void main(String [] args) throws DocumentException, IOException
     {
 
+//        System.setProperty("lgte.score.fields.query.independent","true");
+
         args = new String[2];
-        args[0] = "C:\\WORKSPACE_JM\\APPS\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-index";
-        args[1] = "C:\\WORKSPACE_JM\\APPS\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-data";
+        args[0] = "D:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-index";
+        args[1] = "D:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-data";
 
 
         Globals.INDEX_DIR = args[0];
@@ -115,11 +117,13 @@ public class CranfieldExample
          */
         
         List<XmlFieldHandler> xmlTopicFieldHandlers = new ArrayList<XmlFieldHandler>();
+
         xmlTopicFieldHandlers.add(new SimpleXmlFieldHandler("./description",new SimpleFieldFilter(),"contents"));
-        xmlTopicFieldHandlers.add(new SimpleXmlFieldHandler("./description",new SimpleFieldFilter(),"contentsN2"));
-        xmlTopicFieldHandlers.add(new SimpleXmlFieldHandler("./description",new SimpleFieldFilter(),"contentsN3"));
-        xmlTopicFieldHandlers.add(new SimpleXmlFieldHandler("./description",new SimpleFieldFilter(),"contentsN4"));
         xmlTopicFieldHandlers.add(new SimpleXmlFieldHandler("./description",new SimpleFieldFilter(),"contentsN5"));
+        xmlTopicFieldHandlers.add(new SimpleXmlFieldHandler("./description",new SimpleFieldFilter(),"contentsN4"));
+        xmlTopicFieldHandlers.add(new SimpleXmlFieldHandler("./description",new SimpleFieldFilter(),"contentsN3"));
+        xmlTopicFieldHandlers.add(new SimpleXmlFieldHandler("./description",new SimpleFieldFilter(),"contentsN2"));
+
         ResourceHandler topicResourceHandler = new XmlResourceHandler("//top","./num",xmlTopicFieldHandlers);
         TrecEvalOutputFormatFactory factory =  new TrecEvalOutputFormatFactory(Globals.DOCUMENT_ID_FIELD);
         ITopicsPreprocessor topicsDirectory = new TDirectory(topicResourceHandler,factory);
@@ -167,11 +171,11 @@ public class CranfieldExample
         
         List<Configuration> configurations = new ArrayList<Configuration>();
         //we just need these three configurations because the indexes are the same for all probabilistic models and can be used in vector space because the difference is just an extra index with documents lenghts
-        configurations.add(LM_CRAN);
-        configurations.add(LM_STEMMER_CRAN);
-        configurations.add(LM_2_6GRAMS_CRAN);
+//        configurations.add(LM_CRAN);
+//        configurations.add(LM_STEMMER_CRAN);
+//        configurations.add(LM_2_6GRAMS_CRAN);
 
-        //IndexCollections.indexConfiguration(configurations,Globals.DOCUMENT_ID_FIELD);
+        IndexCollections.indexConfiguration(configurations,Globals.DOCUMENT_ID_FIELD);
         
         
         /***
@@ -184,26 +188,26 @@ public class CranfieldExample
         QueryConfiguration queryConfiguration1_grams = new QueryConfiguration();
         queryConfiguration1_grams.setForceQE(QEEnum.no);
         queryConfiguration1_grams.getQueryProperties().setProperty("lgte.default.order", "sc");
-        queryConfiguration1_grams.getQueryProperties().setProperty("field.boost.contents","0.56f");
-        queryConfiguration1_grams.getQueryProperties().setProperty("field.boost.contentsN5","0.14f");
-        queryConfiguration1_grams.getQueryProperties().setProperty("field.boost.contentsN4","0.11f");
-        queryConfiguration1_grams.getQueryProperties().setProperty("field.boost.contentsN3","0.11f");
-        queryConfiguration1_grams.getQueryProperties().setProperty("field.boost.contentsN2","0.11f");
+        queryConfiguration1_grams.getQueryProperties().setProperty("field.boost.contents","0.97f");
+        queryConfiguration1_grams.getQueryProperties().setProperty("field.boost.contentsN5","0.01f");
+        queryConfiguration1_grams.getQueryProperties().setProperty("field.boost.contentsN4","0.01f");
+        queryConfiguration1_grams.getQueryProperties().setProperty("field.boost.contentsN3","0.01f");
+        queryConfiguration1_grams.getQueryProperties().setProperty("field.boost.contentsN2","0.0f");
         
 
         QueryConfiguration queryConfiguration2 = new QueryConfiguration();
         queryConfiguration2.setForceQE(QEEnum.text);
         queryConfiguration2.getQueryProperties().setProperty("lgte.default.order", "sc");
         
-        QueryConfiguration queryConfiguration2_grams = new QueryConfiguration();
-        queryConfiguration2_grams.setForceQE(QEEnum.text);
-        queryConfiguration2_grams.getQueryProperties().setProperty("lgte.default.order", "sc");
-        queryConfiguration2_grams.getQueryProperties().setProperty("field.boost.contents","0.55f");
-        queryConfiguration2_grams.getQueryProperties().setProperty("field.boost.contentsN6","0.14f");
-        queryConfiguration2_grams.getQueryProperties().setProperty("field.boost.contentsN5","0.14f");
-        queryConfiguration2_grams.getQueryProperties().setProperty("field.boost.contentsN4","0.10f");
-        queryConfiguration2_grams.getQueryProperties().setProperty("field.boost.contentsN3","0.10f");
-        
+//        QueryConfiguration queryConfiguration2_grams = new QueryConfiguration();
+//        queryConfiguration2_grams.setForceQE(QEEnum.text);
+//        queryConfiguration2_grams.getQueryProperties().setProperty("lgte.default.order", "sc");
+//        queryConfiguration2_grams.getQueryProperties().setProperty("field.boost.contents","0.66f");
+//        queryConfiguration2_grams.getQueryProperties().setProperty("field.boost.contentsN6","0.14f");
+//        queryConfiguration2_grams.getQueryProperties().setProperty("field.boost.contentsN5","0.14f");
+//        queryConfiguration2_grams.getQueryProperties().setProperty("field.boost.contentsN4","0.10f");
+//        queryConfiguration2_grams.getQueryProperties().setProperty("field.boost.contentsN3","0.10f");
+//
         
         
         List<SearchConfiguration> searchConfigurations = new ArrayList<SearchConfiguration>();
@@ -212,8 +216,8 @@ public class CranfieldExample
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, LM_CRAN));
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, VS_STEMMER_CRAN));
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, LM_STEMMER_CRAN));
-//        searchConfigurations.add(new SearchConfiguration(queryConfiguration1_grams, VS_2_6GRAMS_CRAN));
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration1_grams, LM_2_6GRAMS_CRAN));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration1_grams, VS_2_6GRAMS_CRAN));
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration1_grams, LM_2_6GRAMS_CRAN));
 
         
         

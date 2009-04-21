@@ -19,6 +19,8 @@ public class SearchConfiguration
     {
         this.queryConfiguration = queryConfiguration;
         this.configuration = configuration;
+        if(queryConfiguration.getAnalyzer() == null)
+            queryConfiguration.setAnalyzer(configuration.getAnalyzer());
     }
 
     public QueryConfiguration getQueryConfiguration()

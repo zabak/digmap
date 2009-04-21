@@ -1,7 +1,8 @@
-package pt.utl.ist.lucene.analyzer;
+package pt.utl.ist.lucene.test.ngrams;
 
 import junit.framework.TestCase;
 import pt.utl.ist.lucene.*;
+import pt.utl.ist.lucene.analyzer.LgteStemAnalyzer;
 import pt.utl.ist.lucene.utils.Files;
 
 import java.io.IOException;

@@ -3,8 +3,10 @@ package pt.utl.ist.lucene;
 import pt.utl.ist.lucene.config.ConfigProperties;
 
 import java.util.Properties;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.apache.lucene.analysis.Analyzer;
 
 /**
  * @author Jorge Machado
@@ -18,12 +20,23 @@ public class QueryConfiguration
 
     private Properties queryProperties = null;
     private QEEnum forceQE = QEEnum.defaultQE;
+    private Analyzer analyzer;
 
 
     public QueryConfiguration()
     {
     }
 
+
+    public Analyzer getAnalyzer()
+    {
+        return analyzer;
+    }
+
+    public void setAnalyzer(Analyzer analyzer)
+    {
+        this.analyzer = analyzer;
+    }
 
     public Properties getQueryProperties()
     {

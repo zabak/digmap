@@ -194,7 +194,7 @@ public class LgteIndexSearcherWrapper
 
     private LgteSort checkSort(LgteQuery lgteQuery, ITimeSpatialDistancesWrapper wrapper)
     {
-        if(lgteQuery.getQueryParams().getOrder().isSpatial() || lgteQuery.getQueryParams().getOrder().isTime())
+        if((lgteQuery.getQueryParams().isSpatial() && lgteQuery.getQueryParams().getOrder().isSpatial()) || (lgteQuery.getQueryParams().isTime() && lgteQuery.getQueryParams().getOrder().isTime()))
         {
             TimeSpatialTextSorterSource dsort = new TimeSpatialTextSorterSource(lgteQuery.getQueryParams());
             dsort.addQueryParams(lgteQuery.getQueryParams());

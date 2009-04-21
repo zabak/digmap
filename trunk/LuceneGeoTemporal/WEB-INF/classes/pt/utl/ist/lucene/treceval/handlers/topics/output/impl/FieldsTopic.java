@@ -3,6 +3,7 @@ package pt.utl.ist.lucene.treceval.handlers.topics.output.impl;
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.standard.StandardTokenizer;
 import org.apache.lucene.analysis.Token;
+import org.apache.lucene.analysis.TokenStream;
 
 import com.sun.xml.internal.fastinfoset.sax.Properties;
 
@@ -17,6 +18,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.List;
 import java.util.Map;
+
 
 /**
  * Provides a simple Fields Topic
@@ -52,13 +54,23 @@ public class FieldsTopic implements Topic
                 if(boostStr != null)
                 {
                 	Float boost =  Float.parseFloat(boostStr);
-                    StandardTokenizer tokenizer = new StandardTokenizer(new StringReader(escapedQuery));
+                    TokenStream stream = queryConfiguration.getAnalyzer().tokenStream(entry.getKey(),new StringReader(entry.getValue()));
                     Token t;
                     try
                     {
-                        while((t = tokenizer.next()) != null)
+                        StringBuilder sub = new StringBuilder();
+                        while((t = stream.next()) != null)
                         {
-                            builder.append(entry.getKey()).append(":").append(t.termText()).append("^").append(boost).append(" ");
+                            sub.append(t.termText()).append(" ");
+                        }
+                        if(sub.toString().trim().length() > 0)
+                        {
+                            builder.append(entry.getKey())
+                                    .append(":(")
+                                    .append(sub.toString())
+                                    .append(")^")
+                                    .append(boost)
+                                    .append(" ");
                         }
                     }
                     catch (IOException e)

@@ -36,24 +36,24 @@ public class ClefAdHocExample
 
     public static void main(String [] args) throws DocumentException, IOException
     {
-//        country = "bl";
-//        lang  = IndexCollections.en;
+        country = "bl";
+        lang  = IndexCollections.en;
+        compute(args);
+
+//        country = "bnf";
+//        lang  = IndexCollections.fr;
 //        compute(args);
-
-        country = "bnf";
-        lang  = IndexCollections.fr;
-        compute(args);
-
-        country = "onb";
-        lang  = IndexCollections.de;
-        compute(args);
+//
+//        country = "onb";
+//        lang  = IndexCollections.de;
+//        compute(args);
     }
     public static void compute(String [] args) throws DocumentException, IOException
     {
 
         args = new String[2];
-        args[0] = "C:\\WORKSPACE_JM\\DATA\\INDEXES";
-        args[1] = "C:\\WORKSPACE_JM\\APPS\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-data";
+        args[0] = "F:\\INDEXES";
+        args[1] = "D:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-data";
 
 
         Globals.INDEX_DIR = args[0];
@@ -165,7 +165,7 @@ public class ClefAdHocExample
         configurations.add(LM_2_6GRAMS_CRAN);
 
 
-        IndexCollections.indexConfiguration(configurations,Globals.DOCUMENT_ID_FIELD);
+//        IndexCollections.indexConfiguration(configurations,Globals.DOCUMENT_ID_FIELD);
 
 
 //        /***
@@ -177,10 +177,10 @@ public class ClefAdHocExample
 
         List<SearchConfiguration> searchConfigurations = new ArrayList<SearchConfiguration>();
 
-//        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, VS_ADHOC));
-//        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, VS_STEMMER_ADHOC));
-//        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, LM_ADHOC));
-//        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, LM_STEMMER_ADHOC));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, VS_ADHOC));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, VS_STEMMER_ADHOC));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, LM_ADHOC));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, LM_STEMMER_ADHOC));
 
         queryConfiguration1.getQueryProperties().setProperty("field.boost.contents","0.53f");
         queryConfiguration1.getQueryProperties().setProperty("field.boost.contentsN5","0.14f");
@@ -190,7 +190,7 @@ public class ClefAdHocExample
         searchConfigurations.add(new SearchConfiguration(queryConfiguration1,LM_2_6GRAMS_CRAN ));
 
 //        //Search Topics Runs to submission
-//        SearchTopics.search(searchConfigurations);
+        SearchTopics.search(searchConfigurations);
     }
 
 

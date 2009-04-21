@@ -129,7 +129,7 @@ public class EdgeNGramTokenFilter extends TokenFilter {
     if (ngrams.size() > 0)
       return (Token) ngrams.removeFirst();
     else
-      return null;
+      return next();
   }
   
   public final Token next() throws IOException {

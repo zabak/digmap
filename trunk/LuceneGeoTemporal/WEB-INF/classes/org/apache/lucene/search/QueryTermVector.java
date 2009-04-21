@@ -65,7 +65,8 @@ public class QueryTermVector implements TermFreqVector {
 
 	public QueryTermVector(String queryString, Analyzer analyzer, String field) {
 		this.field = field;
-		if (analyzer != null) {
+        queryString = queryString.replace("\n"," ").replace("\r"," ");
+        if (analyzer != null) {
 
 			TokenStream stream = analyzer.tokenStream(field, new StringReader(
 					queryString));

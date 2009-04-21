@@ -19,11 +19,15 @@ package org.apache.lucene.analysis.ngram;
 
 import org.apache.lucene.analysis.Token;
 import org.apache.lucene.analysis.Tokenizer;
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.ngram.EdgeNGramTokenFilter.Side;
 
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
+
+import pt.utl.ist.lucene.analyzer.LgteStemAnalyzer;
 
 /**
  * Tokenizes the input from an edge into n-grams of given size(s).
@@ -152,14 +156,52 @@ public class EdgeNGramTokenizer extends Tokenizer {
 
     public static void main(String[] args) throws IOException
     {
-        EdgeNGramTokenizer tokenizer = new EdgeNGramTokenizer(new StringReader("Jorge"), Side.FRONT,3,3);
+        EdgeNGramTokenizer tokenizer; //= new EdgeNGramTokenizer(new StringReader("Jorge"), Side.FRONT,3,3);
         Token t;
-        while((t = tokenizer.next()) != null)
-        {
-            System.out.println(t.termText());
-        }
-        tokenizer = new EdgeNGramTokenizer(new StringReader("Jorge"), Side.FRONT,4,4);
-         while((t = tokenizer.next()) != null)
+//        while((t = tokenizer.next()) != null)
+//        {
+//            System.out.println(t.termText());
+//        }
+        Analyzer a = new LgteStemAnalyzer(4,4,EdgeNGramTokenFilter.Side.FRONT);
+        TokenStream ts = a.tokenStream("contentsN4",new StringReader("\n" +
+                "  the similarity laws for aerothermoelastic testing are presented\n" +
+                "in the range .  these are obtained by\n" +
+                "making nondimensional the appropriate governing equations of\n" +
+                "the individual external aerodynamic flow, heat conduction to\n" +
+                "the interior, and stress deflection problems which make up the\n" +
+                "combined aerothermoelastic problem .\n" +
+                "  for the general aerothermoelastic model, where the model is\n" +
+                "placed in a high stagnation temperature wind tunnel, similitude\n" +
+                "is shown to be very difficult to achieve for a scale ratio other\n" +
+                "than unity .  the primary conflict occurs between the freestream\n" +
+                "mach number reynolds number aeroelastic\n" +
+                "parameter heat conduction parameter and\n" +
+                "thermal expansion parameter .\n" +
+                "  means of dealing with this basic conflict are presented .  these\n" +
+                "include (1) looking at more specialized situations, such as the\n" +
+                "behavior of wing structures and of thin solid plate lifting surfaces,\n" +
+                "and panel flutter, where the aerothermoelastic similarity parameters\n" +
+                "assume less restrictive forms, (2) the use of /incomplete\n" +
+                "aerothermoelastic/ testing in which the pressure and/or heating\n" +
+                "rates are estimated in advance and applied artificially to the\n" +
+                "model, and (3) the use of /restricted purpose/ models investigating\n" +
+                "separately one or another facet of the complete aerothermoelastic\n" +
+                "problem .\n" +
+                "  some numerical examples of modeling for the general aerothermoelastic\n" +
+                "case as well as for the specialized situations mentioned\n" +
+                "in (1) above are given .\n" +
+                "  finally, extension of the aerothermoelastic similarity laws to\n" +
+                "higher speeds and temperatures is discussed .\n" +
+                "  \n" +
+                "similarity laws for aerothermoelastic testing .\n" +
+                " \n" +
+                "similarity laws for aerothermoelastic testing .\n" +
+                "  \n" +
+                "dugundji,j.\n" +
+                " \n" +
+                "dugundji,j.\n" +
+                "  ".replace("\n"," ")));
+         while((t = ts.next()) != null)
         {
             System.out.println(t.termText());
         }

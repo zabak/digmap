@@ -200,15 +200,15 @@ public class CranfieldExample
         queryConfiguration2.setForceQE(QEEnum.text);
         queryConfiguration2.getQueryProperties().setProperty("lgte.default.order", "sc");
         
-//        QueryConfiguration queryConfiguration2_grams = new QueryConfiguration();
-//        queryConfiguration2_grams.setForceQE(QEEnum.text);
-//        queryConfiguration2_grams.getQueryProperties().setProperty("lgte.default.order", "sc");
-//        queryConfiguration2_grams.getQueryProperties().setProperty("field.boost.contents","0.66f");
-//        queryConfiguration2_grams.getQueryProperties().setProperty("field.boost.contentsN6","0.14f");
-//        queryConfiguration2_grams.getQueryProperties().setProperty("field.boost.contentsN5","0.14f");
-//        queryConfiguration2_grams.getQueryProperties().setProperty("field.boost.contentsN4","0.10f");
-//        queryConfiguration2_grams.getQueryProperties().setProperty("field.boost.contentsN3","0.10f");
-//
+        QueryConfiguration queryConfiguration2_grams = new QueryConfiguration();
+        queryConfiguration2_grams.setForceQE(QEEnum.text);
+        queryConfiguration2_grams.getQueryProperties().setProperty("lgte.default.order", "sc");
+        queryConfiguration2_grams.getQueryProperties().setProperty("field.boost.contents","0.53f");
+        queryConfiguration2_grams.getQueryProperties().setProperty("field.boost.contentsN5","0.14f");
+        queryConfiguration2_grams.getQueryProperties().setProperty("field.boost.contentsN4","0.11f");
+        queryConfiguration2_grams.getQueryProperties().setProperty("field.boost.contentsN3","0.11f");
+        queryConfiguration2_grams.getQueryProperties().setProperty("field.boost.contentsN2","0.11");
+
         
         
         List<SearchConfiguration> searchConfigurations = new ArrayList<SearchConfiguration>();
@@ -218,7 +218,7 @@ public class CranfieldExample
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, VS_STEMMER_CRAN));
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, LM_STEMMER_CRAN));
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration1_grams, VS_2_6GRAMS_CRAN));
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration1_grams, LM_2_6GRAMS_CRAN));
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration1_grams, LM_2_6GRAMS_CRAN));
 
         
         
@@ -226,8 +226,8 @@ public class CranfieldExample
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, LM_CRAN));
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, VS_STEMMER_CRAN));
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, LM_STEMMER_CRAN));
-//        searchConfigurations.add(new SearchConfiguration(queryConfiguration2_grams, VS_2_6GRAMS_CRAN));
-//        searchConfigurations.add(new SearchConfiguration(queryConfiguration2_grams, LM_2_6GRAMS_CRAN));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration2_grams, VS_2_6GRAMS_CRAN));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration2_grams, LM_2_6GRAMS_CRAN));
 
     
 

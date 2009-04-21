@@ -253,7 +253,7 @@ public class QueryExpansion
         // setBoost of level1query terms
         // Get queryTerms from the level1query
         Vector<TermQuery> queryTerms;
-        if (PropertiesUtil.getListProperties(prop, "field.boost") == null)
+        if (PropertiesUtil.getListProperties(prop, "field.boost").size() == 0)
         {
             QueryTermVector queryTermsVector = new QueryTermVector(queryStr, analyzer);
             queryTerms = setBoost(queryTermsVector, alpha);
@@ -289,7 +289,7 @@ public class QueryExpansion
         else if (q instanceof TermQuery)
         {
             TermQuery tq = (TermQuery) q;
-            float idf = similarity.idf(tq.getTerm(), searcher);
+            float idf = alpha * similarity.idf(tq.getTerm(), searcher);
             tq.setBoost(idf);
             vector.add(tq);
         }
@@ -359,19 +359,23 @@ public class QueryExpansion
         }
         StringBuilder queryBuilder = new StringBuilder();
         List<String> boostFields = PropertiesUtil.getListPropertiesSuffix(prop,"field.boost.");
-        if(boostFields != null)
+        if(boostFields != null && boostFields.size() > 0)
         {
-            StringBuilder fieldBuilder = new StringBuilder();
+
             for(String field: boostFields)
             {
+                StringBuilder fieldBuilder = new StringBuilder();
                 float boostField = PropertiesUtil.getFloatProperty(prop,"field.boost." + field);
                 boolean any = false;
                 for (TermQuery termQuery : terms)
                 {
-                    any = true;
-                    buildTermBoosted(termQuery,fieldBuilder,false);
+                    if(termQuery.getTerm().field().equals(field))
+                    {
+                        any = true;
+                        buildTermBoosted(termQuery,fieldBuilder,false);
+                    }
                 }
-                if(any)
+                if(any && fieldBuilder.toString().trim().length()  > 0)
                     queryBuilder.append(" ").append(field).append(":").append("(").append(fieldBuilder.toString()).append(")^").append(boostField);
             }
         }
@@ -408,7 +412,7 @@ public class QueryExpansion
             // Get text of the document and append it
             StringBuffer docTxtBuffer = new StringBuffer();
             List<String> boostFields = PropertiesUtil.getListPropertiesSuffix(prop, "field.boost.");
-            if (boostFields == null)
+            if (boostFields == null || boostFields.size() == 0)
             {
                 getQueryTermVector(docsTerms, doc, analyzer, Defs.FLD_TEXT);
             }

@@ -2,6 +2,7 @@ package pt.utl.ist.lucene.treceval;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.ngram.EdgeNGramTokenFilter;
 import org.dom4j.DocumentException;
 
 import java.io.IOException;
@@ -149,11 +150,11 @@ public class CranfieldExample
         ngramsAnalizers.put("contents",IndexCollections.en.getAnalyzerNoStemming());
         ngramsAnalizers.put("author",IndexCollections.en.getAnalyzerNoStemming());
         ngramsAnalizers.put(pt.utl.ist.lucene.treceval.Globals.DOCUMENT_TITLE,IndexCollections.en.getAnalyzerNoStemming());
-        ngramsAnalizers.put("contentsN2", LgteAnalyzerManager.getInstance().getLanguagePackage(2,2).getAnalyzerWithStemming());
-        ngramsAnalizers.put("contentsN3", LgteAnalyzerManager.getInstance().getLanguagePackage(3,3).getAnalyzerWithStemming());
-        ngramsAnalizers.put("contentsN4", LgteAnalyzerManager.getInstance().getLanguagePackage(4,4).getAnalyzerWithStemming());
-        ngramsAnalizers.put("contentsN5", LgteAnalyzerManager.getInstance().getLanguagePackage(5,5).getAnalyzerWithStemming());
-        ngramsAnalizers.put("contentsN6", LgteAnalyzerManager.getInstance().getLanguagePackage(6,6).getAnalyzerWithStemming());
+        ngramsAnalizers.put("contentsN2", LgteAnalyzerManager.getInstance().getLanguagePackage(2,2,EdgeNGramTokenFilter.Side.FRONT).getAnalyzerWithStemming());
+        ngramsAnalizers.put("contentsN3", LgteAnalyzerManager.getInstance().getLanguagePackage(3,3,EdgeNGramTokenFilter.Side.FRONT).getAnalyzerWithStemming());
+        ngramsAnalizers.put("contentsN4", LgteAnalyzerManager.getInstance().getLanguagePackage(4,4,EdgeNGramTokenFilter.Side.FRONT).getAnalyzerWithStemming());
+        ngramsAnalizers.put("contentsN5", LgteAnalyzerManager.getInstance().getLanguagePackage(5,5,EdgeNGramTokenFilter.Side.FRONT).getAnalyzerWithStemming());
+        ngramsAnalizers.put("contentsN6", LgteAnalyzerManager.getInstance().getLanguagePackage(6,6,EdgeNGramTokenFilter.Side.FRONT).getAnalyzerWithStemming());
         LgteBrokerStemAnalyzer lgteBrokerStemAnalyzer = new LgteBrokerStemAnalyzer(ngramsAnalizers);
         Configuration VS_2_6GRAMS_CRAN = new Configuration("version1", "cran","lmstem2_6grams", Model.VectorSpaceModel, lgteBrokerStemAnalyzer,collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", null,outputDir,maxResults);
         Configuration LM_2_6GRAMS_CRAN = new Configuration("version1", "cran","lmstem2_6grams", Model.LanguageModel, lgteBrokerStemAnalyzer,collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", null,outputDir,maxResults);
@@ -188,11 +189,11 @@ public class CranfieldExample
         QueryConfiguration queryConfiguration1_grams = new QueryConfiguration();
         queryConfiguration1_grams.setForceQE(QEEnum.no);
         queryConfiguration1_grams.getQueryProperties().setProperty("lgte.default.order", "sc");
-        queryConfiguration1_grams.getQueryProperties().setProperty("field.boost.contents","0.97f");
-        queryConfiguration1_grams.getQueryProperties().setProperty("field.boost.contentsN5","0.01f");
-        queryConfiguration1_grams.getQueryProperties().setProperty("field.boost.contentsN4","0.01f");
-        queryConfiguration1_grams.getQueryProperties().setProperty("field.boost.contentsN3","0.01f");
-        queryConfiguration1_grams.getQueryProperties().setProperty("field.boost.contentsN2","0.0f");
+        queryConfiguration1_grams.getQueryProperties().setProperty("field.boost.contents","0.53f");
+        queryConfiguration1_grams.getQueryProperties().setProperty("field.boost.contentsN5","0.14f");
+        queryConfiguration1_grams.getQueryProperties().setProperty("field.boost.contentsN4","0.11f");
+        queryConfiguration1_grams.getQueryProperties().setProperty("field.boost.contentsN3","0.11f");
+        queryConfiguration1_grams.getQueryProperties().setProperty("field.boost.contentsN2","0.11");
         
 
         QueryConfiguration queryConfiguration2 = new QueryConfiguration();

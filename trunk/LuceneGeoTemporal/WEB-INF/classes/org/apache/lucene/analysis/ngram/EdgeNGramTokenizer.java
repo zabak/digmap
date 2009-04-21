@@ -23,6 +23,7 @@ import org.apache.lucene.analysis.ngram.EdgeNGramTokenFilter.Side;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.io.StringReader;
 
 /**
  * Tokenizes the input from an edge into n-grams of given size(s).
@@ -148,4 +149,25 @@ public class EdgeNGramTokenizer extends Tokenizer {
     gramSize++;
     return reusableToken;
   }
+
+    public static void main(String[] args) throws IOException
+    {
+        EdgeNGramTokenizer tokenizer = new EdgeNGramTokenizer(new StringReader("Jorge"), Side.FRONT,3,3);
+        Token t;
+        while((t = tokenizer.next()) != null)
+        {
+            System.out.println(t.termText());
+        }
+        tokenizer = new EdgeNGramTokenizer(new StringReader("Jorge"), Side.FRONT,4,4);
+         while((t = tokenizer.next()) != null)
+        {
+            System.out.println(t.termText());
+        }
+        tokenizer = new EdgeNGramTokenizer(new StringReader("Jo"), Side.FRONT,5,5);
+
+        while((t = tokenizer.next()) != null)
+        {
+            System.out.println(t.termText());
+        }
+    }
 }

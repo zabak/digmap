@@ -25,15 +25,17 @@
         <delete dir="${build}" />
     </target>
 
-    <target name="compileSrc">
-
+    <target name="compileOnlyJavaCode">
+        <copy todir="${webapp.path}/WEB-INF/classes">
+            <fileset dir="${base.dir}/classes">
+                  <include name="**/*.*"/>
+            </fileset>
+        </copy>
         <replace file="${webapp.path}/WEB-INF/classes/pt/utl/ist/lucene/app.properties" value="">
             <replacefilter token="@tmp.dir@" value="${base.dir}/test-index" />
             <replacefilter token="@index.dir@" value="${base.dir}/test-index" />
             <replacefilter token="@data.dir@" value="${base.dir}/test-data" />
         </replace>
-
-        <mkdir dir="${webapp.path}/WEB-INF/classes" />
         <javac destdir="${webapp.path}/WEB-INF/classes" optimize="off" debug="true" debuglevel="lines,vars,source" nowarn="true" deprecation="${compile.deprecation}" failonerror="true" srcdir="${webapp.path}/WEB-INF/classes" encoding="UTF-8" excludes="**/*.smap">
             <classpath>
                 <fileset dir="${base.dir}/lib">
@@ -346,7 +348,7 @@
         </for>
     </target>
 
-    
+
     <target name="evaluation-metrics-dmoz" description="Generate trec_eval results">
         <for param="runfile">
             <path>

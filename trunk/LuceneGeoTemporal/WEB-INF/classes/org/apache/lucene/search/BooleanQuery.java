@@ -19,6 +19,8 @@ package org.apache.lucene.search;
 import java.io.IOException;
 import java.util.Vector;
 import org.apache.lucene.index.IndexReader;
+import pt.utl.ist.lucene.Model;
+import pt.utl.ist.lucene.ModelManager;
 
 /** A Query that matches documents matching boolean combinations of other
   queries, typically {@link TermQuery}s or {@link PhraseQuery}s.
@@ -109,21 +111,20 @@ public class BooleanQuery extends Query {
         if (!c.prohibited)
           sum += w.sumOfSquaredWeights();         // sum sub weights
       }
-
       sum *= getBoost() * getBoost();             // boost each sub-weight
-
       return sum ;
     }
 
 
     public void normalize(float norm) {
-      norm *= getBoost();                         // incorporate boost
-      for (int i = 0 ; i < weights.size(); i++) {
-        BooleanClause c = (BooleanClause)clauses.elementAt(i);
-        Weight w = (Weight)weights.elementAt(i);
-        if (!c.prohibited)
-          w.normalize(norm);
-      }
+
+          norm *= getBoost();                         // incorporate boost
+          for (int i = 0 ; i < weights.size(); i++) {
+            BooleanClause c = (BooleanClause)clauses.elementAt(i);
+            Weight w = (Weight)weights.elementAt(i);
+            if (!c.prohibited)
+              w.normalize(norm);
+          }
     }
 
     public Scorer scorer(IndexReader reader) throws IOException {

@@ -54,7 +54,7 @@ final class TermScorerDFR extends Scorer  {
         this.norms = norms;
         this.weightValue = weight.getValue();
         this.indexReader = new LanguageModelIndexReader(reader);
-        this.term = ((TermQueryLanguageModel) weight.getQuery()).getTerm();
+        this.term = ((TermQueryProbabilisticModel) weight.getQuery()).getTerm();
 
         // Get data for the collection model
         String docLengthType = (String) DataCacher.Instance().get("LM-lengths");
@@ -131,7 +131,7 @@ final class TermScorerDFR extends Scorer  {
         }
         if(sim < 0)
             System.out.println(">>>>>>>>>>>>>>>>>>>>>>>FATAL  : PLEASE CHECK DFR Formulas similarity come negative for doc:" + doc + " term: " + term.text());
-        return (float)sim;
+        return weightValue * (float)sim;
     }
 
     private double stirlingFormula ( double m, double n )

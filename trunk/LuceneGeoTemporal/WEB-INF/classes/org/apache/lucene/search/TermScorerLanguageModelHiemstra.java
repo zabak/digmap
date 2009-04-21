@@ -45,7 +45,7 @@ final class TermScorerLanguageModelHiemstra extends Scorer {
 		this.norms = norms;
 		this.weightValue = weight.getValue();
 		this.indexReader = new LanguageModelIndexReader(reader);
-		this.term = ((TermQueryLanguageModelHiemstra) weight.getQuery()).getTerm();
+		this.term = ((TermQueryProbabilisticModel) weight.getQuery()).getTerm();
 
 		// Get data for the collection model
 		String collectionModel =
@@ -109,7 +109,7 @@ final class TermScorerLanguageModelHiemstra extends Scorer {
         float probabilityTermCollection = tfCollection / collSize;
         float probabilityTermDocument = tfDoc / fieldLen;
         
-        return (float) Math.log10( 1.0f + (lambda * (probabilityTermDocument) / ((1-lambda)*probabilityTermCollection)));
+        return weightValue * (float) Math.log10( 1.0f + (lambda * (probabilityTermDocument) / ((1-lambda)*probabilityTermCollection)));
 	}
 
 	public boolean skipTo(int target) throws IOException {

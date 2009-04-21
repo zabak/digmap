@@ -1,22 +1,15 @@
 package pt.utl.ist.lucene.treceval.handlers.topics.output.impl;
 
 import org.apache.log4j.Logger;
-import org.apache.lucene.analysis.standard.StandardTokenizer;
 import org.apache.lucene.analysis.Token;
 import org.apache.lucene.analysis.TokenStream;
-
-import com.sun.xml.internal.fastinfoset.sax.Properties;
-
 import pt.utl.ist.lucene.QueryConfiguration;
-import pt.utl.ist.lucene.config.PropertiesUtil;
-import pt.utl.ist.lucene.treceval.SearchConfiguration;
 import pt.utl.ist.lucene.treceval.handlers.topics.output.OutputFormat;
 import pt.utl.ist.lucene.treceval.handlers.topics.output.Topic;
 import pt.utl.ist.lucene.utils.QueryUtils;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.List;
 import java.util.Map;
 
 

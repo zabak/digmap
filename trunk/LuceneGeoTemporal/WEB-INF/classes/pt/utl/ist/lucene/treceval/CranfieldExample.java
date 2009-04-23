@@ -207,7 +207,7 @@ public class CranfieldExample
         QueryConfiguration queryConfiguration2 = new QueryConfiguration();
         queryConfiguration2.setForceQE(QEEnum.text);
         queryConfiguration2.getQueryProperties().setProperty("lgte.default.order", "sc");
-        queryConfiguration2.getQueryProperties().setProperty("field.boost.contents","1.0f");
+//        queryConfiguration2.getQueryProperties().setProperty("field.boost.contents","1.0f");
         
         QueryConfiguration queryConfiguration2_grams = new QueryConfiguration();
         queryConfiguration2_grams.setForceQE(QEEnum.text);
@@ -222,21 +222,21 @@ public class CranfieldExample
         
         List<SearchConfiguration> searchConfigurations = new ArrayList<SearchConfiguration>();
 
-//        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, VS_CRAN));
-//        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, LM_CRAN));
-//        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, VS_STEMMER_CRAN));
-//        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, LM_STEMMER_CRAN));
-//        searchConfigurations.add(new SearchConfiguration(queryConfiguration1_grams, VS_2_6GRAMS_CRAN));
-//        searchConfigurations.add(new SearchConfiguration(queryConfiguration1_grams, LM_2_6GRAMS_CRAN));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, VS_CRAN));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, LM_CRAN));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, VS_STEMMER_CRAN));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, LM_STEMMER_CRAN));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration1_grams, VS_2_6GRAMS_CRAN));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration1_grams, LM_2_6GRAMS_CRAN));
 
         
         
         searchConfigurations.add(new SearchConfiguration(queryConfiguration2, VS_CRAN));
         searchConfigurations.add(new SearchConfiguration(queryConfiguration2, LM_CRAN));
-//        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, VS_STEMMER_CRAN));
-//        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, LM_STEMMER_CRAN));
-//        searchConfigurations.add(new SearchConfiguration(queryConfiguration2_grams, VS_2_6GRAMS_CRAN));
-//        searchConfigurations.add(new SearchConfiguration(queryConfiguration2_grams, LM_2_6GRAMS_CRAN));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, VS_STEMMER_CRAN));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, LM_STEMMER_CRAN));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration2_grams, VS_2_6GRAMS_CRAN));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration2_grams, LM_2_6GRAMS_CRAN));
 
     
 

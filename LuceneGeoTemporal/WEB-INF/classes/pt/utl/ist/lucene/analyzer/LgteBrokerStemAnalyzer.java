@@ -27,7 +27,8 @@ public class LgteBrokerStemAnalyzer extends org.apache.lucene.analysis.Analyzer
 
 
 
-   Map<String,Analyzer> analizers;
+    Map<String,Analyzer> analizers;
+    Analyzer defaultAnalyzer = LgteAnalyzer.defaultAnalyzer;
 
 
     public LgteBrokerStemAnalyzer(Map<String, Analyzer> analizers)
@@ -38,6 +39,8 @@ public class LgteBrokerStemAnalyzer extends org.apache.lucene.analysis.Analyzer
     public final TokenStream tokenStream(String fieldName, Reader reader)
     {
 //    	try{
+        if(analizers.get(fieldName) == null)
+            return defaultAnalyzer.tokenStream(fieldName,reader);
         return analizers.get(fieldName).tokenStream(fieldName,reader);
 //    	}catch(Exception e)
 //    	{

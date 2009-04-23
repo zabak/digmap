@@ -6,6 +6,7 @@ import java.util.*;
 import java.util.logging.*;
 
 import org.apache.lucene.analysis.*;
+import org.apache.lucene.analysis.Token;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.*;
 import org.apache.lucene.index.*;
@@ -213,7 +214,23 @@ public class QueryExpansion
                 prop.getProperty(QueryExpansion.TERM_NUM_FLD)).intValue();
 
         // Create combine documents term vectors - sum ( rel term vectors )
-        Vector<QueryTermVector> docsTermVector = getDocsTerms(hits, docNum, analyzer);
+        List<Vector<QueryTermVector>> docsTermVector = new ArrayList<Vector<QueryTermVector>>();
+        List<String> boostFields = PropertiesUtil.getListPropertiesSuffix(prop,"field.boost.");
+        if(boostFields != null && boostFields.size() > 0)
+        {
+            for(String field: boostFields)
+            {
+                Vector<QueryTermVector> docsTermVectorField = getDocsTerms(hits, docNum, analyzer, field);
+                if(docsTermVectorField != null)
+                    docsTermVector.add(docsTermVectorField);
+            }
+        }
+        else
+        {
+             docsTermVector.add(getDocsTerms(hits, docNum, analyzer, Defs.FLD_TEXT));
+        }
+
+
 
         // Adjust term features of the docs with alpha * level1query; and beta;
         // and assign weights/boost to terms (tf*idf)
@@ -222,6 +239,34 @@ public class QueryExpansion
 
         return expandedQuery;
     }
+
+
+    private class FieldTermVector
+    {
+        HashMap<String,QueryTermVector> fields = new HashMap<String,QueryTermVector>();
+
+        public FieldTermVector(Document doc)
+        {
+            List<String> boostFields = PropertiesUtil.getListPropertiesSuffix(prop,"field.boost.");
+            if(boostFields != null && boostFields.size() > 0)
+            {
+
+            }
+            else
+            {
+                QueryTermVector docsTermVector = getQueryTermVector(doc, analyzer, Defs.FLD_TEXT);
+                fields.put(Defs.FLD_TEXT,docsTermVector);
+            }
+
+        }
+
+        public FieldTermVector(String query)
+        {
+
+        }
+
+    }
+
 
     /**
      * Adjust term features of the docs with alpha * level1query; and beta; and
@@ -239,7 +284,7 @@ public class QueryExpansion
      * @throws IOException
      * @throws ParseException
      */
-    public Query adjust(Vector<QueryTermVector> docsTermsVector,
+    public Query adjust(List<Vector<QueryTermVector>> docsTermsVector,
                         String queryStr, float alpha, float beta, float decay,
                         int docsRelevantCount, int maxExpandedQueryTerms)
             throws IOException, ParseException
@@ -247,7 +292,13 @@ public class QueryExpansion
         Query expandedQuery;
 
         // setBoost of docs terms
-        Vector<TermQuery> docsTerms = setBoost(docsTermsVector, beta, decay);
+        Vector<TermQuery> docsTerms = new Vector<TermQuery>();
+        for(Vector<QueryTermVector> qT : docsTermsVector)
+        {
+            Vector<TermQuery> termQueries = setBoost(qT, beta, decay);
+            docsTerms.addAll(termQueries);
+        }
+        merge(docsTerms);
         logger.finer(docsTerms.toString());
 
         // setBoost of level1query terms
@@ -263,42 +314,92 @@ public class QueryExpansion
             queryTerms = getBoostedOriginalQuery(queryStr, alpha);
         }
         // combine weights according to expansion formula
-        Vector<TermQuery> expandedQueryTerms = combine(queryTerms, docsTerms);
-        setExpandedTerms(expandedQueryTerms);
+        queryTerms.addAll(docsTerms);
+//        Vector<TermQuery> expandedQueryTerms = combine(queryTerms, docsTerms);
+        merge(queryTerms);
+        setExpandedTerms(queryTerms);
         // Sort by boost=weight
         Comparator comparator = new QueryBoostComparator();
-        Collections.sort(expandedQueryTerms, comparator);
+        Collections.sort(queryTerms, comparator);
 
         // Create Expanded Level1Query
-        expandedQuery = mergeQueries(expandedQueryTerms, maxExpandedQueryTerms);
+        expandedQuery = mergeQueries(queryTerms, maxExpandedQueryTerms);
         logger.finer(expandedQuery.toString());
 
         return expandedQuery;
     }
 
-    private void getTermVectorsBoosts(Vector<TermQuery> vector, Query q, float alpha) throws IOException
+    /**
+     *
+     * @param termsFreqs
+     * @param vector
+     * @param q
+     * @param alpha
+     * @throws IOException
+     */
+    private void getTermVectorsBoosts(Map<String,Integer> termsFreqs, Vector<TermQuery> vector, Query q, float alpha) throws IOException
     {
         if (q instanceof BooleanQuery)
         {
             BooleanQuery bq = (BooleanQuery) q;
             for (BooleanClause bc : bq.getClauses())
             {
-                getTermVectorsBoosts(vector, bc.query, alpha);
+                getTermVectorsBoosts(termsFreqs, vector, bc.query, alpha);
+            }
+        }
+        else if (q instanceof TermQuery)
+        {
+
+            TermQuery tq = (TermQuery) q;
+//            if(tq.getTerm().field().equals(Defs.FLD_TEXT)) // using only model 2
+//            {
+                int tf = termsFreqs.get(tq.getTerm().field() + ":" + tq.getTerm().text());
+                setBoost(tq,tf,alpha,0.0f);
+                vector.add(tq);
+//            }
+        }
+    }
+
+    /**
+     *
+     * @param termsFreqs
+     * @param vector
+     * @param q
+     * @throws IOException
+     */
+    private void getTermFrequencies(Map<String,Integer> termsFreqs, Vector<TermQuery> vector, Query q) throws IOException
+    {
+        if (q instanceof BooleanQuery)
+        {
+            BooleanQuery bq = (BooleanQuery) q;
+            for (BooleanClause bc : bq.getClauses())
+            {
+                getTermFrequencies(termsFreqs,vector, bc.query);
             }
         }
         else if (q instanceof TermQuery)
         {
             TermQuery tq = (TermQuery) q;
-            float idf = alpha * similarity.idf(tq.getTerm(), searcher);
-            tq.setBoost(idf);
-            vector.add(tq);
+            Integer tf = termsFreqs.get(tq.getTerm().field() + ":" + tq.getTerm().text());
+            if(tf == null)
+            {
+                termsFreqs.put(tq.getTerm().field() + ":" + tq.getTerm().text(),1);
+                vector.add(tq);
+            }
+            else
+            {
+                termsFreqs.put(tq.getTerm().field() + ":" + tq.getTerm().text(),tf+1);
+            }
         }
     }
 
     /**
-     * Jorge Machado
+     * author: Jorge Machado
      *
-     * @throws IOException
+     * @param query to analyze
+     * @param alpha factor
+     * @return a query terms vector
+     * @throws IOException on index read error
      */
     private Vector<TermQuery> getBoostedOriginalQuery(String query, float alpha) throws IOException
     {
@@ -306,7 +407,9 @@ public class QueryExpansion
         try
         {
             Query q = QueryParser.parse(query, "", analyzer);
-            getTermVectorsBoosts(queryTerms, q, alpha);
+            Map<String,Integer> termFreqs = new HashMap<String,Integer>();
+            getTermFrequencies(termFreqs,queryTerms,q);
+            getTermVectorsBoosts(termFreqs,queryTerms, q, alpha);
         }
         catch (ParseException e)
         {
@@ -347,7 +450,7 @@ public class QueryExpansion
      * @return level1query created from termQueries including boost parameters
      */
     public Query mergeQueries(Vector<TermQuery> termQueries, int maxTerms)
-            throws ParseException
+            throws ParseException, IOException
     {
         Query query;
         // Select only the maxTerms number of terms
@@ -361,7 +464,6 @@ public class QueryExpansion
         List<String> boostFields = PropertiesUtil.getListPropertiesSuffix(prop,"field.boost.");
         if(boostFields != null && boostFields.size() > 0)
         {
-
             for(String field: boostFields)
             {
                 StringBuilder fieldBuilder = new StringBuilder();
@@ -369,6 +471,8 @@ public class QueryExpansion
                 boolean any = false;
                 for (TermQuery termQuery : terms)
                 {
+//                    Map<String,List<String>> termProjections = getDocumentTermInFields(termQuery.getTerm().text(),boostFields);
+//                    buildTermBoosted(termQuery,fieldBuilder,false);
                     if(termQuery.getTerm().field().equals(field))
                     {
                         any = true;
@@ -376,8 +480,10 @@ public class QueryExpansion
                     }
                 }
                 if(any && fieldBuilder.toString().trim().length()  > 0)
-                    queryBuilder.append(" ").append(field).append(":").append("(").append(fieldBuilder.toString()).append(")^").append(boostField);
+                    queryBuilder.append(" ").append(field).append(":").append("(").append(fieldBuilder.toString()).append(")");//.append(boostField);
             }
+
+
         }
         else
         {
@@ -399,8 +505,7 @@ public class QueryExpansion
      * @param analyzer          - to extract terms
      * @return docsTerms docs must be in order
      */
-    public Vector<QueryTermVector> getDocsTerms(Vector<Document> hits,
-                                                int docsRelevantCount, Analyzer analyzer) throws IOException
+    public Vector<QueryTermVector> getDocsTerms(Vector<Document> hits, int docsRelevantCount, Analyzer analyzer, String field) throws IOException
     {
         Vector<QueryTermVector> docsTerms = new Vector<QueryTermVector>();
         if (hits == null || hits.size() == 0)
@@ -411,40 +516,52 @@ public class QueryExpansion
             Document doc = hits.elementAt(i);
             // Get text of the document and append it
             StringBuffer docTxtBuffer = new StringBuffer();
-            List<String> boostFields = PropertiesUtil.getListPropertiesSuffix(prop, "field.boost.");
-            if (boostFields == null || boostFields.size() == 0)
-            {
-                getQueryTermVector(docsTerms, doc, analyzer, Defs.FLD_TEXT);
-            }
-            else
-            {
-                for (String field : boostFields)
-                {
-                    getQueryTermVector(docsTerms, doc, analyzer, field);
-                }
-            }
+            QueryTermVector qT = getQueryTermVector(doc, analyzer, field);
+            docsTerms.add(qT);
         }
         return docsTerms;
     }
 
     /**
-     * @param docsTerms
+     * Return a map of one term representation in all fields
+     * @param boostFields
+     * @return
+     * @throws IOException
+     */
+    private Map<String,List<String>> getDocumentTermInFields(String term, List<String> boostFields) throws IOException
+    {
+        Map<String,List<String>> docTermInFields = new HashMap<String,List<String>>();
+        for (String field : boostFields)
+        {
+            List<String> stemmingTerms = new ArrayList<String>();
+
+            TokenStream stream = analyzer.tokenStream(field, new StringReader(term));
+            Token t;
+            while((t=stream.next()) != null)
+            {
+                stemmingTerms.add(t.termText());
+            }
+            docTermInFields.put(field,stemmingTerms);
+        }
+        return docTermInFields;
+    }
+
+    /**
      * @param doc
      * @param analyzer
      * @param field
      * @author Jorge Machado New Method LGTE
      */
-    private static void getQueryTermVector(Vector<QueryTermVector> docsTerms,
-                                           Document doc, Analyzer analyzer, String field)
+    private static QueryTermVector getQueryTermVector(Document doc, Analyzer analyzer, String field)
     {
         StringBuffer docTxtBuffer = new StringBuffer();
         String[] docTxtFlds = doc.getValues(field);
-        for (int j = 0; j < docTxtFlds.length; j++)
+        for (String docTxtFld : docTxtFlds)
         {
-            docTxtBuffer.append(docTxtFlds[j].replace(":", " ").replace("-", " ") + " ");
+            docTxtBuffer.append(docTxtFld.replace(":", " ").replace("-", " ")).append(" ");
         }
-        QueryTermVector docTerms = new QueryTermVector(docTxtBuffer.toString(), analyzer, field);
-        docsTerms.add(docTerms);
+        return new QueryTermVector(docTxtBuffer.toString(), analyzer, field);
+
     }
 
     /**
@@ -457,7 +574,6 @@ public class QueryExpansion
     {
         Vector<QueryTermVector> v = new Vector<QueryTermVector>();
         v.add(termVector);
-
         return setBoost(v, factor, 0);
     }
 
@@ -491,13 +607,59 @@ public class QueryExpansion
                 // Create Term
                 String termTxt = termsTxt[i];
                 Term term = new Term(field, termTxt);
+                TermQuery termQuery = new TermQuery(term);
+                setBoost(termQuery,termFrequencies[i],factor,decay);
+                terms.add(termQuery);
+            }
+        }
+        // Get rid of duplicates by merging termQueries with equal terms
+        merge(terms);
 
-                // Calculate weight
-                float tf = termFrequencies[i];
-                float idf = similarity.idf(term, searcher);
+        return terms;
+    }
 
-                float weight;
-//				if(prop.getProperty("qe.field.boosted.termweight").equals("combineModelAndBoost"))
+    //set boost in one term query
+    private void setBoost(TermQuery termQuery, int tf, float factor, float decay) throws IOException
+    {
+        List<String> boostFields = PropertiesUtil.getListPropertiesSuffix(prop, "field.boost.");
+        //Experimental Ranking Model 1
+//        if(boostFields.size() > 0)
+//        {
+//            String term = termQuery.getTerm().text();
+//            Map<String,List<String>> termProjections = getDocumentTermInFields(term,boostFields);
+//
+//            float sum = 0;
+//            for (String field : boostFields)
+//            {
+//                List<String> termsField = termProjections.get(field);
+//                if(termsField.size() > 0)
+//                {
+//                    float relativeWeight = 1 / termsField.size();
+//                    for(String projectedTerm: termsField)
+//                    {
+//                        float fieldFactor = PropertiesUtil.getFloatProperty(prop,"field.boost." + field);
+//                        Term t = new Term(field,projectedTerm);
+//                        float idf = similarity.idf(t, searcher);
+//                        float weight = (1.0f * tf) * idf;
+//                        weight = weight - (weight * decay);
+//                        sum += factor * relativeWeight * fieldFactor * weight;
+//                    }
+//                }
+//            }
+//            termQuery.setBoost(sum);
+//        }
+//        else
+//        {
+            String fieldBoostStr = prop.getProperty("field.boost." + termQuery.getTerm().field());
+            float fieldFactor = 1.0f;
+            if(fieldBoostStr != null)
+                fieldFactor = Float.parseFloat(fieldBoostStr);
+            float idf = similarity.idf(termQuery.getTerm(), searcher);
+            float weight = (1.0f * tf) * idf;
+            weight = weight - (weight * decay);
+            termQuery.setBoost(factor * weight * fieldFactor);
+//        }
+        //				if(prop.getProperty("qe.field.boosted.termweight").equals("combineModelAndBoost"))
 //				{
 //					String boostQE = prop.getProperty("field.boost.qe." + field );
 //					String boost = prop.getProperty( "field.boost." + field );
@@ -509,24 +671,6 @@ public class QueryExpansion
 //				 	weight = Float.parseFloat(boostQE) * tf * idf;
 //				}
 //				else
-                weight = tf * idf;
-
-                // Adjust weight by decay factor
-                weight = weight - (weight * decay);
-                logger.finest("weight: " + weight);
-
-                // Create TermQuery and add it to the collection
-                TermQuery termQuery = new TermQuery(term);
-                // Calculate and set boost
-                termQuery.setBoost(factor * weight);
-                terms.add(termQuery);
-            }
-        }
-
-        // Get rid of duplicates by merging termQueries with equal terms
-        merge(terms);
-
-        return terms;
     }
 
     /**
@@ -544,9 +688,8 @@ public class QueryExpansion
             for (int j = i + 1; j < terms.size(); j++)
             {
                 TermQuery tmpTerm = terms.elementAt(j);
-
                 // If equal then merge
-                if (tmpTerm.getTerm().text().equals(term.getTerm().text()))
+                if (tmpTerm.getTerm().field().equals(term.getTerm().field()) && tmpTerm.getTerm().text().equals(term.getTerm().text()))
                 {
                     // Add boost factors of terms
                     term.setBoost(term.getBoost() + tmpTerm.getBoost());
@@ -603,7 +746,7 @@ public class QueryExpansion
         while (iterator.hasNext())
         {
             TermQuery currentTerm = iterator.next();
-            if (term.getTerm().equals(currentTerm.getTerm()))
+            if (term.getTerm().field().equals(currentTerm.getTerm().field()) && term.getTerm().text().equals(currentTerm.getTerm().text()))
             {
                 termF = currentTerm;
                 logger.finest("Term Found: " + term);

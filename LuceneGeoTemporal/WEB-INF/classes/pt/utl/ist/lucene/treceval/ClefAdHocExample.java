@@ -2,6 +2,7 @@ package pt.utl.ist.lucene.treceval;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.ngram.EdgeNGramTokenFilter;
 import org.dom4j.DocumentException;
 
 import java.io.IOException;
@@ -60,8 +61,8 @@ public class ClefAdHocExample
         Globals.DATA_DIR = args[1];
 
 
-//        String collectionPath = Globals.DATA_DIR + "\\clef2008AdHoc\\documents";
-        String collectionPath = "C:\\WORKSPACE_JM\\DATA\\COLLECTIONS\\telCollection\\" + country;
+        String collectionPath = "F:\\coleccoesIR\\CLEFAdHoc\\telCollection\\" + country;
+//        String collectionPath = "C:\\WORKSPACE_JM\\DATA\\COLLECTIONS\\telCollection\\" + country;
         String topicsPath = Globals.DATA_DIR + "\\clef2008AdHoc\\topics\\" + country;
         String outputDir = Globals.DATA_DIR + "\\clef2008AdHoc\\output\\" + country;
 
@@ -149,23 +150,23 @@ public class ClefAdHocExample
         //N-Grams will use one broker analyzer where each index will be created using different grams
         Map<String, Analyzer> ngramsAnalizers = new HashMap<String,Analyzer>();
         ngramsAnalizers.put("contents",lang.getAnalyzerNoStemming());
-        ngramsAnalizers.put("contentsN2", LgteAnalyzerManager.getInstance().getLanguagePackage(2,2).getAnalyzerWithStemming());
-        ngramsAnalizers.put("contentsN3", LgteAnalyzerManager.getInstance().getLanguagePackage(3,3).getAnalyzerWithStemming());
-        ngramsAnalizers.put("contentsN4", LgteAnalyzerManager.getInstance().getLanguagePackage(4,4).getAnalyzerWithStemming());
-        ngramsAnalizers.put("contentsN5", LgteAnalyzerManager.getInstance().getLanguagePackage(5,5).getAnalyzerWithStemming());
-        ngramsAnalizers.put("contentsN6", LgteAnalyzerManager.getInstance().getLanguagePackage(6,6).getAnalyzerWithStemming());
+        ngramsAnalizers.put("contentsN2", LgteAnalyzerManager.getInstance().getLanguagePackage(2,2,EdgeNGramTokenFilter.Side.FRONT).getAnalyzerWithStemming());
+        ngramsAnalizers.put("contentsN3", LgteAnalyzerManager.getInstance().getLanguagePackage(3,3,EdgeNGramTokenFilter.Side.FRONT).getAnalyzerWithStemming());
+        ngramsAnalizers.put("contentsN4", LgteAnalyzerManager.getInstance().getLanguagePackage(4,4,EdgeNGramTokenFilter.Side.FRONT).getAnalyzerWithStemming());
+        ngramsAnalizers.put("contentsN5", LgteAnalyzerManager.getInstance().getLanguagePackage(5,5,EdgeNGramTokenFilter.Side.FRONT).getAnalyzerWithStemming());
+        ngramsAnalizers.put("contentsN6", LgteAnalyzerManager.getInstance().getLanguagePackage(6,6,EdgeNGramTokenFilter.Side.FRONT).getAnalyzerWithStemming());
         LgteBrokerStemAnalyzer lgteBrokerStemAnalyzer = new LgteBrokerStemAnalyzer(ngramsAnalizers);
         Configuration VS_2_6GRAMS_CRAN = new Configuration("version1", "clef2008AdHoc" + country,"lmstem2_6grams", Model.VectorSpaceModel, lgteBrokerStemAnalyzer,collectionPath,collectionsDirectoryNG,topicsPath, topicsDirectoryNG,"contents", null,outputDir,maxResults);
         Configuration LM_2_6GRAMS_CRAN = new Configuration("version1", "clef2008AdHoc" + country,"lmstem2_6grams", Model.LanguageModel, lgteBrokerStemAnalyzer,collectionPath,collectionsDirectoryNG,topicsPath, topicsDirectoryNG,"contents", null,outputDir,maxResults);
 
 
         List<Configuration> configurations = new ArrayList<Configuration>();
-        configurations.add(LM_ADHOC);
+//        configurations.add(LM_ADHOC);
         configurations.add(LM_STEMMER_ADHOC);
         configurations.add(LM_2_6GRAMS_CRAN);
 
 
-//        IndexCollections.indexConfiguration(configurations,Globals.DOCUMENT_ID_FIELD);
+        IndexCollections.indexConfiguration(configurations,Globals.DOCUMENT_ID_FIELD);
 
 
 //        /***
@@ -190,7 +191,7 @@ public class ClefAdHocExample
         searchConfigurations.add(new SearchConfiguration(queryConfiguration1,LM_2_6GRAMS_CRAN ));
 
 //        //Search Topics Runs to submission
-        SearchTopics.search(searchConfigurations);
+//        SearchTopics.search(searchConfigurations);
     }
 
 

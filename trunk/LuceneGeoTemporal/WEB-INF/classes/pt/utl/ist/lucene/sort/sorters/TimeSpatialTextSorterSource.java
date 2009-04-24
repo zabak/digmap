@@ -95,9 +95,9 @@ public class TimeSpatialTextSorterSource implements TimeSpatialDistancesSorterSo
     {
         if(spatialScoreDocComparator == null)
         {
-            spatialScoreDocComparator = (SpatialDistancesScoreDocComparator) queryParams.getQueryConfiguration().getPlugin("spatial.score.doc.comparator");
-            timeScoreDocComparator = (TimeDistancesScoreDocComparator) queryParams.getQueryConfiguration().getPlugin("time.score.doc.comparator");
-            textScoreDocComparator = (LgteScoreDocComparator) queryParams.getQueryConfiguration().getPlugin("text.score.doc.comparator");
+            spatialScoreDocComparator = (SpatialDistancesScoreDocComparator) queryParams.getQueryConfiguration().getPlugin("scorer.spatial.score.doc.comparator");
+            timeScoreDocComparator = (TimeDistancesScoreDocComparator) queryParams.getQueryConfiguration().getPlugin("scorer.time.score.doc.comparator");
+            textScoreDocComparator = (LgteScoreDocComparator) queryParams.getQueryConfiguration().getPlugin("scorer.text.score.doc.comparator");
             spatialScoreDocComparator.init(reader);
             timeScoreDocComparator.init(reader);
             textScoreDocComparator.init(reader);
@@ -107,7 +107,7 @@ public class TimeSpatialTextSorterSource implements TimeSpatialDistancesSorterSo
             timeScoreDocComparator.addQueryParams(queryParams);
 
         }
-        comparator = (ModelSortDocComparator) queryParams.getQueryConfiguration().getPlugin("score.model");
+        comparator = (ModelSortDocComparator) queryParams.getQueryConfiguration().getPlugin("scorer.model");
         comparator.initModel(timeScoreDocComparator, spatialScoreDocComparator, textScoreDocComparator, queryParams, reader);
         return comparator;
     }

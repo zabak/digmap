@@ -67,7 +67,7 @@ public class TXmlHandler implements TDocumentHandler
         {
             String runName;
             if(Globals.RUN_OUTPUT_FILE == null)
-                runName =  outputDir + "/" + run + "-" + confId + ".txt";
+                runName =  outputDir + "/" + confId;
             else
                 runName = Globals.RUN_OUTPUT_FILE;
 

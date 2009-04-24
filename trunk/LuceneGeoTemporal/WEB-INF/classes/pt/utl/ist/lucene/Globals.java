@@ -20,9 +20,9 @@ public class Globals {
   		    String aux = Globals.class.getProtectionDomain().getCodeSource().getLocation().toString().replace("%20"," ");
   		    if(aux.endsWith("Globals.class")) aux = aux.substring(0,aux.lastIndexOf("/")) + "/../../../../../";
 		    ConfigProperties = new ConfigProperties();
-		    TMP_DIR = ConfigProperties.getProperty("tmp.dir");
-		    INDEX_DIR = ConfigProperties.getProperty("index.dir");
-            DATA_DIR = ConfigProperties.getProperty("data.dir");
+		    TMP_DIR = ConfigProperties.getProperty("output.tmp.dir");
+		    INDEX_DIR = ConfigProperties.getProperty("output.index.dir");
+            DATA_DIR = ConfigProperties.getProperty("output.data.dir");
             if(INDEX_DIR == null || (!new File(INDEX_DIR).exists() && !INDEX_DIR.startsWith(File.separator))) {
 		    	INDEX_DIR = aux.substring(aux.indexOf("/"))+"test-index";
                 DATA_DIR = aux.substring(aux.indexOf("/"))+"test-data";

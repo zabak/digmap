@@ -14,7 +14,6 @@ import pt.utl.ist.lucene.sort.sorters.models.SpatialDistancesScoreDocComparator;
 import pt.utl.ist.lucene.config.ConfigProperties;
 import pt.utl.ist.lucene.filter.ISpatialDistancesWrapper;
 import pt.utl.ist.lucene.level1query.QueryParams;
-import pt.utl.ist.lucene.utils.GeoUtils;
 
 import java.io.IOException;
 
@@ -135,11 +134,11 @@ public class SigmoidSpatialScoreDocComparator implements SpatialDistancesScoreDo
             String startegyClassName;
             if(queryParams != null)
             {
-                startegyClassName = queryParams.getQueryConfiguration().getProperty("spatial.score.strategy");
+                startegyClassName = queryParams.getQueryConfiguration().getProperty("scorer.spatial.score.strategy");
             }
             else
             {
-                startegyClassName = ConfigProperties.getProperty("spatial.score.strategy");
+                startegyClassName = ConfigProperties.getProperty("scorer.spatial.score.strategy");
             }
             try
             {

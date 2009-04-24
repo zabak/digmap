@@ -29,7 +29,7 @@ public class MatlabToTREC
      * 
      * @param args 
      *              0 - Matlab Out File
-     *              1 - Lucene Result File
+     *              1 - Lucene ReportResult File
      * @throws IOException
      */
     public void process( String[] args ) throws IOException

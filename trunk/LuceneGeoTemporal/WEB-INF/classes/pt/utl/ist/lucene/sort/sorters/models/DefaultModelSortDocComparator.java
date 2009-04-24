@@ -3,11 +3,9 @@ package pt.utl.ist.lucene.sort.sorters.models;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.SortField;
 import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.ilps.DataCacher;
 import pt.utl.ist.lucene.level1query.QueryParams;
 import pt.utl.ist.lucene.sort.ModelSortDocComparator;
 import pt.utl.ist.lucene.ModelManager;
-import pt.utl.ist.lucene.Model;
 
 import java.util.HashMap;
 
@@ -48,9 +46,9 @@ public class DefaultModelSortDocComparator implements ModelSortDocComparator
 
 
         this.queryParams = queryParams;
-        this.timeFactor = queryParams.getQueryConfiguration().getFloatProperty("default.model.time.factor");
-        spatialFactor = queryParams.getQueryConfiguration().getFloatProperty("default.model.spatial.factor");
-        textFactor = queryParams.getQueryConfiguration().getFloatProperty("default.model.text.factor");
+        this.timeFactor = queryParams.getQueryConfiguration().getFloatProperty("scorer.default.model.time.factor");
+        spatialFactor = queryParams.getQueryConfiguration().getFloatProperty("scorer.default.model.spatial.factor");
+        textFactor = queryParams.getQueryConfiguration().getFloatProperty("scorer.default.model.text.factor");
 
         scoresCache = new HashMap<Integer,Float>();
         textScoresCache = new HashMap<Integer,Float>();

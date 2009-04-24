@@ -58,7 +58,7 @@ public class HighlightTest extends TestCase {
     }
   }
   
-  private String indexDir = System.getProperty("index.dir");
+  private String indexDir = System.getProperty("output.index.dir");
   protected Directory directory;
 
   protected void setUp() throws Exception {

@@ -4,13 +4,15 @@ import org.apache.log4j.Logger;
 import org.apache.lucene.queryParser.ParseException;
 import org.dom4j.DocumentException;
 import pt.utl.ist.lucene.*;
+import pt.utl.ist.lucene.config.ConfigProperties;
+import pt.utl.ist.lucene.utils.XmlUtils;
+import pt.utl.ist.lucene.utils.StringComparator;
 import pt.utl.ist.lucene.treceval.handlers.topics.output.OutputFormat;
 import pt.utl.ist.lucene.treceval.handlers.topics.output.Topic;
 
-import java.io.IOException;
-import java.io.FileWriter;
+import java.io.*;
 import java.net.MalformedURLException;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author Jorge Machado
@@ -21,13 +23,13 @@ import java.util.List;
 public class SearchTopics implements ISearchCallBack
 {
 
+    public static final String outputReportSuffix = "-treceval-report.txt";
     private static final Logger logger = Logger.getLogger(SearchTopics.class);
 
     private int maxResultsForOutput;
     private SearchConfiguration searchConfiguration;
     private Configuration configuration;
     private LgteIndexSearcherWrapper indexSearcher;
-    private String run;
 
 
 
@@ -35,14 +37,12 @@ public class SearchTopics implements ISearchCallBack
      * constructor
      *
      * @param searchConfiguration to search topics in index
-     * @param run           name of the handle
      * @throws IOException opening indexes
      */
 
-    public SearchTopics(SearchConfiguration searchConfiguration, String run) throws IOException
+    public SearchTopics(SearchConfiguration searchConfiguration) throws IOException
     {
         this.maxResultsForOutput = searchConfiguration.getConfiguration().getMaxResultsPerTopic();
-        this.run = run;
         this.searchConfiguration = searchConfiguration;
         configuration = searchConfiguration.getConfiguration();
         indexSearcher = new LgteIndexSearcherWrapper(configuration.getModel(), configuration.getIndexPath(),searchConfiguration.getQueryConfiguration().getQueryProperties());
@@ -52,6 +52,25 @@ public class SearchTopics implements ISearchCallBack
     //static FileWriter topicTotalResults;
 
 
+    public static void search(List<SearchConfiguration> searchConfigurations) throws IOException, DocumentException
+    {
+        search(searchConfigurations,searchConfigurations.get(0).getConfiguration().getOutputDir());
+    }
+
+    public static void evaluateMetrics(List<SearchConfiguration> searchConfigurations, String assessementsFile) throws IOException, DocumentException
+    {
+        for (SearchConfiguration c : searchConfigurations)
+        {
+            String[] args = new String[]{c.getOutputFile().getAbsolutePath(), assessementsFile};
+            PrintStream out = System.out;
+            System.setOut(new PrintStream(new FileOutputStream(c.getOutputReportFile(outputReportSuffix))));
+            ireval.Main.main(args);
+            System.out.close();
+            System.setOut(out);
+        }
+
+    }
+
     /**
      * Static service to search in a list of Configurations
      *
@@ -59,22 +78,29 @@ public class SearchTopics implements ISearchCallBack
      * @throws IOException       opening indexes
      * @throws DocumentException opening topics xml
      */
-    public static void search(List<SearchConfiguration> searchConfigurations) throws IOException, DocumentException
+    public static void search(List<SearchConfiguration> searchConfigurations, String runPackageFileOutputDir) throws IOException, DocumentException
     {
 
         //topicTotalResults = new FileWriter("D:/topicTotalResults.csv");
         //topicTotalResults.write("topic;total;s>=0.99;s>=0.98;s>=0.95;s>=0.9;s>=0.8;s>=0.5;\n");
-        int runId = 1;
+
         for (SearchConfiguration c : searchConfigurations)
         {
-            SearchTopics searchTopics = new SearchTopics(c, "run-" + runId);
+            SearchTopics searchTopics = new SearchTopics(c);
             searchTopics.searchTopics();
             searchTopics.close();
-            runId++;
         }
+
+
+
+        createRunPackage(runPackageFileOutputDir,searchConfigurations);
+
+
         //topicTotalResults.close();
 
     }
+
+
 
 
 
@@ -84,24 +110,18 @@ public class SearchTopics implements ISearchCallBack
      */
     public void searchTopics()
     {
-
-        String filter = "-filter_" + FilterEnum.defaultFilter.toString();
-        String order = "-order_" + OrderEnum.defaultOrder.toString();
-        if(searchConfiguration.getQueryConfiguration() != null)
-        {
-            String filter2 = searchConfiguration.getQueryConfiguration().getProperty("lgte.default.filter");
-            if(filter2 != null)
-                filter = "-filter_" + filter2;
-            String order2 = searchConfiguration.getQueryConfiguration().getProperty("lgte.default.order");
-            if(order2 != null)
-                order = "-order_" + order2;
-        }
         try
         {
-            String stem = "no";
-            if(configuration.getDir().indexOf("stem")>=0)
-                stem=configuration.getDir();
-            configuration.getITopicsProcessor().handle(configuration.getTopicsPath(), this, configuration.getModel().getShortName() + "-Stemming_" + stem + "-qe_" + searchConfiguration.getQueryConfiguration().getForceQE() +filter+order, run, configuration.getCollectionId(), configuration.getOutputDir(), searchConfiguration.getQueryConfiguration());
+            configuration
+                    .getITopicsProcessor()
+                    .handle(
+                            configuration.getTopicsPath(),
+                            this,
+                            searchConfiguration.getFileId(),
+                            searchConfiguration.getRun(),
+                            configuration.getCollectionId(),
+                            configuration.getOutputDir(),
+                            searchConfiguration.getQueryConfiguration());
         }
         catch (MalformedURLException e)
         {
@@ -190,7 +210,7 @@ public class SearchTopics implements ISearchCallBack
 
         for (int i = 0; i < hits.length() && i < maxResultsForOutput; i++)
         {
-            format.writeRecord(hits.id(i), hits.doc(i).getDocument(), hits.score(i), run);
+            format.writeRecord(hits.id(i), hits.doc(i).getDocument(), hits.score(i), searchConfiguration.getRun());
         }
         format.writeFooter();
         logger.info("writeTime:" + (System.currentTimeMillis() - time) + " ms");
@@ -204,5 +224,64 @@ public class SearchTopics implements ISearchCallBack
     public void setMaxResultsForOutput(int maxResultsForOutput)
     {
         this.maxResultsForOutput = maxResultsForOutput;
+    }
+
+    public static void createRunPackage(String toDir, List<SearchConfiguration> searchConfigurations)
+    {
+        try
+        {
+            FileWriter fw = new FileWriter(toDir + "\\runs.xml");
+            fw.write("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+            fw.write("<?xml-stylesheet type=\"text/xsl\" href=\"runs.xsl\"?>\n");
+            fw.write("<runs>");
+            for(SearchConfiguration searchConfiguration: searchConfigurations)
+            {
+                createRunPackage(fw,searchConfiguration);
+            }
+            fw.write("</runs>");
+            fw.flush();
+            fw.close();
+        }catch(Exception e)
+        {
+            logger.error(e,e);
+        }
+    }
+
+    private static void writeProps(FileWriter fw, Properties props) throws IOException
+    {
+        List<String> propsList = new ArrayList<String>(props.stringPropertyNames());
+        Collections.sort(propsList, StringComparator.getInstance());
+        for(String key : propsList)
+        {
+            String value = (String) props.getProperty(key);
+            fw.write("<key id=\"" + XmlUtils.escape(key) + "\">");
+            fw.write(XmlUtils.escape(value));
+            fw.write("</key>");
+        }
+    }
+    public static void createRunPackage(FileWriter fw, SearchConfiguration searchConfiguration) throws IOException
+    {
+
+        fw.write("<run id=\"" + XmlUtils.escape(searchConfiguration.getFileId()) + "\">");
+
+        fw.write("<configuration>");
+        fw.write("<base>");
+        writeProps(fw, ConfigProperties.getProperties());     
+        fw.write("</base>");
+        fw.write("<override>");
+        writeProps(fw,searchConfiguration.getQueryConfiguration().getQueryProperties());
+        fw.write("</override>");
+        fw.write("</configuration>");
+        fw.write("<results>");
+        ReportFile rf = new ReportFile(searchConfiguration.getOutputReportFile(outputReportSuffix));
+        ReportResult all = rf.getResult("all");
+        for(int i = 0; i < all.getValues().length; i++)
+        {
+            fw.write("<result name=\"" + XmlUtils.escape(ReportResult.names[i]) + "\">");
+            fw.write(XmlUtils.escape(all.getValues()[i]));
+            fw.write("</result>");
+        }
+        fw.write("</results>");
+        fw.write("</run>");
     }
 }

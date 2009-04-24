@@ -102,7 +102,7 @@ public class TestSpatialBoxDocumentBoxQueryStrategyWithLgte extends TestCase
         String query = "contents:(jorge bruno shoping)";
         QueryParams queryParams = new QueryParams();
         QueryConfiguration queryConfiguration = new QueryConfiguration();
-        queryConfiguration.getQueryProperties().put("spatial.score.strategy", "pt.utl.ist.lucene.sort.sorters.priors.comparators.strategy.BoxQueryWithBoxDoc");
+        queryConfiguration.getQueryProperties().put("scorer.spatial.score.strategy", "pt.utl.ist.lucene.sort.sorters.priors.comparators.strategy.BoxQueryWithBoxDoc");
         queryParams.setGmlPolygon(portalegreCenterPolygon);
         queryParams.setFilter(FilterEnum.no);
         queryParams.setOrder(OrderEnum.scoreSpace);

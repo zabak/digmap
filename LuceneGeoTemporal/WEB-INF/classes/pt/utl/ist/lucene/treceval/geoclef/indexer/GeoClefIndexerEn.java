@@ -211,19 +211,19 @@ public class GeoClefIndexerEn
         QueryConfiguration queryConfiguration1 = new QueryConfiguration();
         queryConfiguration1.setForceQE(QEEnum.no);
         queryConfiguration1.getQueryProperties().put("lgte.default.filter","no");
-        queryConfiguration1.getQueryProperties().put("spatial.score.strategy","pt.utl.ist.lucene.sort.sorters.priors.comparators.strategy.BoxQueryWithBoxDoc");
+        queryConfiguration1.getQueryProperties().put("scorer.spatial.score.strategy","pt.utl.ist.lucene.sort.sorters.priors.comparators.strategy.BoxQueryWithBoxDoc");
         queryConfiguration1.getQueryProperties().put("lgte.default.order","sc");
 
         QueryConfiguration queryConfiguration2 = new QueryConfiguration();
         queryConfiguration2.setForceQE(QEEnum.text);
         queryConfiguration2.getQueryProperties().put("lgte.default.filter","no");
-        queryConfiguration2.getQueryProperties().put("spatial.score.strategy","pt.utl.ist.lucene.sort.sorters.priors.comparators.strategy.BoxQueryWithBoxDoc");
+        queryConfiguration2.getQueryProperties().put("scorer.spatial.score.strategy","pt.utl.ist.lucene.sort.sorters.priors.comparators.strategy.BoxQueryWithBoxDoc");
         queryConfiguration2.getQueryProperties().put("lgte.default.order","sc");
 
         QueryConfiguration queryConfiguration3 = new QueryConfiguration();
         queryConfiguration3.setForceQE(QEEnum.lgte);
         queryConfiguration3.getQueryProperties().put("lgte.default.filter","no");
-        queryConfiguration3.getQueryProperties().put("spatial.score.strategy","pt.utl.ist.lucene.sort.sorters.priors.comparators.strategy.BoxQueryWithBoxDoc");
+        queryConfiguration3.getQueryProperties().put("scorer.spatial.score.strategy","pt.utl.ist.lucene.sort.sorters.priors.comparators.strategy.BoxQueryWithBoxDoc");
         queryConfiguration3.getQueryProperties().put("lgte.default.order","sc");
 
 
@@ -232,20 +232,20 @@ public class GeoClefIndexerEn
         QueryConfiguration queryConfiguration4 = new QueryConfiguration();
         queryConfiguration4.setForceQE(QEEnum.no);
         queryConfiguration4.getQueryProperties().put("lgte.default.filter","no");
-        queryConfiguration4.getQueryProperties().put("spatial.score.strategy","pt.utl.ist.lucene.sort.sorters.priors.comparators.strategy.BoxQueryWithBoxDoc");
+        queryConfiguration4.getQueryProperties().put("scorer.spatial.score.strategy","pt.utl.ist.lucene.sort.sorters.priors.comparators.strategy.BoxQueryWithBoxDoc");
         queryConfiguration4.getQueryProperties().put("lgte.default.order","sc_sp");
 
 
         QueryConfiguration queryConfiguration5 = new QueryConfiguration();
         queryConfiguration5.setForceQE(QEEnum.text);
         queryConfiguration5.getQueryProperties().put("lgte.default.filter","no");
-        queryConfiguration5.getQueryProperties().put("spatial.score.strategy","pt.utl.ist.lucene.sort.sorters.priors.comparators.strategy.BoxQueryWithBoxDoc");
+        queryConfiguration5.getQueryProperties().put("scorer.spatial.score.strategy","pt.utl.ist.lucene.sort.sorters.priors.comparators.strategy.BoxQueryWithBoxDoc");
         queryConfiguration5.getQueryProperties().put("lgte.default.order","sc_sp");
 
         QueryConfiguration queryConfiguration6 = new QueryConfiguration();
         queryConfiguration6.setForceQE(QEEnum.lgte);
         queryConfiguration6.getQueryProperties().put("lgte.default.filter","no");
-        queryConfiguration6.getQueryProperties().put("spatial.score.strategy","pt.utl.ist.lucene.sort.sorters.priors.comparators.strategy.BoxQueryWithBoxDoc");
+        queryConfiguration6.getQueryProperties().put("scorer.spatial.score.strategy","pt.utl.ist.lucene.sort.sorters.priors.comparators.strategy.BoxQueryWithBoxDoc");
         queryConfiguration6.getQueryProperties().put("lgte.default.order","sc_sp");
 
 

@@ -5,11 +5,8 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.ngram.EdgeNGramTokenFilter;
 import org.dom4j.DocumentException;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.HashMap;
+import java.io.*;
+import java.util.*;
 
 import pt.utl.ist.lucene.treceval.handlers.*;
 import pt.utl.ist.lucene.treceval.handlers.topics.output.impl.TrecEvalOutputFormatFactory;
@@ -20,6 +17,7 @@ import pt.utl.ist.lucene.Model;
 import pt.utl.ist.lucene.QueryConfiguration;
 import pt.utl.ist.lucene.QEEnum;
 import pt.utl.ist.lucene.utils.LgteAnalyzerManager;
+import pt.utl.ist.lucene.utils.XmlUtils;
 import pt.utl.ist.lucene.analyzer.LgteBrokerStemAnalyzer;
 
 /**
@@ -30,6 +28,8 @@ import pt.utl.ist.lucene.analyzer.LgteBrokerStemAnalyzer;
 public class ClefAdHocExample
 {
 
+    public static String assessmentsFile;
+
     public static String country = "bl";
     public static LgteAnalyzerManager.LanguagePackage lang;
 
@@ -38,14 +38,17 @@ public class ClefAdHocExample
     public static void main(String [] args) throws DocumentException, IOException
     {
         country = "bl";
+        assessmentsFile = "10.2454-AH-TEL-ENGLISH-CLEF2008.txt";
         lang  = IndexCollections.en;
         compute(args);
 
 //        country = "bnf";
+//        assessmentsFile = "10.2454-AH-TEL-FRENCH-CLEF2008.txt";
 //        lang  = IndexCollections.fr;
 //        compute(args);
 //
 //        country = "onb";
+//        assessmentsFile = "10.2454-AH-TEL-GERMAN-CLEF2008.txt";
 //        lang  = IndexCollections.de;
 //        compute(args);
     }
@@ -65,6 +68,7 @@ public class ClefAdHocExample
 //        String collectionPath = "C:\\WORKSPACE_JM\\DATA\\COLLECTIONS\\telCollection\\" + country;
         String topicsPath = Globals.DATA_DIR + "\\clef2008AdHoc\\topics\\" + country;
         String outputDir = Globals.DATA_DIR + "\\clef2008AdHoc\\output\\" + country;
+        String assessementsFile = Globals.DATA_DIR + "\\clef2008AdHoc\\assessements\\" + country + "\\" + assessmentsFile;
 
         logger.info("Writing indexes to:" + Globals.INDEX_DIR);
         logger.info("Reading data from:" + Globals.DATA_DIR);
@@ -161,7 +165,7 @@ public class ClefAdHocExample
 
 
         List<Configuration> configurations = new ArrayList<Configuration>();
-//        configurations.add(LM_ADHOC);
+        configurations.add(LM_ADHOC);
         configurations.add(LM_STEMMER_ADHOC);
         configurations.add(LM_2_6GRAMS_CRAN);
 
@@ -207,21 +211,29 @@ public class ClefAdHocExample
 
         List<SearchConfiguration> searchConfigurations = new ArrayList<SearchConfiguration>();
 
-        searchConfigurations.add(new SearchConfiguration(queryConfigurationNoQE, VS_ADHOC));
-        searchConfigurations.add(new SearchConfiguration(queryConfigurationNoQE, VS_STEMMER_ADHOC));
-        searchConfigurations.add(new SearchConfiguration(queryConfigurationNoQE, LM_ADHOC));
-        searchConfigurations.add(new SearchConfiguration(queryConfigurationNoQE, LM_STEMMER_ADHOC));
-        searchConfigurations.add(new SearchConfiguration(queryConfigurationNoQE_ngrams,LM_2_6GRAMS_CRAN ));
+        searchConfigurations.add(new SearchConfiguration(queryConfigurationNoQE, VS_ADHOC, 1));
+        searchConfigurations.add(new SearchConfiguration(queryConfigurationNoQE, LM_ADHOC, 2));
+        searchConfigurations.add(new SearchConfiguration(queryConfigurationNoQE, VS_STEMMER_ADHOC, 3));
+        searchConfigurations.add(new SearchConfiguration(queryConfigurationNoQE, LM_STEMMER_ADHOC, 4));
+        searchConfigurations.add(new SearchConfiguration(queryConfigurationNoQE_ngrams,VS_2_6GRAMS_CRAN, 5));
+        searchConfigurations.add(new SearchConfiguration(queryConfigurationNoQE_ngrams,LM_2_6GRAMS_CRAN, 6));
 
-        searchConfigurations.add(new SearchConfiguration(queryConfigurationQE, VS_ADHOC));
-        searchConfigurations.add(new SearchConfiguration(queryConfigurationQE, VS_STEMMER_ADHOC));
-        searchConfigurations.add(new SearchConfiguration(queryConfigurationQE, LM_ADHOC));
-        searchConfigurations.add(new SearchConfiguration(queryConfigurationQE, LM_STEMMER_ADHOC));
-        searchConfigurations.add(new SearchConfiguration(queryConfigurationQE_ngrams,LM_2_6GRAMS_CRAN ));
+        searchConfigurations.add(new SearchConfiguration(queryConfigurationQE, VS_ADHOC, 7));
+        searchConfigurations.add(new SearchConfiguration(queryConfigurationQE, LM_ADHOC, 8));
+        searchConfigurations.add(new SearchConfiguration(queryConfigurationQE, VS_STEMMER_ADHOC, 9));
+        searchConfigurations.add(new SearchConfiguration(queryConfigurationQE, LM_STEMMER_ADHOC, 10));
+        searchConfigurations.add(new SearchConfiguration(queryConfigurationQE_ngrams,VS_2_6GRAMS_CRAN, 11));
+        searchConfigurations.add(new SearchConfiguration(queryConfigurationQE_ngrams,LM_2_6GRAMS_CRAN, 12 ));
+
 
 
 //        //Search Topics Runs to submission
         SearchTopics.search(searchConfigurations);
+        SearchTopics.evaluateMetrics(searchConfigurations,assessementsFile);
+        SearchTopics.createRunPackage(searchConfigurations.get(0).getConfiguration().getOutputDir(),searchConfigurations);
+
+
+
     }
 
 
@@ -292,4 +304,9 @@ public class ClefAdHocExample
         xmlFieldHandlers.add(xmlSource);
         xmlFieldHandlers.add(xmlIssued);
     }
+
+
+
+
+    
 }

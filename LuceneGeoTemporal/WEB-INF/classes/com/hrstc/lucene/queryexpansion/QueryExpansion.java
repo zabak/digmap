@@ -7,14 +7,12 @@ import java.util.logging.*;
 
 import org.apache.lucene.analysis.*;
 import org.apache.lucene.analysis.Token;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.*;
 import org.apache.lucene.index.*;
 import org.apache.lucene.queryParser.*;
 import org.apache.lucene.search.*;
 import com.google.soap.search.GoogleSearchFault;
 import com.hrstc.lucene.*;
-import com.sun.org.apache.xalan.internal.xsltc.compiler.Template;
 
 import pt.utl.ist.lucene.config.PropertiesUtil;
 import pt.utl.ist.lucene.versioning.LuceneVersionFactory;
@@ -79,8 +77,8 @@ public class QueryExpansion
     /**
      * Rocchio Params
      */
-    public static final String ROCCHIO_ALPHA_FLD = "rocchio.alpha";
-    public static final String ROCCHIO_BETA_FLD = "rocchio.beta";
+    public static final String ROCCHIO_ALPHA_FLD = "QE.rocchio.alpha";
+    public static final String ROCCHIO_BETA_FLD = "QE.rocchio.beta";
 
     private Properties prop;
     private Analyzer analyzer;

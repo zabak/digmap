@@ -20,6 +20,11 @@ public class ConfigProperties
     private static Logger logger = Logger.getLogger(ConfigProperties.class);
 
     private static LocalProperties properties = null;
+
+    public static Properties getProperties()
+    {
+        return properties;
+    }
     
     public static void loadProperties()
     {

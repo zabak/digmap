@@ -461,7 +461,7 @@ public class GeoClefIndexer
 
         queryConfiguration1.setForceQE(QEEnum.no);
         queryConfiguration1.getQueryProperties().put("lgte.default.filter", "no");
-        queryConfiguration1.getQueryProperties().put("spatial.score.strategy", "pt.utl.ist.lucene.sort.sorters.priors.comparators.strategy.BoxQueryWithBoxDoc");
+        queryConfiguration1.getQueryProperties().put("scorer.spatial.score.strategy", "pt.utl.ist.lucene.sort.sorters.priors.comparators.strategy.BoxQueryWithBoxDoc");
         queryConfiguration1.getQueryProperties().put("lgte.default.order", "sc_sp");
         queryConfiguration1.getQueryProperties().put("LM-lambda",LM_LAMBDA);
 //        queryConfiguration1.getQueryProperties().put("score.model","pt.utl.ist.lucene.sort.sorters.priors.PiModelSortDocComparator")  ;
@@ -484,10 +484,10 @@ public class GeoClefIndexer
         QueryConfiguration queryConfiguration4 = new QueryConfiguration();
         queryConfiguration4.setForceQE(QEEnum.no);
         queryConfiguration4.getQueryProperties().put("lgte.default.filter", "no");
-        queryConfiguration4.getQueryProperties().put("spatial.score.strategy", "pt.utl.ist.lucene.sort.sorters.priors.comparators.strategy.BoxQueryWithBoxDoc");
+        queryConfiguration4.getQueryProperties().put("scorer.spatial.score.strategy", "pt.utl.ist.lucene.sort.sorters.priors.comparators.strategy.BoxQueryWithBoxDoc");
         queryConfiguration4.getQueryProperties().put("lgte.default.order", "sc_sp");
-        queryConfiguration4.getQueryProperties().put("default.model.spatial.factor",SPATIAL_FACTOR);
-        queryConfiguration4.getQueryProperties().put("default.model.text.factor",TEXT_FACTOR);
+        queryConfiguration4.getQueryProperties().put("scorer.default.model.spatial.factor",SPATIAL_FACTOR);
+        queryConfiguration4.getQueryProperties().put("scorer.default.model.text.factor",TEXT_FACTOR);
         queryConfiguration4.getQueryProperties().put("LM-lambda",LM_LAMBDA);
 //        queryConfiguration4.getQueryProperties().put("score.model","pt.utl.ist.lucene.sort.sorters.priors.PiModelSortDocComparator");
 

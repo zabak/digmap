@@ -166,32 +166,62 @@ public class ClefAdHocExample
         configurations.add(LM_2_6GRAMS_CRAN);
 
 
-        IndexCollections.indexConfiguration(configurations,Globals.DOCUMENT_ID_FIELD);
+//        IndexCollections.indexConfiguration(configurations,Globals.DOCUMENT_ID_FIELD);
 
 
 //        /***
 //         * Search Configurations
 //         */
-        QueryConfiguration queryConfiguration1 = new QueryConfiguration();
-        queryConfiguration1.setForceQE(QEEnum.no);
-        queryConfiguration1.getQueryProperties().setProperty("lgte.default.order", "sc");
+
+
+
+        QueryConfiguration queryConfigurationNoQE = new QueryConfiguration();
+        queryConfigurationNoQE.setForceQE(QEEnum.no);
+        queryConfigurationNoQE.getQueryProperties().setProperty("lgte.default.order", "sc");
+
+        QueryConfiguration queryConfigurationNoQE_ngrams = new QueryConfiguration();
+        queryConfigurationNoQE_ngrams.setForceQE(QEEnum.no);
+        queryConfigurationNoQE_ngrams.getQueryProperties().setProperty("lgte.default.order", "sc");
+        queryConfigurationNoQE_ngrams.getQueryProperties().setProperty("field.boost.contents","0.53f");
+        queryConfigurationNoQE_ngrams.getQueryProperties().setProperty("field.boost.contentsN5","0.14f");
+        queryConfigurationNoQE_ngrams.getQueryProperties().setProperty("field.boost.contentsN4","0.11f");
+        queryConfigurationNoQE_ngrams.getQueryProperties().setProperty("field.boost.contentsN3","0.11f");
+        queryConfigurationNoQE_ngrams.getQueryProperties().setProperty("field.boost.contentsN2","0.11f");
+
+
+        //With Query Expansion
+        QueryConfiguration queryConfigurationQE = new QueryConfiguration();
+        queryConfigurationQE.setForceQE(QEEnum.text);
+        queryConfigurationQE.getQueryProperties().setProperty("lgte.default.order", "sc");
+
+        QueryConfiguration queryConfigurationQE_ngrams = new QueryConfiguration();
+        queryConfigurationQE_ngrams.setForceQE(QEEnum.text);
+        queryConfigurationQE_ngrams.getQueryProperties().setProperty("lgte.default.order", "sc");
+        queryConfigurationQE_ngrams.getQueryProperties().setProperty("field.boost.contents","0.53f");
+        queryConfigurationQE_ngrams.getQueryProperties().setProperty("field.boost.contentsN5","0.14f");
+        queryConfigurationQE_ngrams.getQueryProperties().setProperty("field.boost.contentsN4","0.11f");
+        queryConfigurationQE_ngrams.getQueryProperties().setProperty("field.boost.contentsN3","0.11f");
+        queryConfigurationQE_ngrams.getQueryProperties().setProperty("field.boost.contentsN2","0.11f");
+
+        
 
         List<SearchConfiguration> searchConfigurations = new ArrayList<SearchConfiguration>();
 
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, VS_ADHOC));
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, VS_STEMMER_ADHOC));
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, LM_ADHOC));
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, LM_STEMMER_ADHOC));
+        searchConfigurations.add(new SearchConfiguration(queryConfigurationNoQE, VS_ADHOC));
+        searchConfigurations.add(new SearchConfiguration(queryConfigurationNoQE, VS_STEMMER_ADHOC));
+        searchConfigurations.add(new SearchConfiguration(queryConfigurationNoQE, LM_ADHOC));
+        searchConfigurations.add(new SearchConfiguration(queryConfigurationNoQE, LM_STEMMER_ADHOC));
+        searchConfigurations.add(new SearchConfiguration(queryConfigurationNoQE_ngrams,LM_2_6GRAMS_CRAN ));
 
-        queryConfiguration1.getQueryProperties().setProperty("field.boost.contents","0.53f");
-        queryConfiguration1.getQueryProperties().setProperty("field.boost.contentsN5","0.14f");
-        queryConfiguration1.getQueryProperties().setProperty("field.boost.contentsN4","0.11f");
-        queryConfiguration1.getQueryProperties().setProperty("field.boost.contentsN3","0.11f");
-        queryConfiguration1.getQueryProperties().setProperty("field.boost.contentsN2","0.11f");
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration1,LM_2_6GRAMS_CRAN ));
+        searchConfigurations.add(new SearchConfiguration(queryConfigurationQE, VS_ADHOC));
+        searchConfigurations.add(new SearchConfiguration(queryConfigurationQE, VS_STEMMER_ADHOC));
+        searchConfigurations.add(new SearchConfiguration(queryConfigurationQE, LM_ADHOC));
+        searchConfigurations.add(new SearchConfiguration(queryConfigurationQE, LM_STEMMER_ADHOC));
+        searchConfigurations.add(new SearchConfiguration(queryConfigurationQE_ngrams,LM_2_6GRAMS_CRAN ));
+
 
 //        //Search Topics Runs to submission
-//        SearchTopics.search(searchConfigurations);
+        SearchTopics.search(searchConfigurations);
     }
 
 

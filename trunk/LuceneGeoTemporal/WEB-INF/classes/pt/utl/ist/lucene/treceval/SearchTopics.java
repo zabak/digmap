@@ -29,7 +29,9 @@ public class SearchTopics implements ISearchCallBack
     private int maxResultsForOutput;
     private SearchConfiguration searchConfiguration;
     private Configuration configuration;
-    private LgteIndexSearcherWrapper indexSearcher;
+    public static LgteIndexSearcherWrapper indexSearcher = null;
+
+    public static boolean useAllaysTheSameSearcher = false;
 
 
 
@@ -45,7 +47,8 @@ public class SearchTopics implements ISearchCallBack
         this.maxResultsForOutput = searchConfiguration.getConfiguration().getMaxResultsPerTopic();
         this.searchConfiguration = searchConfiguration;
         configuration = searchConfiguration.getConfiguration();
-        indexSearcher = new LgteIndexSearcherWrapper(configuration.getModel(), configuration.getIndexPath(),searchConfiguration.getQueryConfiguration().getQueryProperties());
+        if(!useAllaysTheSameSearcher || indexSearcher == null)
+            indexSearcher = new LgteIndexSearcherWrapper(configuration.getModel(), configuration.getIndexPath(),searchConfiguration.getQueryConfiguration().getQueryProperties());
     }
 
 
@@ -218,7 +221,8 @@ public class SearchTopics implements ISearchCallBack
 
     public void close() throws IOException
     {
-        indexSearcher.close();
+        if(!useAllaysTheSameSearcher)
+            indexSearcher.close();
     }
 
     public void setMaxResultsForOutput(int maxResultsForOutput)

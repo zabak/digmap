@@ -16,8 +16,8 @@ import pt.utl.ist.lucene.treceval.handlers.collections.CDirectory;
 import pt.utl.ist.lucene.Model;
 import pt.utl.ist.lucene.QueryConfiguration;
 import pt.utl.ist.lucene.QEEnum;
+import pt.utl.ist.lucene.config.ConfigProperties;
 import pt.utl.ist.lucene.utils.LgteAnalyzerManager;
-import pt.utl.ist.lucene.utils.XmlUtils;
 import pt.utl.ist.lucene.analyzer.LgteBrokerStemAnalyzer;
 
 /**
@@ -28,7 +28,9 @@ import pt.utl.ist.lucene.analyzer.LgteBrokerStemAnalyzer;
 public class ClefAdHocExample
 {
 
+    public static Map<String,String> parameterTunning = null;
     public static String assessmentsFile;
+    public static float map;
 
     public static String country = "bl";
     public static LgteAnalyzerManager.LanguagePackage lang;
@@ -84,13 +86,13 @@ public class ClefAdHocExample
         namespaces.put("mods","http://www.loc.gov/mods");
         namespaces.put("dc", "http://purl.org/dc/elements/1.1/");
         namespaces.put("dcterms", "http://purl.org/dc/terms/");
-        
+
         /*Regular Indexes*/
         List<XmlFieldHandler> xmlFieldHandlers = new ArrayList<XmlFieldHandler>();
         addFields(xmlFieldHandlers,"contents");
         ResourceHandler resourceHandler = new XmlResourceHandler("//record","./header/id","./id",xmlFieldHandlers,namespaces);
         CDirectory collectionsDirectory = new CDirectory(resourceHandler,null);
-        
+
         /*N-Grams*/
         List<XmlFieldHandler> xmlFieldHandlersNG = new ArrayList<XmlFieldHandler>();
         addFields(xmlFieldHandlersNG,"contents");
@@ -114,14 +116,14 @@ public class ClefAdHocExample
          *       <description>Trouver des livres ou des publications sur l'invasion et l'occupation de la Grande-Bretagne par les Romains.</description>
          *   </topic>
          ******************************************************/
-        
+
         //Regular Indexes
         List<XmlFieldHandler> xmlTopicFieldHandlers = new ArrayList<XmlFieldHandler>();
         addTopics(xmlTopicFieldHandlers,"contents");
         ResourceHandler topicResourceHandler = new XmlResourceHandler("//topic","./identifier",xmlTopicFieldHandlers);
         TrecEvalOutputFormatFactory factory =  new TrecEvalOutputFormatFactory(Globals.DOCUMENT_ID_FIELD);
         ITopicsPreprocessor topicsDirectory = new TDirectory(topicResourceHandler,factory);
-        
+
         //N-Grams
         //The handlers will be the same in 6 different fields, each one associated with different analyzers
         //The fields suffixed with NX will have XGrams Tokenizers        
@@ -134,13 +136,13 @@ public class ClefAdHocExample
         ResourceHandler topicResourceHandlerNG = new XmlResourceHandler("//topic","./identifier",xmlTopicFieldHandlersNG);
         TrecEvalOutputFormatFactory factoryNG =  new TrecEvalOutputFormatFactory(Globals.DOCUMENT_ID_FIELD);
         ITopicsPreprocessor topicsDirectoryNG = new TDirectory(topicResourceHandlerNG,factoryNG);
-        
-        
+
+
 
         /*****************
-         * 
+         *
          * Configurations
-         *  
+         *
          */
         //maxResults in output File per topic;
         int maxResults = 1000;
@@ -207,33 +209,70 @@ public class ClefAdHocExample
         queryConfigurationQE_ngrams.getQueryProperties().setProperty("field.boost.contentsN3","0.11f");
         queryConfigurationQE_ngrams.getQueryProperties().setProperty("field.boost.contentsN2","0.11f");
 
-        
+
 
         List<SearchConfiguration> searchConfigurations = new ArrayList<SearchConfiguration>();
 
-        searchConfigurations.add(new SearchConfiguration(queryConfigurationNoQE, VS_ADHOC, 1));
-        searchConfigurations.add(new SearchConfiguration(queryConfigurationNoQE, LM_ADHOC, 2));
-        searchConfigurations.add(new SearchConfiguration(queryConfigurationNoQE, VS_STEMMER_ADHOC, 3));
-        searchConfigurations.add(new SearchConfiguration(queryConfigurationNoQE, LM_STEMMER_ADHOC, 4));
-        searchConfigurations.add(new SearchConfiguration(queryConfigurationNoQE_ngrams,VS_2_6GRAMS_CRAN, 5));
-        searchConfigurations.add(new SearchConfiguration(queryConfigurationNoQE_ngrams,LM_2_6GRAMS_CRAN, 6));
+//        searchConfigurations.add(new SearchConfiguration(queryConfigurationNoQE, VS_ADHOC, 1));
+//        searchConfigurations.add(new SearchConfiguration(queryConfigurationNoQE, LM_ADHOC, 2));
+//        searchConfigurations.add(new SearchConfiguration(queryConfigurationNoQE, VS_STEMMER_ADHOC, 3));
+//        searchConfigurations.add(new SearchConfiguration(queryConfigurationNoQE, LM_STEMMER_ADHOC, 4));
+//        searchConfigurations.add(new SearchConfiguration(queryConfigurationNoQE_ngrams,VS_2_6GRAMS_CRAN, 5));
+//        searchConfigurations.add(new SearchConfiguration(queryConfigurationNoQE_ngrams,LM_2_6GRAMS_CRAN, 6));
 
-        searchConfigurations.add(new SearchConfiguration(queryConfigurationQE, VS_ADHOC, 7));
-        searchConfigurations.add(new SearchConfiguration(queryConfigurationQE, LM_ADHOC, 8));
-        searchConfigurations.add(new SearchConfiguration(queryConfigurationQE, VS_STEMMER_ADHOC, 9));
-        searchConfigurations.add(new SearchConfiguration(queryConfigurationQE, LM_STEMMER_ADHOC, 10));
-        searchConfigurations.add(new SearchConfiguration(queryConfigurationQE_ngrams,VS_2_6GRAMS_CRAN, 11));
+//        searchConfigurations.add(new SearchConfiguration(queryConfigurationQE, VS_ADHOC, 7));
+//        searchConfigurations.add(new SearchConfiguration(queryConfigurationQE, LM_ADHOC, 8));
+//        searchConfigurations.add(new SearchConfiguration(queryConfigurationQE, VS_STEMMER_ADHOC, 9));
+//        searchConfigurations.add(new SearchConfiguration(queryConfigurationQE, LM_STEMMER_ADHOC, 10));
+//        searchConfigurations.add(new SearchConfiguration(queryConfigurationQE_ngrams,VS_2_6GRAMS_CRAN, 11));
         searchConfigurations.add(new SearchConfiguration(queryConfigurationQE_ngrams,LM_2_6GRAMS_CRAN, 12 ));
 
+
+        if(parameterTunning != null)
+            tunning(queryConfigurationQE_ngrams);
 
 
 //        //Search Topics Runs to submission
         SearchTopics.search(searchConfigurations);
+
         SearchTopics.evaluateMetrics(searchConfigurations,assessementsFile);
         SearchTopics.createRunPackage(searchConfigurations.get(0).getConfiguration().getOutputDir(),searchConfigurations);
 
+        if(parameterTunning != null)
+            reportResults(searchConfigurations.get(0));
 
 
+    }
+
+    static FileWriter parameterTunningOutput;
+
+    private static void tunning(QueryConfiguration queryConfiguration) throws IOException
+    {
+
+        if(parameterTunning != null)
+        {
+            for(Map.Entry<String,String> entry: parameterTunning.entrySet())
+            {
+                queryConfiguration.getQueryProperties().setProperty(entry.getKey(),entry.getValue());
+            }
+        }
+
+    }
+
+    private static void reportResults(SearchConfiguration searchConfiguration) throws IOException
+    {
+        ReportFile reportFile = new ReportFile(searchConfiguration.getOutputReportFile(SearchTopics.outputReportSuffix));
+        ReportResult result = reportFile.getResult("all");
+        for(int i = 0;i < result.getValues().length;i++)
+        {
+
+            parameterTunningOutput.write(result.getValues()[i]+";");
+            if(ReportResult.names[i].equals("map"))
+            {
+                map = Float.parseFloat(result.getValues()[i]);
+            }
+        }
+        parameterTunningOutput.write("\n");
     }
 
 
@@ -306,7 +345,121 @@ public class ClefAdHocExample
     }
 
 
+    public static class Tunning
+    {
+
+        public static void main(String[] args) throws DocumentException, IOException
+        {
+
+            SearchTopics.useAllaysTheSameSearcher = true;
+            parameterTunningOutput = new FileWriter("D:/optimizeBL.txt");
+            TunningParameter t1 = new TunningParameter("QE.doc.num", 4, 15, 2,true,5);
+            TunningParameter t2 = new TunningParameter("QE.term.num", 15, 60, 5,true,30);
+            TunningParameter t3 = new TunningParameter("field.boost.contents", 0.45f, 0.8f, 0.05f,0.53f);
+            TunningParameter t4 = new TunningParameter("field.boost.contentsN5", 0.05f, 0.3f, 0.05f,0.14f);
+            TunningParameter t5 = new TunningParameter("field.boost.contentsN4", 0.05f, 0.3f, 0.05f,0.11f);
+            TunningParameter t6 = new TunningParameter("field.boost.contentsN3", 0.05f, 0.3f, 0.05f,0.11f);
+            TunningParameter t7 = new TunningParameter("field.boost.contentsN2", 0.0f, 0.3f, 0.05f,0.11f);
+            List<TunningParameter> tunningParameters = new ArrayList<TunningParameter>();
+            tunningParameters.add(t1);
+            tunningParameters.add(t2);
+            tunningParameters.add(t3);
+            tunningParameters.add(t4);
+            tunningParameters.add(t5);
+            tunningParameters.add(t6);
+            tunningParameters.add(t7);
+            tune(tunningParameters);
+            parameterTunningOutput.flush();
+            parameterTunningOutput.close();
+            SearchTopics.indexSearcher.close();
+        }
+
+        public static void tune(List<TunningParameter> parameters) throws DocumentException, IOException
+        {
+
+            HashMap<String,String> fixed = new HashMap<String,String>();
+            for(TunningParameter t: parameters)
+            {
+                parameterTunningOutput.write(t.key + ";");
+                fixed.put(t.key,"" + t.getStartValue());
+            }
+            for(String name : ReportResult.names)
+                parameterTunningOutput.write(name + ";");
+            parameterTunningOutput.write("\n");
+
+            for(TunningParameter t: parameters)
+            {
+
+                ClefAdHocExample.parameterTunning = new HashMap<String,String>();
+                ClefAdHocExample.parameterTunning.putAll(fixed);
+                float maxMAPObtained = 0.0f;
+                String parameter = "";
+                for(t.nowParameter = t.minValue; t.nowParameter < t.maxValue; t.nowParameter += t.increment)
+                {
+                    System.out.println("Testing Parameter: " + t.key + "=" + t.nowParameter);
+                    ClefAdHocExample.parameterTunning.put(t.key,t.getValue());
+                    for(TunningParameter tAux: parameters)
+                    {
+                        parameterTunningOutput.write(ClefAdHocExample.parameterTunning.get(tAux.key) + ";");
+                    }
+                    ClefAdHocExample.main(null);
+                    System.out.println("MAP:"+map );
+                    if(ClefAdHocExample.map > maxMAPObtained)
+                    {
+                        maxMAPObtained = ClefAdHocExample.map;
+                        parameter = t.getValue();
+                        parameterTunningOutput.flush();
+                    }
+                }
+                fixed.put(t.key,""+parameter);
+                parameterTunningOutput.flush();
+            }
+        }
+
+        public static class TunningParameter
+        {
+            public float nowParameter;
+            public String key;
+            public float maxValue;
+            public float minValue;
+            public float increment;
+            public boolean typeInt = false;
+            public float startValue;
+
+            public TunningParameter(String key, float minValue, float maxValue, float increment, float startValue)
+            {
+                this(key,minValue,maxValue,increment,false,startValue);
+
+            }
+            public TunningParameter(String key, float minValue, float maxValue, float increment,boolean typeInt,float startValue)
+            {
+                this.key = key;
+                this.maxValue = maxValue;
+                this.minValue = minValue;
+                this.increment = increment;
+                this.typeInt = typeInt;
+                this.startValue = startValue;
+            }
+
+            public String getValue()
+            {
+                if(typeInt)
+                    return "" + ((int) nowParameter);
+                else
+                    return "" + nowParameter;
+            }
+            public String getStartValue()
+            {
+                if(typeInt)
+                    return "" + ((int) startValue);
+                else
+                    return "" + startValue;
+            }
+        }
+    }
 
 
-    
+
+
+
 }

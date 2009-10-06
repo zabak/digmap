@@ -37,7 +37,7 @@ final class TermScorerLanguageModel extends Scorer {
 
 	private final int[] docs = new int[32]; // buffered doc numbers
 	private final int[] freqs = new int[32]; // buffered term freqs
-    private int[][] freqsDist;
+//    private int[][] freqsDist;
     private int pointer;
 	private int pointerMax;
 	private Term term;
@@ -95,7 +95,7 @@ final class TermScorerLanguageModel extends Scorer {
 		pointer++;
 		if (pointer >= pointerMax) {
 			pointerMax = termDocs.read(docs, freqs); // refill buffer
-            freqsDist = ((SegmentTermContextDistanceDocs)termDocs).getFreqsDist();
+//            freqsDist = ((SegmentTermContextDistanceDocs)termDocs).getFreqsDist();
             if (pointerMax != 0) {
 				pointer = 0;
 			} else {

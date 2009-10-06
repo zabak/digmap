@@ -132,7 +132,13 @@ public class IndexSearcher extends Searcher {
                     else
                     {
                         System.err.println(">>>>>>>>>>>>>>>>Zero doc length for doc " + doc);
-                        System.exit(-1);
+                        try {
+                            System.out.println("Contents for this document: " + reader.document(doc).getField("contents").stringValue());
+                        } catch (IOException e) {
+                            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                        }
+//                        score = Model.VectorSpaceModel.getDocumentFinalScorer().computeFinalScore(score,reader,docLen);
+//                        System.exit(-1);
                     }
                     if (usePriors) {
                         float prior = 1.0f;

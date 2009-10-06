@@ -28,31 +28,84 @@ import pt.utl.ist.lucene.analyzer.LgteBrokerStemAnalyzer;
 public class ClefAdHocExample
 {
 
+    /*
+     * Basic Configuration
+     */
+    
+    static boolean buildIndexes = false;
+    static boolean buildRuns = false;
+    static boolean evaluate = true;
+
+//    static String collectionYear = "2009";
+//    static String assessmentsBl =  "10.2454-AH-TEL-ENGLISH-CLEF2008.txt";
+//    static String assessmentsBnf =  "10.2454-AH-TEL-FRENCH-CLEF2008.txt";
+//    static String assessmentsOnb =  "10.2454-AH-TEL-GERMAN-CLEF2008.txt";
+
+    static String collectionYear = "2009";
+    static String assessmentsBl =  "10.2454_AH-TEL-ENGLISH-CLEF2009.txt";
+    static String assessmentsBnf =  "10.2454_AH-TEL-FRENCH-CLEF2009.txt";
+    static String assessmentsOnb =  "10.2454_AH-TEL-GERMAN-CLEF2009.txt";
+
+    /**
+     * End of Basic configuration
+     */
+
+
+    private static final Logger logger = Logger.getLogger(ClefAdHocExample.class);
+
     public static Map<String,String> parameterTunning = null;
     public static String assessmentsFile;
     public static float map;
 
     public static String country = "bl";
     public static LgteAnalyzerManager.LanguagePackage lang;
+    static String qeDocNum;
+    static String qeTermNum;
+    static String nGramsBoostContents;
+    static String nGramsBoostN5;
+    static String nGramsBoostN4;
+    static String nGramsBoostN3;
+    static String nGramsBoostN2;
 
-    private static final Logger logger = Logger.getLogger(ClefAdHocExample.class);
 
     public static void main(String [] args) throws DocumentException, IOException
     {
-        country = "bl";
-        assessmentsFile = "10.2454-AH-TEL-ENGLISH-CLEF2008.txt";
-        lang  = IndexCollections.en;
-        compute(args);
+        /**Collection Configuration*/
+//        country = "bl";
+//        assessmentsFile = assessmentsBl;
+//        lang  = IndexCollections.en;
+//        qeDocNum = "7";
+//        qeTermNum = "64";
+//        nGramsBoostContents = "0.45f";
+//        nGramsBoostN5 = "0.24f";
+//        nGramsBoostN4 = "0.22f";
+//        nGramsBoostN3 = "0.01f";
+//        nGramsBoostN2 = "0.00f";
+//        compute(args);
 
 //        country = "bnf";
-//        assessmentsFile = "10.2454-AH-TEL-FRENCH-CLEF2008.txt";
+//        assessmentsFile = assessmentsBnf;
 //        lang  = IndexCollections.fr;
+//        qeDocNum = "8";
+//        qeTermNum = "40";
+//        nGramsBoostContents = "0.55f";
+//        nGramsBoostN5 = "0.24f";
+//        nGramsBoostN4 = "0.22f";
+//        nGramsBoostN3 = "0.01f";
+//        nGramsBoostN2 = "0.00f";
 //        compute(args);
 //
-//        country = "onb";
-//        assessmentsFile = "10.2454-AH-TEL-GERMAN-CLEF2008.txt";
-//        lang  = IndexCollections.de;
-//        compute(args);
+        country = "onb";
+        assessmentsFile = assessmentsOnb;
+        lang  = IndexCollections.de;
+        qeDocNum = "8";
+        qeTermNum = "40";
+        nGramsBoostContents = "0.55f";
+        nGramsBoostN5 = "0.24f";
+        nGramsBoostN4 = "0.22f";
+        nGramsBoostN3 = "0.01f";
+        nGramsBoostN2 = "0.00f";
+        compute(args);
     }
     public static void compute(String [] args) throws DocumentException, IOException
     {
@@ -68,9 +121,9 @@ public class ClefAdHocExample
 
         String collectionPath = "F:\\coleccoesIR\\CLEFAdHoc\\telCollection\\" + country;
 //        String collectionPath = "C:\\WORKSPACE_JM\\DATA\\COLLECTIONS\\telCollection\\" + country;
-        String topicsPath = Globals.DATA_DIR + "\\clef2008AdHoc\\topics\\" + country;
-        String outputDir = Globals.DATA_DIR + "\\clef2008AdHoc\\output\\" + country;
-        String assessementsFile = Globals.DATA_DIR + "\\clef2008AdHoc\\assessements\\" + country + "\\" + assessmentsFile;
+        String topicsPath = Globals.DATA_DIR + "\\clef" + collectionYear + "AdHoc\\topics\\" + country;
+        String outputDir = Globals.DATA_DIR + "\\clef" + collectionYear + "AdHoc\\output\\" + country;
+        String assessementsFile = Globals.DATA_DIR + "\\clef" + collectionYear + "AdHoc\\assessements\\" + country + "\\" + assessmentsFile;
 
         logger.info("Writing indexes to:" + Globals.INDEX_DIR);
         logger.info("Reading data from:" + Globals.DATA_DIR);
@@ -148,10 +201,10 @@ public class ClefAdHocExample
         int maxResults = 1000;
 
         //Regular Indexes
-        Configuration VS_ADHOC = new Configuration("version1", "clef2008AdHoc" + country,"lm", Model.VectorSpaceModel, lang.getAnalyzerNoStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", lang.getWordList(),outputDir,maxResults);
-        Configuration LM_ADHOC = new Configuration("version1", "clef2008AdHoc" + country,"lm",Model.LanguageModel , lang.getAnalyzerNoStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", lang.getWordList(),outputDir,maxResults);
-        Configuration VS_STEMMER_ADHOC = new Configuration("version1", "clef2008AdHoc" + country,"lmstem", Model.VectorSpaceModel, lang.getAnalyzerWithStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", lang.getWordList(),outputDir,maxResults);
-        Configuration LM_STEMMER_ADHOC = new Configuration("version1", "clef2008AdHoc" + country,"lmstem", Model.LanguageModel, lang.getAnalyzerWithStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", lang.getWordList(),outputDir,maxResults);
+        Configuration VS_ADHOC = new Configuration("version1", "clef" + collectionYear + "AdHoc" + country,"lm", Model.VectorSpaceModel, lang.getAnalyzerNoStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", lang.getWordList(),outputDir,maxResults);
+        Configuration LM_ADHOC = new Configuration("version1", "clef" + collectionYear + "AdHoc" + country,"lm",Model.LanguageModel , lang.getAnalyzerNoStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", lang.getWordList(),outputDir,maxResults);
+        Configuration VS_STEMMER_ADHOC = new Configuration("version1", "clef" + collectionYear + "AdHoc" + country,"lmstem", Model.VectorSpaceModel, lang.getAnalyzerWithStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", lang.getWordList(),outputDir,maxResults);
+        Configuration LM_STEMMER_ADHOC = new Configuration("version1", "clef" + collectionYear + "AdHoc" + country,"lmstem", Model.LanguageModel, lang.getAnalyzerWithStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", lang.getWordList(),outputDir,maxResults);
 
         //N-Grams will use one broker analyzer where each index will be created using different grams
         Map<String, Analyzer> ngramsAnalizers = new HashMap<String,Analyzer>();
@@ -162,17 +215,18 @@ public class ClefAdHocExample
         ngramsAnalizers.put("contentsN5", LgteAnalyzerManager.getInstance().getLanguagePackage(5,5,EdgeNGramTokenFilter.Side.FRONT).getAnalyzerWithStemming());
         ngramsAnalizers.put("contentsN6", LgteAnalyzerManager.getInstance().getLanguagePackage(6,6,EdgeNGramTokenFilter.Side.FRONT).getAnalyzerWithStemming());
         LgteBrokerStemAnalyzer lgteBrokerStemAnalyzer = new LgteBrokerStemAnalyzer(ngramsAnalizers);
-        Configuration VS_2_6GRAMS_CRAN = new Configuration("version1", "clef2008AdHoc" + country,"lmstem2_6grams", Model.VectorSpaceModel, lgteBrokerStemAnalyzer,collectionPath,collectionsDirectoryNG,topicsPath, topicsDirectoryNG,"contents", null,outputDir,maxResults);
-        Configuration LM_2_6GRAMS_CRAN = new Configuration("version1", "clef2008AdHoc" + country,"lmstem2_6grams", Model.LanguageModel, lgteBrokerStemAnalyzer,collectionPath,collectionsDirectoryNG,topicsPath, topicsDirectoryNG,"contents", null,outputDir,maxResults);
+        Configuration VS_2_6GRAMS = new Configuration("version1", "clef" + collectionYear + "AdHoc" + country,"lmstem2_6grams", Model.VectorSpaceModel, lgteBrokerStemAnalyzer,collectionPath,collectionsDirectoryNG,topicsPath, topicsDirectoryNG,"contents", null,outputDir,maxResults);
+        Configuration LM_2_6GRAMS = new Configuration("version1", "clef" + collectionYear + "AdHoc" + country,"lmstem2_6grams", Model.LanguageModel, lgteBrokerStemAnalyzer,collectionPath,collectionsDirectoryNG,topicsPath, topicsDirectoryNG,"contents", null,outputDir,maxResults);
 
 
         List<Configuration> configurations = new ArrayList<Configuration>();
         configurations.add(LM_ADHOC);
         configurations.add(LM_STEMMER_ADHOC);
-        configurations.add(LM_2_6GRAMS_CRAN);
+        configurations.add(LM_2_6GRAMS);
 
 
-//        IndexCollections.indexConfiguration(configurations,Globals.DOCUMENT_ID_FIELD);
+        if(buildIndexes)
+            IndexCollections.indexConfiguration(configurations,Globals.DOCUMENT_ID_FIELD);
 
 
 //        /***
@@ -188,44 +242,49 @@ public class ClefAdHocExample
         QueryConfiguration queryConfigurationNoQE_ngrams = new QueryConfiguration();
         queryConfigurationNoQE_ngrams.setForceQE(QEEnum.no);
         queryConfigurationNoQE_ngrams.getQueryProperties().setProperty("lgte.default.order", "sc");
-        queryConfigurationNoQE_ngrams.getQueryProperties().setProperty("field.boost.contents","0.53f");
-        queryConfigurationNoQE_ngrams.getQueryProperties().setProperty("field.boost.contentsN5","0.14f");
-        queryConfigurationNoQE_ngrams.getQueryProperties().setProperty("field.boost.contentsN4","0.11f");
-        queryConfigurationNoQE_ngrams.getQueryProperties().setProperty("field.boost.contentsN3","0.11f");
-        queryConfigurationNoQE_ngrams.getQueryProperties().setProperty("field.boost.contentsN2","0.11f");
+        queryConfigurationNoQE_ngrams.getQueryProperties().setProperty("field.boost.contents",nGramsBoostContents);
+        queryConfigurationNoQE_ngrams.getQueryProperties().setProperty("field.boost.contentsN5",nGramsBoostN5);
+        queryConfigurationNoQE_ngrams.getQueryProperties().setProperty("field.boost.contentsN4",nGramsBoostN4);
+        queryConfigurationNoQE_ngrams.getQueryProperties().setProperty("field.boost.contentsN3",nGramsBoostN3);
+        queryConfigurationNoQE_ngrams.getQueryProperties().setProperty("field.boost.contentsN2",nGramsBoostN2);
 
 
         //With Query Expansion
         QueryConfiguration queryConfigurationQE = new QueryConfiguration();
         queryConfigurationQE.setForceQE(QEEnum.text);
         queryConfigurationQE.getQueryProperties().setProperty("lgte.default.order", "sc");
+        queryConfigurationQE.getQueryProperties().setProperty("QE.doc.num",qeDocNum);
+        queryConfigurationQE.getQueryProperties().setProperty("QE.term.num",qeTermNum);
 
         QueryConfiguration queryConfigurationQE_ngrams = new QueryConfiguration();
         queryConfigurationQE_ngrams.setForceQE(QEEnum.text);
+
         queryConfigurationQE_ngrams.getQueryProperties().setProperty("lgte.default.order", "sc");
-        queryConfigurationQE_ngrams.getQueryProperties().setProperty("field.boost.contents","0.53f");
-        queryConfigurationQE_ngrams.getQueryProperties().setProperty("field.boost.contentsN5","0.14f");
-        queryConfigurationQE_ngrams.getQueryProperties().setProperty("field.boost.contentsN4","0.11f");
-        queryConfigurationQE_ngrams.getQueryProperties().setProperty("field.boost.contentsN3","0.11f");
-        queryConfigurationQE_ngrams.getQueryProperties().setProperty("field.boost.contentsN2","0.11f");
+        queryConfigurationQE_ngrams.getQueryProperties().setProperty("QE.doc.num",qeDocNum);
+        queryConfigurationQE_ngrams.getQueryProperties().setProperty("QE.term.num",qeTermNum);
+        queryConfigurationQE_ngrams.getQueryProperties().setProperty("field.boost.contents",nGramsBoostContents);
+        queryConfigurationQE_ngrams.getQueryProperties().setProperty("field.boost.contentsN5",nGramsBoostN5);
+        queryConfigurationQE_ngrams.getQueryProperties().setProperty("field.boost.contentsN4",nGramsBoostN4);
+        queryConfigurationQE_ngrams.getQueryProperties().setProperty("field.boost.contentsN3",nGramsBoostN3);
+        queryConfigurationQE_ngrams.getQueryProperties().setProperty("field.boost.contentsN2",nGramsBoostN2);
 
 
 
         List<SearchConfiguration> searchConfigurations = new ArrayList<SearchConfiguration>();
 
-//        searchConfigurations.add(new SearchConfiguration(queryConfigurationNoQE, VS_ADHOC, 1));
-//        searchConfigurations.add(new SearchConfiguration(queryConfigurationNoQE, LM_ADHOC, 2));
-//        searchConfigurations.add(new SearchConfiguration(queryConfigurationNoQE, VS_STEMMER_ADHOC, 3));
-//        searchConfigurations.add(new SearchConfiguration(queryConfigurationNoQE, LM_STEMMER_ADHOC, 4));
-//        searchConfigurations.add(new SearchConfiguration(queryConfigurationNoQE_ngrams,VS_2_6GRAMS_CRAN, 5));
-//        searchConfigurations.add(new SearchConfiguration(queryConfigurationNoQE_ngrams,LM_2_6GRAMS_CRAN, 6));
+        searchConfigurations.add(new SearchConfiguration(queryConfigurationNoQE, VS_ADHOC, 1));
+        searchConfigurations.add(new SearchConfiguration(queryConfigurationNoQE, LM_ADHOC, 2));
+        searchConfigurations.add(new SearchConfiguration(queryConfigurationNoQE, VS_STEMMER_ADHOC, 3));
+        searchConfigurations.add(new SearchConfiguration(queryConfigurationNoQE, LM_STEMMER_ADHOC, 4));
+        searchConfigurations.add(new SearchConfiguration(queryConfigurationNoQE_ngrams,VS_2_6GRAMS, 5));
+        searchConfigurations.add(new SearchConfiguration(queryConfigurationNoQE_ngrams,LM_2_6GRAMS, 6));
 
-//        searchConfigurations.add(new SearchConfiguration(queryConfigurationQE, VS_ADHOC, 7));
-//        searchConfigurations.add(new SearchConfiguration(queryConfigurationQE, LM_ADHOC, 8));
-//        searchConfigurations.add(new SearchConfiguration(queryConfigurationQE, VS_STEMMER_ADHOC, 9));
-//        searchConfigurations.add(new SearchConfiguration(queryConfigurationQE, LM_STEMMER_ADHOC, 10));
-//        searchConfigurations.add(new SearchConfiguration(queryConfigurationQE_ngrams,VS_2_6GRAMS_CRAN, 11));
-        searchConfigurations.add(new SearchConfiguration(queryConfigurationQE_ngrams,LM_2_6GRAMS_CRAN, 12 ));
+        searchConfigurations.add(new SearchConfiguration(queryConfigurationQE, VS_ADHOC, 7));
+        searchConfigurations.add(new SearchConfiguration(queryConfigurationQE, LM_ADHOC, 8));
+        searchConfigurations.add(new SearchConfiguration(queryConfigurationQE, VS_STEMMER_ADHOC, 9));
+        searchConfigurations.add(new SearchConfiguration(queryConfigurationQE, LM_STEMMER_ADHOC, 10));
+        searchConfigurations.add(new SearchConfiguration(queryConfigurationQE_ngrams,VS_2_6GRAMS, 11));
+        searchConfigurations.add(new SearchConfiguration(queryConfigurationQE_ngrams,LM_2_6GRAMS, 12 ));
 
 
         if(parameterTunning != null)
@@ -233,10 +292,14 @@ public class ClefAdHocExample
 
 
 //        //Search Topics Runs to submission
-        SearchTopics.search(searchConfigurations);
+        if(buildRuns)
+            SearchTopics.search(searchConfigurations);
 
-        SearchTopics.evaluateMetrics(searchConfigurations,assessementsFile);
-        SearchTopics.createRunPackage(searchConfigurations.get(0).getConfiguration().getOutputDir(),searchConfigurations);
+        if(evaluate)
+        {
+            SearchTopics.evaluateMetrics(searchConfigurations,assessementsFile);
+            SearchTopics.createRunPackage(searchConfigurations.get(0).getConfiguration().getOutputDir(),searchConfigurations);
+        }
 
         if(parameterTunning != null)
             reportResults(searchConfigurations.get(0));
@@ -352,14 +415,37 @@ public class ClefAdHocExample
         {
 
             SearchTopics.useAllaysTheSameSearcher = true;
-            parameterTunningOutput = new FileWriter("D:/optimizeBL.txt");
-            TunningParameter t1 = new TunningParameter("QE.doc.num", 4, 15, 2,true,5);
-            TunningParameter t2 = new TunningParameter("QE.term.num", 15, 60, 5,true,30);
-            TunningParameter t3 = new TunningParameter("field.boost.contents", 0.45f, 0.8f, 0.05f,0.53f);
-            TunningParameter t4 = new TunningParameter("field.boost.contentsN5", 0.05f, 0.3f, 0.05f,0.14f);
-            TunningParameter t5 = new TunningParameter("field.boost.contentsN4", 0.05f, 0.3f, 0.05f,0.11f);
-            TunningParameter t6 = new TunningParameter("field.boost.contentsN3", 0.05f, 0.3f, 0.05f,0.11f);
-            TunningParameter t7 = new TunningParameter("field.boost.contentsN2", 0.0f, 0.3f, 0.05f,0.11f);
+
+            parameterTunningOutput = new FileWriter("D:/optimizeGE.txt");
+//
+
+            TunningParameter t1 = new TunningParameter("QE.doc.num", 6, 10, 2,true,5);
+            TunningParameter t2 = new TunningParameter("QE.term.num", 30, 70, 10,true,30);
+            TunningParameter t3 = new TunningParameter("field.boost.contents", 0.45f, 0.6f, 0.05f,0.53f);
+            TunningParameter t4 = new TunningParameter("field.boost.contentsN5", 0.05f, 0.35f, 0.1f,0.14f);
+            TunningParameter t5 = new TunningParameter("field.boost.contentsN4", 0.05f, 0.35f, 0.1f,0.11f);
+            TunningParameter t6 = new TunningParameter("field.boost.contentsN3", 0.0f, 0.3f, 0.1f,0.11f);
+            TunningParameter t7 = new TunningParameter("field.boost.contentsN2", 0.0f, 0.3f, 0.1f,0.11f);
+
+//            TunningParameter t1 = new TunningParameter("QE.doc.num", 4, 15, 2,true,5);
+//            TunningParameter t2 = new TunningParameter("QE.term.num", 15, 60, 5,true,30);
+//            TunningParameter t3 = new TunningParameter("field.boost.contents", 0.45f, 0.8f, 0.05f,0.53f);
+//            TunningParameter t4 = new TunningParameter("field.boost.contentsN5", 0.05f, 0.3f, 0.05f,0.14f);
+//            TunningParameter t5 = new TunningParameter("field.boost.contentsN4", 0.05f, 0.3f, 0.05f,0.11f);
+//            TunningParameter t6 = new TunningParameter("field.boost.contentsN3", 0.05f, 0.3f, 0.05f,0.11f);
+//            TunningParameter t7 = new TunningParameter("field.boost.contentsN2", 0.0f, 0.3f, 0.05f,0.11f);
+//            8	55	0,45	0,25	0,2	0,1	0
+
+
+//            TunningParameter t1 = new TunningParameter("QE.doc.num", 6, 12, 1,true,8);
+//            TunningParameter t2 = new TunningParameter("QE.term.num", 40, 70, 3,true,55);
+//            TunningParameter t3 = new TunningParameter("field.boost.contents", 0.35f, 0.6f, 0.02f,0.45f);
+//            TunningParameter t4 = new TunningParameter("field.boost.contentsN5", 0.20f, 0.4f, 0.02f,0.25f);
+//            TunningParameter t5 = new TunningParameter("field.boost.contentsN4", 0.1f, 0.3f, 0.01f,0.2f);
+//            TunningParameter t6 = new TunningParameter("field.boost.contentsN3", 0.0f, 0.2f, 0.01f,0.1f);
+//            TunningParameter t7 = new TunningParameter("field.boost.contentsN2", 0.0f, 0.1f, 0.01f,0.0f);
+
+
             List<TunningParameter> tunningParameters = new ArrayList<TunningParameter>();
             tunningParameters.add(t1);
             tunningParameters.add(t2);

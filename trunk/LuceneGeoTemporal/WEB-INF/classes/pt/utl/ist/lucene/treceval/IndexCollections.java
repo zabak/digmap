@@ -137,6 +137,7 @@ public class IndexCollections implements IndexFilesCallBack
         new File(c.getIndexPath()).mkdirs();
         //using LGTE writer to abstract from index Model, Temporal and Spatial details.
         writer = new LgteIndexWriter(c.getIndexPath(), c.getAnalyzer(), c.isCreateIndex(), c.getModel());
+//        writer = new LgteIndexWriter(c.getIndexPath(), c.getAnalyzer(), false, c.getModel());
         c.getPreprocessor().handle(c.getCollectionPath(), this);
         indexDocs(writer);
         docs.clear();

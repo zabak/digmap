@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Collection;
 
+import pt.utl.ist.lucene.treceval.handlers.IdMap;
+
 /**
  * @author Jorge Machado
  * @date 8/Jun/2008
@@ -14,5 +16,5 @@ import java.util.Collection;
  */
 public interface IndexFilesCallBack
 {
-    public void indexDoc(String id, Map<String,String> textFields,Map<String,String> storedFields, Collection<Field> uniqueFields) throws IOException;
+    public void indexDoc(String id, Map<String, String> textFields, Map<String, String> storedFields, Collection<Field> uniqueFields, Collection<IdMap.TextField> isolatedFields) throws IOException;
 }

@@ -96,7 +96,7 @@ public class LatEnGh95Preprocessor implements ICollectionPreprocessor
                             if(id == null)
                                 logger.error("ERROR: id come null");
                             else
-                                callBack.indexDoc(id.getText(),indexFields,null,null);
+                                callBack.indexDoc(id.getText(),indexFields,null,null, null);
                         }
                         catch (IOException e1)
                         {
@@ -189,7 +189,7 @@ public class LatEnGh95Preprocessor implements ICollectionPreprocessor
                             if(id == null)
                                 logger.error("ERROR: id come null");
                             else
-                                callBack.indexDoc(id.getText(),indexFields,null,null);
+                                callBack.indexDoc(id.getText(),indexFields,null,null, null);
                         }
                         catch (IOException e1)
                         {

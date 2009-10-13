@@ -1,22 +1,15 @@
 package pt.utl.ist.lucene.treceval;
 
 import org.apache.log4j.Logger;
-import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.analysis.ngram.EdgeNGramTokenFilter;
 import org.dom4j.DocumentException;
 
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.Collection;
 import java.io.IOException;
-import java.io.File;
 
-import pt.utl.ist.lucene.utils.LgteAnalyzerManager;
-import pt.utl.ist.lucene.LgteIndexWriter;
-import pt.utl.ist.lucene.LgteDocumentWrapper;
+import pt.utl.ist.lucene.treceval.handlers.IdMap;
 
 /**
  * @author Jorge Machado
@@ -65,7 +58,7 @@ public class RunCollections implements IndexFilesCallBack
     }
 
 
-    public void indexDoc(String id, Map<String, String> textFields, Map<String, String> storedFields, Collection<Field> uniqueFields) throws IOException
+    public void indexDoc(String id, Map<String, String> textFields, Map<String, String> storedFields, Collection<Field> uniqueFields, Collection<IdMap.TextField> isolatedFields) throws IOException
     {
         //To change body of implemented methods use File | Settings | File Templates.
     }

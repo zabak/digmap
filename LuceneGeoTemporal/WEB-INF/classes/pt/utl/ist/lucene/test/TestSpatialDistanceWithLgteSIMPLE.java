@@ -5,6 +5,7 @@ import junit.framework.TestCase;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.search.SortField;
 import pt.utl.ist.lucene.*;
+import pt.utl.ist.lucene.forms.RectangleForm;
 import pt.utl.ist.lucene.sort.LgteSort;
 import pt.utl.ist.lucene.sort.sorters.SpatialDistanceSortSource;
 import pt.utl.ist.lucene.utils.Files;
@@ -51,7 +52,7 @@ public class TestSpatialDistanceWithLgteSIMPLE extends TestCase
         LgteDocumentWrapper doc3 = new LgteDocumentWrapper();
         doc3.indexText("id", "3");
         doc3.indexText("contents","Jorge Machado and Bruno Martins in Arhus");
-        doc3.addGeoPointField(56.162500, 10.144250);
+        doc3.addGeoPointField(56.162500, 10.144250);   doc3.addRectangleField(new RectangleForm(39.29,-7.43,39.10,-7.41));
 
         writer.addDocument(doc1);
         writer.addDocument(doc2);

@@ -8,6 +8,7 @@ import org.apache.lucene.analysis.ngram.EdgeNGramTokenFilter;
 import org.dom4j.DocumentException;
 import pt.utl.ist.lucene.LgteDocumentWrapper;
 import pt.utl.ist.lucene.LgteIndexWriter;
+import pt.utl.ist.lucene.treceval.handlers.IdMap;
 import pt.utl.ist.lucene.utils.LgteAnalyzerManager;
 
 import java.io.File;
@@ -150,9 +151,10 @@ public class IndexCollections implements IndexFilesCallBack
      * @param id identifier field in use
      * @param indexFields to add in document
      * @param uniqueFields to add to index
+     * @param isolatedFields
      * @throws IOException writing index
      */
-    public void indexDoc(String id, Map<String,String> indexFields, Map<String,String> storedFields, Collection<Field> uniqueFields) throws IOException
+    public void indexDoc(String id, Map<String, String> indexFields, Map<String, String> storedFields, Collection<Field> uniqueFields, Collection<IdMap.TextField> isolatedFields) throws IOException
     {
         LgteDocumentWrapper d = new LgteDocumentWrapper();
         d.addField(idField, id, true, true, false);
@@ -163,6 +165,13 @@ public class IndexCollections implements IndexFilesCallBack
         for (Map.Entry<String,String> entry : storedFields.entrySet())
         {
             d.addField(entry.getKey(), entry.getValue(), true, false, false);
+        }
+        if(isolatedFields != null)
+        {
+            for(IdMap.TextField t: isolatedFields)
+            {
+                d.addField(t.name,t.value,true,false,false);
+            }
         }
         if(uniqueFields!=null)
             d.addFields(uniqueFields);

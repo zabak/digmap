@@ -15,6 +15,20 @@ public class FilteredFields
     Map<String,String> textFields;
     Map<String,String> storedTextFields;
     Collection<Field> preparedFields;
+    Collection<TextField> isolatedTextFields;
+
+    public static class TextField
+    {
+        public String name;
+        public String value;
+
+
+        public TextField(String name, String value) {
+            this.name = name;
+            this.value = value;
+        }
+    }
+
 
 
     public FilteredFields()
@@ -43,6 +57,13 @@ public class FilteredFields
         this.textFields = textFields;
         this.preparedFields = preparedFields;
         this.storedTextFields = storedTextFields;
+    }
+    public FilteredFields(Map<String, String> textFields, Collection<Field> preparedFields, Map<String, String> storedTextFields, Collection<TextField> isolatedTextFields)
+    {
+        this.textFields = textFields;
+        this.preparedFields = preparedFields;
+        this.storedTextFields = storedTextFields;
+        this.isolatedTextFields = isolatedTextFields;
     }
 
     public Map<String, String> getTextFields()
@@ -74,5 +95,14 @@ public class FilteredFields
     public void setStoredTextFields(Map<String, String> storedTextFields)
     {
         this.storedTextFields = storedTextFields;
+    }
+
+
+    public Collection<TextField> getIsolatedTextFields() {
+        return isolatedTextFields;
+    }
+
+    public void setIsolatedTextFields(Collection<TextField> isolatedTextFields) {
+        this.isolatedTextFields = isolatedTextFields;
     }
 }

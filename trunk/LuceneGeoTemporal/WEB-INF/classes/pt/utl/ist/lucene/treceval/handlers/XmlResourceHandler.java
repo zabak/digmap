@@ -7,10 +7,7 @@ import org.dom4j.Node;
 import org.dom4j.XPath;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.ArrayList;
+import java.util.*;
 
 /**
  * XML Resource Handler will Call Field Handler for each given field
@@ -86,6 +83,7 @@ public class XmlResourceHandler implements ResourceHandler
         Map<String,String> textFields = new HashMap<String,String>();
         Map<String,String> storedFields = new HashMap<String,String>();
         Map<String,Field> uniqueFields = new HashMap<String,Field>();
+        Collection<IdMap.TextField> isolatedFields = new HashSet<IdMap.TextField>();
         for(XmlFieldHandler handler: fieldHandlers)
         {
             XPath xPath = element.createXPath(handler.getFieldXpath());
@@ -120,6 +118,15 @@ public class XmlResourceHandler implements ResourceHandler
                             storedFields.put(entry.getKey(),old + ' ' + entry.getValue());
                     }
                 }
+
+                //IsolatedFields
+                if(fields != null && fields.getIsolatedTextFields() != null)
+                {
+                    for(FilteredFields.TextField t :fields.getIsolatedTextFields())
+                    {
+                        isolatedFields.add(new IdMap.TextField(t.name,t.value));
+                    }
+                }
                 //PreparedFields
                 if(fields != null && fields.getPreparedFields() != null)
                 {
@@ -135,9 +142,9 @@ public class XmlResourceHandler implements ResourceHandler
             }
         }
         if(id instanceof Element)
-            return new IdMap(((Element)id).getTextTrim(),textFields,storedFields,new ArrayList<Field>(uniqueFields.values()));
+            return new IdMap(((Element)id).getTextTrim(),textFields,storedFields,new ArrayList<Field>(uniqueFields.values()),isolatedFields);
         else
-            return new IdMap(id.getText().trim(),textFields,storedFields,new ArrayList<Field>(uniqueFields.values()));
+            return new IdMap(id.getText().trim(),textFields,storedFields,new ArrayList<Field>(uniqueFields.values()),isolatedFields);
     }
 
     public String getIdXpath()

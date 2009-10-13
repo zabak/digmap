@@ -78,7 +78,7 @@ public class BraunCorpusPreprocessor implements ICollectionPreprocessor
                     if(id == null)
                         logger.error("ERROR: id come null");
                     else
-                        callBack.indexDoc(id.getText(),indexFields,null,null);
+                        callBack.indexDoc(id.getText(),indexFields,null,null, null);
                 }
                 catch (IOException e1)
                 {

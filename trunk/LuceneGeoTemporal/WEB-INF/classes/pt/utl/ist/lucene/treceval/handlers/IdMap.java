@@ -16,7 +16,18 @@ public class IdMap
     Map<String,String> textFields;
     Map<String,String> storedFields;
     Collection<Field> preparedFields;
+    Collection<TextField> isolatedTextFields;
 
+    public static class TextField
+    {
+        public String name;
+        public String value;
+
+        public TextField(String name, String value) {
+            this.name = name;
+            this.value = value;
+        }
+    }
 
     public IdMap(String id, Map<String, String> textFields, Collection<Field> uniqueFields)
     {
@@ -31,12 +42,13 @@ public class IdMap
         this.textFields = textFields;
     }
 
-    public IdMap(String id, Map<String, String> textFields, Map<String, String> storedFields, Collection<Field> preparedFields)
+    public IdMap(String id, Map<String, String> textFields, Map<String, String> storedFields, Collection<Field> preparedFields, Collection<TextField> isolatedTextFields)
     {
         this.id = id;
         this.textFields = textFields;
         this.storedFields = storedFields;
         this.preparedFields = preparedFields;
+        this.isolatedTextFields = isolatedTextFields;
     }
 
     public String getId()
@@ -79,5 +91,14 @@ public class IdMap
     public void setStoredFields(Map<String, String> storedFields)
     {
         this.storedFields = storedFields;
+    }
+
+
+    public Collection<TextField> getIsolatedTextFields() {
+        return isolatedTextFields;
+    }
+
+    public void setIsolatedTextFields(Collection<TextField> isolatedTextFields) {
+        this.isolatedTextFields = isolatedTextFields;
     }
 }

@@ -67,18 +67,19 @@ public class XmlResourceHandler implements ResourceHandler
             idXPath.setNamespaceURIs(namespaces);
 
         Node id = idXPath.selectSingleNode(element);
-        if(id == null)
+        if(id == null && idXpathSecondary != null)
         {
             idXPath = element.createXPath(idXpathSecondary);
             if(namespaces != null)
                 idXPath.setNamespaceURIs(namespaces);
             id = idXPath.selectSingleNode(element);
         }
-        if(id == null)
+        else if(id == null && idXpathSecondary == null)
         {
             logger.error("Doc without id field: " + element);
             return null;
         }
+
 
         Map<String,String> textFields = new HashMap<String,String>();
         Map<String,String> storedFields = new HashMap<String,String>();

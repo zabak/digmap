@@ -163,6 +163,34 @@ public class Files
             return fileName.substring(lastDot + 1);
     }
 
+    public static String getFileWithoutExtension(String fileName)
+    {
+        if (fileName == null)
+            return "";
+        int lastDot = fileName.lastIndexOf('.');
+        if (lastDot < 0)
+            return fileName;
+        else
+            return fileName.substring(0, lastDot);
+    }
+
+//    public static void main(String[] args)
+//    {
+//        System.out.println(getFileWithoutExtension("teste."));
+//        System.out.println(getFileWithoutExtension("teste"));
+//        System.out.println(getFileWithoutExtension("."));
+//        System.out.println(getFileWithoutExtension("e.3"));
+//        System.out.println(getFileWithoutExtension(".www"));
+//
+//        System.out.println(getExtension("teste.sss"));
+//        System.out.println(getExtension("teste."));
+//        System.out.println(getExtension("teste"));
+//        System.out.println(getExtension("."));
+//        System.out.println(getExtension("e.3"));
+//        System.out.println(getExtension(".www"));
+//
+//    }
+
     public static String getText(File file, String encoding) throws IOException
     {
         StringBuffer contentBuffer = new StringBuffer();
@@ -245,6 +273,11 @@ public class Files
             throw e;
         }
         return contentBuffer.toString();
+    }
+
+    public static String normalizePathSeparators(String path)
+    {
+        return path.replace("\\",File.separator).replace("/",File.separator);
     }
 
 }

@@ -4,8 +4,9 @@ import org.dom4j.DocumentException;
 import org.dom4j.Document;
 import org.dom4j.XPath;
 import org.dom4j.Node;
+import org.xml.sax.InputSource;
 
-import java.io.File;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.util.Map;
 
@@ -17,6 +18,30 @@ import java.util.Map;
  */
 public class XmlUtils
 {
+
+    public static Node getFragment(String filePath, String xpathString, Map<String,String> namespaces, String encoding) throws MalformedURLException, DocumentException, UnsupportedEncodingException, FileNotFoundException {
+           try
+           {
+               Document dom = Dom4jUtil.parse(new InputSource(new InputStreamReader(new FileInputStream(filePath),encoding)));
+               XPath xPath = dom.createXPath(xpathString);
+               if(namespaces != null)
+                   xPath.setNamespaceURIs(namespaces);
+               return xPath.selectSingleNode(dom.getRootElement());
+           }
+           catch (DocumentException e)
+           {
+               throw e;
+           }
+           catch (MalformedURLException e)
+           {
+               throw e;
+           } catch (FileNotFoundException e) {
+               throw e;
+           } catch (UnsupportedEncodingException e) {
+               throw e;
+           }
+       }
+
 
     public static Node getFragment(String filePath, String xpathString, Map<String,String> namespaces) throws MalformedURLException, DocumentException
     {

@@ -1,0 +1,840 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="frbr.xsl"?>
+<response>
+	<totalResults>7</totalResults>
+	<node>
+		<info>
+			<title xml:lang="fr">Le livre de la Jungle</title>
+			<title xml:lang="en">The jungle book</title>
+			<title xml:lang="en">Jungle book</title>
+			<title xml:lang="fr">Le Livre de la Jungle</title>
+			<title xml:lang="fr">Le dernier livre de la jungle</title>
+			<title xml:lang="fr">Mowgli et ses amis</title>
+			<title xml:lang="fr">Les nouvelles aventures de Mowgli</title>
+			<title xml:lang="fr">Le Livre de la jungle</title>
+			<title xml:lang="fr">Les Aventures de Mowgli</title>
+			<title xml:lang="fr">Histoires à coller de Bibou et Fanti</title>
+			<title xml:lang="fr">Le livre de la jungle</title>
+			<title xml:lang="fr">L&apos;anglais c&apos;est facile avec Le livre de la jungle</title>
+			<author name="Geldman, Mark"/>
+			<author name="Yanover, Ron"/>
+			<author date="1865-1936" name="Kipling, Rudyard"/>
+		</info>
+		<record catalog="fra" id="FRBNF382682990000005" score="5.595009">
+			<info>
+				<title xml:lang="en">Jungle book</title>
+				<date>1994</date>
+				<artifact>ProjectedMedia</artifact>
+				<author date="1907-1995" name="Rózsa, Miklós"/>
+				<author name="Zorda, Zoltan"/>
+				<author date="1894-1968" name="Stallings, Laurence"/>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF383428980000009" score="5.2748017">
+			<info>
+				<title xml:lang="fr">Le livre de la jungle</title>
+				<date>1995</date>
+				<artifact>ProjectedMedia</artifact>
+				<author name="Hartstein, Laurence"/>
+				<author name="Dimitroff, Andrew"/>
+				<author name="Hiruma, Toshiyuki"/>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF382982830000006" score="5.2600946">
+			<info>
+				<title xml:lang="en">The jungle book</title>
+				<date>1995</date>
+				<artifact>MusicalPerformanceSoundRecording</artifact>
+				<author date="1945-2006" name="Poledouris, Basil"/>
+				<author date="1962-?" name="Sommers, Stephen"/>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF383610200000005" score="5.036266">
+			<info>
+				<title xml:lang="fr">Le livre de la jungle</title>
+				<date>1997</date>
+				<artifact>ProjectedMedia</artifact>
+				<author date="1945-2006" name="Poledouris, Basil"/>
+				<author name="Geldman, Mark"/>
+				<author date="1962-?" name="Sommers, Stephen"/>
+				<author name="Yanover, Ron"/>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF38363823000000X" score="5.036266">
+			<info>
+				<title xml:lang="fr">Le livre de la jungle</title>
+				<date>1997</date>
+				<artifact>ProjectedMedia</artifact>
+				<author date="1945-2006" name="Poledouris, Basil"/>
+				<author name="Geldman, Mark"/>
+				<author date="1962-?" name="Sommers, Stephen"/>
+				<author name="Yanover, Ron"/>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF383812330000001" score="4.997312">
+			<info>
+				<title xml:lang="fr">Le livre de la jungle</title>
+				<date>1996</date>
+				<artifact>ProjectedMedia</artifact>
+				<author date="1945-2006" name="Poledouris, Basil"/>
+				<author name="Geldman, Mark"/>
+				<author date="1962-?" name="Sommers, Stephen"/>
+				<author name="Yanover, Ron"/>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF385141940000005" score="4.826478">
+			<info>
+				<title xml:lang="fr">Le livre de la jungle</title>
+				<date>2000</date>
+				<artifact>ProjectedMedia</artifact>
+				<author date="1945-2006" name="Poledouris, Basil"/>
+				<author name="Geldman, Mark"/>
+				<author date="1962-?" name="Sommers, Stephen"/>
+				<author name="Yanover, Ron"/>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF411512270000006" score="4.666888">
+			<info>
+				<title xml:lang="fr">Le livre de la jungle</title>
+				<date>2007</date>
+				<artifact>ProjectedMedia</artifact>
+				<author date="1909-1985" name="Reitherman, Wolfgang"/>
+				<author date="1914-1983" name="Bruns, George"/>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF412172080000006" score="3.850306">
+			<info>
+				<title xml:lang="fr">Le livre de la jungle</title>
+				<date>2008</date>
+				<artifact>Multimedia</artifact>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF383692170000007" score="3.5793962">
+			<info>
+				<title xml:lang="fr">Le livre de la jungle</title>
+				<date>1996</date>
+				<artifact>ProjectedMedia</artifact>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF385170080000005" score="3.5742798">
+			<info>
+				<title xml:lang="fr">Le livre de la jungle</title>
+				<date>1991</date>
+				<artifact>ProjectedMedia</artifact>
+				<author name="Elliott, Dean"/>
+				<author date="1912-2002" name="Jones, Chuck"/>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF383620280000008" score="3.5071492">
+			<info>
+				<title xml:lang="fr">Le Livre de la jungle</title>
+				<date>1996</date>
+				<artifact>ProjectedMedia</artifact>
+				<author name="Hartstein, Laurence"/>
+				<author name="Dimitroff, Andrew"/>
+				<author name="Hiruma, Toshiyuki"/>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF383822500000007" score="3.4963999">
+			<info>
+				<title xml:lang="fr">Le livre de la jungle</title>
+				<date>1997</date>
+				<artifact>Multimedia</artifact>
+				<author name="Chesnet, Céline"/>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF383889380000008" score="3.4963999">
+			<info>
+				<title xml:lang="fr">Le livre de la jungle</title>
+				<date>1997</date>
+				<artifact>Multimedia</artifact>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF401549100000009" score="3.4963999">
+			<info>
+				<title xml:lang="fr">Le livre de la jungle</title>
+				<date>2005</date>
+				<artifact>PrintedLanguageMaterial</artifact>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF411096550000000" score="3.4963999">
+			<info>
+				<title xml:lang="fr">Le livre de la jungle</title>
+				<date>197.-?</date>
+				<artifact>Multimedia</artifact>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF356047000000005" score="3.4915514">
+			<info>
+				<title xml:lang="fr">Le livre de la jungle</title>
+				<date>1993</date>
+				<artifact>PrintedLanguageMaterial</artifact>
+				<author name="Meunier, Charlie"/>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF34723208000000X" score="3.4870105">
+			<info>
+				<title xml:lang="fr">Le Livre de la jungle</title>
+				<date>1980</date>
+				<artifact>PrintedLanguageMaterial</artifact>
+				<author name="Antoine, Yvette"/>
+				<author name="Walt Disney company"/>
+				<author date="1915-?" name="Fallberg, Carl"/>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF348796570000004" score="3.4870105">
+			<info>
+				<title xml:lang="fr">Le Livre de la jungle</title>
+				<date>1986</date>
+				<artifact>PrintedLanguageMaterial</artifact>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF349755470000007" score="3.4870105">
+			<info>
+				<title xml:lang="fr">Le Livre de la jungle</title>
+				<date>1986</date>
+				<artifact>PrintedLanguageMaterial</artifact>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF349880130000009" score="3.4870105">
+			<info>
+				<title xml:lang="fr">Le Livre de la jungle</title>
+				<date>1988</date>
+				<artifact>PrintedLanguageMaterial</artifact>
+				<author name="Antoine, Yvette"/>
+				<author name="Walt Disney company"/>
+				<author date="1915-?" name="Fallberg, Carl"/>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF35095087000000X" score="3.4870105">
+			<info>
+				<title xml:lang="fr">Le Livre de la jungle</title>
+				<date>1990</date>
+				<artifact>PrintedLanguageMaterial</artifact>
+				<author name="Antoine, Yvette"/>
+				<author name="Walt Disney company"/>
+				<author date="1915-?" name="Fallberg, Carl"/>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF357139670000007" score="3.4870105">
+			<info>
+				<title xml:lang="fr">Le livre de la jungle</title>
+				<date>1994</date>
+				<artifact>PrintedLanguageMaterial</artifact>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF357262310000003" score="3.4870105">
+			<info>
+				<title xml:lang="fr">Le livre de la jungle</title>
+				<date>1994</date>
+				<artifact>PrintedLanguageMaterial</artifact>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF357936340000009" score="3.4870105">
+			<info>
+				<title xml:lang="fr">Le livre de la jungle</title>
+				<date>1995</date>
+				<artifact>PrintedLanguageMaterial</artifact>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF358175390000001" score="3.4870105">
+			<info>
+				<title xml:lang="fr">Le livre de la jungle</title>
+				<date>1995</date>
+				<artifact>PrintedLanguageMaterial</artifact>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF361715120000005" score="3.4870105">
+			<info>
+				<title xml:lang="fr">Le livre de la jungle</title>
+				<date>1996</date>
+				<artifact>PrintedLanguageMaterial</artifact>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF36188929000000X" score="3.4870105">
+			<info>
+				<title xml:lang="fr">Le livre de la jungle</title>
+				<date>1997</date>
+				<artifact>PrintedLanguageMaterial</artifact>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF367077740000007" score="3.4870105">
+			<info>
+				<title xml:lang="fr">Le livre de la jungle</title>
+				<date>1998</date>
+				<artifact>PrintedLanguageMaterial</artifact>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF37674385000000X" score="3.4870105">
+			<info>
+				<title xml:lang="fr">Le livre de la jungle</title>
+				<date>2000</date>
+				<artifact>PrintedLanguageMaterial</artifact>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF377183540000002" score="3.4870105">
+			<info>
+				<title xml:lang="fr">Le livre de la jungle</title>
+				<date>2001</date>
+				<artifact>PrintedLanguageMaterial</artifact>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF370742380000008" score="3.482749">
+			<info>
+				<title xml:lang="fr">Le livre de la jungle</title>
+				<date>1999</date>
+				<artifact>PrintedLanguageMaterial</artifact>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF38367557000000X" score="3.482749">
+			<info>
+				<title xml:lang="fr">Le livre de la jungle</title>
+				<date>1996</date>
+				<artifact>ProjectedMedia</artifact>
+				<author name="Kurokawa, Fumio"/>
+				<author name="Yabuki, Kimio"/>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF392513030000006" score="3.482749">
+			<info>
+				<title xml:lang="fr">Le Livre de la jungle</title>
+				<date>2004</date>
+				<artifact>Multimedia</artifact>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF400925380000000" score="3.482749">
+			<info>
+				<title xml:lang="fr">Le livre de la jungle</title>
+				<date>2005</date>
+				<artifact>PrintedLanguageMaterial</artifact>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF401774470000002" score="3.482749">
+			<info>
+				<title xml:lang="fr">Le livre de la jungle</title>
+				<date>2006</date>
+				<artifact>PrintedLanguageMaterial</artifact>
+				<author name="Antoine, Yvette"/>
+				<author name="Walt Disney company"/>
+				<author date="1915-?" name="Fallberg, Carl"/>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF411167990000000" score="3.482749">
+			<info>
+				<title xml:lang="fr">Le livre de la jungle</title>
+				<date>2007</date>
+				<artifact>Multimedia</artifact>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF411442910000007" score="3.482749">
+			<info>
+				<title xml:lang="fr">Le livre de la jungle</title>
+				<date>2007</date>
+				<artifact>Multimedia</artifact>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF412561280000003" score="3.482749">
+			<info>
+				<title xml:lang="fr">Le livre de la jungle</title>
+				<date>2008</date>
+				<artifact>NonMusicalPerformanceSoundRecording</artifact>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF37000628000000X" score="3.4787436">
+			<info>
+				<title xml:lang="fr">Le livre de la jungle</title>
+				<date>1998</date>
+				<artifact>PrintedLanguageMaterial</artifact>
+				<author name="Van Gool"/>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF391099580000002" score="3.4787436">
+			<info>
+				<title xml:lang="fr">Le livre de la jungle</title>
+				<date>2003</date>
+				<artifact>PrintedLanguageMaterial</artifact>
+				<author name="Van Gool"/>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF342975860000002" score="3.4749718">
+			<info>
+				<title xml:lang="fr">Le Livre de la jungle</title>
+				<date>1979-?</date>
+				<artifact>PrintedLanguageMaterial</artifact>
+				<author name="Antoine, Yvette"/>
+				<author name="Walt Disney company"/>
+				<author date="1915-?" name="Fallberg, Carl"/>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF345817460000005" score="3.4749718">
+			<info>
+				<title xml:lang="fr">Le Livre de la jungle</title>
+				<date>1976</date>
+				<artifact>PrintedLanguageMaterial</artifact>
+				<author name="Antoine, Yvette"/>
+				<author name="Walt Disney company"/>
+				<author date="1915-?" name="Fallberg, Carl"/>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF345913290000006" score="3.4749718">
+			<info>
+				<title xml:lang="fr">Le Livre de la jungle</title>
+				<date>1976</date>
+				<artifact>PrintedLanguageMaterial</artifact>
+				<author name="Antoine, Yvette"/>
+				<author name="Walt Disney company"/>
+				<author date="1915-?" name="Fallberg, Carl"/>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF346257500000007" score="3.4749718">
+			<info>
+				<title xml:lang="fr">Le Livre de la jungle</title>
+				<date>1977</date>
+				<artifact>PrintedLanguageMaterial</artifact>
+				<author name="Antoine, Yvette"/>
+				<author name="Walt Disney company"/>
+				<author date="1915-?" name="Fallberg, Carl"/>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF346325020000009" score="3.4749718">
+			<info>
+				<title xml:lang="fr">Le Livre de la jungle</title>
+				<date>1979</date>
+				<artifact>PrintedLanguageMaterial</artifact>
+				<author name="Antoine, Yvette"/>
+				<author name="Walt Disney company"/>
+				<author date="1915-?" name="Fallberg, Carl"/>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF346442560000006" score="3.4749718">
+			<info>
+				<title xml:lang="fr">Le Livre de la jungle</title>
+				<date>1978</date>
+				<artifact>PrintedLanguageMaterial</artifact>
+				<author name="Antoine, Yvette"/>
+				<author name="Walt Disney company"/>
+				<author date="1915-?" name="Fallberg, Carl"/>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF346465790000006" score="3.4749718">
+			<info>
+				<title xml:lang="fr">Le Livre de la jungle</title>
+				<date>1979</date>
+				<artifact>PrintedLanguageMaterial</artifact>
+				<author name="Antoine, Yvette"/>
+				<author name="Walt Disney company"/>
+				<author date="1915-?" name="Fallberg, Carl"/>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF346466110000005" score="3.4749718">
+			<info>
+				<title xml:lang="fr">Le Livre de la jungle</title>
+				<date>1979</date>
+				<artifact>PrintedLanguageMaterial</artifact>
+				<author name="Antoine, Yvette"/>
+				<author name="Walt Disney company"/>
+				<author date="1915-?" name="Fallberg, Carl"/>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF346776130000005" score="3.4749718">
+			<info>
+				<title xml:lang="fr">Le Livre de la jungle</title>
+				<date>1978</date>
+				<artifact>PrintedLanguageMaterial</artifact>
+				<author name="Antoine, Yvette"/>
+				<author name="Walt Disney company"/>
+				<author date="1915-?" name="Fallberg, Carl"/>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF346820570000008" score="3.4749718">
+			<info>
+				<title xml:lang="fr">Le Livre de la jungle</title>
+				<date>1979</date>
+				<artifact>PrintedLanguageMaterial</artifact>
+				<author name="Antoine, Yvette"/>
+				<author name="Walt Disney company"/>
+				<author date="1915-?" name="Fallberg, Carl"/>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF348698340000007" score="3.4749718">
+			<info>
+				<title xml:lang="fr">Le Livre de la jungle</title>
+				<date>1986</date>
+				<artifact>PrintedLanguageMaterial</artifact>
+				<author name="Antoine, Yvette"/>
+				<author name="Walt Disney company"/>
+				<author date="1915-?" name="Fallberg, Carl"/>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF348727610000000" score="3.4749718">
+			<info>
+				<title xml:lang="fr">Le Livre de la jungle</title>
+				<date>1986</date>
+				<artifact>PrintedLanguageMaterial</artifact>
+				<author name="Antoine, Yvette"/>
+				<author name="Walt Disney company"/>
+				<author date="1915-?" name="Fallberg, Carl"/>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF349897570000006" score="3.4749718">
+			<info>
+				<title xml:lang="fr">Le Livre de la jungle</title>
+				<date>1988</date>
+				<artifact>PrintedLanguageMaterial</artifact>
+				<author name="Antoine, Yvette"/>
+				<author name="Walt Disney company"/>
+				<author date="1915-?" name="Fallberg, Carl"/>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF351082790000002" score="3.4749718">
+			<info>
+				<title xml:lang="fr">Le Livre de la jungle</title>
+				<date>1990</date>
+				<artifact>PrintedLanguageMaterial</artifact>
+				<author name="Antoine, Yvette"/>
+				<author name="Walt Disney company"/>
+				<author date="1915-?" name="Fallberg, Carl"/>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF357199970000003" score="3.4749718">
+			<info>
+				<title xml:lang="fr">Le livre de la jungle</title>
+				<date>1994</date>
+				<artifact>PrintedLanguageMaterial</artifact>
+				<author name="Antoine, Yvette"/>
+				<author name="Walt Disney company"/>
+				<author date="1915-?" name="Fallberg, Carl"/>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF358170520000006" score="3.4749718">
+			<info>
+				<title xml:lang="fr">Le livre de la jungle</title>
+				<date>1996</date>
+				<artifact>PrintedLanguageMaterial</artifact>
+				<author name="Antoine, Yvette"/>
+				<author name="Walt Disney company"/>
+				<author date="1915-?" name="Fallberg, Carl"/>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF361623850000001" score="3.4749718">
+			<info>
+				<title xml:lang="fr">Le livre de la jungle</title>
+				<date>1997</date>
+				<artifact>PrintedLanguageMaterial</artifact>
+				<author name="Antoine, Yvette"/>
+				<author name="Walt Disney company"/>
+				<author date="1915-?" name="Fallberg, Carl"/>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF361876080000009" score="3.4749718">
+			<info>
+				<title xml:lang="fr">Le livre de la jungle</title>
+				<date>1997</date>
+				<artifact>PrintedLanguageMaterial</artifact>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF370689360000006" score="3.4749718">
+			<info>
+				<title xml:lang="fr">Le livre de la jungle</title>
+				<date>1998</date>
+				<artifact>PrintedLanguageMaterial</artifact>
+				<author name="Antoine, Yvette"/>
+				<author name="Walt Disney company"/>
+				<author date="1915-?" name="Fallberg, Carl"/>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF377041580000009" score="3.4749718">
+			<info>
+				<title xml:lang="fr">Le livre de la jungle</title>
+				<date>2001</date>
+				<artifact>PrintedLanguageMaterial</artifact>
+				<author name="Antoine, Yvette"/>
+				<author name="Walt Disney company"/>
+				<author date="1915-?" name="Fallberg, Carl"/>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF38254685000000X" score="3.4749718">
+			<info>
+				<title xml:lang="fr">Le livre de la jungle</title>
+				<date>1992</date>
+				<artifact>Multimedia</artifact>
+				<author date="1945-?" name="Leroux, Jean-François"/>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF392104660000002" score="3.4749718">
+			<info>
+				<title xml:lang="fr">Le livre de la jungle</title>
+				<date>2004</date>
+				<artifact>PrintedLanguageMaterial</artifact>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF357485060000003" score="3.4714153">
+			<info>
+				<title xml:lang="fr">Le livre de la jungle</title>
+				<date>1995</date>
+				<artifact>PrintedLanguageMaterial</artifact>
+				<author name="Antoine, Yvette"/>
+				<author name="Walt Disney company"/>
+				<author date="1915-?" name="Fallberg, Carl"/>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF356139630000005" score="3.4680567">
+			<info>
+				<title xml:lang="fr">Le livre de la jungle</title>
+				<date>1993</date>
+				<artifact>PrintedLanguageMaterial</artifact>
+				<author name="Antoine, Yvette"/>
+				<author name="Walt Disney company"/>
+				<author date="1915-?" name="Fallberg, Carl"/>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF377067560000006" score="3.4680567">
+			<info>
+				<title xml:lang="fr">Le livre de la jungle</title>
+				<date>2001</date>
+				<artifact>PrintedLanguageMaterial</artifact>
+				<author name="Baiocchi, Giulia"/>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF382384580000002" score="3.4680567">
+			<info>
+				<title xml:lang="fr">Le Livre de la jungle</title>
+				<date>1993</date>
+				<artifact>ProjectedMedia</artifact>
+				<author date="1909-1985" name="Reitherman, Wolfgang"/>
+				<author date="1914-1983" name="Bruns, George"/>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF391690350000000" score="3.4680567">
+			<info>
+				<title xml:lang="fr">Le dernier livre de la jungle</title>
+				<date>2004-?</date>
+				<artifact>PrintedLanguageMaterial</artifact>
+				<author date="1954-?" name="Desberg, Stephen"/>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF355635040000008" score="3.46488">
+			<info>
+				<title xml:lang="fr">Le livre de la jungle</title>
+				<date>1993</date>
+				<artifact>PrintedLanguageMaterial</artifact>
+				<author name="Antoine, Yvette"/>
+				<author name="Walt Disney company"/>
+				<author date="1915-?" name="Fallberg, Carl"/>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF382958680000009" score="3.46488">
+			<info>
+				<title xml:lang="fr">Le livre de la jungle</title>
+				<date>1994</date>
+				<artifact>Multimedia</artifact>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF384277760000004" score="3.46488">
+			<info>
+				<title xml:lang="fr">Le livre de la Jungle</title>
+				<date>1998</date>
+				<artifact>Multimedia</artifact>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF355266620000006" score="3.4618723">
+			<info>
+				<title xml:lang="fr">Le livre de la jungle</title>
+				<date>1992</date>
+				<artifact>PrintedLanguageMaterial</artifact>
+				<author name="Antoine, Yvette"/>
+				<author name="Walt Disney company"/>
+				<author date="1915-?" name="Fallberg, Carl"/>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF388156620000001" score="3.459021">
+			<info>
+				<title xml:lang="fr">Le livre de la jungle</title>
+				<date>2001</date>
+				<artifact>PrintedLanguageMaterial</artifact>
+				<author name="Antoine, Yvette"/>
+				<author name="Walt Disney company"/>
+				<author date="1915-?" name="Fallberg, Carl"/>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF349393080000001" score="3.4489675">
+			<info>
+				<title xml:lang="fr">Le Livre de la jungle</title>
+				<date>1988</date>
+				<artifact>PrintedLanguageMaterial</artifact>
+				<author name="Antoine, Yvette"/>
+				<author name="Walt Disney company"/>
+				<author date="1915-?" name="Fallberg, Carl"/>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF382634050000007" score="3.4489675">
+			<info>
+				<title xml:lang="fr">Le livre de la jungle</title>
+				<date>1993</date>
+				<artifact>Multimedia</artifact>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF411444330000004" score="3.4489675">
+			<info>
+				<title xml:lang="fr">Le livre de la jungle</title>
+				<date>2007</date>
+				<artifact>Multimedia</artifact>
+				<author date="1916-1999" name="Gilkyson, Terry"/>
+				<author date="1901-1966" name="Disney, Walt"/>
+				<author date="1928-?" name="Sherman, Richard M"/>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF384080720000004" score="3.446748">
+			<info>
+				<title xml:lang="fr">Le livre de la jungle</title>
+				<date>1997</date>
+				<artifact>ProjectedMedia</artifact>
+				<author date="1945-2006" name="Poledouris, Basil"/>
+				<author name="Geldman, Mark"/>
+				<author date="1962-?" name="Sommers, Stephen"/>
+				<author name="Yanover, Ron"/>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF402051580000008" score="3.446748">
+			<info>
+				<title xml:lang="fr">Le livre de la jungle</title>
+				<date>2006</date>
+				<artifact>ProjectedMedia</artifact>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF402356800000007" score="3.44068">
+			<info>
+				<title xml:lang="fr">Le livre de la jungle</title>
+				<date>2004</date>
+				<artifact>PrintedLanguageMaterial</artifact>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF381454510000009" score="3.429285">
+			<info>
+				<title xml:lang="fr">Le Livre de la Jungle</title>
+				<date>1988</date>
+				<artifact>MusicalPerformanceSoundRecording</artifact>
+				<author date="1916-1999" name="Gilkyson, Terry"/>
+				<author date="1901-1966" name="Disney, Walt"/>
+				<author date="1928-?" name="Sherman, Richard M"/>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF347674580000005" score="3.427912">
+			<info>
+				<title xml:lang="fr">Le Livre de la jungle</title>
+				<date>1984</date>
+				<artifact>PrintedLanguageMaterial</artifact>
+				<author name="Antoine, Yvette"/>
+				<author name="Walt Disney company"/>
+				<author date="1915-?" name="Fallberg, Carl"/>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF382485610000007" score="3.4012446">
+			<info>
+				<title xml:lang="fr">Le Livre de la jungle</title>
+				<date>1989</date>
+				<artifact>Multimedia</artifact>
+			</info>
+		</record>
+	</node>
+	<node>
+		<info>
+			<title xml:lang="fr">L&apos;enfant de la jungle</title>
+			<author date="1865-1936" name="Kipling, Rudyard"/>
+		</info>
+		<record catalog="fra" id="FRBNF402052560000009" score="3.4618723">
+			<info>
+				<title xml:lang="fr">L&apos;enfant de la jungle</title>
+				<date>2006</date>
+				<artifact>ProjectedMedia</artifact>
+				<author name="Shekter, Mark"/>
+				<author name="Shepherd, Laura"/>
+			</info>
+		</record>
+	</node>
+	<node>
+		<info>
+			<title xml:lang="fr">Le roman célèbre en chansons</title>
+			<author date="1865-1936" name="Kipling, Rudyard"/>
+		</info>
+		<record catalog="fra" id="FRBNF408922970000007" score="3.408329">
+			<info>
+				<title xml:lang="fr">Le roman célèbre en chansons</title>
+				<date>1951?-?</date>
+				<artifact>ManuscriptLanguageMaterial</artifact>
+			</info>
+		</record>
+	</node>
+	<node>
+		<info>
+			<title xml:lang="fr">Charles Koechlin. Les Bandar-log</title>
+			<author date="1865-1936" name="Kipling, Rudyard"/>
+		</info>
+		<record catalog="fra" id="FRBNF397343010000001" score="3.402953">
+			<info>
+				<title xml:lang="fr">Charles Koechlin. Les Bandar-log</title>
+				<date>1967</date>
+				<artifact>PrintedNotatedMusic</artifact>
+				<author date="1867-1950" name="Koechlin, Charles"/>
+				<author date="1865-1936" name="Kipling, Rudyard"/>
+			</info>
+		</record>
+	</node>
+	<node>
+		<info>
+			<title xml:lang="fr">Les Bandar-Log, récitation chorale, d&apos;après le Livre de jungle de R. Kipling, proposée aux scouts-rouliers, par Léon Chancerel et &quot;Ne pleure pas, Jeannette...&quot;, jeu dramatique, d&apos;après la chanson populaire, proposé aux scouts par André Fayol, avec des notes de Maurice Jacquemont</title>
+			<author date="1865-1936" name="Kipling, Rudyard"/>
+		</info>
+		<record catalog="fra" id="FRBNF387087770000007" score="3.3916402">
+			<info>
+				<title xml:lang="fr">Les Bandar-Log, récitation chorale, d&apos;après le Livre de jungle de R. Kipling, proposée aux scouts-rouliers, par Léon Chancerel et &quot;Ne pleure pas, Jeannette...&quot;, jeu dramatique, d&apos;après la chanson populaire, proposé aux scouts par André Fayol, avec des notes de Maurice Jacquemont</title>
+				<date>1935</date>
+				<artifact>PrintedLanguageMaterial</artifact>
+				<author date="1886-1965" name="Chancerel, Léon"/>
+				<author name="Fayol, André"/>
+			</info>
+		</record>
+	</node>
+	<node>
+		<info>
+			<title xml:lang="en">Cats</title>
+			<title xml:lang="fr">Cats</title>
+			<author date="1888-1965" name="Eliot, Thomas Stearns"/>
+		</info>
+		<record catalog="fra" id="FRBNF384145940000004" score="3.1544514">
+			<info>
+				<title xml:lang="en">Cats</title>
+				<date>1999</date>
+				<artifact>ProjectedMedia</artifact>
+				<author date="1940-?" name="Nunn, Trevor"/>
+				<author date="19..-?" name="Mallet, David"/>
+				<author date="1948-?" name="Lloyd Webber, Andrew"/>
+			</info>
+		</record>
+		<record catalog="fra" id="FRBNF384664410000002" score="3.1293852">
+			<info>
+				<title xml:lang="en">Cats</title>
+				<date>1999</date>
+				<artifact>ProjectedMedia</artifact>
+				<author date="1940-?" name="Nunn, Trevor"/>
+				<author date="19..-?" name="Mallet, David"/>
+				<author date="1948-?" name="Lloyd Webber, Andrew"/>
+			</info>
+		</record>
+	</node>
+	<node>
+		<info>
+			<title xml:lang="fr">Les contes merveilleux</title>
+			<author date="1865-1936" name="Kipling, Rudyard"/>
+		</info>
+		<record catalog="fra" id="FRBNF383854900000007" score="2.9985628">
+			<info>
+				<title xml:lang="fr">Les contes merveilleux</title>
+				<date>1995</date>
+				<artifact>ProjectedMedia</artifact>
+				<author date="1912-2002" name="Jones, Chuck"/>
+				<author name="Elliott, Dean"/>
+			</info>
+		</record>
+	</node>
+</response>

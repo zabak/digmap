@@ -24,6 +24,7 @@
 <%
     Properties props = new LocalProperties("digmapFrbr/conf.properties");
     Globals.DATA_DIR = props.getProperty("data.dir");
+    Globals.INDEX_DIR = props.getProperty("indexes.dir");
 
     if (request.getParameter("xml") != null && (request.getParameter("xml").equals("frbr") || request.getParameter("xml").equals("true"))) {
 
@@ -126,11 +127,12 @@
             StringBuilder builder = new StringBuilder();
             while((read = inStream.read(bytes)) >= 0)
             {
-                String readed = new String(bytes,0,read);
+                String readed = new String(bytes,0,read,"UTF-8");
                 builder.append(readed);
             }
             inStream.close();
             response.setContentType("text/xml");
+            response.setCharacterEncoding("UTF-8");
             PrintWriter pw = response.getWriter();
             pw.write(builder.toString());
 

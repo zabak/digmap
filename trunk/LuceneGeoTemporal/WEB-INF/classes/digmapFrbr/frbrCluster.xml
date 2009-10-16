@@ -1,0 +1,11 @@
+ <Context path="/frbrCluster" docBase="D:\Servidores\workspace\lgte\WEB-INF\build\frbrCluster\"
+         debug="0">
+
+  <!-- Link to the user database we will get roles from -->
+  <ResourceLink name="users" global="UserDatabase"
+                type="org.apache.catalina.UserDatabase"/>
+
+  <Logger className="org.apache.catalina.logger.FileLogger"
+          prefix="D:\Servidores\workspace\lgte\frbrCluster_log." suffix=".txt"
+          timestamp="true"/>
+</Context>

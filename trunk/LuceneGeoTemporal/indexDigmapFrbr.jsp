@@ -14,24 +14,31 @@
 <%@ page import="pt.utl.ist.lucene.config.LocalProperties" %>
 <%@ page import="pt.utl.ist.lucene.treceval.*" %>
 <%@ page import="pt.utl.ist.lucene.Globals" %>
+<%@ page import="pt.utl.ist.lucene.utils.XmlUtils" %>
+<%@ page import="java.net.URL" %>
+<%@ page import="java.io.DataInputStream" %>
+<%@ page import="java.io.DataOutputStream" %>
+<%@ page import="java.net.URLConnection" %>
+<%@ page import="java.net.URLEncoder" %>
+<%@ page import="java.net.HttpURLConnection" %>
 <%
     Properties props = new LocalProperties("digmapFrbr/conf.properties");
     Globals.DATA_DIR = props.getProperty("data.dir");
 
+    if (request.getParameter("xml") != null && (request.getParameter("xml").equals("frbr") || request.getParameter("xml").equals("true"))) {
 
-    if (request.getParameter("xml") != null && request.getParameter("xml").equals("true")) {
-        response.setContentType("text/xml");
-        PrintWriter pw = response.getWriter();
-
-        pw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-        pw.write("<lgte>\n");
-        if (request.getParameter("q") != null && request.getParameter("q").length() > 1) {
-            pw.write("<response>\n");
+        StringBuilder responseBuilder = new StringBuilder();
 
 
+        responseBuilder.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+        responseBuilder.append("<lgte>\n");
+        responseBuilder.append("<request query=\"" + XmlUtils.escape(request.getParameter("q")) + "\"/>\n");
+        if (request.getParameter("q") != null && request.getParameter("q").length() > 1)
+        {
+            responseBuilder.append("<response>\n");
             try {
 
-                StringBuilder responseBuilder = new StringBuilder();
+
                 LgteIndexSearcherWrapper searcher = new LgteIndexSearcherWrapper(Model.LanguageModel, Globals.INDEX_DIR + "/lm/version1/digmapFrbr");
                 Set<String> notTokenizableFields = new HashSet<String>();
                 notTokenizableFields.add("collection");
@@ -39,9 +46,9 @@
                 notTokenizableFields.add(pt.utl.ist.lucene.treceval.Globals.DOCUMENT_FILE_PATH);
                 Analyzer analyzer = new LgteAnalyzer(notTokenizableFields);
                 //we pass the searcher to parser because in case of query expansion it will be needed
-                 String q  = request.getParameter("q");
-                    if(request.getParameter("collection") != null && request.getParameter("collection").length()>0)
-                            q = "collection:" + request.getParameter("collection") + " AND (" + q + ")";
+                String q = request.getParameter("q");
+                if (request.getParameter("collection") != null && request.getParameter("collection").length() > 0)
+                    q = "collection:" + request.getParameter("collection") + " AND (" + q + ")";
                 LgteQuery query = LgteQueryParser.parseQuery(q, analyzer, searcher);
                 if (query != null) {
                     LgteHits hits = searcher.search(query);
@@ -50,11 +57,13 @@
                     responseBuilder.append("<showing>" + request.getParameter("show") + "</showing>\n");
                     responseBuilder.append("<page>" + request.getParameter("page") + "</page>\n");
 
-
+                    int pageNumber = 1;
                     int startResult = 0;
-                    int showNumber = 100;
-                    if (request.getParameter("page") != null && request.getParameter("show") != null) {
-                        int pageNumber = Integer.parseInt(request.getParameter("page"));
+                    int showNumber = 1000;
+                    if (request.getParameter("page") != null) {
+                        pageNumber = Integer.parseInt(request.getParameter("page"));
+                    }
+                    if (request.getParameter("show") != null) {
                         showNumber = Integer.parseInt(request.getParameter("show"));
                         startResult = pageNumber * showNumber - showNumber;
                     }
@@ -63,24 +72,78 @@
                         LgteDocumentWrapper doc = hits.doc(i);
                         String filepath = doc.get(pt.utl.ist.lucene.treceval.Globals.DOCUMENT_FILE_PATH);
                         String docno = doc.get(pt.utl.ist.lucene.treceval.Globals.DOCUMENT_ID_FIELD);
-                        responseBuilder.append("<record score=\"" + hits.score(i) + "\">" + docno + "</record>");
+                        responseBuilder.append("<record catalog=\"" + doc.get("collection") + "\" score=\"" + hits.score(i) + "\" id=\"" + docno + "\"/>");
                     }
                     searcher.close();
                 }
-                pw.write(responseBuilder.toString());
             }
-            catch (Exception ee) {
-                out.println("<error>" + pt.utl.ist.lucene.utils.TextToHTMLEnconder.escapeHTML(ee.toString()) + "</error>");
+            catch (Exception ee)
+            {
+                responseBuilder = new StringBuilder();
+                responseBuilder.append("<error>" + pt.utl.ist.lucene.utils.TextToHTMLEnconder.escapeHTML(ee.toString()) + "</error>");
                 ee.printStackTrace();
             }
-            pw.write("</response>\n");
-        } else {
-            pw.write("<response><error>no query</error></response>\n");
+            responseBuilder.append("</response>\n");
         }
-        pw.write("</lgte>\n");
+        else
+        {
+            responseBuilder = new StringBuilder();
+            responseBuilder.append("<response><error>no query</error></response>\n");
+        }
+        responseBuilder.append("</lgte>\n");
+
+        if(request.getParameter("xml") != null && (request.getParameter("xml").equals("frbr") ))
+        {
+            URL url;
+            URLConnection urlConnection;
+            DataOutputStream outStream;
+            DataInputStream inStream;
+            String body = "request=" + URLEncoder.encode(responseBuilder.toString(), "UTF-8");
+            url = new URL("http://localhost:8080/frbrCluster/Handler");
+            urlConnection = url.openConnection();
+            ((HttpURLConnection) urlConnection).setRequestMethod("POST");
+
+            urlConnection.setDoInput(true);
+            urlConnection.setDoOutput(true);
+            urlConnection.setUseCaches(false);
+            urlConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+            urlConnection.setRequestProperty("Content-Length","" + body.length());
 
 
-    } else {
+            // Create I/O streams
+            outStream = new DataOutputStream(urlConnection.getOutputStream());
+            inStream = new DataInputStream(urlConnection.getInputStream());
+
+            // Send request
+            outStream.writeBytes(body);
+            outStream.flush();
+            outStream.close();
+
+
+
+            byte[] bytes = new byte[1024];
+            int read;
+            StringBuilder builder = new StringBuilder();
+            while((read = inStream.read(bytes)) >= 0)
+            {
+                String readed = new String(bytes,0,read);
+                builder.append(readed);
+            }
+            inStream.close();
+            response.setContentType("text/xml");
+            PrintWriter pw = response.getWriter();
+            pw.write(builder.toString());
+
+        }
+        else
+        {
+                response.setContentType("text/xml");
+                PrintWriter pw = response.getWriter();
+                pw.write(responseBuilder.toString());
+        }
+        
+    }
+     else {
 %>
 <html>
 <head>
@@ -233,6 +296,7 @@
                         <select name="xml">
                             <option value="false">Result  in HTML</option>
                             <option value="true">Result in XML</option>
+                            <option value="frbr">Cluster FRBR</option>
                         </select>
                     </td>
                 </tr>

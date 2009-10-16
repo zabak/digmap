@@ -3,7 +3,6 @@ package digmapFrbr;
 import org.apache.log4j.Logger;
 import org.apache.lucene.document.Field;
 import org.dom4j.*;
-import pt.utl.ist.lucene.treceval.DigmapExample;
 import pt.utl.ist.lucene.treceval.Globals;
 import pt.utl.ist.lucene.treceval.Configuration;
 import pt.utl.ist.lucene.treceval.IndexCollections;

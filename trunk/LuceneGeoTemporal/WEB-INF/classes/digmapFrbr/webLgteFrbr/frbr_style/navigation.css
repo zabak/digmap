@@ -1,0 +1,35 @@
+/* SUPRANAV */
+#supranav {position: absolute; top: 24px; right: 0; }
+#supranav_select {color: #555; background: #f1f1f1; padding: 2px 10px 2px 4px;}
+
+/* HEADER */
+#brand {width: 100%; background: url(header.jpg) no-repeat;height: 55px; padding: 0;}
+#header_title {display: none; margin: 0; font-family: Geneva; font-size: 180%; color: #A63700; z-index: 10; width: auto; }
+
+/* MAIN NAVIGATION */
+div#navcontainer { background-color: #555;	height: 22px;	width: 100%;}
+div#navcontainer ul { margin: 0px; padding: 0px; line-height: 22px; white-space: nowrap;}
+div#navcontainer li { list-style-type: none; display: inline;}
+div#navcontainer li.active { list-style-type: none; display: inline; background: #A63700; padding: 2px 20px; /*border-bottom: 4px solid #A63700;*/ }
+div#navcontainer li.first {margin-left: 10px;}
+div#navcontainer li a {text-decoration: none; padding: 2px 20px; color: #FFF; font-weight: bold; text-transform: uppercase; }
+div#navcontainer li a:hover { font-weight: bold; color: #FFF; background-color: #A63700;}
+
+/* SUB NAVIGATION */
+div#subnavcontainer { background-color: #A63700;	height: 22px;	width: 100%; border-top: 4px solid #A63700; }
+div#subnavcontainer ul { margin: 0px; padding: 0px; line-height: 22px; white-space: nowrap;}
+div#subnavcontainer li { list-style-type: none; display: inline;}
+div#subnavcontainer li.active { list-style-type: none; display: inline; background: #f1f1f1; padding: 2px 10px; border-bottom: 4px solid #f1f1f1;}
+div#subnavcontainer li.first {margin-left: 25px;}
+div#subnavcontainer li a {text-decoration: none; padding: 2px 10px; color: #fff; text-decoration: none; letter-spacing: 1px; font-weight: normal;}
+div#subnavcontainer li.active a { color: #555; font-weight:normal;}
+div#subnavcontainer li a:hover { font-weight: normal; color: #555; background-color: #f1f1f1;}
+
+/* FOOTER */
+#footer{width: auto; border-top: #C6C6C6 1px solid; background: #EEE; height: auto; padding: 20px 0; color: #777777; clear:both; display:block;}
+#footer a{ text-decoration: none; color: #777; font-weight: normal;}
+#footer a:hover{ text-decoration: underline;}
+#footerContent {width: auto; text-align: center; margin-top: 10px;}
+#subfooter{width: auto; font-size: 90%; text-align: center; padding: 10px 0; display: block;}
+#subfooter a {color: #aa1117;}
+

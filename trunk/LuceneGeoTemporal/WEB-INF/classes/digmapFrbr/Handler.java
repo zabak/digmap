@@ -41,11 +41,14 @@ public class Handler extends HttpServlet
         {
 //           //O XML vem BOM que eu já testei, para testares faz um pedido com o post que está no index.html e descomenta isto           
 //            String XML = request.getParameter("request");
+//            System.out.println(XML);
 //            SAXReader reader = new SAXReader();
 //            createIgnoreErrorHandler(reader);
 //            Document dom = reader.read(new StringReader(XML));
-
-
+//
+//
+//
+//
 //
 //            XMLWriter writer = new XMLWriter(response.getOutputStream());
 //            writer.write( dom );

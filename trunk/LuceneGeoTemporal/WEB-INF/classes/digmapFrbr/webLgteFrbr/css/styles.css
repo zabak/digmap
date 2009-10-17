@@ -1,0 +1,239 @@
+body
+{
+    color: black;
+    border: 0;
+    padding: 0;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 0;
+    /*font-family:  sans-serif;
+    font-size: 0.7em;*/
+}
+
+th
+{
+    font-size:0.9em;
+    font-weight: normal;
+}
+
+td
+{
+    font-size: 0.8em;
+}
+a
+{
+    color: blue;
+}
+
+h2, h3, h4
+{
+    color: black; border-color: #1170A2;
+}
+form
+{
+    margin: 0; padding: 0;
+}
+
+#footer
+{
+    border-top: 1px solid #cccccc;
+}
+
+#footer #license ul
+{
+    clear: both;
+    padding-right: 0;
+    padding-left: 0;
+    padding-bottom: 0;
+    margin: 0;
+    list-style-type: none;
+    text-align: center;
+    font-size: 0.8em;
+}
+
+
+#content
+{
+    padding-bottom: 10px;
+    padding-bottom: 20px;
+    padding-left:20px;
+    padding-right:20px;
+}
+#header, #header td, #header td a
+{
+    background-color:#396F9D;
+    color:white;
+}
+
+table.collections
+{
+    padding-top:10px;
+}
+
+
+.collections th
+{
+    color:white;
+    background-color:#042F3F;
+    border: 1px black solid;
+}
+
+.collections td
+{
+    color:white;
+    background-color:#257196;
+    border: 1px black solid;
+}
+
+#bigtable
+{
+    width:100%;
+    left: 0;
+    width:100%;
+    padding:0;
+    right:0;
+    top:0;
+    bottom:0;
+}
+
+#bigtableCenter
+{
+    width:100%;
+    padding:0;
+    left:0;
+    right:0;
+    top:0;
+    bottom:0;
+}
+#topNav
+{
+    width:100%;
+    color:white;
+    padding:5px;
+    left:0;
+    right:0;
+    top:0;
+    bottom:0;
+    border-bottom: 1px solid #cccccc;
+    background-color:#257196;
+
+}
+
+#leftNav
+{
+    color:white;
+    background-color:#042F3F;
+    left: 0;
+    padding:5px;
+    right:0;
+    top:0;
+    bottom:0;
+    vertical-align:top;
+    border-right: 1px solid #cccccc;
+}
+
+#rightNav
+{
+    color:white;
+    background-color:#042F3F;
+    left: 0;
+    padding:5px;
+    right:0;
+    top:0;
+    bottom:0;
+    vertical-align:top;
+    border-left: 1px solid #cccccc;
+}
+
+.lang
+{
+    font-size:0.75em;
+}
+.resultsBar
+{
+    border-top: 2px solid #FDBB1C;
+    left: 0;
+    width:100%;
+    padding:0;
+    right:0;
+    top:0;
+    bottom:0;
+    vertical-align:top;
+    border-bottom: 1px solid #cccccc;
+    background-color:#9ACCEF;
+}
+
+
+/*RESULTS*/
+.separator
+{
+    height:10px;
+    left:0;
+    border-top: 1px solid #cccccc;
+}
+
+.item
+{
+    border-bottom: 1px solid #cccccc;
+    padding-left:5px;
+    padding-top:5px;
+}
+
+.navTable th.tableTitle
+{
+    background-color:#257196;
+    border-bottom: 1px solid #cccccc;
+    color:white;
+}
+
+.navTable
+{
+    padding-top:5px;
+}
+#topNav .navTable th.tableTitle
+{
+    background-color:#042F3F;
+}
+
+.navTable td
+{
+    font-size: 0.7em;
+    background-color:#9ACCEF;
+    border-bottom: 1px solid #dedede;
+    padding-left:5px;
+}
+
+.invisible
+{
+    visibility: hidden;
+}
+
+td.subNode
+{
+    padding-left: 20px;
+}
+td.subNode a
+{
+    padding-left: 4px;
+    border-left: 1px solid #dedede;
+}
+
+.dcinfo
+{
+    color:#257196;
+    text-decoration:underline;
+}
+
+.dcinfoText
+{
+    color:#257196;
+}
+
+.smallInfoGreen {
+    COLOR: #336600; TEXT-DECORATION: none;
+}
+
+.linkNavPage{
+    color: ffffff;
+    text-decoration:underline;
+}

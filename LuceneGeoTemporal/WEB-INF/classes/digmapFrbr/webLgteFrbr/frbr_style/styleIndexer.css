@@ -1,0 +1,617 @@
+
+TD {
+	vertical-align: middle; font-size:10pt; font-family: Arial,Helvetica,Geneva,Verdana,sans-serif;
+}
+.main {
+	WIDTH: 100%; BACKGROUND-COLOR: #FFFFFF;
+}
+H2 {
+	FONT-SIZE: 16px; COLOR: #000000; FONT-FAMILY: Verdana, Helvetica
+}
+H3 {
+	FONT-SIZE: 14px; COLOR: #000000; FONT-FAMILY: Verdana, Helvetica ; MARGIN-BOTTOM: 5px; MARGIN-TOP: 5px;
+}
+H4 {
+	FONT-SIZE: 12px; COLOR: #000000; FONT-FAMILY: Verdana, Helvetica
+}
+.link {
+	FONT-SIZE: 12px; COLOR: #000000;
+}
+.link:hover {
+	FONT-SIZE: 12px; COLOR: #0000ff; 
+}
+
+.linkSimilar {
+	FONT-SIZE: 12px; COLOR: #000000;
+}
+.linkSimilar:hover {
+	FONT-SIZE: 12px; COLOR: #0000ff;
+}
+
+.linkSimilarAutority {
+	FONT-SIZE: 12px; COLOR: #000000; font-style: italic;
+}
+
+
+
+.linkRange {
+	FONT-SIZE: 12px; COLOR: #000000
+}
+.linkRange:hover {
+	FONT-SIZE: 12px; COLOR: #0000ff
+}
+.linkRangeSelect {
+	FONT-SIZE: 12px; COLOR: #339944
+}
+.linkRangeSelect:hover {
+	FONT-SIZE: 12px; COLOR: #0000ff
+}
+
+
+.linkLetter {
+	FONT-SIZE: 13px; COLOR: #000000
+}
+.linkLetter:hover {
+	FONT-SIZE: 13px; COLOR: #0000ff
+}
+.letter {
+	FONT-SIZE: 14px; VERTICAL-ALIGN: top; FONT-FAMILY: Courier New; PADDING-TOP: 1px; PADDING-bottom: 1px; 
+}
+
+.letterBackgroundGrey {
+	FONT-SIZE: 14px; VERTICAL-ALIGN: top; FONT-FAMILY: Courier New; PADDING-TOP: 1px; PADDING-bottom: 1px; background-color: #eeeeee;
+}
+
+.letterBackgroundRed {
+	FONT-SIZE: 14px; VERTICAL-ALIGN: top; FONT-FAMILY: Courier New; PADDING-TOP: 1px; PADDING-bottom: 1px; background-color: #a63700;
+}
+
+.numberOf { color:#000000; padding: 0px 12px 0px 12px; white-space: nowrap; }
+
+.linkWhite {
+	FONT-SIZE: 12px; COLOR: #ffffff
+}
+.linkWhite:hover {
+	FONT-SIZE: 12px; COLOR: #ffffff
+}
+.linksmall {
+	FONT-SIZE: 11px; COLOR: #ffffff
+}
+.linksmall:hover {
+	FONT-SIZE: 11px; COLOR: #ffffff
+}
+
+.firsttitle2 {
+	PADDING-RIGHT: 3px; PADDING-LEFT: 3px; FONT-WEIGHT: bold; FONT-SIZE: 13px; PADDING-BOTTOM: 3px; COLOR: #225588; PADDING-TOP: 3px; BACKGROUND-COLOR: #E1F0FF; TEXT-ALIGN: center
+}
+.subtitle {
+	TEXT-ALIGN: center; PADDING-RIGHT: 3px; PADDING-LEFT: 3px; FONT-WEIGHT: bold; FONT-SIZE: 12px; COLOR: #000000; BACKGROUND-COLOR: #ffffff
+}
+.subtitle2 {
+	PADDING-RIGHT: 3px; PADDING-LEFT: 3px; FONT-WEIGHT: bold; FONT-SIZE: 12px; COLOR: #000000
+}
+.smalltext {
+	FONT-SIZE: 10px; COLOR: #ffffff; FONT-FAMILY: Verdana, Helvetica ; background-color: #339944
+}
+.linksmallBlk {
+	FONT-SIZE: 12px; COLOR: #000000
+}
+.linksmallBlk:hover {
+	FONT-SIZE: 12px; COLOR: #000000
+}
+.linksmallText {
+	FONT-SIZE: 10px; COLOR: #000000
+}
+.linksmallText:hover {
+	FONT-SIZE: 10px; COLOR: #000000; 
+}
+.text {
+	FONT-SIZE: 12px; VERTICAL-ALIGN: top; BACKGROUND-COLOR: #ffffff; border: none; 
+}
+.languageText {
+	padding-left: 5px ;height: 30px; FONT-SIZE: 13px; VERTICAL-ALIGN: middle; COLOR: #000000; BACKGROUND-COLOR: #ffffff
+}
+.cooperantText {
+	padding-left: 5px ;height: 30px; FONT-SIZE: 12px; VERTICAL-ALIGN: middle; COLOR: #000000; BACKGROUND-COLOR: #ffffff
+}
+.textDateTitle {
+	FONT-SIZE: 12px; COLOR: #000000; FONT-FAMILY: Courier New, sans-serif; font: bold; WHITE-SPACE: nowrap; BACKGROUND-COLOR: #ffffff; vertical-align: middle; text-align: center; 
+}
+.textDateTitleFirstCol{
+	FONT-SIZE: 12px; COLOR: #000000; FONT-FAMILY: Courier New, sans-serif; font: bold; WHITE-SPACE: nowrap; BACKGROUND-COLOR: #ffffff; vertical-align: middle; text-align: center; width: auto;
+}
+.textDateCol1 {
+	FONT-SIZE: 12px; VERTICAL-ALIGN: top; COLOR: #000000; FONT-FAMILY: Courier New, sans-serif; WHITE-SPACE: nowrap; BACKGROUND-COLOR: #ffffff
+}
+.textDateCol2 {
+	FONT-SIZE: 12px; VERTICAL-ALIGN: top; COLOR: #000000; FONT-FAMILY: Courier New, sans-serif; WHITE-SPACE: nowrap; BACKGROUND-COLOR: #dddddd
+}
+.linkDate {
+	FONT-SIZE: 12px; COLOR: #000000; FONT-FAMILY: Courier New, sans-serif
+}
+.linkDate:hover {
+	FONT-SIZE: 12px; COLOR: #0000ff; FONT-FAMILY: Courier New, sans-serif
+}
+.index {
+	PADDING-BOTTOM: 3px; COLOR: #ffffff; PADDING-TOP: 3px
+}
+
+.indexText {
+	FONT-SIZE: 13px; COLOR: #ffffff; FONT-FAMILY: Verdana, Helvetica
+}
+
+.indexSmallText {
+	FONT-SIZE: 12px; COLOR: #ffffff; FONT-FAMILY: Verdana, Helvetica
+}
+
+.indexLogo { vertical-align:middle ; border: none}
+
+.linkIndex {
+	FONT-SIZE: 13px; COLOR: #ffffff
+}
+.linkIndex:hover {
+	FONT-SIZE: 13px; COLOR: #ffffff
+}
+
+.linkSmallIndex {
+	FONT-SIZE: 12px; COLOR: #ffffff
+}
+.linkSmallIndex:hover {
+	FONT-SIZE: 12px; COLOR: #ffffff
+}
+
+.linkIndexBlack {
+	FONT-WEIGHT: bold; FONT-SIZE: 13px; COLOR: #000000;
+}
+.linkIndexBlack:hover {
+    FONT-SIZE: 13px; COLOR: #339944;
+}
+
+.linkIndexNovidades {
+	FONT-WEIGHT: bold; FONT-SIZE: 11px; COLOR: #000000;
+}
+.linkIndexNovidades:hover {
+    FONT-SIZE: 11px; COLOR: #339944;
+}
+.linkFooter {
+	FONT-SIZE: 11px; COLOR: #000000
+}
+.linkFooter:hover {
+	FONT-SIZE: 11px; COLOR: #000000
+}
+
+
+
+
+.workSubTitle {
+	WIDTH: 25px; PADDING-RIGHT: 3px; FONT-SIZE: 11px; VERTICAL-ALIGN: top; COLOR: #000000; BACKGROUND-COLOR: #FFFFFF; TEXT-ALIGN: right
+}
+.workTitle2 {
+	WIDTH: 70px; PADDING-RIGHT: 3px; FONT-SIZE: 12px; VERTICAL-ALIGN: top; COLOR: #225588; BACKGROUND-COLOR: #E1F0FF; TEXT-ALIGN: right
+}
+.workSubTitle2 {
+	WIDTH: 70px; PADDING-RIGHT: 3px; FONT-SIZE: 11px; VERTICAL-ALIGN: top; COLOR: #225588; BACKGROUND-COLOR: #E1F0FF; TEXT-ALIGN: right
+}
+.workVerticalLine {
+    BACKGROUND-COLOR: #DDDDDD; WIDTH: 1px
+}
+.workCover {
+    PADDING-RIGHT: 9px; PADDING-LEFT: 9px; PADDING-TOP: 3px; PADDING-BOTTOM: 3px;
+}
+.workImgCover {
+    WIDTH: 80px; border:solid #000000 1px;
+}
+.newWorkImgCover {
+    WIDTH: 100px
+}
+.indexPageImgCover {
+    WIDTH: 55px
+}
+
+.indexIcon img{
+    border-color: #dddddd; border-width: 1; 
+}
+
+.newWorkImgLink {
+    border:1; BORDER-COLOR: #000000;
+}
+.newWorkImgLink:visited {
+    border:1;  BORDER-COLOR: #000000;
+}
+.newWorkImgLink:hover{
+    border:1;  BORDER-COLOR: #000000;
+}
+.newWorkImgLink:link{
+    border:1;  BORDER-COLOR: #000000;
+}
+
+.destaquesImgCover {
+    WIDTH: 25px
+}
+.workInfo {
+    WIDTH: 100% ; PADDING-RIGHT: 3px; PADDING-LEFT: 3px; FONT-SIZE: 12px; PADDING-BOTTOM: 1px; VERTICAL-ALIGN: top; COLOR: #000000; PADDING-TOP: 1px; BACKGROUND-COLOR: #ffffff;
+}
+
+.workLink {
+	FONT-SIZE: 12px; VERTICAL-ALIGN: top;
+}
+.url {
+	FONT-SIZE: 11px; VERTICAL-ALIGN: top; COLOR: #339944; padding: 1px 0px 6px 2px;
+}
+.urlLink {
+	FONT-SIZE: 11px; VERTICAL-ALIGN: top; COLOR: #0000ff;
+}
+.workLink:hover {
+	FONT-SIZE: 12px; VERTICAL-ALIGN: top; COLOR: #0000ff
+}
+.workLink2 {
+	FONT-SIZE: 12px; VERTICAL-ALIGN: top; COLOR: #225588
+}
+.workLink2:hover {
+	FONT-SIZE: 12px; VERTICAL-ALIGN: top; COLOR: #225588
+}
+.workSubLink {
+	FONT-SIZE: 11px; VERTICAL-ALIGN: top; COLOR: #777777;
+}
+.workSubLink:hover {
+	FONT-SIZE: 11px; VERTICAL-ALIGN: top; COLOR: #0000CD;
+}
+
+
+
+.BiblRecord {
+	PADDING-LEFT: 5px;  PADDING-TOP: 5px; BACKGROUND-COLOR: #eeeeee
+}
+
+DIV.Description {
+	PADDING-RIGHT: 175px
+}
+DIV.CoverImage {
+	PADDING-RIGHT: 10px;  PADDING-TOP: 5px; float:right
+}
+DIV.Visualisation {
+	PADDING-BOTTOM: 10px; PADDING-TOP: 10px;
+}
+DIV.DigitalItems {
+    BACKGROUND-COLOR: #FFFFFF;
+}
+DIV.itemDiv {
+    PADDING-LEFT: 17px;
+}
+TD.ISBD {
+	PADDING-RIGHT: 5px; PADDING-LEFT: 15px
+}
+
+TD.Item {
+	PADDING-LEFT: 15px
+}
+TD.infoBND {
+	PADDING-TOP: 10px; PADDING-RIGHT: 10px; PADDING-LEFT: 10px; VERTICAL-ALIGN: top; FONT-SIZE: 12px; WIDTH: 50%;
+}
+.linkItem {
+    FONT-WEIGHT: bold; COLOR: #339944; PADDING-RIGHT: 10px;
+}
+.nolinkItem {
+	FONT-WEIGHT: bold; COLOR: #444444; PADDING-RIGHT: 10px;
+}
+.linkItem:hover {
+	FONT-WEIGHT: bold; COLOR: #0000ff
+}
+.linkRight {
+	COLOR: #000000
+}
+.linkRight:hover {
+	COLOR: #000000
+}
+.linkInfo {
+	FONT-WEIGHT: bold; FONT-SIZE: 13px; COLOR: #663300; font-family: Verdana, Helvetica, sans-serif
+}
+.linkInfo:hover {
+	FONT-WEIGHT: bold; FONT-SIZE: 13px; COLOR: #663300; font-family: Verdana, Helvetica, sans-serif
+}
+.linkbiblRecord {
+	COLOR: #663300
+}
+.linkbiblRecord:hover {
+	COLOR: #0000ff
+}
+.title {
+	FONT-WEIGHT: bold; FONT-SIZE: 15px; COLOR: #663300; font-family: Verdana, Helvetica, sans-serif
+}
+.titleFB {
+	FONT-WEIGHT: bold; FONT-SIZE: 14px; COLOR: #663300; font-family: Verdana, Helvetica, sans-serif
+}
+.smalltitle {
+	FONT-WEIGHT: bold; FONT-SIZE: 13px; COLOR: #663300; font-family: Verdana, Helvetica, sans-serif
+}
+.smalltitle2 {
+    FONT-SIZE: 13px; COLOR: #663300; font-family: Verdana, Helvetica, sans-serif
+}
+.smalltext {
+	FONT-SIZE: 11px; COLOR: #ffffff; FONT-FAMILY: Verdana, Helvetica
+}
+.Cooperant {
+	PADDING-LEFT: 10px
+}
+
+DIV.inicio {
+	PADDING-RIGHT: 5px; PADDING-LEFT: 5px; FLOAT: left; TEXT-ALIGN: left; WIDTH: 165px; font-size: 13; color: #FFFFFF
+}
+
+
+
+DIV.IndexBottom {
+	PADDING-BOTTOM: 3px; WIDTH: 85%; PADDING-TOP: 3px; BACKGROUND-COLOR: #339944; FLOAT: left ;
+}
+DIV.PurlNavegation {
+	PADDING-BOTTOM: 3px; WIDTH: 130px; PADDING-TOP: 3px; BACKGROUND-COLOR: #339944; FLOAT: right ;
+}
+DIV.ViewPorbase {
+	PADDING-RIGHT: 5px; PADDING-LEFT: 15px; PADDING-BOTTOM: 3px; PADDING-TOP: 3px
+}
+DIV.ViewAuthors {
+	PADDING-RIGHT: 5px; PADDING-LEFT: 15px
+}
+.linkAuthor {
+	FONT-SIZE: 13px; COLOR: #ffffff
+}
+.linkAuthor:hover {
+	FONT-SIZE: 13px; COLOR: #ffffff
+}
+
+.indexLinks {
+	VERTICAL-ALIGN: middle; TEXT-ALIGN: left;
+}
+
+.iconsPartners {
+	TEXT-ALIGN: center;
+}
+
+
+DIV.Content2 {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; FLOAT: left; PADDING-BOTTOM: 15px; BACKGROUND-COLOR: #339944
+}
+
+DIV.IndexTitle {
+	FLOAT: left; WIDTH: 90%; TEXT-ALIGN: center
+}
+DIV.IndexFormat {
+	FLOAT: right; TEXT-ALIGN: right
+}
+DIV.BNImage {
+	PADDING-RIGHT: 5px; PADDING-LEFT: 5px; FLOAT: left; WIDTH: 30%; PADDING-TOP: 5px; TEXT-ALIGN: left
+}
+DIV.FooterInfo {
+	PADDING-RIGHT: 5px; PADDING-LEFT: 5px; FLOAT: left; WIDTH: 30%; TEXT-ALIGN: center
+}
+
+
+DIV.ECImage {
+	PADDING-RIGHT: 5px; PADDING-LEFT: 5px; FLOAT: right; WIDTH: 30%; PADDING-TOP: 5px; TEXT-ALIGN: center;
+}
+
+DIV.Order {
+	PADDING-RIGHT: 5px; PADDING-LEFT: 5px; FLOAT: left; TEXT-ALIGN: left
+}
+DIV.Legend {
+	PADDING-RIGHT: 5px; PADDING-LEFT: 5px; FLOAT: right; TEXT-ALIGN: right
+}
+DIV.Error {
+    FLOAT: left;
+}
+DIV.IndexPage {
+	FLOAT: left; WIDTH: 100%; BACKGROUND-COLOR: #ffffff
+}
+DIV.DivDestaques {
+	FLOAT: left; WIDTH: 250px; BACKGROUND-COLOR: #ffffff; TEXT-ALIGN: left
+}
+DIV.DivMenu {
+	MARGIN-TOP: 5px; MARGIN-LEFT: 240px; MARGIN-RIGHT: 10px; BACKGROUND-COLOR: #eeeeee; TEXT-ALIGN: left
+}
+DIV.ListLinks {
+	TEXT-ALIGN: left
+}
+DIV.ListDestaques {
+	TEXT-ALIGN: left
+}
+DIV.List {
+	TEXT-ALIGN: left
+}
+DIV.PurlMain {
+	WIDTH: 100%; BACKGROUND-COLOR: #339944
+}
+
+DIV.destaqueCover {
+	FLOAT: left; WIDTH: 60px;  TEXT-ALIGN: center   ;
+}
+DIV.destaqueTitle {
+	FLOAT: left; WIDTH: 170px;   TEXT-ALIGN: left ; PADDING-LEFT: 5px;
+}
+DIV.destaqueText {
+	FONT-SIZE: 11px; WIDTH: 179px; FLOAT: left; TEXT-ALIGN: left ; PADDING-LEFT: 5px;
+}
+
+.destaqueLink { FONT-SIZE: 11px; COLOR: #339944 }
+.destaqueLink:hover { FONT-SIZE: 11px; COLOR: #0000ff }
+
+DIV.destaqueTitleL {
+	FLOAT: left; WIDTH: 179px;   TEXT-ALIGN: right ; PADDING-RIGHT: 5px;
+}
+
+
+
+
+td.colIcon{
+	width: 28px;
+}
+
+DIV.LineFooter {
+	WIDTH: 98%; HEIGHT: 15px; FLOAT: left; text-align: right; margin-bottom:5px; 
+}
+
+.indexGroup {
+	VERTICAL-ALIGN: middle; TEXT-ALIGN: left; float:left; width:100%;
+}
+
+/* logo DIGMAP */
+div.IndexTop { float: left; padding-bottom: 0px; padding-top: 5px; width: 100%; background-color: #ffffff; }
+div.logo 	 { float: left; padding-left: 5px; padding-bottom: 5px; text-align: left; }
+div.mitraSearch { float: right; padding-left: 5px; padding-right: 5px; padding-top: 5px; text-align: right; width: 230px; }
+
+/* conteudo da pagina */
+div.Content 	 { float: left; padding-bottom: 5px; background-color: #ffffff; text-align: center; width: 100%;}
+.indexMainTable { width:100%; }
+.viewRecord	{ float: left; text-align: center; }
+.viewRecordBox 	{ text-align: center; white-space:nowrap; }
+
+.tagTitle   { padding-right: 6px; padding-left: 6px; padding-top: 3px; padding-bottom: 3px; font-size: 12px; vertical-align: top; color: #000000; background-color: #DDDDDD; text-align: right; white-space: nowrap; width:65px; }
+.tagContent { padding-right: 3px; padding-left: 3px; padding-top: 3px; padding-bottom: 3px; font-size: 12px; vertical-align: top; color: #000000; background-color: #ffffff; }
+
+/* Barra de navegacao */
+.firsttitle 	{ padding-right: 3px; padding-left: 3px; padding-top: 3px; padding-bottom: 3px; color: #ffffff; font-weight: bold; font-size:0.86em;  background-color: #EEEEEE; text-align: center; height:20px; font-family:Arial,Helvetica,Geneva,Verdana,sans-serif;}
+div.navMain 	{ padding-left: 10px; color: #ffffff; font-size:1em; float: left; text-align: left; width: 48px;  }
+div.navPage 	{ font-size:1em; float: left; text-align: left; color: #ffffff;  }
+.linkNavPage 		 { color: #ffffff; }
+.linkNavPage:hover { color: #ffffff; }
+
+td.cover { text-align: center; vertical-align: top; PADDING-RIGHT: 10px; PADDING-LEFT: 5px; }
+
+div.selectedLine{
+	background-color: #ffffff; width: 100%;
+}
+
+div.notSelectedLine{
+	background-color: #EBF5E0; width: 100%;
+}
+
+td.listOfNames{
+	vertical-align:top; width: 100%; 
+}
+td.selectedIFrame{
+	background-color: #ffffff;
+}
+
+.TitleBoxTop { FONT-WEIGHT: bold; FONT-SIZE: 14px; COLOR: darkgreen; FONT-FAMILY: Verdana, Helvetica ; MARGIN-BOTTOM: 4px; MARGIN-TOP: 4px; PADDING-LEFT: 4px; BACKGROUND-COLOR: #FFFFFF; PADDING-BOTTOM: 4px; PADDING-TOP: 4px;}
+.TitleBoxRedLine { border-top: 3px solid #339944;  FONT-WEIGHT: bold; FONT-SIZE: 14px; COLOR: #063A4F; FONT-FAMILY: Verdana, Helvetica ; MARGIN-BOTTOM: 4px; MARGIN-TOP: 4px; PADDING-LEFT: 4px; PADDING-BOTTOM: 4px; PADDING-TOP: 4px;  BACKGROUND-COLOR: #FFFFFF}
+.TitleBoxH { FONT-WEIGHT: bold; FONT-SIZE: 14px; COLOR: #063A4F; FONT-FAMILY: Verdana, Helvetica ; MARGIN-BOTTOM: 4px; MARGIN-TOP: 4px; PADDING-LEFT: 4px;  }
+.TitleWithOutBox { border-top: 0px solid #339944;  FONT-WEIGHT: bold; FONT-SIZE: 14px; COLOR: #FFFFFF; FONT-FAMILY: Verdana, Helvetica ; MARGIN-BOTTOM: 4px; MARGIN-TOP: 0px; PADDING-LEFT: 4px; PADDING-BOTTOM: 4px; PADDING-TOP: 4px;  BACKGROUND-COLOR: #8097B5}
+.TitleBox { border-top: 1px solid black;  border-left: 1px solid black; border-bottom: 1px solid black; border-right: 1px solid black; FONT-WEIGHT: bold; FONT-SIZE: 13px; COLOR: #063A4F; FONT-FAMILY: Verdana, Helvetica ; MARGIN-BOTTOM: 4px; MARGIN-TOP: 4px; PADDING-LEFT: 4px; PADDING-BOTTOM: 4px; PADDING-TOP: 4px;  BACKGROUND-COLOR: #EEEEEE}
+
+.TitleBoxHSmall { border-top: 1px solid black;  FONT-WEIGHT: bold; FONT-SIZE: 13px; COLOR: #063A4F; FONT-FAMILY: Verdana, Helvetica ; MARGIN-BOTTOM: 4px; MARGIN-TOP: 4px; PADDING-LEFT: 4px; PADDING-BOTTOM: 4px; PADDING-TOP: 4px;  BACKGROUND-COLOR: #FFFFFF}
+.TitleBoxBig { border-top: 1px solid black;  border-left: 1px solid black; border-bottom: 1px solid black; border-right: 1px solid black; FONT-WEIGHT: bold; FONT-SIZE: 15px; COLOR: #063A4F; FONT-FAMILY: Verdana, Helvetica ; MARGIN-BOTTOM: 4px; MARGIN-TOP: 4px; PADDING-LEFT: 4px; PADDING-BOTTOM: 4px; PADDING-TOP: 4px;  BACKGROUND-COLOR: #EEEEEE}
+.randomWorks { vertical-align: top ; PADDING-BOTTOM: 5px; PADDING-TOP: 5px;}
+
+.col1 { PADDING-LEFT: 0px; PADDING-RIGHT: 5px; vertical-align: top; BACKGROUND-COLOR: #FFFFFF;}
+.col2 { PADDING-LEFT: 0px; PADDING-RIGHT: 5px; vertical-align: top ; WIDTH: 250; BACKGROUND-COLOR: #EEEEEE;}
+
+.emailingListLink { FONT-SIZE: 11px; COLOR: #ffffff ; text-decoration: none}
+.emailingList { PADDING-LEFT: 5px; PADDING-TOP: 5px; PADDING-BOTTOM: 5px; PADDING-RIGHT: 5px; BACKGROUND-COLOR: #063A4F}
+
+.highlightImg { MARGIN-TOP: 7px; border: 0; }
+
+.linkFasciculo { FONT-SIZE: 14px; COLOR: #000000}
+.linkFasciculo:hover { FONT-SIZE: 14px;  COLOR: #339944}
+
+.linkVolume { FONT-SIZE: 14px;  COLOR: #000000}
+.linkVolume:hover { FONT-SIZE: 14px;  COLOR: #339944}
+
+.fascNumber { FONT-SIZE: 10px; }
+.volNumber { FONT-SIZE: 10px; }
+
+.volume { border-top: 2px solid black;  border-left: 2px solid black; border-bottom: 2px solid black;WIDTH: 30px; padding-left:10px; padding-bottom:5px; padding-top:5px; BACKGROUND-COLOR: #ffffff }
+.volumeNumber { border-top: 2px solid black; border-right: 1px solid black; border-bottom: 2px solid black; WIDTH: 120px;  padding-bottom:5px; padding-top:5px; BACKGROUND-COLOR: #ffffff }
+.fasciculo { border-top: 2px solid black; border-right: 2px solid black; border-bottom: 2px solid black; padding-left:10px;  padding-bottom:5px; padding-top:5px; BACKGROUND-COLOR: #ffffff }
+.divFasciculo {padding-left:10px; float:left ; TEXT-ALIGN: center ; }
+
+.linkAboutList {list-style-image:inherit; margin-top:15px; margin-left:40px; margin-bottom:15px;}
+
+.collectionTitle {FONT-SIZE: 16px; COLOR: #000000; FONT-FAMILY: Verdana, Helvetica ; FONT-WEIGHT: bold; MARGIN-RIGHT: 5px; MARGIN-LEFT: 5px; MARGIN-TOP: 5px;}
+
+
+.indexDateTable {  }
+.indexTableSpace { background-color:#FFFFFF; height: 3px; }
+.lettersTable { background-color:#DDDDDD; border: none; width: 125px; }
+.lettersColumn { vertical-align: top; }
+.authorNameList { margin-left: 15px; overflow-y: auto; height: 500px; }
+.tableWorkList 		{	background-color: #FFFFFF; width: 100%; }
+
+
+.purlSubRangeSelect { background-color:#EEEEEE;  padding-top:5px; padding-bottom:5px; padding-left:2px; padding-right:2px; }
+.purlSubRangeNotSelect { padding-top:5px;padding-bottom:5px;padding-left:2px;padding-right:2px; }
+.purlRangeSelect { background-color:#FFFFFF;  padding-top:10px ; padding-bottom:10px ; padding-left:5px ; padding-right:5px }
+.purlRangeNotSelect { padding-top:10px ; padding-bottom:10px ; padding-left:5px ; padding-right:5px }
+.purlRangeArea { background-color:#EEEEEE; padding-left:10px;  }
+
+span.resourcesNumber     { font-size:9pt; color: #000000; font-weight: normal;}
+span.record         { font-family:Arial, sans-serif; font-size:10pt; font-weight:bold; color:#663300; }
+span.bold         { font-weight: bold; }
+div.recordText  { padding-left:10px;  padding-top:10px; padding-right:160px; }
+.workList { padding-top:6px; padding-left:6px; }
+
+/* Footer */
+div.special { clear: both; }
+
+
+
+/* TABLES */
+td.collectionIndexes{
+	width:100px;
+	text-align: right; 
+	vertical-align:top;
+}
+
+.submitButton{
+	width:70px;	
+}
+
+div.navMainIndex {
+	padding-left: 10px;
+	color: #ffffff;
+	font-size:1em;
+	float: left;
+	text-align: left;
+	width: 65px;
+}
+
+.box{
+	width: 125px;
+}
+
+/** Homepapage Collection */
+div.logoLeftPane{
+	padding:10px;
+	float:left;
+}
+
+div.infoRightPane{
+	padding-top: 10px;
+	padding-bottom: 10px;
+	float: left;
+	width:550px;
+}
+
+div.indexName{
+	float:left;
+	width:55px;
+}
+
+/* Author List */
+tr.heightLine{
+	height:15px;
+}
+
+.colWidth{
+	width:145px;	
+}
+
+.frame{
+	width: 500px;
+	height: 550px;
+}
+
+table.statistics				{ border: 1px solid #000000; }
+tr.greyStatistics				{ background-color:#eeeeee; }
+tr.darkGreyStatistics		{ background-color:#DDDDDD; }
+td.statisticsTitle			{ background-color:#DDDDDD; color:#000000; font-size:12px; padding:3px 6px; text-align:left; vertical-align:top; white-space:nowrap; }
+td.statisticsInfo				{ color:#000000; font-size:12px; padding:1px 3px; vertical-align:top; white-space:nowrap; }
+td.statisticsInfoRight		{ color:#000000; font-size:12px; padding:1px 3px; vertical-align:top; white-space:nowrap; text-align:right; }

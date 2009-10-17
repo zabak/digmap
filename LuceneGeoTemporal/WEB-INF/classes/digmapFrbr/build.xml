@@ -1,0 +1,172 @@
+<?xml version="1.0"?>
+<project name="Lucene With Geo-Temporal Extensions" default="compile" basedir="../../">
+
+    <description>Lucene With Geo-Temporal Extensions</description>
+
+    <property file="deployer.properties" />
+
+    <!-- Configure the directory into which the web application is built -->
+    <property name="build" value="${base.dir}/build" />
+
+    <property name="webapp.path.lgte.frbr" value="${build}/lgteFrbr" />
+    <property name="webapp.path.frbr.cluster" value="${build}/frbrCluster" />
+
+    <path id="deployer.classpath">
+        <fileset dir="${base.dir}/lib">
+            <include name="*.jar" />
+        </fileset>
+    </path>
+
+
+    
+    <!-- Executable Targets -->
+    <target name="clean" description="Removes build directory">
+        <delete dir="${build}" />
+    </target>
+
+    <target name="war.lgte.frbr" depends="compile">
+
+        <mkdir dir="${webapp.path.lgte.frbr}/WEB-INF/lib" />
+        <mkdir dir="${webapp.path.lgte.frbr}/WEB-INF/classes" />
+        <copy todir="${webapp.path.lgte.frbr}/WEB-INF" file="${base.dir}/web.xml"/>
+
+        <copy todir="${webapp.path.lgte.frbr}/WEB-INF/classes">
+            <fileset dir="${base.dir}/classes">
+                <include name="**/*.properties"/>
+                <include name="**/*.list"/>
+                <include name="**/stopword*"/>
+                <include name="**/*.xml"/>
+            </fileset>
+        </copy>
+
+        <replace file="${webapp.path.lgte.frbr}/WEB-INF/classes/pt/utl/ist/lucene/app.properties" value="">
+            <replacefilter token="@tmp.dir@" value="${base.dir}/test-index" />
+            <replacefilter token="@index.dir@" value="${base.dir}/test-index" />
+            <replacefilter token="@data.dir@" value="${base.dir}/test-data" />
+        </replace>
+
+        <copy todir="${webapp.path.lgte.frbr}/WEB-INF/lib">
+            <fileset dir="${base.dir}/lib">
+                <include name="**/*.jar"/>
+            </fileset>
+        </copy>
+        <delete>
+             <fileset dir="${webapp.path.lgte.frbr}/WEB-INF/lib">
+                <include name="jasper*.jar"/>
+                <include name="servlet-api.jar"/>
+                <include name="jsp-api.jar"/>
+            </fileset>
+        </delete>
+
+        <copy todir="${webapp.path.lgte.frbr}">
+            <fileset dir="${base.dir}/classes/digmapFrbr/webLgteFrbr">
+                <include name="**/*.*"/>
+            </fileset>
+        </copy>
+         
+
+        <copy todir="${webapp.path.lgte.frbr}" file="${base.dir}/../downloadDigmapFrbr.jsp"/>
+        <copy todir="${webapp.path.lgte.frbr}" file="${base.dir}/../footer.jsp"/>
+        <copy todir="${webapp.path.lgte.frbr}" file="${base.dir}/../index.sh"/>
+        <copy todir="${webapp.path.lgte.frbr}">
+            <fileset dir="${base.dir}/../">
+                <include name="*.png"/>
+                <include name="*.PNG"/>
+            </fileset>
+        </copy>
+        <copy tofile="${webapp.path.lgte.frbr}/index.jsp" file="${base.dir}/../indexDigmapFrbr.jsp"/>
+    </target>
+
+
+
+    <target name="war.frbr.cluster" depends="compile">
+
+        <mkdir dir="${webapp.path.frbr.cluster}/WEB-INF/lib" />
+        <mkdir dir="${webapp.path.frbr.cluster}/WEB-INF/classes" />
+
+        <copy todir="${webapp.path.frbr.cluster}/WEB-INF/classes/digmapFrbr" file="${base.dir}/classes/digmapFrbr/Handler.java"/>
+        <copy todir="${webapp.path.frbr.cluster}/WEB-INF/classes/digmapFrbr" file="${webapp.path.lgte.frbr}/WEB-INF/classes/digmapFrbr/Handler.class"/>
+
+        <copy todir="${webapp.path.frbr.cluster}/WEB-INF/lib">
+            <fileset dir="${base.dir}/lib">
+                <include name="dom4j.jar"/>
+            </fileset>
+        </copy>
+        <copy todir="${webapp.path.frbr.cluster}">
+            <fileset dir="${base.dir}/classes/digmapFrbr/webFrbrCluster">
+                <include name="**/*.*"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="compile">
+        <mkdir dir="${webapp.path.lgte.frbr}/WEB-INF/classes" />
+        <javac destdir="${webapp.path.lgte.frbr}/WEB-INF/classes" optimize="off" debug="true" debuglevel="lines,vars,source" nowarn="true" deprecation="${compile.deprecation}" failonerror="true" srcdir="${base.dir}/classes" encoding="UTF-8" excludes="**/*.smap">
+            <classpath>
+                <fileset dir="${base.dir}/lib">
+                    <include name="**.jar" />
+                    <exclude name="servlet-api.jar" />
+                    <exclude name="jsp-api.jar" />
+                </fileset>
+                <fileset dir="${base.dir}/lib">
+                    <include name="*.jar" />
+                </fileset>
+            </classpath>
+            <include name="**" />
+            <exclude name="tags/**" />
+        </javac>
+    </target>
+
+
+    <!-- Webapp lifecycle control -->
+
+    <taskdef name="tomcat.reload" classname="org.apache.catalina.ant.ReloadTask" classpathref="deployer.classpath"/>
+    <taskdef name="tomcat.remove" classname="org.apache.catalina.ant.RemoveTask" classpathref="deployer.classpath"/>
+    <taskdef name="tomcat.roles" classname="org.apache.catalina.ant.RolesTask" classpathref="deployer.classpath"/>
+    <taskdef name="tomcat.start" classname="org.apache.catalina.ant.StartTask" classpathref="deployer.classpath"/>
+    <taskdef name="tomcat.stop" classname="org.apache.catalina.ant.StopTask" classpathref="deployer.classpath"/>
+    <taskdef name="tomcat.undeploy" classname="org.apache.catalina.ant.UndeployTask" classpathref="deployer.classpath"/>
+    <taskdef name="tomcat.deploy" classname="org.apache.catalina.ant.DeployTask" classpathref="deployer.classpath"/>
+    <taskdef name="tomcat.install" classname="org.apache.catalina.ant.InstallTask" classpathref="deployer.classpath"/>
+    <taskdef name="tomcat.jasper" classname="org.apache.jasper.JspC" classpathref="deployer.classpath"/>
+    <!--
+        TOMCAT Instalation Tasks
+    -->
+
+    <target name="tomcat.deployContextLgteFrbr">
+        <echo message="${username}"/>
+        <tomcat.install url="${url}" path="/lgteFrbr"
+                        config="file://D:/Servidores/workspace/lgte/WEB-INF/classes/digmapFrbr/lgteFrbr.xml"
+                        username="${username}" password="${password}" />
+    </target>
+    <target name="tomcat.undeployLgteFrbr">
+        <echo message="${username}"/>
+        <tomcat.undeploy url="${url}" path="/lgteFrbr"
+                         username="${username}" password="${password}" />
+    </target>
+    <target name="tomcat.reloadLgteFrbr">
+        <echo message="${username}"/>
+        <tomcat.reload url="${url}" path="/lgteFrbr"
+                       username="${username}" password="${password}" />
+    </target>
+
+    <target name="tomcat.deployContextFrbrCluster">
+        <echo message="${url}"/>
+        <tomcat.install url="${url}" path="/frbrCluster"
+                        config="file://D:/Servidores/workspace/lgte/WEB-INF/classes/digmapFrbr/frbrCluster.xml"
+                        username="${username}" password="${password}" />
+    </target>
+    <target name="tomcat.undeployFrbrCluster">
+        <echo message="${username}"/>
+        <tomcat.undeploy url="${url}" path="/frbrCluster"
+                         username="${username}" password="${password}" />
+    </target>
+    <target name="tomcat.reloadFrbrCluster">
+        <echo message="${username}"/>
+        <tomcat.reload url="${url}" path="/frbrCluster"
+                       username="${username}" password="${password}" />
+    </target>
+
+
+
+</project>

@@ -89,6 +89,7 @@
         else
         {
             responseBuilder = new StringBuilder();
+            responseBuilder.append("<lgte>\n");
             responseBuilder.append("<response><error>no query</error></response>\n");
         }
         responseBuilder.append("</lgte>\n");
@@ -107,20 +108,20 @@
             urlConnection.setDoInput(true);
             urlConnection.setDoOutput(true);
             urlConnection.setUseCaches(false);
-            urlConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-            urlConnection.setRequestProperty("Content-Length","" + body.length());
+//            urlConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+//            urlConnection.setRequestProperty("Content-Length","" + body.length());
 
 
             // Create I/O streams
             outStream = new DataOutputStream(urlConnection.getOutputStream());
-            inStream = new DataInputStream(urlConnection.getInputStream());
+
 
             // Send request
             outStream.writeBytes(body);
             outStream.flush();
-            outStream.close();
 
 
+            inStream = new DataInputStream(urlConnection.getInputStream());
 
             byte[] bytes = new byte[1024];
             int read;
@@ -131,6 +132,7 @@
                 builder.append(readed);
             }
             inStream.close();
+            outStream.close();
             response.setContentType("text/xml");
             response.setCharacterEncoding("UTF-8");
             PrintWriter pw = response.getWriter();

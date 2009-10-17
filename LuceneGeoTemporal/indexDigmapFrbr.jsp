@@ -153,7 +153,7 @@
 <head>
     <title>Example Web Application for Search with Lucene GeoTemporal Extensions</title>
     <!--FRBR Styles-->
-    <link rel="stylesheet" type="text/css" href="frbr_style/styleIndexer.css">
+    <link rel="stylesheet" type="text/css" href="css/styleIndexer.css">
     <link rel="stylesheet" type="text/css" href="frbr_style/navigation.css">
     <link rel="stylesheet" type="text/css" href="frbr_style/page_layout.css">
     <!--FRBR Styles-->

@@ -3,7 +3,7 @@
 #supranav_select {color: #555; background: #f1f1f1; padding: 2px 10px 2px 4px;}
 
 /* HEADER */
-#brand {width: 100%; background: url(header.jpg) no-repeat;height: 55px; padding: 0;}
+#brand {width: 100%; background: url(../images/header.jpg) no-repeat;height: 55px; padding: 0;}
 #header_title {display: none; margin: 0; font-family: Geneva; font-size: 180%; color: #A63700; z-index: 10; width: auto; }
 
 /* MAIN NAVIGATION */

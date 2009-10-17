@@ -37,7 +37,7 @@ a:visited {
 } 
 .twoColElsLtHdr #headerTel {
 	padding: 0;  /* this padding matches the left alignment of the elements in the divs that appear beneath it. If an image is used in the #header instead of text, you may want to remove the padding. */
-	background: url(frbr/mainbg.gif) repeat-x;
+	background: url(../images/mainbg.gif) repeat-x;
 	margin: 0 0 0 0;
 } 
 .twoColElsLtHdr #headerTel h1 {
@@ -164,7 +164,7 @@ fieldset {background:transparent;-moz-border-radius:8px; border: #ccc 4px solid;
 
 .button { 
 	text-transform: uppercase; 
-	background: #FFF url(frbr/sprite.png) 0px 0px repeat-x; 
+	background: #FFF url(../images/sprite.png) 0px 0px repeat-x;
 	display: -moz-inline-box; /* Gecko */
 	display: inline-block; /* IE, Opera and Safari */
 	vertical-align: text-bottom; 
@@ -188,7 +188,7 @@ a.button {
 }
 
 .button:hover { 
-	background: #FFF url(frbr/sprite.png) 0px -1300px repeat-x;
+	background: #FFF url(../images/sprite.png) 0px -1300px repeat-x;
 }
 /* PADDING */
 .p4 {padding: 4px;}

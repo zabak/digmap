@@ -147,7 +147,19 @@
         }
         
     }
-     else {
+    else if(request.getParameter("xml") != null && (request.getParameter("xml").equals("mitraStyle")))
+    {
+
+%>
+
+<jsp:include page="resultsMitraStyle.jsp"/>
+
+
+<%
+    }
+    else
+    {
+
 %>
 <html>
 <head>
@@ -298,9 +310,10 @@
                     <td>Response Type</td>
                     <td>
                         <select name="xml">
-                            <option value="false">Result  in HTML</option>
+                            <option value="false">Result  in HTML (Engine RAW DATA)</option>
                             <option value="true">Result in XML</option>
                             <option value="frbr">Cluster FRBR</option>
+                            <option value="mitraStyle">Mitra Style</option>
                         </select>
                     </td>
                 </tr>

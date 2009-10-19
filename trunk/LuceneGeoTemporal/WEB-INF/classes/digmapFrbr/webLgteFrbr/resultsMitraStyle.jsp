@@ -17,6 +17,7 @@
 <link rel="stylesheet" type="text/css" href="css/navigation.css">
 <link rel="stylesheet" type="text/css" href="css/page_layout.css">
 <link rel="stylesheet" type="text/css" href="css/styles.css">
+<link rel="stylesheet" type="text/css" href="css/mitra.css">
 <link rel="stylesheet" type="text/css" href="jsp/templates/frbr/styles/mitra.css">
 <link type="image/x-icon" href="http://portal.digmap.eu/images/digmap.ico" rel="shortcut icon">
 
@@ -30,12 +31,8 @@
 <table cellspacing="0" cellpadding="0" border="0">
 <tbody>
 <tr>
-<td><img src="/searchFrbr/imgs/frbr/supranav_left.gif" align="absmiddle" width="30" height="30"></td><td id="supranav_select">
-<form style="margin: 0pt; padding: 0pt;" action="index.html" id="formLg" name="formLg" method="post">
-                                Language:
-                                <select onchange="setCookie('cLang',this.options[this.selectedIndex].value,10);document.getElementById('formLg').submit();" id="lang" name="lang"></select>
+<td><img src="images/supranav_left.gif" align="absmiddle" width="30" height="30"></td><td id="supranav_select">
 
-</form>
 </td>
 </tr>
 </tbody>
@@ -60,9 +57,6 @@
 
         <%
             if (request.getParameter("q") != null && request.getParameter("q").length() > 1) {
-        %>
-        <h3>Results for '<%=request.getParameter("q")%>':</h3>
-        <%
                 try {
                     LgteIndexSearcherWrapper searcher = new LgteIndexSearcherWrapper(Model.LanguageModel, Globals.INDEX_DIR + "/lm/version1/digmapFrbr");
 
@@ -104,9 +98,6 @@
                             startResult = pageNumber * showNumber - showNumber;
                         }
 
-                        out.println("<h3>Number of matching documents = " + hits.length() + "</h3>");
-                        out.println("<h3>Showing " + request.getParameter("show") + " results - Page " + request.getParameter("page") + "</h3>");
-
 %>
 
 <div id="subnavcontainer">
@@ -116,11 +107,15 @@
             <span class="bold"><%=((pageNumber-1) * showNumber)%></span>
 
             -
-            <span class="bold"><%=(((pageNumber-1) * showNumber) + showNumber)%></span>  of  <span class="bold"><%=hits.length()%>%></span>  for  <span class="bold"><%=request.getParameter("q")%></span>
+            <span class="bold"><%=(((pageNumber-1) * showNumber) + showNumber)%></span>  of  <span class="bold"><%=hits.length()%></span>  for  <span class="bold"><%=request.getParameter("q")%></span>
         </div>
         <div class="navSearch">
-            <form class="nospace" method="GET" action="/searchFrbr/Handler">
+            <form class="nospace" method="GET" action="index.jsp?show=20&page=1&xml=mitraStyle">
                     ... <%=collUser%>
+                <input name="page" type="hidden" value="<%=request.getParameter("page")%>">
+                <input name="show" type="hidden" value="<%=request.getParameter("show")%>">
+                <input name="type" type="hidden" value="<%=request.getParameter("type")%>">
+                <input name="xml" type="hidden" value="<%=request.getParameter("xml")%>">
                 <input name="collection" type="hidden" value="<%=request.getParameter("collection")%>">
                 <input type="text" name="q" style="width:200px" value="<%=request.getParameter("q")%>"> <input type="submit" value="Search">
 
@@ -165,7 +160,7 @@
                                             <tr>
                                                 <td class="tagTitle"><span class="bold">Title</span></td><td class="tagContent"><label class="big"><%=doc.get(pt.utl.ist.lucene.treceval.Globals.DOCUMENT_TITLE)%></label></td>
                                             </tr>
-<%
+                                            <%if(doc.getDocument().getValues("creator") != null)
                                             for (String creator : doc.getDocument().getValues("creator"))
                                             {
 %>
@@ -174,11 +169,12 @@
                                                 </tr>
 <%
                                             }
+                                            if(doc.getDocument().getValues("date") != null)
                                             for (String date : doc.getDocument().getValues("date"))
                                             {
 %>
                                                 <tr>
-                                                    <td class="tagTitle"><span class="bold">Author</span></td><td class="tagContent"><%=date%></td>
+                                                    <td class="tagTitle"><span class="bold">Date</span></td><td class="tagContent"><%=date%></td>
                                                 </tr>
 <%
                                             }
@@ -240,6 +236,14 @@
 //                            }
 //                            out.print("</table></div>");
                         }
+
+                        if(showNumber != hits.length())
+                        {
+                    %>
+                        <h4>The page navigation is NOT IN USE. Please use the <a href="index.jsp">open form</a> and define yourself the page to display</h4>
+                    <%
+
+                        }
                         searcher.close();
                     }
                 }
@@ -248,7 +252,11 @@
                     ee.printStackTrace();
                 }
             }
+
+
         %>
+
+
 
 
                     </td>

@@ -21,15 +21,45 @@
     Globals.DATA_DIR = props.getProperty("data.dir");
     Globals.INDEX_DIR = props.getProperty("indexes.dir");
 
+    String queryStr = request.getParameter("q");
+    if(queryStr == null)
+        queryStr = "";
+    if(request.getParameter("creator") != null && request.getParameter("creator").length() > 0)
+    {
+        queryStr += " dc_creator:(" + request.getParameter("creator")+ ")";
+    }
+    if(request.getParameter("contributor") != null && request.getParameter("contributor").length() > 0)
+    {
+        queryStr += " dc_contributor:(" + request.getParameter("contributor")+ ")";
+    }
+    if(request.getParameter("title") != null && request.getParameter("title").length() > 0)
+    {
+        queryStr += " title:(" + request.getParameter("title")+ ")";
+    }
+    if(request.getParameter("date") != null && request.getParameter("date").length() > 0)
+    {
+        queryStr += " dc_date:(" + request.getParameter("date") + ")";
+    }
+    if(request.getParameter("description") != null && request.getParameter("description").length() > 0)
+    {
+        queryStr += " dc_description:(" + request.getParameter("description")+ ")";
+    }
+    if(request.getParameter("subject") != null && request.getParameter("subject").length() > 0)
+    {
+        queryStr += " dc_subject:(" + request.getParameter("subject")+ ")";
+    }
+    request.setAttribute("queryStr",queryStr);
+
     if (request.getParameter("xml") != null && (request.getParameter("xml").equals("frbr") || request.getParameter("xml").equals("true"))) {
 
         StringBuilder responseBuilder = new StringBuilder();
 
 
+
         responseBuilder.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
         responseBuilder.append("<lgte>\n");
-        responseBuilder.append("<request query=\"" + XmlUtils.escape(request.getParameter("q")) + "\"/>\n");
-        if (request.getParameter("q") != null && request.getParameter("q").length() > 1)
+        responseBuilder.append("<request query=\"" + XmlUtils.escape(queryStr) + "\"/>\n");
+        if (queryStr != null && queryStr.length() > 1)
         {
             responseBuilder.append("<response>\n");
             try {
@@ -42,7 +72,7 @@
                 notTokenizableFields.add(pt.utl.ist.lucene.treceval.Globals.DOCUMENT_FILE_PATH);
                 Analyzer analyzer = new LgteAnalyzer(notTokenizableFields);
                 //we pass the searcher to parser because in case of query expansion it will be needed
-                String q = request.getParameter("q");
+                String q = queryStr;
                 if (request.getParameter("collection") != null && request.getParameter("collection").length() > 0)
                     q = "collection:" + request.getParameter("collection") + " AND (" + q + ")";
                 LgteQuery query = LgteQueryParser.parseQuery(q, analyzer, searcher);
@@ -158,7 +188,7 @@
 %>
 <html>
 <head>
-    <title>Example Web Application for Search with Lucene GeoTemporal Extensions</title>
+    <title>The European Library - Library Search Interface</title>
     <!--FRBR Styles-->
     <link rel="stylesheet" type="text/css" href="css/styleIndexer.css">
     <link rel="stylesheet" type="text/css" href="frbr_style/navigation.css">
@@ -211,6 +241,68 @@
      }
        
     </style>
+    <script type="text/javascript">
+        /**
+         * Return an HTML element given ID
+         *
+         * @author Jorge Machado
+         * @date April 2008
+         *
+         * params:
+         * @objectId required object
+         */
+        function getObjectById(objectId)
+        {
+            // cross-browser function to get an object's style object given its id
+            try
+            {
+                if(document.getElementById && document.getElementById(objectId))
+                {
+                    // W3C DOM
+                    return document.getElementById(objectId);
+                }
+                else if (document.all(objectId))
+                {
+                    // MSIE 4 DOM
+                    return document.all(objectId);
+                }
+                else if (document.layers && document.layers[objectId])
+                {
+                    // NN 4 DOM.. note: this won't find nested layers
+                    return document.layers[objectId];
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch(e)
+            {
+                return false;
+            }
+        }
+        function hideOne(id)
+        {
+        //    getObjectById(id).style.visibility='hidden';
+        //    getObjectById(id).style.position='absolute';
+            getObjectById(id).style.display='none';
+        }
+
+        function showOne(id)
+        {
+        //    getObjectById(id).style.visibility='visible';
+        //    getObjectById(id).style.position='relative';
+            getObjectById(id).style.display='';
+        }
+        function showOrHideOne(id)
+        {
+            if(getObjectById(id).style.display == 'none')
+                showOne(id);
+            else
+                hideOne(id);
+        }
+
+    </script>
 
 </head>
 <body class="twoColElsLtHdr">
@@ -233,29 +325,29 @@
 <div id="brand">
 <a href="http://search.theeuropeanlibrary.org/portal/"><img src="frbr_style/spacer.gif" align="absmiddle" border="0" height="50" hspace="20" width="220"></a>
 
-<h1 id="header_title">The European Library</h1>
+<font size="5"> The European Library - Library Search Interface</font>
 
 
 </div>
 </div>
 <div id="navcontainer">
 <ul id="navlist">
-<li class="first active">
-<a href="">SEARCH FRBR</a>
-
-</li>
+    <li class="first active">
+        <a href="">SEARCH Library</a>
+    </li>
+    <li class="second"><a href="indexFrbrClustering.jsp">FRBR Clustering</a></li>
 </ul>
 </div>
 <div id="subnavcontainer">
 <div class="separatorBar">
 <div style="float: right; margin-top: -3px; padding-right: 8px;">
-<form action="index.jsp" method="get">
-    <input type="hidden" name="show" value="50"/>
-    <input type="hidden" name="page" value="1"/>
-    <input type="hidden" name="xml" value="false"/>
+<%--<form action="index.jsp" method="get">--%>
+    <%--<input type="hidden" name="show" value="50"/>--%>
+    <%--<input type="hidden" name="page" value="1"/>--%>
+    <%--<input type="hidden" name="xml" value="false"/>--%>
 
-<label for="mod_search_searchword" accesskey="?"></label><input value="search" name="verb" type="hidden"><input value="utf-8" name="encoding" type="hidden"><input value="true" name="html" type="hidden"><input value="1" name="collectionId" type="hidden"><input onblur="if(this.value=='') this.value='Search for...';" onfocus="if(this.value=='Search for...') this.value='';" value="Search for..." class="box" name="q" id="mod_search_searchword" type="text"> <input value="Search" class="button" type="submit">
-</form>
+<%--<label for="mod_search_searchword" accesskey="?"></label><input value="search" name="verb" type="hidden"><input value="utf-8" name="encoding" type="hidden"><input value="true" name="html" type="hidden"><input value="1" name="collectionId" type="hidden"><input onblur="if(this.value=='') this.value='Search for...';" onfocus="if(this.value=='Search for...') this.value='';" value="Search for..." class="box" name="q" id="mod_search_searchword" type="text"> <input value="Search" class="button" type="submit">--%>
+<%--</form>--%>
 </div>
 <div style="float: left;"></div>
 </div>
@@ -278,10 +370,76 @@
 <tr>
     <td valign="top" id="search">
         <h3>Please enter your search query:</h3>
-        <form action="index.jsp" method="get">
+
+        <form action="indexFrbrLibrary.jsp" method="get">
+            <input type="hidden" name="xml" value="mitraStyle"/>
+            <input type="hidden" name="page" value="1"/>
             <table class="searchForm">
                 <tr>
                     <td valign="top" class="column">
+                        <table>
+                            <tr>
+                                <td>
+                                    Search in all fields for
+                                </td>
+                                <td>
+                                    <input type="text" size="100" name="q" value="<%if(request.getParameter("q")!=null){out.print(request.getParameter("q"));}%>"/>
+                                </td>
+                                <td>
+                                    <a href="javascript:showOrHideOne('advancedSearch')">Advanced Search</a>
+                                </td>
+                            </tr>
+                        </table>
+                        <table id="advancedSearch" style="display:none">
+                            <tr>
+                                <td>
+                                    Title
+                                </td>
+                                <td>
+                                    <input type="text" size="100" name="title" value="<%if(request.getParameter("title")!=null){out.print(request.getParameter("title"));}%>"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Author
+                                </td>
+                                <td>
+                                    <input type="text" size="100" name="creator" value="<%if(request.getParameter("creator")!=null){out.print(request.getParameter("creator"));}%>"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Contributor
+                                </td>
+                                <td>
+                                    <input type="text" size="100" name="contributor" value="<%if(request.getParameter("contributor")!=null){out.print(request.getParameter("contributor"));}%>"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Date
+                                </td>
+                                <td>
+                                    <input type="text" size="100" name="date" value="<%if(request.getParameter("date")!=null){out.print(request.getParameter("date"));}%>"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Subject
+                                </td>
+                                <td>
+                                    <input type="text" size="100" name="subject" value="<%if(request.getParameter("subject")!=null){out.print(request.getParameter("subject"));}%>"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Description
+                                </td>
+                                <td>
+                                    <input type="text" size="100" name="description" value="<%if(request.getParameter("description")!=null){out.print(request.getParameter("description"));}%>"/>
+                                </td>
+                            </tr>
+                        </table>
                         <table>
                             <tr>
                                 <td>Show</td>
@@ -297,71 +455,22 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td>Start in Page</td>
-                                <td>
-                                    <select name="page">
-                                    <%
-                                        for(int i = 1; i < 50; i++)
-                                        {
-                                    %>
-                                           <option value="<%=i%>"><%=i%></option>
-                                    <%
-                                        }
-                                    %>
-                                    </select>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Response Type</td>
-                                <td>
-                                    <select name="xml">
-                                        <option value="frbr">Cluster FRBR</option>
-                                        <option value="mitraStyle">Search Engine Style</option>
-                                        <option value="false">Result  in HTML (Engine RAW DATA)</option>
-                                        <option value="true">Result in XML</option>
-
-
-                                    </select>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td height="40px"></td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    Search for
-                                </td>
-                                <td>
-                                    <input type="text" size="100" name="q" value="<%if(request.getParameter("q")!=null){out.print(request.getParameter("q"));}%>"/>
-                                </td>
-                            </tr>
-                            <tr>
                                 <td colspan="2"><input value="Search" class="button"  type="submit"/></td>
-
                             </tr>
                         </table>
-
-
                     </td>
-                    <td valign="top" class="column">
-                        <jsp:include page="collections.jsp"/>
-                    </td>
+                    
                 </tr>
             </table>
 
 
         </form>
-        <h3>or you can try one of our test queries</h3>
-        <table cellpadding="0" cellspacing="0" id="searches">
-            <tr><td>You to search for literature</td><td><a href="index.jsp?q=literature">literature</a></td></tr>
-            <tr><td>You can now try literature but in year 1965</td><td><a href="index.jsp?q=literature time:1965">literature time:1965</a></td></tr>
-            <tr><td>You can filter results in time</td><td><a href="index.jsp?q=literature starttime:1960 endtime:1970 filter:t">literature starttime:1960 endtime:1970 filter:t</a></td></tr>
-        </table>
+        
         <div id="results">
         <%
-            if (request.getParameter("q") != null && request.getParameter("q").length() > 1) {
+            if (queryStr != null && queryStr.length() > 1) {
         %>
-        <h3>Results for '<%=request.getParameter("q")%>':</h3>
+        <h3>Results for '<%=queryStr%>':</h3>
         <%
                 try {
                     LgteIndexSearcherWrapper searcher = new LgteIndexSearcherWrapper(Model.LanguageModel, Globals.INDEX_DIR + "/lm/version1/digmapFrbr");
@@ -375,7 +484,7 @@
                     notTokenizableFields.add(pt.utl.ist.lucene.treceval.Globals.DOCUMENT_FILE_PATH);
                     Analyzer analyzer = new LgteAnalyzer(notTokenizableFields);
                     //we pass the searcher to parser because in case of query expansion it will be needed
-                    String q = request.getParameter("q");
+                    String q = queryStr;
                     if (request.getParameter("collection") != null && request.getParameter("collection").length()>0)
                         q = "collection:" + request.getParameter("collection") + " AND (" + q + ")";
                     LgteQuery query = LgteQueryParser.parseQuery(q, analyzer, searcher);
@@ -471,43 +580,6 @@
 <br><br>
 
 
-<fieldset class="radius boxGray mainBox">
-
-<b>Sources (ISO2709 / XML)</b>
-<br>
-
-<ul>
-
-<li>The British Library - <a title="The British Library" href="http://digmap2.ist.utl.pt:8080/records_frbr/bl/source/biblebibfinal.lex">Bible</a> / <a title="The British Library" href="http://digmap2.ist.utl.pt:8080/records_frbr/bl/source/nobelbibfinal.lex">Nobel</a> / <a title="The British Library" href="http://digmap2.ist.utl.pt:8080/records_frbr/bl/source/authorities/biblenacofinal.lex">Authorities Bible</a> / <a title="The British Library" href="http://digmap2.ist.utl.pt:8080/records_frbr/bl/source/authorities/nobelNT.lex">Authorities Nobel</a></li>
-
-<li>National Library of the Czech Republic - <a title="National Library of the Czech Republic" href="http://digmap2.ist.utl.pt:8080/records_frbr/cze/source/bible_bib.marc">Bible</a> / <a title="National Library of the Czech Republic" href="http://digmap2.ist.utl.pt:8080/records_frbr/cze/source/nobel_bib.marc">Nobel</a> / <a title="National Library of the Czech Republic" href="http://digmap2.ist.utl.pt:8080/records_frbr/cze/source/bible_aut.marc">Authorities Bible</a> / <a title="National Library of the Czech Republic" href="http://digmap2.ist.utl.pt:8080/records_frbr/cze/source/nobel_aut.marc">Authorities Nobel</a></li>
-
-<li>German National Library - <a title="German National Library" href="http://digmap2.ist.utl.pt:8080/records_frbr/ger/source/bibel.mrc">Bible</a> / <a title="German National Library" href="http://digmap2.ist.utl.pt:8080/records_frbr/ger/source/nobel.mrc">Nobel</a></li>
-
-
-<li>National Library of Latvia - <a title="National Library of Latvia" href="http://digmap2.ist.utl.pt:8080/records_frbr/lat/source/bib_bible.xml">Bible XML</a> / <a title="National Library of Latvia" href="http://digmap2.ist.utl.pt:8080/records_frbr/lat/source/bib_nobel.xml">Nobel XML</a> / <a title="National Library of Latvia" href="http://digmap2.ist.utl.pt:8080/records_frbr/lat/source/aut_bible.xml">Authorities Bible XML</a> / <a title="National Library of Latvia" href="http://digmap2.ist.utl.pt:8080/records_frbr/lat/source/aut_nobel.xml">Authorities Nobel XML</a> / <a title="National Library of Latvia" href="http://digmap2.ist.utl.pt:8080/records_frbr/lat/source/AuthorityRecordsLNPW.sav">Authority SAV</a></li>
-
-
-<li>Martynas Mazvydas National Library of Lithuania - <a title="Martynas Mazvydas National Library of Lithuania" href="http://digmap2.ist.utl.pt:8080/records_frbr/lit/source/biblia_bibliographic_records_83.iso">Bible</a> / <a title="Martynas Mazvydas National Library of Lithuania" href="http://digmap2.ist.utl.pt:8080/records_frbr/lit/source/litNobel_prize_bibliographic_records_340.iso">Nobel</a> / <a title="Martynas Mazvydas National Library of Lithuania" href="http://digmap2.ist.utl.pt:8080/records_frbr/lit/source/Biblia_authority_records_26.iso">Authorities Bible</a> / <a title="Martynas Mazvydas National Library of Lithuania" href="http://digmap2.ist.utl.pt:8080/records_frbr/lit/source/litNobel_prize_authority_records_60.iso">Authorities Nobel</a></li>
-
-<li>National Library of Portugal  - <a title="National Library of Portugal" href="http://digmap2.ist.utl.pt:8080/records_frbr/bnp/source/biblias.bibs.iso">Bible</a> / <a title="National Library of Portugal" href="http://digmap2.ist.utl.pt:8080/records_frbr/bnp/source/NOBAILITERATURA.iso">Nobel</a></li>
-
-
-<li>The National Library of Russia - <a title="The National Library of Russia" href="http://digmap2.ist.utl.pt:8080/records_frbr/rus/source/bible.mrc">Bible</a> / <a title="The National Library of Russia" href="http://digmap2.ist.utl.pt:8080/records_frbr/rus/source/Nobel%20Prize%20Bunin.mrc">Nobel Prize Bunin</a> / <a title="The National Library of Russia" href="http://digmap2.ist.utl.pt:8080/records_frbr/rus/source/Nobel%20Prize%20Psternak.mrc">Nobel Prize Psternak</a> / <a title="The National Library of Russia" href="http://digmap2.ist.utl.pt:8080/records_frbr/rus/source/Nobel%20Prize%20Sholohov.mrc">Nobel Prize Sholohov</a> / <a title="The National Library of Russia" href="http://digmap2.ist.utl.pt:8080/records_frbr/rus/source/Nobel%20Prize%20Soldgenicyn.mrc">Nobel Prize Soldgenicyn</a> / <a title="The National Library of Russia" href="http://digmap2.ist.utl.pt:8080/records_frbr/rus/source/Authority%20Bible.mrc">Authorities Bible</a> / <a title="The National Library of Russia" href="http://digmap2.ist.utl.pt:8080/records_frbr/rus/source/Authority%20Bunin.mrc">Authority Bunin</a> / <a title="The National Library of Russia" href="http://digmap2.ist.utl.pt:8080/records_frbr/rus/source/Authority%20Pasternak.mrc">Authority Pasternak</a> / <a title="The National Library of Russia" href="http://digmap2.ist.utl.pt:8080/records_frbr/rus/source/Authority%20Soldgenicyn.mrc">Authority Soldgenicyn</a> / <a title="The National Library of Russia" href="http://digmap2.ist.utl.pt:8080/records_frbr/rus/source/Authority%20Solohov.mrc">Authority Solohov</a></li>
-
-
-<li>National Library of Servia - <a title="SERBIA sources" href="http://digmap2.ist.utl.pt:8080/records_frbr/ser/source/bible24recordsmarc21.xml">Bible XML</a> / <a title="SERBIA sources" href="http://digmap2.ist.utl.pt:8080/records_frbr/ser/source/nobelprize.xml">Nobel XML</a></li>
-
-
-<li>National Library of Spain -  <a title="National Library of Spain" href="http://digmap2.ist.utl.pt:8080/records_frbr/spa/source/BIBLIA2709.mrc">Bible</a> / <a title="National Library of Spain" href="http://digmap2.ist.utl.pt:8080/records_frbr/spa/source/Nobeles-utf8.mrc">Nobel</a> / <a title="National Library of Spain" href="http://digmap2.ist.utl.pt:8080/records_frbr/spa/source/bible_auth.mrk">Bible Authorities</a></li>
-
-
-<li>Royal Library of Belgium  - <a title="Royal Library of Belgium" href="http://digmap2.ist.utl.pt:8080/records_frbr/kbr/source/bible.iso">Bible</a> / <a title="Royal Library of Belgium" href="http://digmap2.ist.utl.pt:8080/records_frbr/kbr/source/KBR-FRBR-nobel">Nobel</a></li>
-
-<li>National Széchényi Library of Hungary  - <a title="National Széchényi Library of Hungary" href="http://digmap2.ist.utl.pt:8080/records_frbr/nsz/source/Biblia.mrc">Bible</a> / <a title="National Széchényi Library of Hungary" href="http://digmap2.ist.utl.pt:8080/records_frbr/nsz/source/NobelBibNszl.mrc">Nobel</a> / <a title="National Széchényi Library of Hungary" href="http://digmap2.ist.utl.pt:8080/records_frbr/nsz/source/NobelAuthNszl.mrc">Nobel Authorities</a></li>
-
-</ul>
-</fieldset>
 
 <div class="clear"></div>
 </div>

@@ -42,21 +42,24 @@
 <div id="brand">
 <a href="http://search.theeuropeanlibrary.org/portal/"><img src="images/spacer.gif" align="absmiddle" width="220" height="50" hspace="20" border="0"></a>
 
-<h1 id="header_title">The European Library</h1>
+<font size="5"> The European Library - Library Search Interface</font>
 </div>
 </div>
 <div id="navcontainer">
 <ul id="navlist">
-<li class="first active">
-
-<a href="">Search</a>
-</li>
+    <li class="second active">
+        <a href="">SEARCH Library</a>
+    </li>
+    <li class="first">
+        <a href="indexFrbrClustering.jsp">FRBR Clustering <%=Globals.INDEX_DIR%></a>
+    </li>
 </ul>
 </div>
 
 
         <%
-            if (request.getParameter("q") != null && request.getParameter("q").length() > 1) {
+            String queryStr = (String) request.getAttribute("queryStr");
+            if (queryStr != null && queryStr.length() > 1) {
                 try {
                     LgteIndexSearcherWrapper searcher = new LgteIndexSearcherWrapper(Model.LanguageModel, Globals.INDEX_DIR + "/lm/version1/digmapFrbr");
 
@@ -70,9 +73,9 @@
                     Analyzer analyzer = new LgteAnalyzer(notTokenizableFields);
                     //we pass the searcher to parser because in case of query expansion it will be needed
                     String collUser = request.getParameter("collection");
-                    if(collUser == null || collUser.length() == 0)
+                    if (collUser == null || collUser.length() == 0)
                         collUser = "all";
-                    String q = request.getParameter("q");
+                    String q = queryStr;
                     if (request.getParameter("collection") != null && request.getParameter("collection").length() > 0)
                         q = "collection:" + request.getParameter("collection") + " AND (" + q + ")";
                     LgteQuery query = LgteQueryParser.parseQuery(q, analyzer, searcher);
@@ -84,13 +87,11 @@
                         int startResult = 0;
                         int showNumber = 100;
                         int pageNumber = 0;
-                        try
-                        {
-                            if(request.getParameter("page") != null)
+                        try {
+                            if (request.getParameter("page") != null)
                                 pageNumber = Integer.parseInt(request.getParameter("page"));
                         }
-                        catch(NumberFormatException e)
-                        {
+                        catch (NumberFormatException e) {
 
                         }
                         if (request.getParameter("page") != null && request.getParameter("show") != null) {
@@ -98,7 +99,7 @@
                             startResult = pageNumber * showNumber - showNumber;
                         }
 
-%>
+        %>
 
 <div id="subnavcontainer">
     <div class="separatorBar">
@@ -107,17 +108,38 @@
             <span class="bold"><%=((pageNumber-1) * showNumber)%></span>
 
             -
-            <span class="bold"><%=(((pageNumber-1) * showNumber) + showNumber)%></span>  of  <span class="bold"><%=hits.length()%></span>  for  <span class="bold"><%=request.getParameter("q")%></span>
+            <span class="bold"><%=(((pageNumber-1) * showNumber) + showNumber)%></span>  of  <span class="bold"><%=hits.length()%></span>  for  <span class="bold"><%=queryStr%></span>
         </div>
         <div class="navSearch">
-            <form class="nospace" method="GET" action="index.jsp?show=20&page=1&xml=mitraStyle">
+            <form class="nospace" method="GET" action="indexFrbrLibrary.jsp">
                     ... <%=collUser%>
                 <input name="page" type="hidden" value="<%=request.getParameter("page")%>">
-                <input name="show" type="hidden" value="<%=request.getParameter("show")%>">
-                <input name="type" type="hidden" value="<%=request.getParameter("type")%>">
                 <input name="xml" type="hidden" value="<%=request.getParameter("xml")%>">
-                <input name="collection" type="hidden" value="<%=request.getParameter("collection")%>">
-                <input type="text" name="q" style="width:200px" value="<%=request.getParameter("q")%>"> <input type="submit" value="Search">
+                <select name="show">
+                    <%
+                        String selected20 = "";
+                        String selected50 = "";
+                        String selected100 = "";
+                        String selected200 = "";
+                        String selected500 = "";
+                        if(request.getParameter("show").equals("20"))
+                            selected20 = "selected=\"selected\"";
+                        else if(request.getParameter("show").equals("50"))
+                            selected50 = "selected=\"selected\"";
+                        else if(request.getParameter("show").equals("100"))
+                            selected100 = "selected=\"selected\"";
+                        else if(request.getParameter("show").equals("200"))
+                            selected200 = "selected=\"selected\"";
+                        else if(request.getParameter("show").equals("500"))
+                            selected500 = "selected=\"selected\"";
+                    %>
+                    <option value="20" <%=selected20%>>20</option>
+                    <option value="50" <%=selected50%>>50</option>
+                    <option value="100" <%=selected100%>>100</option>
+                    <option value="200"<%=selected200%>>200</option>
+                    <option value="500"<%=selected500%>>500</option>
+                </select>
+                <input type="text" name="q" style="width:200px" value="<%=queryStr%>"> <input type="submit" value="Search">
 
 
             </form>
@@ -138,7 +160,7 @@
 
                     <br>
 
-                      <h3>Results for '<%=request.getParameter("q")%>':</h3>
+                      <h3>Results for '<%=queryStr%>':</h3>
 
 <%
 
@@ -240,7 +262,7 @@
                         if(showNumber != hits.length())
                         {
                     %>
-                        <h4>The page navigation is NOT IN USE. Please use the <a href="index.jsp">open form</a> and define yourself the page to display</h4>
+                        <h4>The page navigation is NOT IN USE. Please use the <a href="indexFrbrLibrary.jsp">open form</a> and define yourself the page to display</h4>
                     <%
 
                         }

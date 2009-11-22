@@ -7,6 +7,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.net.URLEncoder;
 import java.io.StringReader;
 import java.io.InputStreamReader;
+import java.io.InputStream;
+import java.io.IOException;
 
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
@@ -55,6 +57,25 @@ public class Handler extends HttpServlet
 //            writer.close();
 //
 //          e comenta o resto
+
+            InputStream stream = request.getInputStream();
+            stream.close();
+            byte[] bytes = new byte[1024];
+            int read;
+            try{
+                while((read = stream.read(bytes)) > 0)
+                {
+                    System.out.println(read + " ----------------------------------------------");
+                    System.out.println(new String(bytes));
+                    System.out.println("----------------------------------------------");
+                   
+                }
+            }catch(IOException e)
+            {
+                System.out.println("HANDLERCLUSTER: Saiu com IO exp: " + e);
+            }
+            System.out.println("CLUSTER-Saiu do Ciclo");
+
 
             InputSource is = new InputSource(new InputStreamReader(Thread.currentThread().getContextClassLoader().getResourceAsStream("retrieval.xml"), "UTF-8"));
             SAXReader reader2 = new SAXReader();

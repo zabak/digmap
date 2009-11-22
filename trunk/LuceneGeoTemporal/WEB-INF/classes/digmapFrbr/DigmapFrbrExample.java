@@ -47,6 +47,11 @@ public class DigmapFrbrExample {
         XmlFieldHandler xmlFieldHandlerOriginalFilename = new SimpleXmlFieldHandler("../@filename", new SimpleNotTokenizedFieldFilter(), "originalFileName");
         XmlFieldHandler xmlFieldHandlerCollection = new SimpleXmlFieldHandler("../../@collection", new SimpleNotTokenizedFieldFilter(), "collection");
         XmlFieldHandler xmlFieldHandlerTitlePresent = new SimpleXmlFieldHandler("./dc:title", new SimpleFieldFilter(), Globals.DOCUMENT_TITLE);
+        XmlFieldHandler xmlFieldHandlerCreatorIndex = new SimpleXmlFieldHandler("./dc:creator", new SimpleFieldFilter(), "dc_creator");
+        XmlFieldHandler xmlFieldHandlerDescriptionIndex = new SimpleXmlFieldHandler("./dc:description", new SimpleFieldFilter(), "dc_description");
+        XmlFieldHandler xmlFieldHandlerDateIndex = new SimpleXmlFieldHandler("./dc:date", new SimpleFieldFilter(), "dc_date");
+        XmlFieldHandler xmlFieldHandlerSubjectIndex = new SimpleXmlFieldHandler("./dc:subject", new SimpleFieldFilter(), "dc_subject");
+        XmlFieldHandler xmlFieldHandlerContributorIndex = new SimpleXmlFieldHandler("./dc:contributor", new SimpleFieldFilter(), "dc_contributor");
         XmlFieldHandler xmlFieldHandlerTitle = new SimpleXmlFieldHandler("./dc:title", new MultipleFieldFilter(3), "contents");
         XmlFieldHandler xmlFieldHandlerSubject = new SimpleXmlFieldHandler("./dc:subject", new MultipleFieldFilter(2), "contents");
         XmlFieldHandler xmlFieldHandlerDescription = new SimpleXmlFieldHandler("./dc:description", new SimpleFieldFilter(), "contents");
@@ -82,6 +87,11 @@ public class DigmapFrbrExample {
         xmlFieldHandlers.add(xmlFieldHandlerCollection);
         xmlFieldHandlers.add(xmlFieldHandlerTitlePresent);
         xmlFieldHandlers.add(xmlFieldHandlerTitle);
+        xmlFieldHandlers.add(xmlFieldHandlerCreatorIndex);
+        xmlFieldHandlers.add(xmlFieldHandlerContributorIndex);
+        xmlFieldHandlers.add(xmlFieldHandlerDateIndex);
+        xmlFieldHandlers.add(xmlFieldHandlerDescriptionIndex);
+        xmlFieldHandlers.add(xmlFieldHandlerSubjectIndex);
         xmlFieldHandlers.add(xmlFieldHandlerSubject);
         xmlFieldHandlers.add(xmlFieldHandlerDescription);
         xmlFieldHandlers.add(xmlFieldHandlerCreator);

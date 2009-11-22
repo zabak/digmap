@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-<project name="Lucene With Geo-Temporal Extensions" default="compile" basedir="../../">
+<project name="FRBR - Lucene With Geo-Temporal Extensions" default="compile" basedir="../../">
 
-    <description>Lucene With Geo-Temporal Extensions</description>
+    <description>FRBR - Lucene With Geo-Temporal Extensions</description>
 
     <property file="deployer.properties" />
 
@@ -66,6 +66,9 @@
          
 
         <copy todir="${webapp.path.lgte.frbr}" file="${base.dir}/../downloadDigmapFrbr.jsp"/>
+        <copy todir="${webapp.path.lgte.frbr}" file="${base.dir}/../indexFrbrLibrary.jsp"/>
+        <copy todir="${webapp.path.lgte.frbr}" file="${base.dir}/../indexFrbrClustering.jsp"/>
+        <copy todir="${webapp.path.lgte.frbr}" file="${base.dir}/classes/digmapFrbr/webLgteFrbr/collections.jsp"/>
         <copy todir="${webapp.path.lgte.frbr}" file="${base.dir}/../footer.jsp"/>
         <copy todir="${webapp.path.lgte.frbr}" file="${base.dir}/../index.sh"/>
         <copy todir="${webapp.path.lgte.frbr}">

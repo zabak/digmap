@@ -22,6 +22,7 @@ import org.apache.lucene.analysis.Tokenizer;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.io.StringReader;
 
 /**
  * Tokenizes the input into n-grams of the given size(s).
@@ -37,6 +38,15 @@ public class NGramTokenizer extends Tokenizer {
   private String inStr;
   private boolean started = false;
 
+
+    public static void main(String [] args) throws IOException {
+       Tokenizer tokenizer = new NGramTokenizer(new StringReader("musique jorge durand"),5,5);
+        Token t;
+       while((t = tokenizer.next()) != null)
+       {
+           System.out.println(t.termText());
+       }
+    }
   /**
    * Creates NGramTokenizer with given min and max n-grams.
    * @param input Reader holding the input to be tokenized
@@ -90,7 +100,7 @@ public class NGramTokenizer extends Tokenizer {
 
     int oldPos = pos;
     pos++;
-    reusableToken = new Token(inStr.substring(oldPos, gramSize), reusableToken.startOffset()+oldPos, reusableToken.startOffset()+oldPos+gramSize);
+    reusableToken = new Token(inStr.substring(oldPos, gramSize + oldPos), reusableToken.startOffset()+oldPos, reusableToken.startOffset()+oldPos+gramSize);
     return reusableToken;
   }
 }

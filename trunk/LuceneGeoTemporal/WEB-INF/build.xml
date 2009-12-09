@@ -730,10 +730,8 @@
     <target name="significance-tests-clef2009AdHoc" description="Generate trec_eval results">
         <for param="runfile">
             <path>
-                <fileset dir="${webapp.path}/WEB-INF/test-data/clef2009AdHoc/output/bl">
+                <fileset dir="${webapp.path}/WEB-INF/test-data/clef2009AdHoc/baseline">
                     <include name="*.txt" />
-                    <exclude name="*-treceval-report.txt" />
-                    <exclude name="*-significance-report.txt" />
                 </fileset>
             </path>
             <sequential>
@@ -743,11 +741,12 @@
                             <include name="*.txt" />
                             <exclude name="*-treceval-report.txt" />
                             <exclude name="*-significance-report.txt" />
-                            <exclude name="@{runfile}" />
+                            <exclude name="*.xml" />
                         </fileset>
                     </path>
                     <sequential>
-                        <java fork="true" classname="ireval.Main" output="@{runfile}-vs-@{runfile2}-significance-report.txt">
+
+                        <java fork="true" classname="ireval.Main" output="@{runfile2}-significance-report.txt" >
                             <classpath>
                                 <fileset dir="${base.dir}/lib">
                                     <include name="**.jar" />
@@ -768,6 +767,89 @@
 
 
     </target>
+
+     <target name="significance-tests-clef2009AdHocFR" description="Generate trec_eval results">
+        <for param="runfile">
+            <path>
+                <fileset dir="${webapp.path}/WEB-INF/test-data/clef2009AdHoc/baselineBnf">
+                    <include name="*.txt" />
+                </fileset>
+            </path>
+            <sequential>
+                <for param="runfile2">
+                    <path>
+                        <fileset dir="${webapp.path}/WEB-INF/test-data/clef2009AdHoc/output/bnf">
+                            <include name="*.txt" />
+                            <exclude name="*-treceval-report.txt" />
+                            <exclude name="*-significance-report.txt" />
+                            <exclude name="*.xml" />
+                        </fileset>
+                    </path>
+                    <sequential>
+
+                        <java fork="true" classname="ireval.Main" output="@{runfile2}-significance-report.txt" >
+                            <classpath>
+                                <fileset dir="${base.dir}/lib">
+                                    <include name="**.jar" />
+                                </fileset>
+                                <fileset dir="${base.dir}/lib">
+                                    <include name="*.jar" />
+                                </fileset>
+                            </classpath>
+                            <classpath path="${webapp.path}/WEB-INF/classes" />
+                            <arg value="@{runfile}" />
+                            <arg value="@{runfile2}" />
+                            <arg value="${webapp.path}/WEB-INF/test-data/clef2009AdHoc/assessements/bnf/10.2454_AH-TEL-FRENCH-CLEF2009.txt" />
+                        </java>
+                    </sequential>
+                </for>
+            </sequential>
+        </for>
+
+
+    </target>
+
+
+    <target name="significance-tests-clef2009AdHocONB" description="Generate trec_eval results">
+            <for param="runfile">
+                <path>
+                    <fileset dir="${webapp.path}/WEB-INF/test-data/clef2009AdHoc/baselineOnb">
+                        <include name="*.txt" />
+                    </fileset>
+                </path>
+                <sequential>
+                    <for param="runfile2">
+                        <path>
+                            <fileset dir="${webapp.path}/WEB-INF/test-data/clef2009AdHoc/output/onb">
+                                <include name="*.txt" />
+                                <exclude name="*-treceval-report.txt" />
+                                <exclude name="*-significance-report.txt" />
+                                <exclude name="*.xml" />
+                            </fileset>
+                        </path>
+                        <sequential>
+
+                            <java fork="true" classname="ireval.Main" output="@{runfile2}-significance-report.txt" >
+                                <classpath>
+                                    <fileset dir="${base.dir}/lib">
+                                        <include name="**.jar" />
+                                    </fileset>
+                                    <fileset dir="${base.dir}/lib">
+                                        <include name="*.jar" />
+                                    </fileset>
+                                </classpath>
+                                <classpath path="${webapp.path}/WEB-INF/classes" />
+                                <arg value="@{runfile}" />
+                                <arg value="@{runfile2}" />
+                                <arg value="${webapp.path}/WEB-INF/test-data/clef2009AdHoc/assessements/onb/10.2454_AH-TEL-GERMAN-CLEF2009.txt" />
+                            </java>
+                        </sequential>
+                    </for>
+                </sequential>
+            </for>
+
+
+        </target>
 
 
     <target name="significance-tests-clef2008AdHoc" description="Generate trec_eval results">

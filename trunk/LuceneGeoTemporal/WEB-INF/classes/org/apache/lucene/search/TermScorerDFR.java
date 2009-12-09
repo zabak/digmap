@@ -22,7 +22,7 @@ final class TermScorerDFR extends Scorer  {
 
 
     // TODO: Set model and free parameters dynamically
-    private static final double c = 1, k1 = 1.2, b = 0.5;
+    private static final double c = 1, k1 = 2.0, b = 0.75;
     private Model model = Model.DLHHypergeometricDFRModel;
 
     private Weight weight;
@@ -110,14 +110,17 @@ final class TermScorerDFR extends Scorer  {
     }
 
     public float score() throws IOException {
+
+        initCollectionDetails(indexReader);
         Double avgDocLen = avgLen;
         int docLen;
+
         if (useFieldLengths) {
             docLen = indexReader.getFieldLength(doc, term.field());
             avgDocLen = avgLenFields.get(term.field());
             if(avgDocLen == null)
             {
-                avgDocLen = ((double)indexReader.getCollectionTokenNumber(term.field())) / numDocs;
+                avgDocLen = (((double)indexReader.getCollectionTokenNumber(term.field()))+1.0) / numDocs;
                 avgLenFields.put(term.field(),avgDocLen);
             }
         } else {
@@ -126,7 +129,7 @@ final class TermScorerDFR extends Scorer  {
         float tfDoc = freqs[pointer];
         double sim = 0;
 
-        initCollectionDetails(indexReader);
+
         double tfCollection = indexReader.collFreq(term);
         double docFreq = indexReader.docFreq(term);
 //		double numTerms = indexReader.getCollectionTokenNumber();    tava repetido
@@ -145,12 +148,13 @@ final class TermScorerDFR extends Scorer  {
             case BB2DFRModel : sim = ((tfCollection+1)/(nt+(tfn+1))) * (-Math.log1p(collSize-1)-Math.log1p(Math.E)+stirlingFormula(tfCollection+collSize-1,tfCollection+collSize-tfn-2)-stirlingFormula(tfCollection,tfCollection+tfn)); break;
             case OkapiBM25Model :
             {
-                double idf = Math.log((numDocs - docFreq +0.5)/(docFreq+0.5));
+//                double idf = Math.log((numDocs - docFreq + 0.5)/(docFreq+0.5));
+                double idf = Math.log((numDocs + 0.5)/(docFreq+0.5));
                 sim = idf *
                         (
                             (tfDoc*(k1 + 1))
                                     /
-                            ( tfDoc + k1*(1 - b + b*(docLen/avgDocLen)))
+                            ( tfDoc + k1*(1.0 - b + b*(docLen/avgDocLen)))
                         ); break;
             }
         }

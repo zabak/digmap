@@ -63,6 +63,7 @@ public class TermQuery extends Query
             case PL2DFRModel :
             case BB2DFRModel :
             case OkapiBM25Model :
+            case BM25b:
             default:termQueryImpl = new TermQueryProbabilisticModel(term);
         }
     }

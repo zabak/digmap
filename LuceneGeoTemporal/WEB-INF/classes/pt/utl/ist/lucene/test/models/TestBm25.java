@@ -173,28 +173,28 @@ public class TestBm25 extends TestCase {
         }
     }
 
-    static class MyStringWrapperIterator extends BasicStringWrapperIterator
-    {
-
-        public MyStringWrapperIterator(Iterator iterator) {
-            super(iterator);
-        }
-
-    }
-
-    public static void main(String [] args)
-    {
-        TextSimilarityScorer tfidf = new TextSimilarityScorer(new SimpleTokenizer(true,true));
-        BasicStringWrapper doc1 = new BasicStringWrapper("a b c d e f g h i j k l m");
-        BasicStringWrapper doc2 = new BasicStringWrapper("b c d e f g h i");
-        List<BasicStringWrapper> list = new ArrayList<BasicStringWrapper>();
-        list.add(doc1);
-        list.add(doc2);
-        MyStringWrapperIterator myStringWrapperIterator = new MyStringWrapperIterator(list.iterator());
-        tfidf.train(myStringWrapperIterator);
-        System.out.println("BM25:" + tfidf.bm25("a b","a b c d e f g h i j k l m"));
-        System.out.println("BM25:" + tfidf.bm25("a b","b c d e f g h i"));
-    }
+//    static class MyStringWrapperIterator extends BasicStringWrapperIterator
+//    {
+//
+//        public MyStringWrapperIterator(Iterator iterator) {
+//            super(iterator);
+//        }
+//
+//    }
+////
+//    public static void main(String [] args)
+//    {
+//        TextSimilarityScorer tfidf = new TextSimilarityScorer(new SimpleTokenizer(true,true));
+//        BasicStringWrapper doc1 = new BasicStringWrapper("a b c d e f g h i j k l m");
+//        BasicStringWrapper doc2 = new BasicStringWrapper("b c d e f g h i");
+//        List<BasicStringWrapper> list = new ArrayList<BasicStringWrapper>();
+//        list.add(doc1);
+//        list.add(doc2);
+//        MyStringWrapperIterator myStringWrapperIterator = new MyStringWrapperIterator(list.iterator());
+//        tfidf.train(myStringWrapperIterator);
+//        System.out.println("BM25:" + tfidf.bm25("a b","a b c d e f g h i j k l m"));
+//        System.out.println("BM25:" + tfidf.bm25("a b","b c d e f g h i"));
+//    }
 
 
 }

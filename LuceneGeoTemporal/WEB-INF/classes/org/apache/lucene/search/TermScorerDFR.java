@@ -157,6 +157,55 @@ final class TermScorerDFR extends Scorer  {
                             ( tfDoc + k1*(1.0 - b + b*(docLen/avgDocLen)))
                         ); break;
             }
+            case BM25b:
+            {
+
+                ///**
+                //  /** The constant k_1.*/
+                //	private double k_1 = 1.2d;
+                //
+                //	/** The constant k_3.*/
+                //	private double k_3 = 8d;
+                //
+                //	/** The parameter b.*/
+                //	private double b;
+                //
+                //	/** A default constructor.*/
+                //	public BM25() {
+                //		super();
+                //		b=0.75d;
+                //	}
+                //	 * Uses BM25 to compute a weight for a term in a document.
+                //	 * @param tf The term frequency in the document
+                //	 * @param docLength the document's length
+                //	 * @param n_t The document frequency of the term
+                //	 * @param F_t the term frequency in the collection
+                //	 * @param keyFrequency the term frequency in the query
+                //	 * @return the score assigned by the weighting model BM25.
+                //	 */
+                //	public final double score(
+                //		double tf,
+                //		double docLength,
+                //		double n_t,
+                //		double F_t,
+                //		double keyFrequency) {
+                //	    double K = k_1 * ((1 - b) + b * docLength / averageDocumentLength) + tf;
+                //	    return Idf.log((numberOfDocuments - n_t + 0.5d) / (n_t+ 0.5d)) *
+                //			((k_1 + 1d) * tf / (K + tf)) *
+                //			((k_3+1)*keyFrequency/(k_3+keyFrequency));
+                //	}
+                double k_1 = 1.2d;
+                double k_3 = 8d;
+                double b = 0.75d;
+                double keyFrequency = 1.0d;
+
+                //assumo 1 no keyFreq porque o Lucene vai invocar este metodo tantas vezes quantos os termos mesmo que repetidos
+                double K = k_1 * ((1 - b) + b * docLen / avgDocLen) + tfDoc;
+                sim = Math.log((numDocs - docFreq + 0.5d) / (docFreq+ 0.5d)) *
+                            ((k_1 + 1d) * docFreq / (K + docFreq)) *
+                			((k_3+1)*keyFrequency/(k_3+keyFrequency));
+                break;
+            }
         }
 
 

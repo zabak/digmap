@@ -27,7 +27,8 @@ public enum Model
     InL2DFRModel("InL2DFRModel", true,"InL2DFRModel", new DoNothingPriors()),
     PL2DFRModel("PL2DFRModel", true,"PL2DFRModel", new DoNothingPriors()),
     BB2DFRModel("BB2DFRModel", true,"BB2DFRModel", new DoNothingPriors()),
-    OkapiBM25Model("OkapiBM25Model", true,"bm25", new DoNothingPriors());
+    OkapiBM25Model("OkapiBM25Model", true,"bm25", new DoNothingPriors()),
+    BM25b("BM25b", true,"bm25b", new DoNothingPriors());
 
 
 

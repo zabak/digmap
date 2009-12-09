@@ -241,7 +241,15 @@ public class Main {
     }
     
     public static void main( String[] args ) throws IOException {
-        
+
+//        String dir = "D:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-data\\clef2009AdHoc\\output\\bl";
+//        String baseLine=dir + "\\run-1-vs-Stemming_no-qe_no-filter_t_sp-order_sc.txt";
+//        String run=dir + "\\run-3-vs-Stemming_lmstem-qe_no-filter_t_sp-order_sc.txt";
+//        String jud = "D:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-data\\clef2009AdHoc\\assessements\\bl\\10.2454_AH-TEL-ENGLISH-CLEF2009.txt";
+//        args = new String[]{baseLine,run,jud};
+        System.out.println(args[0]);
+        System.out.println(args[1]);
+        System.out.println(args[2]);
         try {
             if( args.length == 3 ) {
                 TreeMap< String, ArrayList<Document> > baselineRanking = loadRanking( args[0] );

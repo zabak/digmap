@@ -1,6 +1,8 @@
 package org.apache.lucene.search;
 
 import java.io.IOException;
+import java.util.Map;
+import java.util.HashMap;
 
 import org.apache.lucene.ilps.DataCacher;
 import org.apache.lucene.index.IndexReader;
@@ -37,7 +39,7 @@ final class TermScorerDFR extends Scorer  {
     private int pointerMax;
     private Term term;
 
-    int fieldLen;
+
 
     TermScorerDFR(
             Weight weight,
@@ -91,44 +93,91 @@ final class TermScorerDFR extends Scorer  {
     static double totalFreqs ;
     static double avgLen;
     static double collSize;
+    static double numDocs;
+    static Map<String,Double> avgLenFields = new HashMap<String,Double>();
 
     public static void initCollectionDetails(LanguageModelIndexReader indexReader) throws IOException
     {
         if(tokenNumber < 0)
         {
+            numDocs = indexReader.maxDoc();
             tokenNumber = indexReader.getCollectionTokenNumber();
             totalFreqs = indexReader.getTotalDocFreqs();
-            avgLen = tokenNumber/totalFreqs;
+            avgLen = tokenNumber/numDocs;
             collSize = indexReader.getTotalDocFreqs();
+
         }
     }
+
     public float score() throws IOException {
+        Double avgDocLen = avgLen;
+        int docLen;
         if (useFieldLengths) {
-            fieldLen = indexReader.getFieldLength(doc, term.field());
+            docLen = indexReader.getFieldLength(doc, term.field());
+            avgDocLen = avgLenFields.get(term.field());
+            if(avgDocLen == null)
+            {
+                avgDocLen = ((double)indexReader.getCollectionTokenNumber(term.field())) / numDocs;
+                avgLenFields.put(term.field(),avgDocLen);
+            }
         } else {
-            fieldLen = indexReader.getDocLength(doc);
+            docLen = indexReader.getDocLength(doc);
         }
         float tfDoc = freqs[pointer];
         double sim = 0;
 
         initCollectionDetails(indexReader);
         double tfCollection = indexReader.collFreq(term);
+        double docFreq = indexReader.docFreq(term);
 //		double numTerms = indexReader.getCollectionTokenNumber();    tava repetido
         double nt = indexReader.docFreq(term);
         double lambda = tfCollection / collSize;
         double ne = collSize * (1-Math.pow(1-nt/collSize, tfCollection));
-        double tfn = tfDoc * Math.log1p(1+c*(avgLen/fieldLen));
-        double tfne = tfDoc * Math.log(1+c*(avgLen/fieldLen));
+        double tfn = tfDoc * Math.log1p(1+c*(avgLen/docLen));
+        double tfne = tfDoc * Math.log(1+c*(avgLen/docLen));
         switch ( model ) {
-            case DLHHypergeometricDFRModel: sim = (1 / (tfDoc + 0.5)) * Math.log1p( ((tfDoc * avgLen) / fieldLen) * ( collSize / tfCollection) ) + ((fieldLen-tfDoc) * Math.log1p( 1 - ( tfDoc / fieldLen ) ) ) + ( 0.5 * Math.log1p( 2*Math.PI*tfDoc*(1 - ( tfDoc / fieldLen ))) ); break;
+            case DLHHypergeometricDFRModel: sim = (1 / (tfDoc + 0.5)) * Math.log1p( ((tfDoc * avgLen) / docLen) * ( collSize / tfCollection) ) + ((docLen-tfDoc) * Math.log1p( 1 - ( tfDoc / docLen ) ) ) + ( 0.5 * Math.log1p( 2*Math.PI*tfDoc*(1 - ( tfDoc / docLen ))) ); break;
             case InExpC2DFRModel : sim = (tfCollection/(nt*(tfne+1))) * (tfne*Math.log1p((collSize+1)/(ne+0.5))); break;
             case InExpB2DFRModel : sim = (tfCollection/(nt*(tfn+1))) * (tfn*Math.log1p((collSize+1)/(ne+0.5))); break;
             case IFB2DFRModel :	sim = (tfCollection/(nt*(tfn+1))) * (tfn*Math.log1p((collSize+1)/(tfCollection+0.5))); break;
             case InL2DFRModel : sim = (1/(tfn+1)) * (tfn*Math.log1p((collSize+1)/(nt+0.5))); break;
             case PL2DFRModel : sim = (1/(tfn+1)) * (tfn*Math.log1p(tfn/lambda) + (lambda-tfn) * Math.log1p(Math.E) + 0.5 * Math.log1p(Math.PI*2*tfn) ); break;
             case BB2DFRModel : sim = ((tfCollection+1)/(nt+(tfn+1))) * (-Math.log1p(collSize-1)-Math.log1p(Math.E)+stirlingFormula(tfCollection+collSize-1,tfCollection+collSize-tfn-2)-stirlingFormula(tfCollection,tfCollection+tfn)); break;
-            case OkapiBM25Model : sim = Math.log((collSize - tfCollection +0.5)/(tfCollection+0.5)) *((tfDoc*(k1+1))/(tfDoc+k1*(1+b+b*(collSize/avgLen)))); break;
+            case OkapiBM25Model :
+            {
+                double idf = Math.log((numDocs - docFreq +0.5)/(docFreq+0.5));
+                sim = idf *
+                        (
+                            (tfDoc*(k1 + 1))
+                                    /
+                            ( tfDoc + k1*(1 - b + b*(docLen/avgDocLen)))
+                        ); break;
+            }
         }
+
+
+
+        /*
+        *
+        * Token tok = (Token)it.next();
+            	Integer dfInteger = (Integer)documentFrequency.get(tok);
+                double df = dfInteger==null ? 0.0 : dfInteger.intValue();
+            	double idf = Math.log((numDocs+0.5)/(df+0.5));
+            	score += idf * (
+            	        (bags.getWeight(tok) * (k1+1))
+            	        /
+            	        (
+            	            bags.getWeight(tok)
+            	                +
+            	            k1 * (
+            	                    (1.0-b)
+            	                         +
+            	                     b   *   (bags.size()/((totalTokenCount+1.0) / numDocs)))) );
+        *
+        *
+        * */
+
+
         if(sim < 0)
             System.out.println(">>>>>>>>>>>>>>>>>>>>>>>FATAL  : PLEASE CHECK DFR Formulas similarity come negative for doc:" + doc + " term: " + term.text());
         return weightValue * (float)sim;

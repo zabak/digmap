@@ -33,10 +33,10 @@ public class ClefAdHocExample
      */
     
     static boolean buildIndexes = false;
-    static boolean buildRuns = false;
+    static boolean buildRuns = true;
     static boolean evaluate = true;
 
-//    static String collectionYear = "2009";
+//    static String collectionYear = "2008";
 //    static String assessmentsBl =  "10.2454-AH-TEL-ENGLISH-CLEF2008.txt";
 //    static String assessmentsBnf =  "10.2454-AH-TEL-FRENCH-CLEF2008.txt";
 //    static String assessmentsOnb =  "10.2454-AH-TEL-GERMAN-CLEF2008.txt";
@@ -71,17 +71,17 @@ public class ClefAdHocExample
     public static void main(String [] args) throws DocumentException, IOException
     {
         /**Collection Configuration*/
-//        country = "bl";
-//        assessmentsFile = assessmentsBl;
-//        lang  = IndexCollections.en;
-//        qeDocNum = "7";
-//        qeTermNum = "64";
-//        nGramsBoostContents = "0.45f";
-//        nGramsBoostN5 = "0.24f";
-//        nGramsBoostN4 = "0.22f";
-//        nGramsBoostN3 = "0.01f";
-//        nGramsBoostN2 = "0.00f";
-//        compute(args);
+        country = "bl";
+        assessmentsFile = assessmentsBl;
+        lang  = IndexCollections.en;
+        qeDocNum = "7";
+        qeTermNum = "64";
+        nGramsBoostContents = "0.45f";
+        nGramsBoostN5 = "0.24f";
+        nGramsBoostN4 = "0.22f";
+        nGramsBoostN3 = "0.01f";
+        nGramsBoostN2 = "0.00f";
+        compute(args);
 
 //        country = "bnf";
 //        assessmentsFile = assessmentsBnf;
@@ -95,17 +95,17 @@ public class ClefAdHocExample
 //        nGramsBoostN2 = "0.00f";
 //        compute(args);
 //
-        country = "onb";
-        assessmentsFile = assessmentsOnb;
-        lang  = IndexCollections.de;
-        qeDocNum = "8";
-        qeTermNum = "40";
-        nGramsBoostContents = "0.55f";
-        nGramsBoostN5 = "0.24f";
-        nGramsBoostN4 = "0.22f";
-        nGramsBoostN3 = "0.01f";
-        nGramsBoostN2 = "0.00f";
-        compute(args);
+//        country = "onb";
+//        assessmentsFile = assessmentsOnb;
+//        lang  = IndexCollections.de;
+//        qeDocNum = "8";
+//        qeTermNum = "40";
+//        nGramsBoostContents = "0.55f";
+//        nGramsBoostN5 = "0.24f";
+//        nGramsBoostN4 = "0.22f";
+//        nGramsBoostN3 = "0.01f";
+//        nGramsBoostN2 = "0.00f";
+//        compute(args);
     }
     public static void compute(String [] args) throws DocumentException, IOException
     {
@@ -273,18 +273,18 @@ public class ClefAdHocExample
         List<SearchConfiguration> searchConfigurations = new ArrayList<SearchConfiguration>();
 
         searchConfigurations.add(new SearchConfiguration(queryConfigurationNoQE, VS_ADHOC, 1));
-        searchConfigurations.add(new SearchConfiguration(queryConfigurationNoQE, LM_ADHOC, 2));
-        searchConfigurations.add(new SearchConfiguration(queryConfigurationNoQE, VS_STEMMER_ADHOC, 3));
-        searchConfigurations.add(new SearchConfiguration(queryConfigurationNoQE, LM_STEMMER_ADHOC, 4));
-        searchConfigurations.add(new SearchConfiguration(queryConfigurationNoQE_ngrams,VS_2_6GRAMS, 5));
-        searchConfigurations.add(new SearchConfiguration(queryConfigurationNoQE_ngrams,LM_2_6GRAMS, 6));
-
-        searchConfigurations.add(new SearchConfiguration(queryConfigurationQE, VS_ADHOC, 7));
-        searchConfigurations.add(new SearchConfiguration(queryConfigurationQE, LM_ADHOC, 8));
-        searchConfigurations.add(new SearchConfiguration(queryConfigurationQE, VS_STEMMER_ADHOC, 9));
-        searchConfigurations.add(new SearchConfiguration(queryConfigurationQE, LM_STEMMER_ADHOC, 10));
-        searchConfigurations.add(new SearchConfiguration(queryConfigurationQE_ngrams,VS_2_6GRAMS, 11));
-        searchConfigurations.add(new SearchConfiguration(queryConfigurationQE_ngrams,LM_2_6GRAMS, 12 ));
+//        searchConfigurations.add(new SearchConfiguration(queryConfigurationNoQE, LM_ADHOC, 2));
+//        searchConfigurations.add(new SearchConfiguration(queryConfigurationNoQE, VS_STEMMER_ADHOC, 3));
+//        searchConfigurations.add(new SearchConfiguration(queryConfigurationNoQE, LM_STEMMER_ADHOC, 4));
+//        searchConfigurations.add(new SearchConfiguration(queryConfigurationNoQE_ngrams,VS_2_6GRAMS, 5));
+//        searchConfigurations.add(new SearchConfiguration(queryConfigurationNoQE_ngrams,LM_2_6GRAMS, 6));
+//
+//        searchConfigurations.add(new SearchConfiguration(queryConfigurationQE, VS_ADHOC, 7));
+//        searchConfigurations.add(new SearchConfiguration(queryConfigurationQE, LM_ADHOC, 8));
+//        searchConfigurations.add(new SearchConfiguration(queryConfigurationQE, VS_STEMMER_ADHOC, 9));
+//        searchConfigurations.add(new SearchConfiguration(queryConfigurationQE, LM_STEMMER_ADHOC, 10));
+//        searchConfigurations.add(new SearchConfiguration(queryConfigurationQE_ngrams,VS_2_6GRAMS, 11));
+//        searchConfigurations.add(new SearchConfiguration(queryConfigurationQE_ngrams,LM_2_6GRAMS, 12 ));
 
 
         if(parameterTunning != null)

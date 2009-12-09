@@ -96,7 +96,7 @@ public class SearchTopics implements ISearchCallBack
 
 
 
-        createRunPackage(runPackageFileOutputDir,searchConfigurations);
+//        createRunPackage(runPackageFileOutputDir,searchConfigurations);
 
 
         //topicTotalResults.close();

@@ -10,6 +10,9 @@ import org.apache.lucene.index.LanguageModelIndexReader;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.index.TermDocs;
 import pt.utl.ist.lucene.Model;
+import pt.utl.ist.lucene.ModelManager;
+import pt.utl.ist.lucene.QueryConfiguration;
+import pt.utl.ist.lucene.config.ConfigProperties;
 
 /*
  * 
@@ -22,7 +25,7 @@ final class TermScorerDFR extends Scorer  {
 
 
     // TODO: Set model and free parameters dynamically
-    private static final double c = 1, k1 = 2.0, b = 0.75;
+    private static final double c = 1;
     private Model model = Model.DLHHypergeometricDFRModel;
 
     private Weight weight;
@@ -59,6 +62,7 @@ final class TermScorerDFR extends Scorer  {
         this.term = ((TermQueryProbabilisticModel) weight.getQuery()).getTerm();
 
         // Get data for the collection model
+
         String docLengthType = (String) DataCacher.Instance().get("LM-lengths");
         if (docLengthType.equalsIgnoreCase("field")){
             this.useFieldLengths = true;
@@ -109,13 +113,15 @@ final class TermScorerDFR extends Scorer  {
         }
     }
 
-    public float score() throws IOException {
+    public float score() throws IOException
+    {
 
         initCollectionDetails(indexReader);
         Double avgDocLen = avgLen;
         int docLen;
 
-        if (useFieldLengths) {
+        if (useFieldLengths)
+        {
             docLen = indexReader.getFieldLength(doc, term.field());
             avgDocLen = avgLenFields.get(term.field());
             if(avgDocLen == null)
@@ -123,12 +129,16 @@ final class TermScorerDFR extends Scorer  {
                 avgDocLen = (((double)indexReader.getCollectionTokenNumber(term.field()))+1.0) / numDocs;
                 avgLenFields.put(term.field(),avgDocLen);
             }
-        } else {
+        }
+        else
+        {
             docLen = indexReader.getDocLength(doc);
         }
         float tfDoc = freqs[pointer];
         double sim = 0;
 
+        QueryConfiguration queryConfiguration = ModelManager.getInstance().getQueryConfiguration();
+        if(queryConfiguration == null) queryConfiguration = new QueryConfiguration();
 
         double tfCollection = indexReader.collFreq(term);
         double docFreq = indexReader.docFreq(term);
@@ -148,14 +158,27 @@ final class TermScorerDFR extends Scorer  {
             case BB2DFRModel : sim = ((tfCollection+1)/(nt+(tfn+1))) * (-Math.log1p(collSize-1)-Math.log1p(Math.E)+stirlingFormula(tfCollection+collSize-1,tfCollection+collSize-tfn-2)-stirlingFormula(tfCollection,tfCollection+tfn)); break;
             case OkapiBM25Model :
             {
-//                double idf = Math.log((numDocs - docFreq + 0.5)/(docFreq+0.5));
-                double idf = Math.log((numDocs + 0.5)/(docFreq+0.5));
-                sim = idf *
+
+                double epslon = 0.01d;
+                double k1 = 2.0, b = 0.75;
+
+
+                if(queryConfiguration != null && queryConfiguration.getProperty("bm25.k1") !=null && !queryConfiguration.getProperty("bm25.k1").equals("bm25.k1"))
+                {
+                    k1 = queryConfiguration.getDoubleProperty("bm25.k1");
+                }
+                if(queryConfiguration != null && queryConfiguration.getProperty("bm25.b") !=null && !queryConfiguration.getProperty("bm25.b").equals("bm25.b"))
+                {
+                    b = queryConfiguration.getDoubleProperty("bm25.b");
+                }
+
+                sim = idf(epslon,docFreq,queryConfiguration) *
                         (
-                            (tfDoc*(k1 + 1))
-                                    /
-                            ( tfDoc + k1*(1.0 - b + b*(docLen/avgDocLen)))
-                        ); break;
+                                (tfDoc*(k1 + 1))
+                                        /
+                                        ( tfDoc + k1*(1.0 - b + b*(docLen/avgDocLen)))
+                        );
+                break;
             }
             case BM25b:
             {
@@ -199,16 +222,27 @@ final class TermScorerDFR extends Scorer  {
                 double b = 0.75d;
                 double keyFrequency = 1.0d;
 
+                if(queryConfiguration != null && queryConfiguration.getProperty("bm25.k1") !=null && !queryConfiguration.getProperty("bm25.k1").equals("bm25.k1"))
+                {
+                    k_1 = queryConfiguration.getDoubleProperty("bm25.k1");
+                }
+                if(queryConfiguration != null && queryConfiguration.getProperty("bm25.k3") !=null && !queryConfiguration.getProperty("bm25.k3").equals("bm25.k3"))
+                {
+                    k_3 = queryConfiguration.getDoubleProperty("bm25.k3");
+                }
+                if(queryConfiguration != null && queryConfiguration.getProperty("bm25.b") !=null && !queryConfiguration.getProperty("bm25.b").equals("bm25.b"))
+                {
+                    b = queryConfiguration.getDoubleProperty("bm25.b");
+                }
+
                 //assumo 1 no keyFreq porque o Lucene vai invocar este metodo tantas vezes quantos os termos mesmo que repetidos
                 double K = k_1 * ((1 - b) + b * docLen / avgDocLen) + tfDoc;
-                sim = Math.log((numDocs - docFreq + 0.5d) / (docFreq+ 0.5d)) *
-                            ((k_1 + 1d) * docFreq / (K + docFreq)) *
-                			((k_3+1)*keyFrequency/(k_3+keyFrequency));
+                sim = idf(0.01d,docFreq,queryConfiguration) *
+                        ((k_1 + 1d) * tfDoc / (K + tfDoc)) *
+                        ((k_3+1)*keyFrequency/(k_3+keyFrequency));
                 break;
             }
         }
-
-
 
         /*
         *
@@ -230,11 +264,37 @@ final class TermScorerDFR extends Scorer  {
         *
         * */
 
-
         if(sim < 0)
             System.out.println(">>>>>>>>>>>>>>>>>>>>>>>FATAL  : PLEASE CHECK DFR Formulas similarity come negative for doc:" + doc + " term: " + term.text());
         return weightValue * (float)sim;
     }
+
+    private double idf(double epslonDefault, double docFreq, QueryConfiguration queryConfiguration)
+    {
+
+        double idf = Math.log((numDocs - docFreq + 0.5)/(docFreq+0.5))/Math.log(2.0d);
+
+        if(queryConfiguration != null)
+        {
+            String idfPolicy = queryConfiguration.getProperty("bm25.idf.policy");
+            if(idf <  0 && idfPolicy != null)
+            {
+                if(idfPolicy.equals("floor_zero"))
+                    idf = 0d;
+                else if(idfPolicy.equals("floor_epslon")){
+                    String idfEpslon = queryConfiguration.getProperty("bm25.idf.epslon");
+                    if(idfEpslon != null)
+                        idf = Double.parseDouble(idfEpslon);
+                    else
+                        idf = epslonDefault;
+                }
+            }
+        }
+        return idf;
+    }
+
+
+
 
     private double stirlingFormula ( double m, double n )
     {

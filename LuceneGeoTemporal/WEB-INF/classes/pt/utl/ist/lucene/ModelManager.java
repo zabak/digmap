@@ -1,9 +1,6 @@
 package pt.utl.ist.lucene;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.List;
-import java.util.ArrayList;
+import java.util.*;
 
 /**
  * This class manages the model used in each thread by a search
@@ -35,6 +32,17 @@ public class ModelManager
         service(ManagerService.setModel,m);
     }
 
+    public void setModel(Model m, QueryConfiguration queryConfiguration)
+    {
+        service(ManagerService.setModel,m);
+        service(ManagerService.setQueryConfiguration,queryConfiguration);
+    }
+
+    public void setQueryConfiguration(QueryConfiguration queryConfiguration)
+    {
+        service(ManagerService.setQueryConfiguration,queryConfiguration);
+    }
+
     public void reset()
     {
         service(ManagerService.clear,null);
@@ -42,16 +50,30 @@ public class ModelManager
 
     public Model getModel()
     {
-        return service(ManagerService.getModel,null);
+        return (Model) service(ManagerService.getModel,null);
     }
 
-//    public synchronized Model service(ManagerService service, Model m)
-    public synchronized Model service(ManagerService service, Model m)
+    public QueryConfiguration getQueryConfiguration()
+    {
+        return (QueryConfiguration) service(ManagerService.getQueryConfiguration,null);
+    }
+
+    //    public synchronized Model service(ManagerService service, Model m)
+    public synchronized Object service(ManagerService service, Object o)
     {
         switch ( service )
         {
-            case setModel: threadModels.put(Thread.currentThread().getId(),new ModelContainer(m)); break;
+            case setModel: threadModels.put(Thread.currentThread().getId(),new ModelContainer((Model) o)); break;
+
+            case setQueryConfiguration:{
+                if(threadModels.get(Thread.currentThread().getId())!=null)
+                    threadModels.get(Thread.currentThread().getId()).setQueryConfiguration((QueryConfiguration) o);
+                else
+                    threadModels.put(Thread.currentThread().getId(),new ModelContainer(Model.defaultModel, (QueryConfiguration) o));
+                break;
+            }
             case getModel: return threadModels.get(Thread.currentThread().getId()).getModel();
+            case getQueryConfiguration: return threadModels.get(Thread.currentThread().getId()).getQueryConfiguration();
             case clear: threadModels.clear();
         }
         checkOldThreads();
@@ -81,20 +103,30 @@ public class ModelManager
     private enum ManagerService
     {
         setModel,
+        setQueryConfiguration,
         clear,
-        getModel
+        getModel,
+        getQueryConfiguration
     }
 
     private class ModelContainer
     {
         Model m;
         long lastAccess = 0;
+        QueryConfiguration queryConfiguration;
 
 
         public ModelContainer(Model m)
         {
             lastAccess = System.currentTimeMillis();
             this.m = m;
+        }
+
+        public ModelContainer(Model m, QueryConfiguration queryConfiguration)
+        {
+            lastAccess = System.currentTimeMillis();
+            this.m = m;
+            this.queryConfiguration = queryConfiguration;
         }
 
         public Model getModel()
@@ -106,6 +138,15 @@ public class ModelManager
         public long getLastAccess()
         {
             return lastAccess;
+        }
+
+
+        public QueryConfiguration getQueryConfiguration() {
+            return queryConfiguration;
+        }
+
+        public void setQueryConfiguration(QueryConfiguration queryConfiguration) {
+            this.queryConfiguration = queryConfiguration;
         }
     }
 

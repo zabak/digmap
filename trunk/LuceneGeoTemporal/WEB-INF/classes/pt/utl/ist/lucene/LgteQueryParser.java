@@ -37,6 +37,12 @@ public class LgteQueryParser
     {
         return parseQuery(query,LgteAnalyzer.defaultAnalyzer);
     }
+
+    
+    public static LgteQuery parseQuery(String query, QueryConfiguration queryConfiguration) throws IOException, ParseException
+    {
+        return parseQuery(query,Globals.LUCENE_DEFAULT_FIELD,LgteAnalyzer.defaultAnalyzer,null,queryConfiguration,null,null);
+    }
     
     public static LgteQuery parseQuery(String query, LgteIndexSearcherWrapper lgteIndexSearcherWrapper, Analyzer a) throws IOException, ParseException
     {
@@ -123,10 +129,13 @@ public class LgteQueryParser
             queryStr = level1Query.toString().trim();
             queryStr = query;
         }
+
+
         if(queryConfiguration != null)
             queryParams.setQueryConfiguration(queryConfiguration);
         //Set Model in Manager
-        if(queryParams.getModel() != null) ModelManager.getInstance().setModel(queryParams.getModel());
+        if(queryParams.getModel() != null) ModelManager.getInstance().setModel(queryParams.getModel(),queryConfiguration);
+        if(queryParams.getModel() == null && queryParams.getQueryConfiguration() != null) ModelManager.getInstance().setQueryConfiguration(queryConfiguration);
 
         Query returnQuery;
 

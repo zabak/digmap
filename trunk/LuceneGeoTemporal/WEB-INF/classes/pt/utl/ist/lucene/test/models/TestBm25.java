@@ -93,10 +93,14 @@ public class TestBm25 extends TestCase {
                             ( tfDoc + k1*(1.0 - b + b*(docLen/avgDocLen)))
                 );
     }
-    public void testRange() throws IOException, InvalidGeoException {
-        LgteIndexSearcherWrapper searcher = new LgteIndexSearcherWrapper(Model.OkapiBM25Model, path);
+    public void testRange() throws IOException, InvalidGeoException
+    {
+
+        LgteIndexSearcherWrapper searcher = new LgteIndexSearcherWrapper(Model.BM25b, path);
 
 
+        //Calculate BM25 for each test document
+        //will calculate for query "word1 word2"
         double numDocs = 3;
         double doc1len = 15;
         double doc2len = 9;
@@ -106,8 +110,13 @@ public class TestBm25 extends TestCase {
         double avgDocLen = (colSize + 1.0) / numDocs;
         double docFreqWord1 = 2;
         double docFreqWord2 = 2;
-        double idfWord1 = Math.log((numDocs + 0.5)/(docFreqWord1+0.5));
-        double idfWord2 = Math.log((numDocs + 0.5)/(docFreqWord2+0.5));
+        double idfWord1 = Math.log((numDocs - docFreqWord1 + 0.5)/(docFreqWord1+0.5));
+        double idfWord2 = Math.log((numDocs - docFreqWord2 + 0.5)/(docFreqWord2+0.5));
+        //epslon policy
+        if(idfWord1 < 0)
+            idfWord1 = 0.05d;
+        if(idfWord2 < 0)
+            idfWord2 = 0.05d;
         double tfDoc1Word1 = 2;
         double tfDoc2Word1 = 0;
         double tfDoc3Word1 = 1;
@@ -121,6 +130,7 @@ public class TestBm25 extends TestCase {
         float score2 = (float) (bm25(idfWord1,tfDoc2Word1,doc2len,avgDocLen,2.0,0.75) + bm25(idfWord2,tfDoc2Word2,doc2len,avgDocLen,2.0,0.75));
         float score3 = (float) (bm25(idfWord1,tfDoc3Word1,doc3len,avgDocLen,2.0,0.75) + bm25(idfWord2,tfDoc3Word2,doc3len,avgDocLen,2.0,0.75));
 
+        //now will sort results using a wrapper for a pair <score,docId>
         ScoreDoc scoreDoc1 = new ScoreDoc(score1,"1");
         ScoreDoc scoreDoc2 = new ScoreDoc(score2,"2");
         ScoreDoc scoreDoc3 = new ScoreDoc(score3,"3");
@@ -139,9 +149,21 @@ public class TestBm25 extends TestCase {
 
 
 
+        //now will create a configuration and execute a search
+
         try
         {
-            LgteHits lgteHits = searcher.search("word1 word2");
+            QueryConfiguration queryConfiguration = new QueryConfiguration();
+            queryConfiguration.setProperty("bm25.idf.policy","floor_epslon");
+            queryConfiguration.setProperty("bm25.idf.epslon","0.05");
+            queryConfiguration.setProperty("bm25.k1","1.2d");
+            queryConfiguration.setProperty("bm25.b","0.75d");
+            queryConfiguration.setProperty("bm25.k3","8d");
+
+            LgteQuery lgteQuery = LgteQueryParser.parseQuery("word1 word2",searcher,queryConfiguration);
+
+            LgteHits lgteHits = searcher.search(lgteQuery);
+            
             System.out.println("doc:" + lgteHits.doc(0).get(Globals.DOCUMENT_ID_FIELD) + ":"  + lgteHits.score(0));
             System.out.println("doc:" + lgteHits.doc(1).get(Globals.DOCUMENT_ID_FIELD) + ":" + lgteHits.score(1));
             System.out.println("doc:" + lgteHits.doc(2).get(Globals.DOCUMENT_ID_FIELD) + ":" + lgteHits.score(2));

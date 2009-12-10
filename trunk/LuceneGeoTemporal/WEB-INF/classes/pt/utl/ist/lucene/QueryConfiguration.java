@@ -166,6 +166,11 @@ public class QueryConfiguration
         return ConfigProperties.getBooleanProperty(key);
     }
 
+    public void setProperty(String key,String value)
+    {
+        getQueryProperties().put(key,value);
+    }
+
     public void setQueryProperties(Properties queryProperties)
     {
         this.queryProperties = queryProperties;

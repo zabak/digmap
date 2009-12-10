@@ -271,12 +271,16 @@ final class TermScorerDFR extends Scorer  {
 
     private double idf(double epslonDefault, double docFreq, QueryConfiguration queryConfiguration)
     {
+        String idfPolicy = null;
+        if(queryConfiguration != null && (idfPolicy = queryConfiguration.getProperty("bm25.idf.policy")) != null && idfPolicy.equals("dont_subtract_n_t"))
+        {
+            return Math.log((numDocs + 0.5)/(docFreq+0.5))/Math.log(2.0d);
+        }
 
         double idf = Math.log((numDocs - docFreq + 0.5)/(docFreq+0.5))/Math.log(2.0d);
 
         if(queryConfiguration != null)
         {
-            String idfPolicy = queryConfiguration.getProperty("bm25.idf.policy");
             if(idf <  0 && idfPolicy != null)
             {
                 if(idfPolicy.equals("floor_zero"))

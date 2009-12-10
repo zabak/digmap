@@ -5,14 +5,13 @@ import pt.utl.ist.lucene.*;
 import pt.utl.ist.lucene.utils.Files;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import com.pjaol.search.geo.utils.InvalidGeoException;
-import com.wcohen.ss.BasicStringWrapper;
-import com.wcohen.ss.BasicStringWrapperIterator;
-import com.wcohen.ss.tokens.SimpleTokenizer;
 import org.apache.lucene.queryParser.ParseException;
-import experiments.TextSimilarityScorer;
 
 /**
  *
@@ -23,7 +22,7 @@ import experiments.TextSimilarityScorer;
  *
  *
  */
-public class TestBm25 extends TestCase {
+public class TestBm25b extends TestCase {
 
     /**
      * You can use the diferent Probabilistic Models creating the index just once with any one of the probabilist models
@@ -86,26 +85,28 @@ public class TestBm25 extends TestCase {
 
     private double idf(double numDocs,double docFreq)
     {
-          return Math.log((numDocs - docFreq + 0.5)/(docFreq+0.5))/Math.log(2.0d);
+        return Math.log((numDocs - docFreq + 0.5)/(docFreq+0.5))/Math.log(2.0d);
     }
 
-    private double bm25(double idf, double tfDoc, double docLen, double avgDocLen, double k1, double b)
+   /*
+    *   Terrier Formula with keyFreq = 1
+    *   keyFreq is the frequency of the term in the query, LGTE will assume 1 so we do the same here
+    */
+    private double bm25(double idf, double tfDoc, double docLen, double avgDocLen, double k1,double k3, double b)
     {
-        return idf *
-                (
-                    (tfDoc*(k1 + 1))
-                            /
-                            ( tfDoc + k1*(1.0 - b + b*(docLen/avgDocLen)))
-                );
+        double K = k1 * ((1 - b) + b * docLen / avgDocLen) + tfDoc;
+        return  idf *
+                ((k1 + 1d) * tfDoc / (K + tfDoc)) *
+                ((k3+1)*1.0/(k3+1.0));
     }
-    public void testRange() throws IOException, InvalidGeoException
-    {
+    public void testRange() throws IOException, InvalidGeoException {
 
-        double k1 = 2.0d;
+        double k1 = 1.2d;
         double b = 0.75d;
+        double k3 = 8d;
         double epslon = 0.05d;
 
-        LgteIndexSearcherWrapper searcher = new LgteIndexSearcherWrapper(Model.OkapiBM25Model, path);
+        LgteIndexSearcherWrapper searcher = new LgteIndexSearcherWrapper(Model.BM25b, path);
 
 
         //Calculate BM25 for each test document
@@ -135,26 +136,26 @@ public class TestBm25 extends TestCase {
 
 
 
-        float score1 = (float) (bm25(idfWord1,tfDoc1Word1,doc1len,avgDocLen,k1,b) + bm25(idfWord2,tfDoc1Word2,doc1len,avgDocLen,k1,b));
-        float score2 = (float) (bm25(idfWord1,tfDoc2Word1,doc2len,avgDocLen,k1,b) + bm25(idfWord2,tfDoc2Word2,doc2len,avgDocLen,k1,b));
-        float score3 = (float) (bm25(idfWord1,tfDoc3Word1,doc3len,avgDocLen,k1,b) + bm25(idfWord2,tfDoc3Word2,doc3len,avgDocLen,k1,b));
+        float score1 = (float) (bm25(idfWord1,tfDoc1Word1,doc1len,avgDocLen,k1,k3,b) + bm25(idfWord2,tfDoc1Word2,doc1len,avgDocLen,k1,k3,b));
+        float score2 = (float) (bm25(idfWord1,tfDoc2Word1,doc2len,avgDocLen,k1,k3,b) + bm25(idfWord2,tfDoc2Word2,doc2len,avgDocLen,k1,k3,b));
+        float score3 = (float) (bm25(idfWord1,tfDoc3Word1,doc3len,avgDocLen,k1,k3,b) + bm25(idfWord2,tfDoc3Word2,doc3len,avgDocLen,k1,k3,b));
 
         //now will sort results using a wrapper for a pair <score,docId>
-        ScoreDoc scoreDoc1 = new ScoreDoc(score1,"1");
-        ScoreDoc scoreDoc2 = new ScoreDoc(score2,"2");
-        ScoreDoc scoreDoc3 = new ScoreDoc(score3,"3");
+        TestBm25b.ScoreDoc scoreDoc1 = new TestBm25b.ScoreDoc(score1,"1");
+        TestBm25b.ScoreDoc scoreDoc2 = new TestBm25b.ScoreDoc(score2,"2");
+        TestBm25b.ScoreDoc scoreDoc3 = new TestBm25b.ScoreDoc(score3,"3");
         List<ScoreDoc> scoreDocs = new ArrayList<ScoreDoc>();
         scoreDocs.add(scoreDoc1);
         scoreDocs.add(scoreDoc2);
         scoreDocs.add(scoreDoc3);
         Collections.sort(scoreDocs,new Comparator<ScoreDoc>()
-                                    {
-                                        public int compare(ScoreDoc o1, ScoreDoc o2) {
-                                            if(o1.score < o2.score) return 1;
-                                            else if(o1.score == o2.score) return 0;
-                                            else return -1;
-                                        }
-                                    });
+        {
+            public int compare(TestBm25b.ScoreDoc o1, TestBm25b.ScoreDoc o2) {
+                if(o1.score < o2.score) return 1;
+                else if(o1.score == o2.score) return 0;
+                else return -1;
+            }
+        });
 
 
 
@@ -167,16 +168,16 @@ public class TestBm25 extends TestCase {
             queryConfiguration.setProperty("bm25.idf.epslon","" + epslon);
             queryConfiguration.setProperty("bm25.k1","" + k1);
             queryConfiguration.setProperty("bm25.b","" + b);
-//            queryConfiguration.setProperty("bm25.k3","8d");
+            queryConfiguration.setProperty("bm25.k3","" + k3);
 
             LgteQuery lgteQuery = LgteQueryParser.parseQuery("word1 word2",searcher,queryConfiguration);
 
             LgteHits lgteHits = searcher.search(lgteQuery);
-            
+
             System.out.println("doc:" + lgteHits.doc(0).get(Globals.DOCUMENT_ID_FIELD) + ":"  + lgteHits.score(0));
             System.out.println("doc:" + lgteHits.doc(1).get(Globals.DOCUMENT_ID_FIELD) + ":" + lgteHits.score(1));
             System.out.println("doc:" + lgteHits.doc(2).get(Globals.DOCUMENT_ID_FIELD) + ":" + lgteHits.score(2));
-            
+
             assertEquals(lgteHits.doc(0).get(Globals.DOCUMENT_ID_FIELD),scoreDocs.get(0).id);
             assertEquals(lgteHits.doc(1).get(Globals.DOCUMENT_ID_FIELD),scoreDocs.get(1).id);
             assertEquals(lgteHits.doc(2).get(Globals.DOCUMENT_ID_FIELD),scoreDocs.get(2).id);

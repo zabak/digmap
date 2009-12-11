@@ -10,6 +10,24 @@ import java.util.*;
  * @time 11:01:03
  * @email machadofisher@gmail.com
  */
+
+/**
+ *     for expressions:  1990 199001 19900114 20090104
+ *
+ *     the tree will be  <Expression, TotalRefs>
+ *                       Tree
+ *                        |
+ *                ----------------
+ *            <1990, 1>  ,  <2009,0>
+ *                |            |
+ *      ----------            -------------
+ *     <199001, 1>             <200901,0>
+ *          |                       |
+ * -----------                     ----------
+ * <19900114, 1 >                   <20090104,1>
+ * 
+ *
+ */
 public class TimeExpressionsTree
 {
 
@@ -36,7 +54,7 @@ public class TimeExpressionsTree
     }
 
 
-    List<TimeExpressionNode> getRootNodes()
+    public List<TimeExpressionNode> getRootNodes()
     {
         List<TimeExpressionNode> nodes = new ArrayList<TimeExpressionNode>();
         for(TimeExpressionNode node: yearNodes.values())
@@ -45,6 +63,11 @@ public class TimeExpressionsTree
         }
         Collections.sort(nodes,TimeExpressionNodeComparator.getInstance());
         return nodes;
+    }
+
+    public boolean hasRootNodes()
+    {
+        return yearNodes.size() > 0;
     }
 
     private static class TimeExpressionNodeComparator implements Comparator<TimeExpressionNode>
@@ -76,12 +99,15 @@ public class TimeExpressionsTree
         if(year == null)
         {
             try {
-                year = new TimeExpressionNode(new TimeExpression(subExprYYYY));
+                if(timeExpression.getType() == TimeExpression.Type.YYYY)
+                    year = new TimeExpressionNode(timeExpression);
+                else
+                    year = new TimeExpressionNode(new TimeExpression(subExprYYYY));
             } catch (TimeExpression.BadTimeExpression e) {
                 logger.error(e,e);
-                return year;
+                return null;
             }
-            yearNodes.put(timeExpression.getExpression(),year);
+            yearNodes.put(subExprYYYY,year);
         }
         return year;
     }
@@ -98,8 +124,16 @@ public class TimeExpressionsTree
         TimeExpressionNode month = year.getChildrenNodes().get(subExprYYYYMM);
         if(month == null)
         {
-            year = new TimeExpressionNode(timeExpression);
-            year.getChildrenNodes().put(timeExpression.getExpression(),month);
+            try {
+                if(timeExpression.getType() == TimeExpression.Type.YYYYMM)
+                    month = new TimeExpressionNode(timeExpression);
+                else
+                    month = new TimeExpressionNode(new TimeExpression(subExprYYYYMM));
+            } catch (TimeExpression.BadTimeExpression e) {
+                logger.error(e,e);
+                return null;
+            }
+            year.getChildrenNodes().put(subExprYYYYMM,month);
         }
         return month;
     }
@@ -116,8 +150,16 @@ public class TimeExpressionsTree
         TimeExpressionNode day = month.getChildrenNodes().get(subExprYYYYMMDD);
         if(day == null)
         {
-            day = new TimeExpressionNode(timeExpression);
-            month.getChildrenNodes().put(timeExpression.getExpression(),day);
+            try {
+                if(timeExpression.getType() == TimeExpression.Type.YYYYMMDD)
+                    day = new TimeExpressionNode(timeExpression);
+                else
+                    day = new TimeExpressionNode(new TimeExpression(subExprYYYYMMDD));
+            } catch (TimeExpression.BadTimeExpression e) {
+                logger.error(e,e);
+                return null;
+            }
+            month.getChildrenNodes().put(subExprYYYYMMDD,day);
         }
         return day;
     }
@@ -162,6 +204,16 @@ public class TimeExpressionsTree
             }
             Collections.sort(nodes,TimeExpressionNodeComparator.getInstance());
             return nodes;
+        }
+
+        public boolean hasChilds()
+        {
+            return childrenNodes.size() > 0;
+        }
+
+        public String toString()
+        {
+            return timeExpression.getExpression() + " : childs(" + childrenNodes.size() + ") refs[" + refs + "]";
         }
     }
 }

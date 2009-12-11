@@ -3,8 +3,10 @@ package pt.utl.ist.lucene.utils.temporal.tests;
 import junit.framework.TestCase;
 
 import java.io.IOException;
+import java.util.GregorianCalendar;
 
 import pt.utl.ist.lucene.utils.temporal.TimeExpression;
+import org.geotools.nature.Calendar;
 
 /**
  * @author Jorge Machado
@@ -29,7 +31,7 @@ public class TimeExpressionTest extends TestCase
                         "1800",
                         "199001","199002","199003","199004","199005","199006","199007","199008","199009","199010","199011","199012",
                         "19900101","19900110","19900131",
-                        "19900201","19900210","19900229",
+                        "19900201","19900210","19900228",
                         "19900301","19900310","19900331",
                         "19900401","19900410","19900430",
                         "19900501","19900510","19900531",
@@ -91,17 +93,55 @@ public class TimeExpressionTest extends TestCase
                 if(t.getType() == TimeExpression.Type.YYYY)
                 {
                     assertTrue(t.getYear() == Integer.parseInt(t.getExpression()));
+                    assertTrue(t.getYear() + 1 == t.getRightLimit().get(GregorianCalendar.YEAR));
+                    assertTrue(1 == (t.getRightLimit().get(GregorianCalendar.MONTH)+1));
+                    assertTrue(1 == t.getRightLimit().get(GregorianCalendar.DAY_OF_MONTH));
                 }
                 else if(t.getType() == TimeExpression.Type.YYYYMM)
                 {
                     assertTrue(t.getYear() == Integer.parseInt(t.getExpression().substring(0,4)));
                     assertTrue(t.getMonth() == Integer.parseInt(t.getExpression().substring(4,6)));
+
+                    if(t.getMonth() == 12)
+                    {
+                        assertTrue(t.getYear() + 1 == t.getRightLimit().get(GregorianCalendar.YEAR));
+                        assertTrue(1 == (t.getRightLimit().get(GregorianCalendar.MONTH)+1));
+                        assertTrue(1 == t.getRightLimit().get(GregorianCalendar.DAY_OF_MONTH));
+                    }
+                    else
+                    {
+                        assertTrue(t.getYear() == t.getRightLimit().get(GregorianCalendar.YEAR));
+                        assertTrue(t.getMonth() + 1 == (t.getRightLimit().get(GregorianCalendar.MONTH)+1));
+                        assertTrue(1 == t.getRightLimit().get(GregorianCalendar.DAY_OF_MONTH));
+                    }
                 }
                 else if(t.getType() == TimeExpression.Type.YYYYMMDD)
                 {
                     assertTrue(t.getYear() == Integer.parseInt(t.getExpression().substring(0,4)));
                     assertTrue(t.getMonth() == Integer.parseInt(t.getExpression().substring(4,6)));
                     assertTrue(t.getDay() == Integer.parseInt(t.getExpression().substring(6)));
+
+                    if(t.getDay() == t.getC().getActualMaximum(GregorianCalendar.DAY_OF_MONTH))
+                    {
+                        if(t.getMonth() == 12)
+                        {
+                            assertTrue(t.getYear() + 1 == t.getRightLimit().get(GregorianCalendar.YEAR));
+                            assertTrue(1 == (t.getRightLimit().get(GregorianCalendar.MONTH)+1));
+                            assertTrue(1 == t.getRightLimit().get(GregorianCalendar.DAY_OF_MONTH));
+                        }
+                        else
+                        {
+                            assertTrue(t.getYear() == t.getRightLimit().get(GregorianCalendar.YEAR));
+                            assertTrue(t.getMonth() + 1 == (t.getRightLimit().get(GregorianCalendar.MONTH)+1));
+                            assertTrue(1 == t.getRightLimit().get(GregorianCalendar.DAY_OF_MONTH));
+                        }
+                    }
+                    else
+                    {
+                        assertTrue(t.getYear() == t.getRightLimit().get(GregorianCalendar.YEAR));
+                        assertTrue(t.getMonth() == (t.getRightLimit().get(GregorianCalendar.MONTH)+1));
+                        assertTrue(t.getDay() + 1 == t.getRightLimit().get(GregorianCalendar.DAY_OF_MONTH));
+                    }
                 }
             }
             catch (TimeExpression.BadTimeExpression badTimeExpression)

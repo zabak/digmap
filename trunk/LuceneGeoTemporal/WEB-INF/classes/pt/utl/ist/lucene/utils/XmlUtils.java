@@ -4,6 +4,8 @@ import org.dom4j.DocumentException;
 import org.dom4j.Document;
 import org.dom4j.XPath;
 import org.dom4j.Node;
+import org.dom4j.io.OutputFormat;
+import org.dom4j.io.XMLWriter;
 import org.xml.sax.InputSource;
 
 import java.io.*;
@@ -43,6 +45,13 @@ public class XmlUtils
        }
 
 
+     public static void writeSout(Document document) throws IOException
+    {
+        // Compact format to System.out
+        OutputFormat format = OutputFormat.createCompactFormat();
+        XMLWriter writer = new XMLWriter( System.out, format );
+        writer.write( document );
+    }
     public static Node getFragment(String filePath, String xpathString, Map<String,String> namespaces) throws MalformedURLException, DocumentException
     {
         try

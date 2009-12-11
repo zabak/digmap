@@ -44,6 +44,7 @@ import com.vividsolutions.jts.algorithm.distance.DiscreteHausdorffDistance;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.Coordinate;
 import com.wcohen.ss.BasicStringWrapper;
 import com.wcohen.ss.BasicStringWrapperIterator;
 import com.wcohen.ss.api.StringWrapper;
@@ -129,8 +130,8 @@ public class ProcessGeoCLEFCollections {
         };
         try {
         	setRandomProxy();
-        	GeometryFactory fact = new GeometryFactory();
-        	List<com.vividsolutions.jts.geom.Geometry> list = new ArrayList<com.vividsolutions.jts.geom.Geometry>();
+        	
+            List<com.vividsolutions.jts.geom.Geometry> list = new ArrayList<com.vividsolutions.jts.geom.Geometry>();
         	NodeList lst = doc.getDocumentElement().getElementsByTagName("gml:Box");
         	StringWriter sw = new StringWriter();
         	ByteArrayOutputStream w = new ByteArrayOutputStream();
@@ -193,7 +194,8 @@ public class ProcessGeoCLEFCollections {
 	}
 	
 	public double geometrySimilarity ( Geometry g1, Geometry g2, int formula ) {
-		Geometry overlap = g1.difference(g1.difference(g2));
+
+        Geometry overlap = g1.difference(g1.difference(g2));
 		Geometry union = g1.union(g2);
 		double a1 = g1.getArea();
 		double a2 = g2.getArea();

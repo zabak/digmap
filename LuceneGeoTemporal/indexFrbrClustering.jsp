@@ -340,7 +340,12 @@
                         </td>
                     </tr>
                 </table>
-                <table id="advancedSearch" style="display:none">
+                <%
+                    String display = "style=\"display:none\"";
+                    if(request.getParameter("showAdvanced")!=null && request.getParameter("showAdvanced").equals("true"))
+                        display = "";
+                %>
+                <table id="advancedSearch" <%=display%>>
                     <tr>
                         <td>
                             Title

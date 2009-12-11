@@ -202,11 +202,14 @@ public class DocumentIterator
         Document d;
         int notesCounter = 1;
         FileOutputStream out;
+        String file;
         if(new File(path).isFile())
-            out = new FileOutputStream(path + "_notes01.xml",false);
+            file = path + "_notes01.xml";
         else
-            out = new FileOutputStream(path + "/notes01.xml",false);
+            file = path + "/notes01.xml";
+        out = new FileOutputStream(file,false);
 
+        System.out.println("output file: " + file);
         out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>".getBytes());
         out.write("<docs>".getBytes());
         
@@ -215,7 +218,7 @@ public class DocumentIterator
 
             count++;
 
-            if( skipId==null || d.getDId().equals(skipId))
+            if( skipId==null || d.getDId().compareTo(skipId) > 0)
             {
                 skipId = null;
                 if((d.getDParagraphs() == null || d.getDParagraphs().size() == 0) && (d.getDText() == null || d.getDText().trim().length() == 0))

@@ -405,7 +405,7 @@ public class ProcessGeoCLEFCollections {
         factory.setNamespaceAware(true);
         DocumentBuilder loader = factory.newDocumentBuilder();
         HttpClient client = new HttpClient();
-        client.getHostConfiguration().setProxy("proxy1.ipp.pt",3128);
+//        client.getHostConfiguration().setProxy("proxy1.ipp.pt",3128);
         String url = "http://wherein.yahooapis.com/v1/document";
         PostMethod post = new PostMethod(url);
         post.addParameter("documentType","text/plain");

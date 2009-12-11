@@ -1,5 +1,8 @@
 package pt.utl.ist.lucene.utils.temporal;
 
+import java.util.GregorianCalendar;
+import java.util.Calendar;
+
 /**
  * @author Jorge Machado
  * @date 11/Dez/2009
@@ -13,6 +16,10 @@ public class TimeExpression
     int month = -1;
     int day = -1;
     Type type;
+    GregorianCalendar c;
+
+    GregorianCalendar leftLimit;
+    GregorianCalendar rightLimit;
 
 
     public TimeExpression(int year) throws BadTimeExpression
@@ -57,6 +64,16 @@ public class TimeExpression
         expression += day > 0 ? String.format("%02d",day):"";
     }
 
+    public int getNumberOfDays()
+    {
+        if(type == Type.YYYYMMDD)
+            return 1;
+        else if(type == Type.YYYY)
+            return c.getActualMaximum(Calendar.DAY_OF_YEAR);
+        else
+            return c.getActualMaximum(Calendar.DAY_OF_MONTH);
+    }
+
     /**
      * Expression of Type "YYYYMMDD"
      *
@@ -91,6 +108,11 @@ public class TimeExpression
             throw new BadTimeExpression("TimeExpression must be only numbers, came:" + expression + " could be only 4(YYYY), 6(YYYYMM) or 8(YYYYMMDD) where Y, M and D must be integers between 0 and 9");
         }
         validate();
+    }
+
+    public String toString()
+    {
+        return type.toString() + ":" + year + "/" + month + "/" + day;
     }
 
 
@@ -129,6 +151,19 @@ public class TimeExpression
         return year;
     }
 
+    public GregorianCalendar getC() {
+        return c;
+    }
+
+
+    public GregorianCalendar getLeftLimit() {
+        return leftLimit;
+    }
+
+    public GregorianCalendar getRightLimit() {
+        return rightLimit;
+    }
+
     private void validate() throws BadTimeExpression {
         if(year < 0)
             throw new BadTimeExpression("Bad Year could be only 4(YYYY)");
@@ -146,6 +181,36 @@ public class TimeExpression
                     throw new BadTimeExpression("Bad Day. For month " + month + ", day must be between 1 and 31");
             }
         }
+        int month = this.month <= 0 ? 1: this.month;
+        int day = this.day <= 0 ? 1: this.day;
+        c = new GregorianCalendar(year,month-1,day);
+        leftLimit = c;
+
+
+        if(type == Type.YYYY)
+            rightLimit = new GregorianCalendar(year+1,0,1);
+        else if(type == Type.YYYYMM)
+        {
+            if(this.month == 12)
+                rightLimit = new GregorianCalendar(year+1,0,1);
+            else
+                rightLimit = new GregorianCalendar(year,month,1);
+        }
+        else
+        {
+            if(this.day == c.getActualMaximum(GregorianCalendar.DAY_OF_MONTH))
+            {
+                if(this.month == 12)
+                    rightLimit = new GregorianCalendar(year+1,0,1);
+                else
+                    rightLimit = new GregorianCalendar(year,month,1);
+            }
+            else
+            {
+                rightLimit = new GregorianCalendar(year,month-1,day+1);
+            }
+        }
+
     }
 
     public class BadTimeExpression extends Exception
@@ -168,8 +233,19 @@ public class TimeExpression
 
     public static enum Type
     {
-        YYYY,
-        YYYYMM,
-        YYYYMMDD
+        YYYY("YYYY"),
+        YYYYMM("YYYYMM"),
+        YYYYMMDD("YYYYMMDD");
+
+        String type;
+
+
+        Type(String type) {
+            this.type = type;
+        }
+
+        public String toString(){
+            return type;
+        }
     }
 }

@@ -175,8 +175,8 @@ public class DocumentIterator
     public static void main(String[]args) throws IOException
     {
 
-        String path = args[0];
-//          String path = "D:\\Servidores\\DATA\\ntcir\\nyt_eng_200509.gz";
+//        String path = args[0];
+          String path = "D:\\Servidores\\DATA\\ntcir\\nyt_eng_200509.gz";
         /**
          *
          * advis
@@ -215,7 +215,7 @@ public class DocumentIterator
         
         while((d = di.next()) != null)
         {
-
+            System.out.println(count + ":" + d.getDId());
             count++;
 
             if( skipId==null || d.getDId().compareTo(skipId) > 0)

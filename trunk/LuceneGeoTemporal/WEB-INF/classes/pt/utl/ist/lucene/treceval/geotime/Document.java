@@ -140,7 +140,8 @@ public class Document
     }
 
 
-    public String getDText() {
+    public String getDText()
+    {
         return dText;
     }
 

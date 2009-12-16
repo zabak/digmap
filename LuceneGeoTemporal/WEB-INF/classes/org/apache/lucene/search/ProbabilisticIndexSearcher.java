@@ -11,7 +11,7 @@ import pt.utl.ist.lucene.ModelManager;
 
 /**
  * Search using a probabilistic model.
- * The objective of thias class is to provide capacity to invoque final scorer to sum of terms scores
+ * The objective of this class is to provide capacity to invoque final scorer to sum of terms scores
  * <p/>
  * <p>inherits everything from IndexSearcher, except the
  * search() method which adds the language length prior.

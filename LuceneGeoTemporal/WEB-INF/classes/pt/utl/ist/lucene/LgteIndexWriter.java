@@ -26,7 +26,7 @@ public class LgteIndexWriter extends IndexWriter
 {
 
 
-    private static String docId_txt = "/docid.txt";
+    private static String docId_txt = "/docid.cache";
 
     private static LuceneVersion luceneVersion = LuceneVersionFactory.getLuceneVersion();
     private static final Logger logger = Logger.getLogger(LgteIndexWriter.class);

@@ -738,4 +738,8 @@ we     */
             return new TimeBox(Long.parseLong(start),Long.parseLong(to));
         return null;
     }
+
+    public Field getId() {
+        return document.getField(Globals.DOCUMENT_ID_FIELD);
+    }
 }

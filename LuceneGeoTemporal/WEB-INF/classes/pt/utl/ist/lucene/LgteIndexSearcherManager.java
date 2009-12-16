@@ -20,7 +20,7 @@ import pt.utl.ist.lucene.config.ConfigProperties;
 public class LgteIndexSearcherManager
 {
 
-    public static boolean extentData = false;
+    public static boolean alreadyReadExtentData = false;
 
 
     /**
@@ -80,7 +80,7 @@ public class LgteIndexSearcherManager
     public static IndexSearcher openSearcher(Model model, IndexReader reader, Properties modelProperties) throws IOException
     {
         IndexSearcher indexSearcher = initSearcher(reader, model);
-        initSimilarity(indexSearcher, model, modelProperties);
+        initSimilarity(Globals.TMP_DIR, indexSearcher, model, modelProperties);
         return indexSearcher;
     }
 
@@ -95,7 +95,7 @@ public class LgteIndexSearcherManager
     public static IndexSearcher openSearcher(Model model, Directory dir, Properties modelProperties) throws IOException
     {
         IndexSearcher indexSearcher = initSearcher(dir, model);
-        initSimilarity(indexSearcher, model, modelProperties);
+        initSimilarity(Globals.TMP_DIR,indexSearcher, model, modelProperties);
         return indexSearcher;
     }
 
@@ -110,7 +110,7 @@ public class LgteIndexSearcherManager
     public static IndexSearcher openSearcher(Model model, String dir, Properties modelProperties) throws IOException
     {
         IndexSearcher indexSearcher = initSearcher(dir, model);
-        initSimilarity(indexSearcher, model, modelProperties);
+        initSimilarity(dir, indexSearcher, model, modelProperties);
         return indexSearcher;
     }
 
@@ -125,7 +125,7 @@ public class LgteIndexSearcherManager
     public static IndexSearcher openSearcher(File dir, Model model, Properties modelProperties) throws IOException
     {
         IndexSearcher indexSearcher = initSearcher(dir, model);
-        initSimilarity(indexSearcher, model, modelProperties);
+        initSimilarity(dir.getAbsolutePath(), indexSearcher, model, modelProperties);
         return indexSearcher;
     }
 
@@ -145,6 +145,8 @@ public class LgteIndexSearcherManager
             throw new IllegalArgumentException();
         }
     }
+
+
 
     public static IndexReader openReader(String f, Model model) throws IOException
     {
@@ -262,17 +264,17 @@ public class LgteIndexSearcherManager
 
 
 
-    private static void initSimilarity(IndexSearcher indexSearcher, Model model, Properties modelProperties)
+    private static void initSimilarity(String dir, IndexSearcher indexSearcher, Model model, Properties modelProperties)
     {
         
         if(model.isProbabilistcModel())
         {
             indexSearcher.setSimilarity(new LangModelSimilarity());
             System.setProperty("RetrievalModel", model.getName());
-            if(!extentData)
+            if(!alreadyReadExtentData)
             {
-                ((ProbabilisticIndexSearcher) indexSearcher).readExtendedDate(Globals.TMP_DIR);
-                extentData = true;
+                ((ProbabilisticIndexSearcher) indexSearcher).readExtendedDate(dir);
+                alreadyReadExtentData = true;
             }
             initDataCacher(modelProperties);
 

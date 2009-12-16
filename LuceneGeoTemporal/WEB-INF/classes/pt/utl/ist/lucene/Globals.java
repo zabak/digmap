@@ -40,7 +40,8 @@ public class Globals {
     public static String TMP_DIR;
     public static String INDEX_DIR;
     public static String DATA_DIR;
-    
+//
+
     public static final String LUCENE_DEFAULT_FIELD = ConfigProperties.getProperty("lucene.default.field");
     public static final String LGTE_USE_QE_BY_DEFAULT = ConfigProperties.getProperty("lgte.use.qe.by.default");
 

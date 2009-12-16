@@ -18,31 +18,41 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.io.*;
-import java.net.URLEncoder;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.net.*;
 
 import com.sun.org.apache.xml.internal.serialize.OutputFormat;
 import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 import com.sun.tools.javac.util.Pair;
 import com.vividsolutions.jts.geom.Geometry;
 import pt.utl.ist.lucene.utils.Dom4jUtil;
+import pt.utl.ist.lucene.config.ConfigProperties;
 
 public class CallWebServices {
 
 
+    static final String proxyHost = ConfigProperties.getProperty("proxy.host");
+    static final int proxyPort = ConfigProperties.getIntProperty("proxy.port");
     private static final Logger logger = Logger.getLogger(CallWebServices.class);
-
+    private static Proxy httpProxy = Proxy.NO_PROXY;
     protected static String yahooAppId = "AVNVvo3V34EOqIaAO7Uo.CrlQeGg8Ss43EhQfPm0HMZjqnkSUtA2MkhAiTkQ6T3XE6FWGg--";
 
 
     public static org.w3c.dom.Document callServices ( String data, String title, int year, int month, int day ,String file, String id) throws Exception {
+        if(proxyHost != null && !proxyHost.equals("proxy.host"))
+        {
+            System.getProperties().setProperty("http.proxyHost",proxyHost);
+            System.getProperties().setProperty("http.proxyPort","" + proxyPort);
+            InetSocketAddress addr = new InetSocketAddress(proxyHost,proxyPort);
+            httpProxy = new Proxy(Proxy.Type.HTTP, addr);
+            System.out.println("Using Proxy:" + proxyHost + ":" + proxyPort);
+        }
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setValidating(false);
         factory.setNamespaceAware(true);
         DocumentBuilder loader = factory.newDocumentBuilder();
         HttpClient client = new HttpClient();
-//        client.getHostConfiguration().setProxy("proxy1.ipp.pt",3128);
+        if(proxyHost != null && !proxyHost.equals("proxy.host"))
+            client.getHostConfiguration().setProxy(proxyHost,proxyPort);
         try{
 
 
@@ -64,7 +74,8 @@ public class CallWebServices {
             post.releaseConnection();
             String geo = getGeometryString(document);
             String xml = geo.toString();
-            System.out.println(xml);
+
+            logger.warn(xml);
             
 
             Document docGmlBox = loader.parse(new ByteArrayInputStream(xml.getBytes()));
@@ -259,8 +270,8 @@ public class CallWebServices {
         		if(woeid.equals("2461607") || woeid.equals("55959673")) { woeid = "55959673"; name = "North Sea"; }
 				try {
         			String url = "http://where.yahooapis.com/v1/place/"+woeid+"/belongtos;count=0?appid=" + yahooAppId;
-        			HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
-        			doc2 = loader.parse(conn.getInputStream());
+        			HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection(httpProxy);
+                    doc2 = loader.parse(conn.getInputStream());
         			NodeList auxp = (NodeList) xpath.compile("//ys2:place/ys2:woeid/text()").evaluate(doc2, XPathConstants.NODESET);
         			for (int i=auxp.getLength()-1; i>=0; i--) parents.add(auxp.item(i).getNodeValue().trim());
         			parents.add(woeid);
@@ -269,7 +280,7 @@ public class CallWebServices {
         		try {
         			String url = "http://where.yahooapis.com/v1/place/" + woeid + "?appid=" + yahooAppId;
 
-                    HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+                    HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection(httpProxy);
         			doc2 = loader.parse(conn.getInputStream());
         			swLat = xpath.compile("//ys2:boundingBox/ys2:southWest/ys2:latitude/text()").evaluate(doc2);
         			swLon = xpath.compile("//ys2:boundingBox/ys2:southWest/ys2:longitude/text()").evaluate(doc2);

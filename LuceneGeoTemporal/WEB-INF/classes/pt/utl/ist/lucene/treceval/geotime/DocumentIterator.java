@@ -175,8 +175,8 @@ public class DocumentIterator
     public static void main(String[]args) throws IOException
     {
 
-//        String path = args[0];
-          String path = "D:\\Servidores\\DATA\\ntcir\\nyt_eng_200509.gz";
+        String path = args[0];
+//          String path = "D:\\Servidores\\DATA\\ntcir\\nyt_eng_200509.gz";
         /**
          *
          * advis
@@ -215,7 +215,7 @@ public class DocumentIterator
         
         while((d = di.next()) != null)
         {
-            System.out.println(count + ":" + d.getDId());
+            logger.warn(count + ":" + d.getDId());
             count++;
 
             if( skipId==null || d.getDId().compareTo(skipId) > 0)
@@ -233,7 +233,7 @@ public class DocumentIterator
                     other++;
                 else
                     unknown++;
-                logger.info("Calling with:" + d.toString());
+                logger.debug("Calling with:" + d.toString());
                 out.write(("<doc id=\"" + d.getDId() + "\">").getBytes());
                 try {
                     org.w3c.dom.Document dxml = CallWebServices.callServices(d.toString().replace("&AMP;","&amp;"),d.getDHeadline(),d.getArticleYear(),d.getArticleMonth(), d.getArticleDay(),d.getFSourceFile(),d.getDId());

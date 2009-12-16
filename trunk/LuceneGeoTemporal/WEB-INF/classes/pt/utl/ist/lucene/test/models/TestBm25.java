@@ -169,13 +169,20 @@ public class TestBm25 extends TestCase {
             queryConfiguration.setProperty("bm25.b","" + b);
 //            queryConfiguration.setProperty("bm25.k3","8d");
 
-            LgteQuery lgteQuery = LgteQueryParser.parseQuery("word* word2",searcher,queryConfiguration);
+            LgteQuery lgteQuery = LgteQueryParser.parseQuery("word1 word2",searcher,queryConfiguration);
 
             LgteHits lgteHits = searcher.search(lgteQuery);
-            
+
+            System.out.println("EXPECTED");
+            System.out.println("doc:" + scoreDocs.get(0).id + ":"  + scoreDocs.get(0).score);
+            System.out.println("doc:" + scoreDocs.get(1).id + ":" + scoreDocs.get(1).score);
+            System.out.println("doc:" + scoreDocs.get(2).id + ":" + scoreDocs.get(2).score);
+            System.out.println("RETURN:");
             System.out.println("doc:" + lgteHits.doc(0).get(Globals.DOCUMENT_ID_FIELD) + ":"  + lgteHits.score(0));
             System.out.println("doc:" + lgteHits.doc(1).get(Globals.DOCUMENT_ID_FIELD) + ":" + lgteHits.score(1));
             System.out.println("doc:" + lgteHits.doc(2).get(Globals.DOCUMENT_ID_FIELD) + ":" + lgteHits.score(2));
+
+
             
             assertEquals(lgteHits.doc(0).get(Globals.DOCUMENT_ID_FIELD),scoreDocs.get(0).id);
             assertEquals(lgteHits.doc(1).get(Globals.DOCUMENT_ID_FIELD),scoreDocs.get(1).id);

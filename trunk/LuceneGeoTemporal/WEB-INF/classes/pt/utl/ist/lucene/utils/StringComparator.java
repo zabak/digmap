@@ -1,5 +1,7 @@
 package pt.utl.ist.lucene.utils;
 
+import java.util.Arrays;
+
 /**
  * @author Jorge Machado
  * @date 17/Out/2008
@@ -7,19 +9,25 @@ package pt.utl.ist.lucene.utils;
  */
 public class StringComparator implements java.util.Comparator<String>
 {
-     private static StringComparator instance = null;
+    private static StringComparator instance = null;
+
+    public static StringComparator ASC = new StringComparator(1);
+    public static StringComparator DESC = new StringComparator(-1);
+
+    int asc = 1;
 
     public static StringComparator getInstance()
     {
         if(StringComparator.instance == null)
         {
-            StringComparator.instance = new StringComparator();
+            StringComparator.instance = new StringComparator(1);
         }
         return StringComparator.instance;
     }
 
     /** Creates a new instance of LongComparator */
-    private StringComparator() {
+    private StringComparator(int asc) {
+        this.asc = asc;
     }
 
     /** Compares its two arguments for order.  Returns a negative integer,
@@ -56,11 +64,22 @@ public class StringComparator implements java.util.Comparator<String>
      */
     public int compare(String s1, String s2)
     {
-        int compareResult = s2.compareTo(s1);
+        int compareResult = s2.compareTo(s1) * asc;
         if(compareResult > 0)
             return -1;
         else if(compareResult < 0)
             return 1;
         return 0;
+    }
+
+    public static void main(String[] args)
+    {
+        String [] terms = new String[]{"jorge", "abba"}     ;
+        Arrays.sort(terms,ASC);
+        System.out.println(terms[0]);
+        System.out.println(terms[1]);
+        Arrays.sort(terms,DESC);
+        System.out.println(terms[0]);
+        System.out.println(terms[1]);
     }
 }

@@ -221,6 +221,7 @@ final class TermScorerDFR extends Scorer  {
                 double k_3 = 8d;
                 double b = 0.75d;
                 double keyFrequency = 1.0d;
+                double epslon = 0.01d;
 
                 if(queryConfiguration != null && queryConfiguration.getProperty("bm25.k1") !=null && !queryConfiguration.getProperty("bm25.k1").equals("bm25.k1"))
                 {
@@ -237,7 +238,7 @@ final class TermScorerDFR extends Scorer  {
 
                 //assumo 1 no keyFreq porque o Lucene vai invocar este metodo tantas vezes quantos os termos mesmo que repetidos
                 double K = k_1 * ((1 - b) + b * docLen / avgDocLen) + tfDoc;
-                sim = idf(0.01d,docFreq,queryConfiguration) *
+                sim = idf(epslon,docFreq,queryConfiguration) *
                         ((k_1 + 1d) * tfDoc / (K + tfDoc)) *
                         ((k_3+1)*keyFrequency/(k_3+keyFrequency));
                 break;

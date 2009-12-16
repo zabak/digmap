@@ -70,7 +70,7 @@ public final class Term implements Comparable, java.io.Serializable {
 
     The ordering of terms is first by field, then by text.*/
   public final int compareTo(Term other) {
-    if (field == other.field)			  // fields are interned
+    if (field.equals(other.field))			  // fields are interned
       return text.compareTo(other.text);
     else
       return field.compareTo(other.field);

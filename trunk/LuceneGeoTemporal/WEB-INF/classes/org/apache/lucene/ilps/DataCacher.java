@@ -117,7 +117,7 @@ public class DataCacher {
 			input = new BufferedReader(new FileReader(fileName));
 
 			int fileLength = getNumLines(fileName) + 1;
-			createCache(table, fileLength);
+			createCache(table, fileLength);                                    
 
 			int k = -1;
 			String key = null;

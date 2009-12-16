@@ -341,6 +341,11 @@ public class LanguageModelIndexReader extends IndexReader {
         return totalDocFreqs;
     }
 
+//    public String getDocIdAppLevel(int doc)
+//    {
+//
+//    }
+
 
     /**
      * @param directory path to index directory

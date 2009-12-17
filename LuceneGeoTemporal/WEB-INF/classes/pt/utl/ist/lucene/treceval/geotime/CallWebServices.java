@@ -69,14 +69,21 @@ public class CallWebServices {
             post.setDoAuthentication( false );
             client.executeMethod( post );
             String response = post.getResponseBodyAsString();
-
-            Document document = loader.parse(new ByteArrayInputStream(response.getBytes("UTF-8")));
+            Document document;
+            try{
+                document = loader.parse(new ByteArrayInputStream(response.getBytes("UTF-8")));
+            }catch(Exception e)
+            {
+                logger.error("Trying this XML");
+                logger.error(response);
+                throw e;
+            }
             post.releaseConnection();
             String geo = getGeometryString(document);
             String xml = geo.toString();
 
             logger.warn(xml);
-            
+
 
             Document docGmlBox = loader.parse(new ByteArrayInputStream(xml.getBytes()));
 
@@ -193,34 +200,34 @@ public class CallWebServices {
     protected static List<Pair<String,String>> proxy;
 
     public static void setRandomProxy () {
-            if (proxy==null) {
-                proxy = new ArrayList<Pair<String,String>>();
+        if (proxy==null) {
+            proxy = new ArrayList<Pair<String,String>>();
 //                proxy.add(new Pair<String,String>("72.55.191.6","3128"));
 //                proxy.add(new Pair<String,String>("87.101.94.30","3128"));
 //                proxy.add(new Pair<String,String>("80.80.111.133","3128"));
-            }
-            int aux = (int)(Math.random() * proxy.size());
-            if (aux==proxy.size()) {
-                System.getProperties().put("http.proxySet", "false");
-            } else {
-                Pair<String,String> p = proxy.get(aux);
-                System.getProperties().put("http.proxySet", "true");
-                System.setProperty("http.proxyHost", p.fst);
-                System.setProperty("http.proxyPort", p.snd);
-            }
         }
+        int aux = (int)(Math.random() * proxy.size());
+        if (aux==proxy.size()) {
+            System.getProperties().put("http.proxySet", "false");
+        } else {
+            Pair<String,String> p = proxy.get(aux);
+            System.getProperties().put("http.proxySet", "true");
+            System.setProperty("http.proxyHost", p.fst);
+            System.setProperty("http.proxyPort", p.snd);
+        }
+    }
 
 
     private static Geometry getGeometry(Document doc) throws Exception {
         return JTSAdapter.export(GMLGeometryAdapter.wrap(getGeometryString(doc)));
     }
 
-     private static Geometry getGeometry(String geometry) throws Exception {
+    private static Geometry getGeometry(String geometry) throws Exception {
         return JTSAdapter.export(GMLGeometryAdapter.wrap(geometry));
     }
 
     private static String getGeometryString ( Document doc ) throws Exception {
-		NamespaceContext ctx = new NamespaceContext() {
+        NamespaceContext ctx = new NamespaceContext() {
             public String getNamespaceURI(String prefix) {
                 String uri;
                 if (prefix.equals("yahoo"))
@@ -239,68 +246,68 @@ public class CallWebServices {
             public String getPrefix(String uri) { return null; }
         };
         try {
-        	setRandomProxy();
+            setRandomProxy();
 
             List<Geometry> list = new ArrayList<com.vividsolutions.jts.geom.Geometry>();
-        	NodeList lst = doc.getDocumentElement().getElementsByTagName("gml:Box");
-        	StringWriter sw = new StringWriter();
-        	ByteArrayOutputStream w = new ByteArrayOutputStream();
-    		if (lst.getLength()!=0) {
+            NodeList lst = doc.getDocumentElement().getElementsByTagName("gml:Box");
+            StringWriter sw = new StringWriter();
+            ByteArrayOutputStream w = new ByteArrayOutputStream();
+            if (lst.getLength()!=0) {
 //                return JTSAdapter.export(GMLGeometryAdapter.wrap((Element)(lst.item(0))));
                 printXML((Element) lst.item(0),new PrintStream(w));
                 return new String(w.toByteArray());
             }
-        	javax.xml.xpath.XPathFactory factory = javax.xml.xpath.XPathFactory.newInstance();
-        	javax.xml.xpath.XPath xpath = factory.newXPath();
-        	xpath.setNamespaceContext(ctx);
-    		DocumentBuilderFactory dfactory = DocumentBuilderFactory.newInstance();
+            javax.xml.xpath.XPathFactory factory = javax.xml.xpath.XPathFactory.newInstance();
+            javax.xml.xpath.XPath xpath = factory.newXPath();
+            xpath.setNamespaceContext(ctx);
+            DocumentBuilderFactory dfactory = DocumentBuilderFactory.newInstance();
             dfactory.setValidating(false);
             dfactory.setNamespaceAware(true);
             DocumentBuilder loader = dfactory.newDocumentBuilder();
             printXML(doc.getDocumentElement(),new PrintStream(w));
             Document doc2 = loader.parse(new ByteArrayInputStream(w.toByteArray()));
             String name = xpath.compile("//ys:geographicScope/ys:name/text()").evaluate(doc2);
-        	String woeid = xpath.compile("//ys:geographicScope/ys:woeId/text()").evaluate(doc2);
-			String swLat = xpath.compile("//ys:extents/ys:southWest/ys:latitude/text()").evaluate(doc2);
-			String swLon = xpath.compile("//ys:extents/ys:southWest/ys:longitude/text()").evaluate(doc2);
-			String neLat = xpath.compile("//ys:extents/ys:northEast/ys:latitude/text()").evaluate(doc2);
-			String neLon = xpath.compile("//ys:extents/ys:northEast/ys:longitude/text()").evaluate(doc2);
-    		List<String> parents = new ArrayList<String>();
-			if(woeid!=null && woeid.trim().length()>0 && !woeid.trim().equals("1")) {
-        		if(woeid.equals("2461607") || woeid.equals("55959673")) { woeid = "55959673"; name = "North Sea"; }
-				try {
-        			String url = "http://where.yahooapis.com/v1/place/"+woeid+"/belongtos;count=0?appid=" + yahooAppId;
-        			HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection(httpProxy);
+            String woeid = xpath.compile("//ys:geographicScope/ys:woeId/text()").evaluate(doc2);
+            String swLat = xpath.compile("//ys:extents/ys:southWest/ys:latitude/text()").evaluate(doc2);
+            String swLon = xpath.compile("//ys:extents/ys:southWest/ys:longitude/text()").evaluate(doc2);
+            String neLat = xpath.compile("//ys:extents/ys:northEast/ys:latitude/text()").evaluate(doc2);
+            String neLon = xpath.compile("//ys:extents/ys:northEast/ys:longitude/text()").evaluate(doc2);
+            List<String> parents = new ArrayList<String>();
+            if(woeid!=null && woeid.trim().length()>0 && !woeid.trim().equals("1")) {
+                if(woeid.equals("2461607") || woeid.equals("55959673")) { woeid = "55959673"; name = "North Sea"; }
+                try {
+                    String url = "http://where.yahooapis.com/v1/place/"+woeid+"/belongtos;count=0?appid=" + yahooAppId;
+                    HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection(httpProxy);
                     doc2 = loader.parse(conn.getInputStream());
-        			NodeList auxp = (NodeList) xpath.compile("//ys2:place/ys2:woeid/text()").evaluate(doc2, XPathConstants.NODESET);
-        			for (int i=auxp.getLength()-1; i>=0; i--) parents.add(auxp.item(i).getNodeValue().trim());
-        			parents.add(woeid);
-        			conn.disconnect();
-        		} catch ( Exception e ) { e.printStackTrace(); }
-        		try {
-        			String url = "http://where.yahooapis.com/v1/place/" + woeid + "?appid=" + yahooAppId;
+                    NodeList auxp = (NodeList) xpath.compile("//ys2:place/ys2:woeid/text()").evaluate(doc2, XPathConstants.NODESET);
+                    for (int i=auxp.getLength()-1; i>=0; i--) parents.add(auxp.item(i).getNodeValue().trim());
+                    parents.add(woeid);
+                    conn.disconnect();
+                } catch ( Exception e ) { e.printStackTrace(); }
+                try {
+                    String url = "http://where.yahooapis.com/v1/place/" + woeid + "?appid=" + yahooAppId;
 
                     HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection(httpProxy);
-        			doc2 = loader.parse(conn.getInputStream());
-        			swLat = xpath.compile("//ys2:boundingBox/ys2:southWest/ys2:latitude/text()").evaluate(doc2);
-        			swLon = xpath.compile("//ys2:boundingBox/ys2:southWest/ys2:longitude/text()").evaluate(doc2);
-        			neLat = xpath.compile("//ys2:boundingBox/ys2:northEast/ys2:latitude/text()").evaluate(doc2);
-        			neLon = xpath.compile("//ys2:boundingBox/ys2:northEast/ys2:longitude/text()").evaluate(doc2);
-        		} catch ( Exception e ) { e.printStackTrace(); }
-        	}
+                    doc2 = loader.parse(conn.getInputStream());
+                    swLat = xpath.compile("//ys2:boundingBox/ys2:southWest/ys2:latitude/text()").evaluate(doc2);
+                    swLon = xpath.compile("//ys2:boundingBox/ys2:southWest/ys2:longitude/text()").evaluate(doc2);
+                    neLat = xpath.compile("//ys2:boundingBox/ys2:northEast/ys2:latitude/text()").evaluate(doc2);
+                    neLon = xpath.compile("//ys2:boundingBox/ys2:northEast/ys2:longitude/text()").evaluate(doc2);
+                } catch ( Exception e ) { e.printStackTrace(); }
+            }
 //			if(swLat==null || swLat.length()==0 || sw.toString().trim().length()==0)
             if(swLat==null || swLat.length()==0)
                 sw.write("<gml:Box xmlns:gml='http://www.opengis.net/gml'><gml:coord><gml:X>-180</gml:X><gml:Y>-90</gml:Y></gml:coord><gml:coord><gml:X>180</gml:X><gml:Y>90</gml:Y></gml:coord></gml:Box>");
-			else
-				sw.write("<gml:Box xmlns:gml='http://www.opengis.net/gml'><gml:coord><gml:X>" + swLon + "</gml:X><gml:Y>" + swLat + "</gml:Y></gml:coord><gml:coord><gml:X>" + neLon + "</gml:X><gml:Y>" + neLat + "</gml:Y></gml:coord></gml:Box>");
+            else
+                sw.write("<gml:Box xmlns:gml='http://www.opengis.net/gml'><gml:coord><gml:X>" + swLon + "</gml:X><gml:Y>" + swLat + "</gml:Y></gml:coord><gml:coord><gml:X>" + neLon + "</gml:X><gml:Y>" + neLat + "</gml:Y></gml:coord></gml:Box>");
 //        	Geometry geo = JTSAdapter.export(GMLGeometryAdapter.wrap(sw.toString()));
 //        	geo.setUserData(new Pair<String,List<String>>(name,parents));
 //          return geo;
             return sw.toString();
         } catch ( Throwable e ) {
-        	e.printStackTrace();
-        	StringWriter sw = new StringWriter();
-        	sw.write("<gml:Box xmlns:gml='http://www.opengis.net/gml'><gml:coord><gml:X>-180</gml:X><gml:Y>-90</gml:Y></gml:coord><gml:coord><gml:X>180</gml:X><gml:Y>90</gml:Y></gml:coord></gml:Box>");
+            e.printStackTrace();
+            StringWriter sw = new StringWriter();
+            sw.write("<gml:Box xmlns:gml='http://www.opengis.net/gml'><gml:coord><gml:X>-180</gml:X><gml:Y>-90</gml:Y></gml:coord><gml:coord><gml:X>180</gml:X><gml:Y>90</gml:Y></gml:coord></gml:Box>");
 //        	Geometry geo = JTSAdapter.export(GMLGeometryAdapter.wrap(sw.toString()));
 //        	List<String> parents = new ArrayList<String>();
 //        	parents.add("1");
@@ -308,17 +315,17 @@ public class CallWebServices {
 //        	return geo;
             return sw.toString();
         }
-	}
+    }
 
 
     public static void printXML ( Element elm, PrintStream out ) throws Exception {
-	    OutputFormat of = new OutputFormat("XML","UTF-8",true);
-    	of.setIndent(1);
-    	of.setIndenting(true);
-    	XMLSerializer serializer = new XMLSerializer(out,of);
-    	serializer.asDOMSerializer();
-    	serializer.serialize( elm );
-	}
+        OutputFormat of = new OutputFormat("XML","UTF-8",true);
+        of.setIndent(1);
+        of.setIndenting(true);
+        XMLSerializer serializer = new XMLSerializer(out,of);
+        serializer.asDOMSerializer();
+        serializer.serialize( elm );
+    }
 
     public static void main ( String args[] ) throws Exception {
         String data = "John Doe lives in the city of Lisbon, in Portugal. John Doe visited France, during the month of December 2004";

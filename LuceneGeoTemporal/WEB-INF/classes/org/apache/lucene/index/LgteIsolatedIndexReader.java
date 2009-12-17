@@ -18,8 +18,59 @@ import org.apache.lucene.document.Field;
  */
 public class LgteIsolatedIndexReader extends IndexReader
 {
-    Map<String, IndexReader> readers = new HashMap<String,IndexReader>();
-    IndexReader[] readersArray;
+
+
+    Readers readers = new Readers();
+
+
+    private class Readers
+    {
+        private Map<String, IndexReader> readers = new HashMap<String,IndexReader>();
+        IndexReader[] readersArray;
+
+        private Readers()
+        {
+
+        }
+
+        public IndexReader[] getReadersArray() {
+            return readersArray;
+        }
+
+        public Collection<IndexReader> getReaders() {
+            return readers.values();
+        }
+
+        public Map<String, IndexReader> getReadersMap() {
+            return readers;
+        }
+
+        public void setReaders(Map<String, IndexReader> readers)
+        {
+            this.readers = readers;
+            int cont = 0;
+            readersArray = new IndexReader[readers.size()];
+            for(IndexReader reader:readers.values())
+            {
+                readersArray[cont] = reader;
+                cont++;
+            }
+        }
+
+        public IndexReader getReader(String field)
+        {
+            IndexReader reader = readers.get(field);
+            if(reader == null)
+                reader = readers.get("*");
+            return reader;
+        }
+
+        public Collection<String> getFields()
+        {
+            return readers.keySet();
+        }
+
+    }
 
     /**
      * Constructor used if IndexReader is not owner of its directory.
@@ -59,66 +110,55 @@ public class LgteIsolatedIndexReader extends IndexReader
     public LgteIsolatedIndexReader(Map<String, IndexReader> readers)
     {
         super(null);
-        this.readers = readers;
-        int cont = 0;
-        readersArray = new IndexReader[readers.size()];
-        for(IndexReader reader:readers.values())
-        {
-            readersArray[cont] = reader;
-        }
+        this.readers.setReaders(readers);
+
     }
 
     private void init(String path, List<String> fields, Model model) throws IOException
     {
-        readersArray = new IndexReader[fields.size()];
-        int cont = 0;
+        Map<String , IndexReader> readers = new HashMap<String,IndexReader>(fields.size());
         for(String field: fields)
         {
             if(model.isProbabilistcModel())
             {
                 IndexReader reader = new LanguageModelIndexReader(IndexReader.open(path + File.separator + field + "_field"));
                 readers.put(field,reader);
-                readersArray[cont] = reader;
             }
             else if(model == Model.VectorSpaceModel)
             {
                 IndexReader reader = IndexReader.open(path + File.separator + field + "_field");
                 readers.put(field,reader);
-                readersArray[cont] = reader;
             }
             else
             {
                 System.err.println("Unknown retrieval model: " + model);
                 throw new IllegalArgumentException();
             }
-            cont++;
         }
+        this.readers.setReaders(readers);
     }
     private void init(Map<String,String> paths, Model model) throws IOException
     {
-        readersArray = new IndexReader[paths.size()];
-        int cont = 0;
+        Map<String , IndexReader> readers = new HashMap<String,IndexReader>(paths.size());
         for(Map.Entry<String,String> path: paths.entrySet())
         {
             if(model.isProbabilistcModel())
             {
                 IndexReader reader = new LanguageModelIndexReader(IndexReader.open(path.getValue()));
                 readers.put(path.getKey(),reader);
-                readersArray[cont] = reader;
             }
             else if(model == Model.VectorSpaceModel)
             {
                 IndexReader reader = IndexReader.open(path.getValue());
                 readers.put(path.getKey(),reader);
-                readersArray[cont] = reader;
             }
             else
             {
                 System.err.println("Unknown retrieval model: " + model);
                 throw new IllegalArgumentException();
             }
-            cont++;
         }
+        this.readers.setReaders(readers);
     }
 
     /** Return an array of term frequency vectors for the specified document.
@@ -139,7 +179,7 @@ public class LgteIsolatedIndexReader extends IndexReader
         //<field, <term, freq>>
         HashMap<String, HashMap<String, Integer>> map = new HashMap<String, HashMap<String, Integer>>(0);
 
-        for(IndexReader subReader: readers.values())
+        for(IndexReader subReader: readers.getReaders())
         {
             TermFreqVector[] vectors = subReader.getTermFreqVectors(n);
             for(TermFreqVector vector: vectors)
@@ -204,7 +244,7 @@ public class LgteIsolatedIndexReader extends IndexReader
         //<field, <term, freq>>
         HashMap<String, Integer> map = new  HashMap<String, Integer>(0);
 
-        for(IndexReader subReader: readers.values())
+        for(IndexReader subReader: readers.getReaders())
         {
             TermFreqVector vector = subReader.getTermFreqVector(n,field);
 
@@ -240,12 +280,12 @@ public class LgteIsolatedIndexReader extends IndexReader
 
     public int getFieldLength(int docNumber, String field) throws IOException
     {
-        return readers.get(field).getFieldLength(docNumber,field);
+        return readers.getReader(field).getFieldLength(docNumber,field);
     }
 
     public int getDocLength(int docNumber) throws IOException {
         int len = 0;
-        for (IndexReader subReader : readers.values()) len += subReader.getDocLength(docNumber);
+        for (IndexReader subReader : readers.getReaders()) len += subReader.getDocLength(docNumber);
         return len;
     }
 
@@ -254,7 +294,7 @@ public class LgteIsolatedIndexReader extends IndexReader
     public int numDocs() {
         if (numDocs == -1) {        // check cache
             int max = 0;            // cache miss--recompute
-            for (IndexReader reader: readers.values())
+            for (IndexReader reader: readers.getReaders())
             {
                 int subNum = reader.numDocs();      // sum from readers
                 max = subNum > max ? subNum : max;
@@ -265,7 +305,7 @@ public class LgteIsolatedIndexReader extends IndexReader
     }
 
     public int maxDoc() {
-        return readers.values().iterator().next().maxDoc();
+        return readers.getReaders().iterator().next().maxDoc();
     }
 
     /**
@@ -278,7 +318,7 @@ public class LgteIsolatedIndexReader extends IndexReader
     public Document document(int n) throws IOException
     {
         Document d = null;
-        for (IndexReader reader : readers.values())
+        for (IndexReader reader : readers.getReaders())
         {
             Document dS = reader.document(n);
             if(d == null) d = dS;
@@ -311,36 +351,36 @@ public class LgteIsolatedIndexReader extends IndexReader
 
 
     public byte[] norms(String field) throws IOException {
-        return readers.get(field).norms(field);
+        return readers.getReader(field).norms(field);
     }
 
     public void norms(String field, byte[] bytes, int offset) throws IOException {
-        readers.get(field).norms(field,bytes,offset);
+        readers.getReader(field).norms(field,bytes,offset);
     }
 
     protected void doSetNorm(int doc, String field, byte value) throws IOException {
-        readers.get(field).doSetNorm(doc,field,value);
+        readers.getReader(field).doSetNorm(doc,field,value);
     }
 
     public TermEnum terms() throws IOException
     {
-        return new MultiTermEnum(readersArray, new int[readers.size()], null);
+        return new MultiTermEnum(readers.getReadersArray(), new int[readers.getReadersArray().length], null);
     }
 
     public TermEnum terms(Term t) throws IOException {
-        return readers.get(t.field()).terms(t);
+        return readers.getReader(t.field()).terms(t);
     }
 
     public int docFreq(Term t) throws IOException {
-        return readers.get(t.field()).docFreq(t);
+        return readers.getReader(t.field()).docFreq(t);
     }
 
     public TermDocs termDocs() throws IOException {
-        return new MultiTermDocs(readers);
+        return new MultiTermDocs(readers.getReadersMap());
     }
 
     public TermPositions termPositions() throws IOException {
-        return new MultiTermPositions(readers);
+        return new MultiTermPositions(readers.getReadersMap());
     }
 
 
@@ -348,21 +388,21 @@ public class LgteIsolatedIndexReader extends IndexReader
 
 
     protected void doCommit() throws IOException {
-        for (IndexReader reader: readers.values())
+        for (IndexReader reader: readers.getReaders())
         {
             reader.commit();
         }
     }
 
     protected synchronized void doClose() throws IOException {
-        for (IndexReader reader: readers.values())
+        for (IndexReader reader: readers.getReaders())
         {
             reader.close();
         }
     }
 
     public Collection getFieldNames() throws IOException {
-        return readers.keySet();
+        return readers.getFields();
     }
 
     /**
@@ -371,7 +411,7 @@ public class LgteIsolatedIndexReader extends IndexReader
     public Collection getFieldNames(boolean indexed) throws IOException {
         // maintain a unique set of field names
         Set fieldSet = new HashSet();
-        for (IndexReader reader: readers.values()) {
+        for (IndexReader reader: readers.getReaders()) {
             Collection<String> names = reader.getFieldNames(indexed);
             for(String field: names)
                 if(!fieldSet.contains(field))
@@ -383,7 +423,7 @@ public class LgteIsolatedIndexReader extends IndexReader
     public Collection getIndexedFieldNames(boolean storedTermVector) {
         // maintain a unique set of field names
         Set fieldSet = new HashSet();
-        for (IndexReader reader: readers.values()) {
+        for (IndexReader reader: readers.getReaders()) {
             Collection<String> names = reader.getIndexedFieldNames(storedTermVector);
             for(String field: names)
                 if(!fieldSet.contains(field))
@@ -394,11 +434,11 @@ public class LgteIsolatedIndexReader extends IndexReader
 
 
     public TermDocs termDocs(Term term) throws IOException {
-        return readers.get(term.field()).termDocs(term);
+        return readers.getReader(term.field()).termDocs(term);
     }
 
     public TermPositions termPositions(Term term) throws IOException {
-        return readers.get(term.field()).termPositions(term);
+        return readers.getReader(term.field()).termPositions(term);
     }
 
     public void setNorm(int doc, String field, float value) throws IOException {
@@ -444,8 +484,8 @@ public class LgteIsolatedIndexReader extends IndexReader
         public int read(final int[] docs, final int[] freqs) throws IOException {
             while (true) {
                 while (current == null) {
-                        return 0;
-                    }
+                    return 0;
+                }
                 int end = current.read(docs, freqs);
                 if (end == 0) {          // none left in segment
                     current = null;
@@ -470,7 +510,7 @@ public class LgteIsolatedIndexReader extends IndexReader
 
 
         public void close() throws IOException {
-           current.close();
+            current.close();
         }
     }
 

@@ -229,12 +229,17 @@ public class TestBm25bWithFields extends TestCase {
             queryConfiguration.setProperty("bm25.idf.epslon","" + epslon);
             queryConfiguration.setProperty("bm25.k1","" + k1);
             queryConfiguration.setProperty("bm25.b","" + b);
-//            queryConfiguration.setProperty("bm25.k3","8d");
+            queryConfiguration.setProperty("bm25.k3",""+k3);
 
             LgteQuery lgteQuery = LgteQueryParser.parseQuery("contents:(word1 word2)^" + factorContents + " title:(title1 title5)^" + factorTitle,searcher,queryConfiguration);
 
             LgteHits lgteHits = searcher.search(lgteQuery);
 
+            System.out.println("EXPECTED");
+            System.out.println("doc:" + scoreDocs.get(0).id + ":"  + scoreDocs.get(0).score);
+            System.out.println("doc:" + scoreDocs.get(1).id + ":" + scoreDocs.get(1).score);
+            System.out.println("doc:" + scoreDocs.get(2).id + ":" + scoreDocs.get(2).score);
+            System.out.println("RETURN:");
             System.out.println("doc:" + lgteHits.doc(0).get(Globals.DOCUMENT_ID_FIELD) + ":"  + lgteHits.score(0));
             System.out.println("doc:" + lgteHits.doc(1).get(Globals.DOCUMENT_ID_FIELD) + ":" + lgteHits.score(1));
             System.out.println("doc:" + lgteHits.doc(2).get(Globals.DOCUMENT_ID_FIELD) + ":" + lgteHits.score(2));
@@ -255,7 +260,7 @@ public class TestBm25bWithFields extends TestCase {
         searcher.close();
     }
 
-    public class ScoreDoc
+    private class ScoreDoc
     {
         public double score;
         public String id;

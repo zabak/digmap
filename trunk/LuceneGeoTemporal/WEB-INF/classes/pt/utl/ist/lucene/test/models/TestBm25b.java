@@ -199,7 +199,7 @@ public class TestBm25b extends TestCase {
         searcher.close();
     }
 
-    public class ScoreDoc
+    private class ScoreDoc
     {
         public double score;
         public String id;

@@ -53,6 +53,7 @@ final class TermScorerDFR extends Scorer  {
             Model model)
             throws IOException {
         super(similarity);
+
         this.model = model;
         this.weight = weight;
         this.termDocs = td;
@@ -61,6 +62,7 @@ final class TermScorerDFR extends Scorer  {
         this.indexReader = new LanguageModelIndexReader(reader);
         this.term = ((TermQueryProbabilisticModel) weight.getQuery()).getTerm();
 
+        initCollectionDetails(indexReader);
         // Get data for the collection model
 
         String docLengthType = (String) DataCacher.Instance().get("LM-lengths");
@@ -93,15 +95,19 @@ final class TermScorerDFR extends Scorer  {
         return true;
     }
 
-    static double tokenNumber = -1;
-    static double totalFreqs ;
-    static double avgLen;
-    static double collSize;
-    static double numDocs;
-    static Map<String,Double> avgLenFields = new HashMap<String,Double>();
+    double tokenNumber = -1;
+    double totalFreqs ;
+    double avgLen;
+    double collSize;
+    double numDocs;
+    Map<String,Double> avgLenFields;
 
-    public static void initCollectionDetails(LanguageModelIndexReader indexReader) throws IOException
+
+
+    
+    public void initCollectionDetails(LanguageModelIndexReader indexReader) throws IOException
     {
+        System.out.println("Calling initCollection Details");
         if(tokenNumber < 0)
         {
             numDocs = indexReader.maxDoc();
@@ -109,23 +115,25 @@ final class TermScorerDFR extends Scorer  {
             totalFreqs = indexReader.getTotalDocFreqs();
             avgLen = tokenNumber/numDocs;
             collSize = indexReader.getTotalDocFreqs();
-
+            avgLenFields = new HashMap<String,Double>();
         }
     }
 
     public float score() throws IOException
     {
 
-        initCollectionDetails(indexReader);
+
         Double avgDocLen = avgLen;
         int docLen;
 
         if (useFieldLengths)
         {
+            System.out.println("Using Fields useFieldLengths = true");
             docLen = indexReader.getFieldLength(doc, term.field());
             avgDocLen = avgLenFields.get(term.field());
             if(avgDocLen == null)
             {
+                System.out.println("Inicializando o AVG Doc Len");
                 avgDocLen = (((double)indexReader.getCollectionTokenNumber(term.field()))+1.0) / numDocs;
                 avgLenFields.put(term.field(),avgDocLen);
             }
@@ -163,6 +171,7 @@ final class TermScorerDFR extends Scorer  {
                 double k1 = 2.0, b = 0.75;
 
 
+
                 if(queryConfiguration != null && queryConfiguration.getProperty("bm25.k1") !=null && !queryConfiguration.getProperty("bm25.k1").equals("bm25.k1"))
                 {
                     k1 = queryConfiguration.getDoubleProperty("bm25.k1");
@@ -178,6 +187,12 @@ final class TermScorerDFR extends Scorer  {
                                         /
                                         ( tfDoc + k1*(1.0 - b + b*(docLen/avgDocLen)))
                         );
+
+                System.out.println("doc-Id");
+                System.out.println("Doc-Len:" + docLen);
+                System.out.println("Avg-Doc-Len:" + avgDocLen);
+                System.out.println("docFreq:" + docFreq);
+                System.out.println("tfDoc:" + tfDoc);
                 break;
             }
             case BM25b:

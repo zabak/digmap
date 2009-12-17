@@ -231,6 +231,11 @@ public class TestBm25WithFields extends TestCase {
 
             LgteHits lgteHits = searcher.search(lgteQuery);
 
+            System.out.println("EXPECTED");
+            System.out.println("doc:" + scoreDocs.get(0).id + ":"  + scoreDocs.get(0).score);
+            System.out.println("doc:" + scoreDocs.get(1).id + ":" + scoreDocs.get(1).score);
+            System.out.println("doc:" + scoreDocs.get(2).id + ":" + scoreDocs.get(2).score);
+            System.out.println("RETURN:");
             System.out.println("doc:" + lgteHits.doc(0).get(Globals.DOCUMENT_ID_FIELD) + ":"  + lgteHits.score(0));
             System.out.println("doc:" + lgteHits.doc(1).get(Globals.DOCUMENT_ID_FIELD) + ":" + lgteHits.score(1));
             System.out.println("doc:" + lgteHits.doc(2).get(Globals.DOCUMENT_ID_FIELD) + ":" + lgteHits.score(2));
@@ -251,7 +256,7 @@ public class TestBm25WithFields extends TestCase {
         searcher.close();
     }
 
-    public class ScoreDoc
+    private class ScoreDoc
     {
         public double score;
         public String id;

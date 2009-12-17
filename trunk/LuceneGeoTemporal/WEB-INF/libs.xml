@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<project name="Lucene With Geo-Temporal Extensions - Libraries" basedir=".">
+
+    <description>Lucene With Geo-Temporal Extensions - Libraries</description>
+
+    <property file="deployer.properties" />
+
+    <path id="deployer.classpath">
+        <fileset dir="${base.dir}/lib">
+            <include name="*.jar" />
+        </fileset>
+    </path>
+
+    <property name="build" value="${base.dir}/build" />
+    <property name="webapp.path" value="${build}/webapp${path}" />
+    <property name="dist.path" value="${build}/dist" />
+    <property name="jar.file" value="${dist.path}/lgte-${version.number}.jar" />
+    <property name="test.report" value="${build}/test/report" />
+    <property name="test.data" value="${build}/test/data" />
+
+    <!-- Configure the custom Ant tasks for the Manager application -->
+    <taskdef resource="org/apache/catalina/ant/catalina.tasks" classpathref="deployer.classpath" />
+    <taskdef resource="net/sf/antcontrib/antlib.xml" classpathref="deployer.classpath" />
+
+
+    <target name="deploy" description="Deploy web application">
+        <deploy url="${url}" username="${username}" password="${password}" path="${path}" war="${webapp.path}.war" update="true" />
+    </target>
+
+    <target name="undeploy" description="Undeploy web application">
+        <undeploy url="${url}" username="${username}" password="${password}" path="${path}" />
+    </target>
+    <!-- Webapp lifecycle control -->
+    <target name="start" description="Start web application">
+        <start url="${url}" username="${username}" password="${password}" path="${path}" />
+    </target>
+    <target name="reload" description="Reload web application">
+        <reload url="${url}" username="${username}" password="${password}" path="${path}" />
+    </target>
+    <target name="stop" description="Stop web application">
+        <stop url="${url}" username="${username}" password="${password}" path="${path}" />
+    </target>
+
+
+    <target name="javadoc">
+        <javadoc destdir="${webapp.path}/WEB-INF/javadoc">
+            <sourcepath path="${webapp.path}/WEB-INF/classes" />
+            <classpath>
+                <fileset dir="${base.dir}/WEB-INF/lib">
+                    <include name="**.jar" />
+                    <exclude name="servlet-api.jar" />
+                    <exclude name="jsp-api.jar" />
+                </fileset>
+                <fileset dir="${base.dir}/lib">
+                    <include name="*.jar" />
+                </fileset>
+            </classpath>
+        </javadoc>
+    </target>
+</project>

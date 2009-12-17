@@ -194,6 +194,8 @@ public class DocumentIterator
         int other = 0;
         int story = 0;
         int unknown = 0;
+        int ok = 0;
+        int fail = 0;
         String skipId = null;
         if(args.length > 1)
             skipId = args[1];
@@ -237,6 +239,7 @@ public class DocumentIterator
                 out.write(("<doc id=\"" + d.getDId() + "\">").getBytes());
                 try {
                     org.w3c.dom.Document dxml = CallWebServices.callServices(d.toString().replace("&AMP;","&amp;"),d.getDHeadline(),d.getArticleYear(),d.getArticleMonth(), d.getArticleDay(),d.getFSourceFile(),d.getDId());
+                    ok++;
                     OutputFormat of = new OutputFormat("XML","UTF-8",true);
                     of.setIndent(1);
                     of.setOmitXMLDeclaration(true);
@@ -246,6 +249,7 @@ public class DocumentIterator
                     serializer.serialize( dxml.getDocumentElement() );
                 } catch (Throwable e) {
                     logger.error(d.getDId() +  "@" + path +": " + e.toString(),e);
+                    fail++;
                 }
                 out.write(("</doc>").getBytes());
             }
@@ -258,11 +262,16 @@ public class DocumentIterator
         out.flush();
         out.close();
 
-        logger.info("count: " + count);
-        logger.info("story: " + story);
-        logger.info("advis: " + advis);
-        logger.info("multi: " + multi);
-        logger.info("other: " + other);
-        logger.info("unknown: " + unknown);
+        logger.fatal("******************************************************************************");
+        logger.fatal("STATUS FOR FILE: " + file);
+        logger.fatal("OK: " + ok);
+        logger.fatal("FAIL: " + fail);
+        logger.fatal("count: " + count);
+        logger.fatal("story: " + story);
+        logger.fatal("advis: " + advis);
+        logger.fatal("multi: " + multi);
+        logger.fatal("other: " + other);
+        logger.fatal("unknown: " + unknown);
+        logger.fatal("******************************************************************************");
     }
 }

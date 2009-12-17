@@ -39,9 +39,9 @@ public class MultiDocumentIterator implements Runnable{
     public static void main(String [] args) throws InterruptedException {
 
 //        String path = "D:\\Servidores\\DATA\\ntcir";
-        String path = "F:\\coleccoesIR\\ntcir\\data";
-        args = new String[] {path};
-//        String path = null;
+//        String path = "F:\\coleccoesIR\\ntcir\\data";
+//        args = new String[] {path, "nyt_eng_200501.gz"};
+        String path = null;
         String startFile = null;
         if(args!=null)
             path = args[0];
@@ -51,11 +51,11 @@ public class MultiDocumentIterator implements Runnable{
         File d = new File(path);
         File[] files = d.listFiles();
         Arrays.sort( files, new Comparator()
-            {
-              public int compare(final Object o1, final Object o2) {
+        {
+            public int compare(final Object o1, final Object o2) {
                 return ((File)o1).getName().compareTo(((File) o2).getName());
-              }
-            });
+            }
+        });
 
         for(File f:files)
         {
@@ -67,13 +67,14 @@ public class MultiDocumentIterator implements Runnable{
                     startFile = null;
                     MultiDocumentIterator multiDocumentIterator = new MultiDocumentIterator(f.getAbsolutePath());
                     multiDocumentIterator.run();
+//                    Thread t = new Thread(multiDocumentIterator);
+//                    t.join();
+//                    logger.warn("Starting thread with: " + f.getAbsolutePath());
+//                    t.start();
                 }
                 else
                     System.out.println("SKIPING FILE: " + f.getName());
-//                Thread t = new Thread(multiDocumentIterator);
-//                t.join();
-//                logger.warn("Starting thread with: " + f.getAbsolutePath());
-//                t.start();
+
             }
         }
     }

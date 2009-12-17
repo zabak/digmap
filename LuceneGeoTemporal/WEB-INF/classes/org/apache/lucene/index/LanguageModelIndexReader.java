@@ -366,7 +366,9 @@ public class LanguageModelIndexReader extends IndexReader {
 
     /**
      * @param directory path to index directory
+     * todo not working for Isolated Fields will override every time we open a new index field
      */
+
     public void readExtendedData(String directory) {
         DataCacher.Instance().loadFromFiles(directory);
     }

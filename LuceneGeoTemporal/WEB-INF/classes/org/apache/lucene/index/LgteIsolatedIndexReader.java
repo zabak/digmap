@@ -69,7 +69,6 @@ public class LgteIsolatedIndexReader extends IndexReader
         {
             return readers.keySet();
         }
-
     }
 
     /**

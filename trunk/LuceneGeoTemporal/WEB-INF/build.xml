@@ -9,13 +9,13 @@
 
     <target name="jarTest" depends="clean,jar,testXml">
         <echo message="Please CHECK WEB-INF/build/test/report"/>
-        <copy file="${dist.path}" todir="${webapp}"/>
         <echo message="Please CHECK jar file at lgte root folder"/>
     </target>
 
 
     <target name="jar" depends="compile">
         <jar destfile="${jar.file}" basedir="${webapp.path}/WEB-INF/classes/" />
+        <copy file="${jar.file}" todir="${webapp}"/>
     </target>
 
     <target name="initDirs">

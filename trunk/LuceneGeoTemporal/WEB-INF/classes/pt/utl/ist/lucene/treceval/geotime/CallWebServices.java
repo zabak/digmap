@@ -82,13 +82,23 @@ public class CallWebServices {
             String geo = getGeometryString(document);
             String xml = geo.toString();
 
-            logger.warn(xml);
+            logger.info(xml);
 
 
             Document docGmlBox = loader.parse(new ByteArrayInputStream(xml.getBytes()));
 
             Node elmDest = ((Element)(document.getFirstChild())).getElementsByTagName("document").item(0);
+            if(elmDest == null)
+            {
+                logger.error("PlaceMaker dont did not bring doc tag >>>>>>");
+                logger.error(xml);
+            }
             Element box = (Element) document.importNode(docGmlBox.getFirstChild(),true);
+            if(box == null)
+            {
+                logger.error("PlaceMaker geometry did not bring Geometry >>>>>>");
+                logger.error(geo);
+            }
             elmDest.appendChild(box);
 //            try{
 //                url = "http://gplsi.dlsi.ua.es/~stela/TERSEO/";

@@ -6,10 +6,7 @@ import pt.utl.ist.lucene.LgteIndexWriterIsolateFields;
 import pt.utl.ist.lucene.utils.Files;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.*;
 
 import com.pjaol.search.geo.utils.InvalidGeoException;
 import org.apache.lucene.queryParser.ParseException;
@@ -145,9 +142,13 @@ public class TestBm25WithMultiFields extends TestCase {
         double factorTitle = 0.7;
         double factorContents = 0.3;
         double epslon = 0.05d;
+
+        Map<String,String> map = new HashMap<String,String>();
+        map.put("contents",path + "/contents_field");
+        map.put("title",path + "/title_field");
         LgteIndexSearcherWrapper searcher = new LgteIndexSearcherWrapper(Model.OkapiBM25Model,
                 /********NEW******/
-                new LgteIsolatedIndexReader(path,Model.OkapiBM25Model)
+                new LgteIsolatedIndexReader(map,Model.OkapiBM25Model)
                 /********NEW******/
         );
 

@@ -39,9 +39,9 @@ public class MultiDocumentIterator implements Runnable{
     public static void main(String [] args) throws InterruptedException {
 
 //        String path = "D:\\Servidores\\DATA\\ntcir";
-//        String path = "F:\\coleccoesIR\\ntcir\\data";
-//        args = new String[] {path, "nyt_eng_200501.gz"};
-        String path = null;
+        String path = "F:\\coleccoesIR\\ntcir\\data";
+        args = new String[] {path, "nyt_eng_200501.gz"};
+//        String path = null;
         String startFile = null;
         if(args!=null)
             path = args[0];

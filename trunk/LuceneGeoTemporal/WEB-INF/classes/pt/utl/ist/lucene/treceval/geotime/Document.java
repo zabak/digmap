@@ -11,6 +11,7 @@ import java.util.Date;
  */
 public class Document
 {
+    StringBuilder sgml = new StringBuilder();
     int articleYear;
     int articleMonth;
     int articleDay;
@@ -33,6 +34,16 @@ public class Document
     public Document() {
     }
 
+
+    public String getSgml()
+    {
+        return sgml.toString();
+    }
+    
+    public void appendSgmlLine(String line)
+    {
+        sgml.append(line).append("\n");
+    }
 
     public int getArticleYear() {
         return articleYear;

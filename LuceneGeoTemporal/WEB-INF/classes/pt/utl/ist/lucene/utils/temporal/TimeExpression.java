@@ -85,6 +85,18 @@ public class TimeExpression
         this.expression = expression;
         try{
             switch(expression.length()){
+                case 1:
+                    type = Type.Y;
+                    year = Integer.parseInt(expression)*1000;
+                    break;
+                case 2:
+                    type = Type.YY;
+                    year = Integer.parseInt(expression)*100;
+                    break;
+                case 3:
+                    type = Type.YYY;
+                    year = Integer.parseInt(expression)*10;
+                    break;
                 case 4:
                     type = Type.YYYY;
                     year = Integer.parseInt(expression);
@@ -112,7 +124,10 @@ public class TimeExpression
 
     public String toString()
     {
-        return type.toString() + ":" + year + "/" + month + "/" + day;
+        if(Type.Y == type || Type.YY == type || Type.YYY == type )
+            return expression;
+        else
+            return type.toString() + ":" + year + "/" + month + "/" + day;
     }
 
 
@@ -122,16 +137,22 @@ public class TimeExpression
 
     public String getSubExpressionYYYY()
     {
+        if(Type.Y == type || Type.YY == type || Type.YYY == type )
+            return expression;
         return expression.substring(0,4);
     }
 
     public String getSubExpressionYYYYMM()
     {
+        if(Type.Y == type || Type.YY == type || Type.YYY == type )
+            return expression;
         return expression.substring(0,6);
     }
 
     public String getSubExpressionYYYYMMDD()
     {
+        if(Type.Y == type || Type.YY == type || Type.YYY == type )
+            return expression;
         return expression.substring(0,8);
     }
 
@@ -233,6 +254,9 @@ public class TimeExpression
 
     public static enum Type
     {
+        Y("Y"),
+        YY("YY"),
+        YYY("YYY"),
         YYYY("YYYY"),
         YYYYMM("YYYYMM"),
         YYYYMMDD("YYYYMMDD");

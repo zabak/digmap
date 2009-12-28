@@ -90,6 +90,18 @@ public class TimeExpressionTest extends TestCase
             try
             {
                 TimeExpression t = new TimeExpression(expression);
+                if(t.getType() == TimeExpression.Type.YYY)
+                {
+                    assertTrue(t.getYear() == Integer.parseInt(t.getExpression()) * 10);
+                }
+                if(t.getType() == TimeExpression.Type.YY)
+                {
+                    assertTrue(t.getYear() == Integer.parseInt(t.getExpression()) * 100);
+                }
+                if(t.getType() == TimeExpression.Type.Y)
+                {
+                    assertTrue(t.getYear() == Integer.parseInt(t.getExpression()) * 1000);
+                }
                 if(t.getType() == TimeExpression.Type.YYYY)
                 {
                     assertTrue(t.getYear() == Integer.parseInt(t.getExpression()));

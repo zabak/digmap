@@ -25,6 +25,7 @@ import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 import com.sun.tools.javac.util.Pair;
 import com.vividsolutions.jts.geom.Geometry;
 import pt.utl.ist.lucene.utils.Dom4jUtil;
+import pt.utl.ist.lucene.utils.XmlUtils;
 import pt.utl.ist.lucene.config.ConfigProperties;
 
 public class CallWebServices {
@@ -198,6 +199,78 @@ public class CallWebServices {
 //                logger.error("TERSEO: " + id + " - @ " + file + ":" + e.toString(),e);
 //                logger.error("data:" + response);
 //            }
+            return document;
+        }
+        catch(Exception e)
+        {
+            logger.error(id + " - @ " + file + ":" + e.toString(),e);
+            throw e;
+        }
+    }
+
+
+    public static org.w3c.dom.Document callTimextag(String url, String xml, String title, int year, int month, int day ,String file, String id) throws Exception {
+        if(proxyHost != null && !proxyHost.equals("proxy.host"))
+        {
+            System.getProperties().setProperty("http.proxyHost",proxyHost);
+            System.getProperties().setProperty("http.proxyPort","" + proxyPort);
+            InetSocketAddress addr = new InetSocketAddress(proxyHost,proxyPort);
+            httpProxy = new Proxy(Proxy.Type.HTTP, addr);
+            System.out.println("Using Proxy:" + proxyHost + ":" + proxyPort);
+        }
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setValidating(false);
+        factory.setNamespaceAware(true);
+        DocumentBuilder loader = factory.newDocumentBuilder();
+        HttpClient client = new HttpClient();
+        if(proxyHost != null && !proxyHost.equals("proxy.host"))
+            client.getHostConfiguration().setProxy(proxyHost,proxyPort);
+        try{
+
+            PostMethod post = new PostMethod(url);
+
+            xml = xml.replace("\\R"," ").replace("\\S"," ").replace("\\T"," ").replace("\\N"," ").replace("\\","/").replace("Eastern","east").replace("millennia ago"," ");
+            post.addParameter("debug","false");
+            post.addParameter("service", "sgml2Timexes");
+            post.addParameter("t", "1");
+            post.addParameter("input", xml);
+            post.setDoAuthentication( false );
+            client.executeMethod( post );
+            String response = post.getResponseBodyAsString();
+            Document document;
+            try{
+                document = loader.parse(new ByteArrayInputStream(response.getBytes("UTF-8")));
+            }catch(Exception e)
+            {
+                logger.error("Parsing this XML:");
+                logger.error(xml);
+                logger.error("Response from tagger:");
+                logger.error(response);
+                throw e;
+            }
+            post.releaseConnection();
+//            String geo = getGeometryString(document);
+
+
+            logger.info(xml);
+
+
+//            Document docGmlBox = loader.parse(new ByteArrayInputStream(xml.getBytes()));
+//
+//            Node elmDest = ((Element)(document.getFirstChild())).getElementsByTagName("document").item(0);
+//            if(elmDest == null)
+//            {
+//                logger.error("PlaceMaker dont did not bring doc tag >>>>>>");
+//                logger.error(xml);
+//            }
+//            Element box = (Element) document.importNode(docGmlBox.getFirstChild(),true);
+//            if(box == null)
+//            {
+//                logger.error("PlaceMaker geometry did not bring Geometry >>>>>>");
+//                logger.error(geo);
+//            }
+//            elmDest.appendChild(box);
+
             return document;
         }
         catch(Exception e)

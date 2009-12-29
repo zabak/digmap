@@ -14,4 +14,14 @@ public class TimeExpressionUnkown extends TimeExpression
     {
         return unknownTimeExpression;
     }
+    public String toString()
+    {
+        return normalizedExpression;
+    }
+
+    public TimeExpressionUnkown(String refNLTxt)
+    {
+        super();
+        setRefNLTxt(refNLTxt);
+    }
 }

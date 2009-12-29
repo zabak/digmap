@@ -12,7 +12,8 @@ import java.util.Calendar;
 public class TimeExpression
 {
 
-    private String normalizedExpression;
+    protected String refNLTxt;
+    protected String normalizedExpression;
     int year = -1;
     int month = -1;
     int day = -1;
@@ -23,9 +24,15 @@ public class TimeExpression
     GregorianCalendar rightLimit;
 
 
+
     protected TimeExpression()
     {
         normalizedExpression = "UNKNOWN";
+    }
+
+    protected void setRefNLTxt(String refNLTxt)
+    {
+        this.refNLTxt = refNLTxt;
     }
 
     public TimeExpression(int year) throws BadTimeExpression
@@ -46,6 +53,19 @@ public class TimeExpression
         this(year,month,day,true);
         if(year < 0 || month <= 0 || day <= 0)
             throw new BadTimeExpression("Bad date, args must be positive");
+    }
+
+    public TimeExpression(int year, int month, int day, String refTxt) throws BadTimeExpression {
+        this(year,month,day);
+        this.refNLTxt = refTxt;
+    }
+    public TimeExpression(int year, int month, String refTxt) throws BadTimeExpression {
+        this(year,month);
+        this.refNLTxt = refTxt;
+    }
+    public TimeExpression(int year, String refTxt) throws BadTimeExpression {
+        this(year);
+        this.refNLTxt = refTxt;
     }
 
 
@@ -78,6 +98,11 @@ public class TimeExpression
             return c.getActualMaximum(Calendar.DAY_OF_YEAR);
         else
             return c.getActualMaximum(Calendar.DAY_OF_MONTH);
+    }
+
+
+    public String getRefNLTxt() {
+        return refNLTxt;
     }
 
     /**
@@ -128,13 +153,19 @@ public class TimeExpression
         validate();
     }
 
-    public String toString()
+    /**
+     *
+     * @param normalizedExpression YYYYMMDD
+     * @param refTxt natural language text from the timex2
+     * @throws BadTimeExpression when text is not valid in grammar YYYYMMDD
+     */
+    public TimeExpression(String normalizedExpression, String refTxt) throws BadTimeExpression
     {
-        if(Type.Y == type || Type.YY == type || Type.YYY == type )
-            return normalizedExpression;
-        else
-            return type.toString() + ":" + year + "/" + month + "/" + day;
+        this(normalizedExpression);
+        this.refNLTxt = refTxt;
     }
+
+
 
 
     public String getNormalizedExpression() {
@@ -185,7 +216,7 @@ public class TimeExpression
     public String getMonthStr() {
         return  String.format("%02d",month);
     }
-    
+
     public String getDayStr() {
         return  String.format("%02d",day);
     }
@@ -289,5 +320,20 @@ public class TimeExpression
         public String toString(){
             return type;
         }
+    }
+
+    public String toString()
+    {
+        return toString(true);
+    }
+
+    public String toString(boolean withRefNLtxt)
+    {
+        String refTxt;
+        if(withRefNLtxt)
+            refTxt = " : (" + this.refNLTxt + ")";
+        else
+            refTxt = "";
+        return type.toString() + ":" + normalizedExpression + refTxt;
     }
 }

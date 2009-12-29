@@ -106,7 +106,7 @@ public class Timex2TimeExpression
         
         if(expressions.size() == 0)
         {
-            expressions.add(TimeExpressionUnkown.getInstance());
+            expressions.add(new TimeExpressionUnkown(timex2.getText()));
         }
     }
 
@@ -123,15 +123,15 @@ public class Timex2TimeExpression
         List<TimeExpression> timeExpressions = new ArrayList<TimeExpression>();
         if(Timex2val.REGEXPR_YYYY_MM_DD_ANY.match(timeExpr))
         {
-            timeExpressions.add(new TimeExpression(timeExpr.substring(0,10).replace("-","")));
+            timeExpressions.add(new TimeExpression(timeExpr.substring(0,10).replace("-",""),timex2.getText()));
         }
         if(Timex2val.REGEXPR_YYYY_MM.match(timeExpr))
         {
-            timeExpressions.add(new TimeExpression(timeExpr.substring(0,7).replace("-","")));
+            timeExpressions.add(new TimeExpression(timeExpr.substring(0,7).replace("-",""),timex2.getText()));
         }
         else if(Timex2val.REGEXPR_YYYY_YYY_YY_Y.match(timeExpr))
         {
-            timeExpressions.add(new TimeExpression(timeExpr));
+            timeExpressions.add(new TimeExpression(timeExpr,timex2.getText()));
         }
         else if(Timex2val.REGEXPR_YYYY_WXX.match(timeExpr))
         {
@@ -145,14 +145,14 @@ public class Timex2TimeExpression
             int startMonth = calendar.get(Calendar.MONTH)+1;
             int startYear = calendar.get(Calendar.YEAR);
 
-            timeExpressions.add(new TimeExpression(startYear,startMonth,startDay));
+            timeExpressions.add(new TimeExpression(startYear,startMonth,startDay,timex2.getText()));
             for(int i = 1; i < 7; i++)
             {
                 calendar.set(Calendar.DAY_OF_YEAR,calendar.get(Calendar.DAY_OF_YEAR) + 1);
                 int endDay = calendar.get(Calendar.DAY_OF_MONTH);
                 int endMonth = calendar.get(Calendar.MONTH)+1;
                 int endYear = calendar.get(Calendar.YEAR);
-                timeExpressions.add(new TimeExpression(endYear,endMonth,endDay));
+                timeExpressions.add(new TimeExpression(endYear,endMonth,endDay,timex2.getText()));
             }
         }
         if(anchor != null && anchor.trim().length() > 0 && anchorDir != null && anchorDir.trim().length() > 0)
@@ -170,7 +170,7 @@ public class Timex2TimeExpression
                         {
                             if(i >= 0)
                             {
-                                TimeExpression timeExpression = new TimeExpression(i);
+                                TimeExpression timeExpression = new TimeExpression(i,timex2.getText());
                                 timeExpressions.add(timeExpression);
                             }
                         }
@@ -181,7 +181,7 @@ public class Timex2TimeExpression
                         {
                             if(i >= 0)
                             {
-                                TimeExpression timeExpression = new TimeExpression(i);
+                                TimeExpression timeExpression = new TimeExpression(i,timex2.getText());
                                 timeExpressions.add(timeExpression);
                             }
                         }
@@ -203,11 +203,11 @@ public class Timex2TimeExpression
                             GregorianCalendar c = new GregorianCalendar();
                             c.set(Calendar.YEAR,year);
                             c.set(Calendar.MONTH,month-1);
-                            timeExpressions.add(new TimeExpression(year,month));
+                            timeExpressions.add(new TimeExpression(year,month,timex2.getText()));
                             for(int i = 0; i < x;i++)
                             {
                                 c.add(Calendar.MONTH,1);
-                                TimeExpression timeExpression = new TimeExpression(c.get(Calendar.YEAR),c.get(Calendar.MONTH)+1);
+                                TimeExpression timeExpression = new TimeExpression(c.get(Calendar.YEAR),c.get(Calendar.MONTH)+1,timex2.getText());
                                 timeExpressions.add(timeExpression);
                             }
                         }
@@ -216,11 +216,11 @@ public class Timex2TimeExpression
                             GregorianCalendar c = new GregorianCalendar();
                             c.set(Calendar.YEAR,year);
                             c.set(Calendar.MONTH,month-1);
-                            timeExpressions.add(new TimeExpression(year,month));
+                            timeExpressions.add(new TimeExpression(year,month,timex2.getText()));
                             for(int i = 0; i < x;i++)
                             {
                                 c.add(Calendar.MONTH,-1);
-                                TimeExpression timeExpression = new TimeExpression(c.get(Calendar.YEAR),c.get(Calendar.MONTH)+1);
+                                TimeExpression timeExpression = new TimeExpression(c.get(Calendar.YEAR),c.get(Calendar.MONTH)+1,timex2.getText());
                                 timeExpressions.add(timeExpression);
                             }
                         }
@@ -244,11 +244,11 @@ public class Timex2TimeExpression
                             c.set(Calendar.YEAR,year);
                             c.set(Calendar.MONTH,month-1);
                             c.set(Calendar.DAY_OF_MONTH,day);
-                            timeExpressions.add(new TimeExpression(year,month,day));
+                            timeExpressions.add(new TimeExpression(year,month,day,timex2.getText()));
                             for(int i = 0; i < x;i++)
                             {
                                 c.add(Calendar.DAY_OF_YEAR,1);
-                                TimeExpression timeExpression = new TimeExpression(c.get(Calendar.YEAR),c.get(Calendar.MONTH)+1,c.get(Calendar.DAY_OF_MONTH));
+                                TimeExpression timeExpression = new TimeExpression(c.get(Calendar.YEAR),c.get(Calendar.MONTH)+1,c.get(Calendar.DAY_OF_MONTH),timex2.getText());
                                 timeExpressions.add(timeExpression);
                             }
                         }
@@ -258,11 +258,11 @@ public class Timex2TimeExpression
                             c.set(Calendar.YEAR,year);
                             c.set(Calendar.MONTH,month-1);
                             c.set(Calendar.DAY_OF_MONTH,day);
-                            timeExpressions.add(new TimeExpression(year,month,day));
+                            timeExpressions.add(new TimeExpression(year,month,day,timex2.getText()));
                             for(int i = 0; i < x;i++)
                             {
                                 c.add(Calendar.DAY_OF_YEAR,-1);
-                                TimeExpression timeExpression = new TimeExpression(c.get(Calendar.YEAR),c.get(Calendar.MONTH)+1,c.get(Calendar.DAY_OF_MONTH));
+                                TimeExpression timeExpression = new TimeExpression(c.get(Calendar.YEAR),c.get(Calendar.MONTH)+1,c.get(Calendar.DAY_OF_MONTH),timex2.getText());
                                 timeExpressions.add(timeExpression);
                             }
                         }

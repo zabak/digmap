@@ -85,7 +85,7 @@ public class Sentence {
     public String toString()
     {
         String txt = "SENTENCE " + index + " (" + startOffset + "," + endOffset + "): [" + phrase + "]";
-        txt+="\nTimeExpressions [";
+        txt+="\nTimeExpressions [\n";
         if(timexes!=null)
         {
             String catToken = "";
@@ -93,11 +93,11 @@ public class Sentence {
             {
 
                 txt+= catToken + timex.getTimex2().getText() + " : {";
-                catToken = ",";
+                catToken = ",\n";
                 String catToken2 = "";
                 for(TimeExpression timeExpression: timex.getExpressions())
                 {
-                    txt+=catToken2 + timeExpression.getNormalizedExpression();
+                    txt+=catToken2 + timeExpression;
                     catToken2 = ",";
                 }
                 txt +="}";

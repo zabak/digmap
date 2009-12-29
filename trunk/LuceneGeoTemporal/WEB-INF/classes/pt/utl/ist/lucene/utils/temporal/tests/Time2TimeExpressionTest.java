@@ -4,6 +4,7 @@ import junit.framework.TestCase;
 import pt.utl.ist.lucene.utils.temporal.Timex2;
 import pt.utl.ist.lucene.utils.temporal.TimeExpression;
 import pt.utl.ist.lucene.utils.temporal.Timex2TimeExpression;
+import pt.utl.ist.lucene.utils.temporal.TimexesDocument;
 
 import java.util.List;
 
@@ -286,7 +287,7 @@ public class Time2TimeExpressionTest extends TestCase
                 "<TIMEX2 set=\"\" rend=\"4031\" val=\"2005\" tmxclass=\"point\" rstart=\"4028\" dirclass=\"same\" parsenode=\".31 w19\" prenorm=\"|fq|_2005\">2005</TIMEX2>\n" +
                 "</TEXT>\n" +
                 "</DOC>";
-        List<Timex2TimeExpression.Timex2TimeExpressionsSet> set = Timex2TimeExpression.buildTimex2TimeExpressionsSet(timex2);
+        List<Timex2TimeExpression.Timex2TimeExpressionsSet> set = new TimexesDocument(timex2).getTimex2TimeExpressionsSets();
 
         assertEquals(set.get(0).getStartOffset(),1);
         assertEquals(set.get(0).getEndOffset(),10);

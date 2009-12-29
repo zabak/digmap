@@ -1,6 +1,14 @@
 package pt.utl.ist.lucene.utils.temporal;
 
+import org.dom4j.Document;
+import org.dom4j.XPath;
+import org.dom4j.Element;
+import org.dom4j.DocumentException;
+import org.apache.log4j.Logger;
+
 import java.util.*;
+
+import pt.utl.ist.lucene.utils.Dom4jUtil;
 
 /**
  * @author Jorge Machado
@@ -11,34 +19,115 @@ import java.util.*;
 public class Timex2TimeExpression
 {
     Timex2 timex2;
+    List<TimeExpression> expressions;
+    private static final Logger logger = Logger.getLogger(TimextagDocumentSpliter.class);
 
-    List<TimeExpression> expressions ;
+
+    public static class Timex2TimeExpressionsSet
+    {
+        int startOffset;
+        int endOffset;
+        List<TimeExpression> expressions;
+        Timex2 timex2;
 
 
+        public Timex2TimeExpressionsSet(int startOffset, int endOffset, Timex2 timex2, List<TimeExpression> expressions) {
+            this.startOffset = startOffset;
+            this.endOffset = endOffset;
+            this.timex2 = timex2;
+            this.expressions = expressions;
+        }
 
+        public int getStartOffset() {
+            return startOffset;
+        }
+
+        public int getEndOffset() {
+            return endOffset;
+        }
+
+        public List<TimeExpression> getExpressions() {
+            return expressions;
+        }
+
+        public Timex2 getTimex2() {
+            return timex2;
+        }
+    }
+
+    public static List<Timex2TimeExpressionsSet> buildTimex2TimeExpressionsSet(String timexesXml)
+    {
+        List<Timex2TimeExpressionsSet> timex2TimeExpressionsSets = new ArrayList<Timex2TimeExpressionsSet>();
+
+        if(timexesXml != null)
+        {
+            Document dom;
+            try {
+                dom = Dom4jUtil.parse(timexesXml);
+                XPath xPath = dom.createXPath("//TIMEX2");
+                List<Element> timexes2 = xPath.selectNodes(dom.getRootElement());
+                if(timexes2 != null && timexes2.size() > 0)
+                {
+                    for(Element timexElement: timexes2)
+                    {
+                        Timex2 timex2 = new Timex2(timexElement);
+                        try {
+                            Timex2TimeExpression timex2TimeExpression = new Timex2TimeExpression(timex2);
+                            Timex2TimeExpressionsSet timex2TimeExpressionsSet = new Timex2TimeExpressionsSet(timex2.getRstart(),timex2.getRend(),timex2,timex2TimeExpression.getTimeExpressions());
+                            timex2TimeExpressionsSets.add(timex2TimeExpressionsSet);
+                        } catch (TimeExpression.BadTimeExpression badTimeExpression)
+                        {
+                            logger.error(badTimeExpression + ": val(" + timex2.getVal() + ") anchor_val(" + timex2.getAnchorVal() + ") anchor_dir(" + timex2.getAnchorDir() + ")",badTimeExpression);
+                        }
+                    }
+                }
+            } catch (DocumentException e) {
+                logger.error(e,e);
+                logger.error("TIMEXES XML was:" + timexesXml);
+            }
+        }
+        return timex2TimeExpressionsSets;
+    }
 
 
     public Timex2TimeExpression(Timex2 timex2) throws TimeExpression.BadTimeExpression
     {
         this.timex2 = timex2;
         if(timex2.getVal()!=null && timex2.getVal().trim().length() > 0)
-        {
             expressions = getTimeExpressions(timex2.getVal(),timex2.getAnchorVal(),timex2.getAnchorDir());
 
-        }
-
-        if(expressions.size() == 0)
+        if(expressions == null || expressions.size() == 0)
+        {
             if(timex2.getAnchorVal() != null && timex2.getAnchorVal().trim().length() > 0)
-            {
                 expressions = getTimeExpressions(timex2.getAnchorVal(),null,null);
-            }
+            else if(expressions == null)
+                expressions = new ArrayList<TimeExpression>();
+        }
+        
+        if(expressions.size() == 0)
+        {
+            expressions.add(TimeExpressionUnkown.getInstance());
+        }
     }
 
+    /**
+     * todo PX.ZW PX.ZY PX.ZM PX.ZD  where X.Z is a fraction number e.g. for the last 6 and a half weeks could be represented by P6.5W
+     * todo PXYZM PXMZD PXWZD PXMZW etc etc  previous e.g. P6W3D six weeks and three days 
+     * @param timeExpr
+     * @param anchor
+     * @param anchorDir
+     * @return
+     * @throws TimeExpression.BadTimeExpression
+     */
     private List<TimeExpression> getTimeExpressions(String timeExpr,String anchor, String anchorDir) throws TimeExpression.BadTimeExpression {
         List<TimeExpression> timeExpressions = new ArrayList<TimeExpression>();
         if(Timex2val.REGEXPR_YYYY_MM_DD_ANY.match(timeExpr))
         {
             timeExpressions.add(new TimeExpression(timeExpr.substring(0,10).replace("-","")));
+        }
+        if(Timex2val.REGEXPR_YYYY_MM.match(timeExpr))
+        {
+            timeExpressions.add(new TimeExpression(timeExpr.substring(0,7).replace("-","")));
         }
         else if(Timex2val.REGEXPR_YYYY_YYY_YY_Y.match(timeExpr))
         {

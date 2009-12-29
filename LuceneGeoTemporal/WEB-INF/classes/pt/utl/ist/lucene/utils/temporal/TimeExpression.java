@@ -11,7 +11,8 @@ import java.util.Calendar;
  */
 public class TimeExpression
 {
-    private String expression;
+
+    private String normalizedExpression;
     int year = -1;
     int month = -1;
     int day = -1;
@@ -21,6 +22,11 @@ public class TimeExpression
     GregorianCalendar leftLimit;
     GregorianCalendar rightLimit;
 
+
+    protected TimeExpression()
+    {
+        normalizedExpression = "UNKNOWN";
+    }
 
     public TimeExpression(int year) throws BadTimeExpression
     {
@@ -59,9 +65,9 @@ public class TimeExpression
 
         validate();
 
-        expression = String.format("%04d",year);
-        expression += month > 0 ? String.format("%02d",month):"";
-        expression += day > 0 ? String.format("%02d",day):"";
+        normalizedExpression = String.format("%04d",year);
+        normalizedExpression += month > 0 ? String.format("%02d",month):"";
+        normalizedExpression += day > 0 ? String.format("%02d",day):"";
     }
 
     public int getNumberOfDays()
@@ -77,47 +83,47 @@ public class TimeExpression
     /**
      * Expression of Type "YYYYMMDD"
      *
-     * @param expression
+     * @param normalizedExpression YYYYMMDD
      * @throws BadTimeExpression
      */
-    public TimeExpression(String expression) throws BadTimeExpression
+    public TimeExpression(String normalizedExpression) throws BadTimeExpression
     {
-        this.expression = expression;
+        this.normalizedExpression = normalizedExpression;
         try{
-            switch(expression.length()){
+            switch(normalizedExpression.length()){
                 case 1:
                     type = Type.Y;
-                    year = Integer.parseInt(expression)*1000;
+                    year = Integer.parseInt(normalizedExpression)*1000;
                     break;
                 case 2:
                     type = Type.YY;
-                    year = Integer.parseInt(expression)*100;
+                    year = Integer.parseInt(normalizedExpression)*100;
                     break;
                 case 3:
                     type = Type.YYY;
-                    year = Integer.parseInt(expression)*10;
+                    year = Integer.parseInt(normalizedExpression)*10;
                     break;
                 case 4:
                     type = Type.YYYY;
-                    year = Integer.parseInt(expression);
+                    year = Integer.parseInt(normalizedExpression);
                     break;
                 case 6:
                     type = Type.YYYYMM;
-                    year = Integer.parseInt(expression.substring(0,4));
-                    month = Integer.parseInt(expression.substring(4));
+                    year = Integer.parseInt(normalizedExpression.substring(0,4));
+                    month = Integer.parseInt(normalizedExpression.substring(4));
                     break;
                 case 8:
                     type = Type.YYYYMMDD;
-                    year = Integer.parseInt(expression.substring(0,4));
-                    month = Integer.parseInt(expression.substring(4,6));
-                    day = Integer.parseInt(expression.substring(6));
+                    year = Integer.parseInt(normalizedExpression.substring(0,4));
+                    month = Integer.parseInt(normalizedExpression.substring(4,6));
+                    day = Integer.parseInt(normalizedExpression.substring(6));
                     break;
-                default: throw new BadTimeExpression("wrong number of chars: " + expression.length() + " could be only 4(YYYY), 6(YYYYMM) or 8(YYYYMMDD)");
+                default: throw new BadTimeExpression("wrong number of chars: " + normalizedExpression.length() + " could be only 4(YYYY), 6(YYYYMM) or 8(YYYYMMDD)");
             }
         }
         catch (NumberFormatException e)
         {
-            throw new BadTimeExpression("TimeExpression must be only numbers, came:" + expression + " could be only 4(YYYY), 6(YYYYMM) or 8(YYYYMMDD) where Y, M and D must be integers between 0 and 9");
+            throw new BadTimeExpression("TimeExpression must be only numbers, came:" + normalizedExpression + " could be only 4(YYYY), 6(YYYYMM) or 8(YYYYMMDD) where Y, M and D must be integers between 0 and 9");
         }
         validate();
     }
@@ -125,35 +131,35 @@ public class TimeExpression
     public String toString()
     {
         if(Type.Y == type || Type.YY == type || Type.YYY == type )
-            return expression;
+            return normalizedExpression;
         else
             return type.toString() + ":" + year + "/" + month + "/" + day;
     }
 
 
-    public String getExpression() {
-        return expression;
+    public String getNormalizedExpression() {
+        return normalizedExpression;
     }
 
     public String getSubExpressionYYYY()
     {
         if(Type.Y == type || Type.YY == type || Type.YYY == type )
-            return expression;
-        return expression.substring(0,4);
+            return normalizedExpression;
+        return normalizedExpression.substring(0,4);
     }
 
     public String getSubExpressionYYYYMM()
     {
         if(Type.Y == type || Type.YY == type || Type.YYY == type )
-            return expression;
-        return expression.substring(0,6);
+            return normalizedExpression;
+        return normalizedExpression.substring(0,6);
     }
 
     public String getSubExpressionYYYYMMDD()
     {
         if(Type.Y == type || Type.YY == type || Type.YYY == type )
-            return expression;
-        return expression.substring(0,8);
+            return normalizedExpression;
+        return normalizedExpression.substring(0,8);
     }
 
     public Type getType() {

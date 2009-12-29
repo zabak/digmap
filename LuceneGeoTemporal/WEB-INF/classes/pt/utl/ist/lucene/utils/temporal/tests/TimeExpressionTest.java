@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.util.GregorianCalendar;
 
 import pt.utl.ist.lucene.utils.temporal.TimeExpression;
-import org.geotools.nature.Calendar;
 
 /**
  * @author Jorge Machado
@@ -92,27 +91,27 @@ public class TimeExpressionTest extends TestCase
                 TimeExpression t = new TimeExpression(expression);
                 if(t.getType() == TimeExpression.Type.YYY)
                 {
-                    assertTrue(t.getYear() == Integer.parseInt(t.getExpression()) * 10);
+                    assertTrue(t.getYear() == Integer.parseInt(t.getNormalizedExpression()) * 10);
                 }
                 if(t.getType() == TimeExpression.Type.YY)
                 {
-                    assertTrue(t.getYear() == Integer.parseInt(t.getExpression()) * 100);
+                    assertTrue(t.getYear() == Integer.parseInt(t.getNormalizedExpression()) * 100);
                 }
                 if(t.getType() == TimeExpression.Type.Y)
                 {
-                    assertTrue(t.getYear() == Integer.parseInt(t.getExpression()) * 1000);
+                    assertTrue(t.getYear() == Integer.parseInt(t.getNormalizedExpression()) * 1000);
                 }
                 if(t.getType() == TimeExpression.Type.YYYY)
                 {
-                    assertTrue(t.getYear() == Integer.parseInt(t.getExpression()));
+                    assertTrue(t.getYear() == Integer.parseInt(t.getNormalizedExpression()));
                     assertTrue(t.getYear() + 1 == t.getRightLimit().get(GregorianCalendar.YEAR));
                     assertTrue(1 == (t.getRightLimit().get(GregorianCalendar.MONTH)+1));
                     assertTrue(1 == t.getRightLimit().get(GregorianCalendar.DAY_OF_MONTH));
                 }
                 else if(t.getType() == TimeExpression.Type.YYYYMM)
                 {
-                    assertTrue(t.getYear() == Integer.parseInt(t.getExpression().substring(0,4)));
-                    assertTrue(t.getMonth() == Integer.parseInt(t.getExpression().substring(4,6)));
+                    assertTrue(t.getYear() == Integer.parseInt(t.getNormalizedExpression().substring(0,4)));
+                    assertTrue(t.getMonth() == Integer.parseInt(t.getNormalizedExpression().substring(4,6)));
 
                     if(t.getMonth() == 12)
                     {
@@ -129,9 +128,9 @@ public class TimeExpressionTest extends TestCase
                 }
                 else if(t.getType() == TimeExpression.Type.YYYYMMDD)
                 {
-                    assertTrue(t.getYear() == Integer.parseInt(t.getExpression().substring(0,4)));
-                    assertTrue(t.getMonth() == Integer.parseInt(t.getExpression().substring(4,6)));
-                    assertTrue(t.getDay() == Integer.parseInt(t.getExpression().substring(6)));
+                    assertTrue(t.getYear() == Integer.parseInt(t.getNormalizedExpression().substring(0,4)));
+                    assertTrue(t.getMonth() == Integer.parseInt(t.getNormalizedExpression().substring(4,6)));
+                    assertTrue(t.getDay() == Integer.parseInt(t.getNormalizedExpression().substring(6)));
 
                     if(t.getDay() == t.getC().getActualMaximum(GregorianCalendar.DAY_OF_MONTH))
                     {
@@ -228,26 +227,26 @@ public class TimeExpressionTest extends TestCase
                 if(t.getType() == TimeExpression.Type.YYYY)
                 {
                     assertTrue(date.length == 1);
-                    assertTrue(date[0] == t.getYear() && date[0] == Integer.parseInt(t.getExpression()));
+                    assertTrue(date[0] == t.getYear() && date[0] == Integer.parseInt(t.getNormalizedExpression()));
                 }
                 else if(t.getType() == TimeExpression.Type.YYYYMM)
                 {
                     assertTrue(date.length == 2);
-                    assertTrue(date[0] == t.getYear() && date[0] == Integer.parseInt(t.getExpression().substring(0,4)));
-                    assertTrue(date[1] == t.getMonth() && date[1] == Integer.parseInt(t.getExpression().substring(4,6)));
+                    assertTrue(date[0] == t.getYear() && date[0] == Integer.parseInt(t.getNormalizedExpression().substring(0,4)));
+                    assertTrue(date[1] == t.getMonth() && date[1] == Integer.parseInt(t.getNormalizedExpression().substring(4,6)));
                     if(date[1] < 10)
-                        assertTrue(t.getExpression().substring(4,6).equals("0" + date[1]));
+                        assertTrue(t.getNormalizedExpression().substring(4,6).equals("0" + date[1]));
                 }
                 else if(t.getType() == TimeExpression.Type.YYYYMMDD)
                 {
                     assertTrue(date.length == 3);
-                    assertTrue(date[0] == t.getYear() && date[0] == Integer.parseInt(t.getExpression().substring(0,4)));
-                    assertTrue(date[1] == t.getMonth() && date[1] == Integer.parseInt(t.getExpression().substring(4,6)));
+                    assertTrue(date[0] == t.getYear() && date[0] == Integer.parseInt(t.getNormalizedExpression().substring(0,4)));
+                    assertTrue(date[1] == t.getMonth() && date[1] == Integer.parseInt(t.getNormalizedExpression().substring(4,6)));
                     if(date[1] < 10)
-                        assertTrue(t.getExpression().substring(4,6).equals("0" + date[1]));
-                    assertTrue(date[2] == t.getDay() && date[2] == Integer.parseInt(t.getExpression().substring(6)));
+                        assertTrue(t.getNormalizedExpression().substring(4,6).equals("0" + date[1]));
+                    assertTrue(date[2] == t.getDay() && date[2] == Integer.parseInt(t.getNormalizedExpression().substring(6)));
                     if(date[2] < 10)
-                        assertTrue(t.getExpression().substring(6).equals("0" + date[2]));
+                        assertTrue(t.getNormalizedExpression().substring(6).equals("0" + date[2]));
                 }
             } catch (TimeExpression.BadTimeExpression badTimeExpression) {
                 String dateStr = "" + date[0];

@@ -79,15 +79,15 @@ public class TimeExpressionTreeTest extends TestCase
     {
         List<TimeExpressionsTree.TimeExpressionNode> years = tree.getRootNodes();
         assertTrue(years.size() == 1);
-        assertTrue(years.get(0).getTimeExpression().getExpression().equals("1990"));
+        assertTrue(years.get(0).getTimeExpression().getNormalizedExpression().equals("1990"));
         assertTrue(years.get(0).getRefs() ==1 );
         assertTrue(years.get(0).getChilds().size() == 2);
-        assertTrue(years.get(0).getChilds().get(0).getTimeExpression().getExpression().equals("199001"));
-        assertTrue(years.get(0).getChilds().get(1).getTimeExpression().getExpression().equals("199002"));
+        assertTrue(years.get(0).getChilds().get(0).getTimeExpression().getNormalizedExpression().equals("199001"));
+        assertTrue(years.get(0).getChilds().get(1).getTimeExpression().getNormalizedExpression().equals("199002"));
         assertTrue(years.get(0).getChilds().get(0).getRefs() == 2);
         assertTrue(years.get(0).getChilds().get(1).getRefs() == 1);
         assertTrue(years.get(0).getChilds().get(0).getChilds().size() == 1);
-        assertTrue(years.get(0).getChilds().get(0).getChilds().get(0).getTimeExpression().getExpression().equals("19900101"));
+        assertTrue(years.get(0).getChilds().get(0).getChilds().get(0).getTimeExpression().getNormalizedExpression().equals("19900101"));
         assertTrue(years.get(0).getChilds().get(0).getChilds().get(0).getRefs() == 1);
 
     }
@@ -95,24 +95,24 @@ public class TimeExpressionTreeTest extends TestCase
     {
         List<TimeExpressionsTree.TimeExpressionNode> years = tree.getRootNodes();
         assertTrue(years.size() == 2);
-        assertTrue(years.get(0).getTimeExpression().getExpression().equals("1990"));
-        assertTrue(years.get(1).getTimeExpression().getExpression().equals("2009"));
+        assertTrue(years.get(0).getTimeExpression().getNormalizedExpression().equals("1990"));
+        assertTrue(years.get(1).getTimeExpression().getNormalizedExpression().equals("2009"));
         assertTrue(years.get(1).getRefs() == 0);
         assertTrue(years.get(1).getChilds().size() == 1);
-        assertTrue(years.get(1).getChilds().get(0).getTimeExpression().getExpression().equals("200904"));
+        assertTrue(years.get(1).getChilds().get(0).getTimeExpression().getNormalizedExpression().equals("200904"));
         assertTrue(years.get(1).getChilds().get(0).getRefs() == 0);
         assertTrue(years.get(1).getChilds().get(0).getChilds().size() == 1);
-        assertTrue(years.get(1).getChilds().get(0).getChilds().get(0).getTimeExpression().getExpression().equals("20090401"));
+        assertTrue(years.get(1).getChilds().get(0).getChilds().get(0).getTimeExpression().getNormalizedExpression().equals("20090401"));
         assertTrue(years.get(1).getChilds().get(0).getChilds().get(0).getRefs() == 1);
 
         assertTrue(years.get(0).getRefs() ==1 );
         assertTrue(years.get(0).getChilds().size() == 2);
-        assertTrue(years.get(0).getChilds().get(0).getTimeExpression().getExpression().equals("199001"));
-        assertTrue(years.get(0).getChilds().get(1).getTimeExpression().getExpression().equals("199002"));
+        assertTrue(years.get(0).getChilds().get(0).getTimeExpression().getNormalizedExpression().equals("199001"));
+        assertTrue(years.get(0).getChilds().get(1).getTimeExpression().getNormalizedExpression().equals("199002"));
         assertTrue(years.get(0).getChilds().get(0).getRefs() == 2);
         assertTrue(years.get(0).getChilds().get(1).getRefs() == 1);
         assertTrue(years.get(0).getChilds().get(0).getChilds().size() == 1);
-        assertTrue(years.get(0).getChilds().get(0).getChilds().get(0).getTimeExpression().getExpression().equals("19900101"));
+        assertTrue(years.get(0).getChilds().get(0).getChilds().get(0).getTimeExpression().getNormalizedExpression().equals("19900101"));
         assertTrue(years.get(0).getChilds().get(0).getChilds().get(0).getRefs() == 1);
     }
 }

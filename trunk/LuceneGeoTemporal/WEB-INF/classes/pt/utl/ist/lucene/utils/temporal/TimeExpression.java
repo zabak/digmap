@@ -172,6 +172,18 @@ public class TimeExpression
         return year;
     }
 
+    public String getYearStr() {
+        return  String.format("%04d",year);
+    }
+
+    public String getMonthStr() {
+        return  String.format("%02d",month);
+    }
+    
+    public String getDayStr() {
+        return  String.format("%02d",day);
+    }
+
     public GregorianCalendar getC() {
         return c;
     }

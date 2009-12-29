@@ -1,9 +1,6 @@
 package pt.utl.ist.lucene.utils.temporal;
 
-import java.util.List;
-import java.util.GregorianCalendar;
-import java.util.Calendar;
-import java.util.ArrayList;
+import java.util.*;
 
 /**
  * @author Jorge Machado
@@ -54,6 +51,7 @@ public class Timex2TimeExpression
             GregorianCalendar calendar = new GregorianCalendar();
             calendar.set( Calendar.YEAR, Integer.parseInt(year) );
             calendar.set( Calendar.WEEK_OF_YEAR, week-1 );
+            calendar.set(Calendar.DAY_OF_WEEK,Calendar.MONDAY);
             int startDay = calendar.get(Calendar.DAY_OF_MONTH);
             int startMonth = calendar.get(Calendar.MONTH)+1;
             int startYear = calendar.get(Calendar.YEAR);
@@ -119,7 +117,7 @@ public class Timex2TimeExpression
                             timeExpressions.add(new TimeExpression(year,month));
                             for(int i = 0; i < x;i++)
                             {
-                                c.set(Calendar.MONTH,c.get(Calendar.MONTH)+1);
+                                c.add(Calendar.MONTH,1);
                                 TimeExpression timeExpression = new TimeExpression(c.get(Calendar.YEAR),c.get(Calendar.MONTH)+1);
                                 timeExpressions.add(timeExpression);
                             }
@@ -132,7 +130,7 @@ public class Timex2TimeExpression
                             timeExpressions.add(new TimeExpression(year,month));
                             for(int i = 0; i < x;i++)
                             {
-                                c.set(Calendar.MONTH,c.get(Calendar.MONTH)-1);
+                                c.add(Calendar.MONTH,-1);
                                 TimeExpression timeExpression = new TimeExpression(c.get(Calendar.YEAR),c.get(Calendar.MONTH)+1);
                                 timeExpressions.add(timeExpression);
                             }
@@ -160,7 +158,7 @@ public class Timex2TimeExpression
                             timeExpressions.add(new TimeExpression(year,month,day));
                             for(int i = 0; i < x;i++)
                             {
-                                c.set(Calendar.DAY_OF_YEAR,c.get(Calendar.DAY_OF_YEAR)+1);
+                                c.add(Calendar.DAY_OF_YEAR,1);
                                 TimeExpression timeExpression = new TimeExpression(c.get(Calendar.YEAR),c.get(Calendar.MONTH)+1,c.get(Calendar.DAY_OF_MONTH));
                                 timeExpressions.add(timeExpression);
                             }
@@ -174,7 +172,7 @@ public class Timex2TimeExpression
                             timeExpressions.add(new TimeExpression(year,month,day));
                             for(int i = 0; i < x;i++)
                             {
-                                c.set(Calendar.DAY_OF_YEAR,c.get(Calendar.DAY_OF_YEAR)-1);
+                                c.add(Calendar.DAY_OF_YEAR,-1);
                                 TimeExpression timeExpression = new TimeExpression(c.get(Calendar.YEAR),c.get(Calendar.MONTH)+1,c.get(Calendar.DAY_OF_MONTH));
                                 timeExpressions.add(timeExpression);
                             }
@@ -195,31 +193,42 @@ public class Timex2TimeExpression
                     {
                         if(anchorDir.equalsIgnoreCase("starting"))
                         {
-                            GregorianCalendar c = new GregorianCalendar();
-                            c.set(Calendar.YEAR,year);
-                            c.set(Calendar.MONTH,month-1);
-                            c.set(Calendar.DAY_OF_MONTH,day);
-                            List<TimeExpression> wexp = getTimeExpressions(c.get(Calendar.YEAR) + "-W" + (c.get(Calendar.WEEK_OF_YEAR)+1),null,null);
+                            GregorianCalendar c = new GregorianCalendar(year,month-1,day);
+                            int week = (c.get(Calendar.WEEK_OF_YEAR)+1);
+                            if(month == 1 && week > 52)       //to avoid a bug in JVM (error example: 03-01-2010 gives 2010-W54)
+                                week = 1;
+                            List<TimeExpression> wexp = getTimeExpressions(String.format("%04d",year) + "-W" + week,null,null);
                             timeExpressions.addAll(wexp);
                             for(int i = 0; i < x;i++)
                             {
-                                c.set(Calendar.WEEK_OF_YEAR,c.get(Calendar.WEEK_OF_YEAR)+1);
-                                wexp = getTimeExpressions(c.get(Calendar.YEAR) + "-W" + (c.get(Calendar.WEEK_OF_YEAR)+1),null,null);
+                                c.add(Calendar.WEEK_OF_YEAR,1);
+                                week = (c.get(Calendar.WEEK_OF_YEAR)+1);
+                                if(c.get(Calendar.MONTH) == 1 && week > 52)
+                                {
+                                    week = 1;
+                                }
+                                wexp = getTimeExpressions(c.get(Calendar.YEAR) + "-W" + (week),null,null);
                                 timeExpressions.addAll(wexp);
                             }
                         }
                         else if(anchorDir.equalsIgnoreCase("ending"))
                         {
-                            GregorianCalendar c = new GregorianCalendar();
-                            c.set(Calendar.YEAR,year);
-                            c.set(Calendar.MONTH,month-1);
-                            c.set(Calendar.DAY_OF_MONTH,day);
-                            List<TimeExpression> wexp = getTimeExpressions(c.get(Calendar.YEAR) + "-W" + (c.get(Calendar.WEEK_OF_YEAR)+1),null,null);
+                            GregorianCalendar c = new GregorianCalendar(year,month-1,day);
+                            int week = (c.get(Calendar.WEEK_OF_YEAR)+1);
+                            if(month == 1 && week > 52)       //to avoid a bug in JVM (error example: 03-01-2010 gives 2010-W54)
+                                week = 1;
+                            List<TimeExpression> wexp = getTimeExpressions(String.format("%04d",year) + "-W" + week,null,null);
                             timeExpressions.addAll(wexp);
                             for(int i = 0; i < x;i++)
                             {
-                                c.set(Calendar.WEEK_OF_YEAR,c.get(Calendar.WEEK_OF_YEAR)-1);
-                                wexp = getTimeExpressions(c.get(Calendar.YEAR) + "-W" + (c.get(Calendar.WEEK_OF_YEAR)+1),null,null);
+
+                                c.add(Calendar.WEEK_OF_YEAR,-1);
+                                week = (c.get(Calendar.WEEK_OF_YEAR)+1);
+                                if(c.get(Calendar.MONTH) == 1 && week > 52)
+                                {
+                                    week = 1;
+                                }
+                                wexp = getTimeExpressions(c.get(Calendar.YEAR) + "-W" + week,null,null);
                                 timeExpressions.addAll(wexp);
                             }
                         }
@@ -227,6 +236,16 @@ public class Timex2TimeExpression
                 }
             }
         }
+        Collections.sort(timeExpressions,new Comparator<TimeExpression>()
+        {
+            public int compare(TimeExpression o1, TimeExpression o2) {
+                if(o1.getC().getTimeInMillis() == o2.getC().getTimeInMillis())
+                    return 0;
+                if(o1.getC().getTimeInMillis() > o2.getC().getTimeInMillis() )
+                    return 1;
+                else return -1;
+            }
+        });
         return timeExpressions;
     }
 
@@ -241,8 +260,16 @@ public class Timex2TimeExpression
 
     public static void main(String[] args) throws TimeExpression.BadTimeExpression {
 
-        Timex2 t = new Timex2("P2W","2009-12-30","STARTING");
+        Timex2 t = new Timex2("P2W","2010-01-03","ENDING");
         Timex2TimeExpression t2t = new Timex2TimeExpression(t);
+
+        for(TimeExpression expression: t2t.getTimeExpressions())
+        {
+            System.out.println(expression);
+        }
+
+        t = new Timex2("P20M","2010-01-03","ENDING");
+        t2t = new Timex2TimeExpression(t);
 
         for(TimeExpression expression: t2t.getTimeExpressions())
         {

@@ -63,7 +63,8 @@ import org.dom4j.Attribute;
     * */
 public class Timex2
 {
-    
+
+    private String text;
     private String val;
     private String anchorVal;
     private String anchorDir;
@@ -98,9 +99,10 @@ public class Timex2
 
     public void parse(Element elem)
     {
+        text = elem.getTextTrim();
         Attribute val = elem.attribute("val");
-        Attribute anchorVal = elem.attribute("anchorVal");
-        Attribute anchorDir = elem.attribute("anchorDir");
+        Attribute anchorVal = elem.attribute("anchor_val");
+        Attribute anchorDir = elem.attribute("anchor_dir");
         Attribute rstart = elem.attribute("rstart");
         Attribute rend = elem.attribute("rend");
         Attribute tmxclass = elem.attribute("tmxclass");
@@ -128,6 +130,10 @@ public class Timex2
             this.prenorm = prenorm.getValue();
     }
 
+
+    public String getText() {
+        return text;
+    }
 
     public String getVal() {
         return val;

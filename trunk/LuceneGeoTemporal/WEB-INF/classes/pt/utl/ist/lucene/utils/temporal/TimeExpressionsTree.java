@@ -82,7 +82,7 @@ public class TimeExpressionsTree
         private TimeExpressionNodeComparator(){}
 
         public int compare(TimeExpressionNode o1, TimeExpressionNode o2) {
-            return o1.getTimeExpression().getExpression().compareTo(o2.getTimeExpression().getExpression());
+            return o1.getTimeExpression().getNormalizedExpression().compareTo(o2.getTimeExpression().getNormalizedExpression());
         }
     }
 
@@ -213,7 +213,7 @@ public class TimeExpressionsTree
 
         public String toString()
         {
-            return timeExpression.getExpression() + " : childs(" + childrenNodes.size() + ") refs[" + refs + "]";
+            return timeExpression.getNormalizedExpression() + " : childs(" + childrenNodes.size() + ") refs[" + refs + "]";
         }
     }
 }

@@ -87,6 +87,10 @@ public class Timex2
         this.anchorDir = anchorDir;
     }
 
+    public Timex2(String val) {
+        this.val = val;
+    }
+
     public Timex2(Element elem) {
         parse(elem);
     }

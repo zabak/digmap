@@ -47,7 +47,7 @@ public class TimeExpressionTest extends TestCase
         String[] badTimeExpressions =
                 {
                         "-1",
-                        "0",
+//                        "0",
                         "19701",
                         "1800123",
                         "18001328",

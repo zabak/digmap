@@ -200,7 +200,7 @@ public class TimeExpression
     private void validate() throws BadTimeExpression {
         if(year < 0)
             throw new BadTimeExpression("Bad Year could be only 4(YYYY)");
-        if(type != Type.YYYY)
+        if(type != Type.YYYY && type != Type.YYY && type != Type.YY && type != Type.Y)
         {
             if(month < 1 || month > 12)
                 throw new BadTimeExpression("Bad Month must be between 1 and 12");

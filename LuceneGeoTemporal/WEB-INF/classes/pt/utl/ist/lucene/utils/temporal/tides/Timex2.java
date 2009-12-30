@@ -1,4 +1,4 @@
-package pt.utl.ist.lucene.utils.temporal;
+package pt.utl.ist.lucene.utils.temporal.tides;
 
 import org.dom4j.Element;
 import org.dom4j.Attribute;
@@ -74,11 +74,16 @@ public class Timex2
     private String dirclass;
     private String parsenode;
     private String prenorm;
+    private Timex2ValRegExprs type = null;
+    private Timex2ValRegExprs typeAnchorVal = null;
 
 
-    public Timex2(String val, String anchorVal) {
+    public Timex2(String val, String anchorVal)
+    {
         this.val = val;
         this.anchorVal = anchorVal;
+        type = Timex2ValRegExprs.getType(val);
+        typeAnchorVal = Timex2ValRegExprs.getType(anchorVal);
     }
 
 
@@ -86,10 +91,13 @@ public class Timex2
         this.val = val;
         this.anchorVal = anchorVal;
         this.anchorDir = anchorDir;
+        type = Timex2ValRegExprs.getType(val);
+        typeAnchorVal = Timex2ValRegExprs.getType(anchorVal);
     }
 
     public Timex2(String val) {
         this.val = val;
+        type = Timex2ValRegExprs.getType(val);
     }
 
     public Timex2(Element elem) {
@@ -110,6 +118,8 @@ public class Timex2
         Attribute parsenode = elem.attribute("parsenode");
         Attribute prenorm = elem.attribute("prenorm");
 
+
+
         if(val != null)
             this.val = val.getValue();
         if(anchorVal != null)
@@ -128,8 +138,19 @@ public class Timex2
             this.parsenode = parsenode.getValue();
         if(prenorm != null)
             this.prenorm = prenorm.getValue();
+
+        type = Timex2ValRegExprs.getType(this.val);
+        typeAnchorVal = Timex2ValRegExprs.getType(this.anchorVal);
     }
 
+
+    public Timex2ValRegExprs getType() {
+        return type;
+    }
+
+    public Timex2ValRegExprs getTypeAnchorVal() {
+        return typeAnchorVal;
+    }
 
     public String getText() {
         return text;

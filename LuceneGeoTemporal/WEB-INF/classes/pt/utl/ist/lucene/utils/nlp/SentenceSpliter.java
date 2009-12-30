@@ -1,4 +1,4 @@
-package pt.utl.ist.lucene.utils.temporal;
+package pt.utl.ist.lucene.utils.nlp;
 
 import com.aliasi.tokenizer.Tokenizer;
 import com.aliasi.tokenizer.TokenizerFactory;
@@ -27,7 +27,7 @@ public class SentenceSpliter
 
     String text;
 
-    public static List<Sentence> split(String text)
+    public static List split(String text, Class subType)
     {
         List<Sentence> sentences = new ArrayList<Sentence>();
 
@@ -63,12 +63,23 @@ public class SentenceSpliter
             }
             logger.debug(startOffset + "-" + endOffset + ":" + text.substring(startOffset, endOffset));
 
-            Sentence sentence = new Sentence(i,sentenceText.toString(),startOffset,endOffset);
-            logger.debug(sentence);
-            sentences.add(sentence);
+            Sentence sentence;
+            try {
+                sentence = (Sentence) subType.newInstance();
+                sentence.setIndex(i);
+                sentence.setPhrase(sentenceText.toString());
+                sentence.setStartOffset(startOffset);
+                sentence.setEndOffset(endOffset);
+                logger.debug(sentence);
+                sentences.add(sentence);
+                startOffset = endOffset;
+                sentStartTok = sentEndTok+1;
+            } catch (InstantiationException e) {
+                logger.error(e,e);
+            } catch (IllegalAccessException e) {
+                logger.error(e,e);
+            }
 
-            startOffset = endOffset;
-            sentStartTok = sentEndTok+1;
         }
         return sentences;
     }

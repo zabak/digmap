@@ -1,4 +1,6 @@
-package pt.utl.ist.lucene.utils.temporal;
+package pt.utl.ist.lucene.utils.temporal.metrics;
+
+import pt.utl.ist.lucene.utils.temporal.TimeExpression;
 
 import java.util.List;
 import java.util.ArrayList;

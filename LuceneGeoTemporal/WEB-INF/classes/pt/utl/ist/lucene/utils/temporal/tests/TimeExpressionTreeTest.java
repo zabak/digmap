@@ -1,7 +1,7 @@
 package pt.utl.ist.lucene.utils.temporal.tests;
 
 import junit.framework.TestCase;
-import pt.utl.ist.lucene.utils.temporal.TimeExpressionsTree;
+import pt.utl.ist.lucene.utils.temporal.metrics.TimeExpressionsTree;
 import pt.utl.ist.lucene.utils.temporal.TimeExpression;
 
 import java.util.List;
@@ -71,7 +71,7 @@ public class TimeExpressionTreeTest extends TestCase
 
         } catch (TimeExpression.BadTimeExpression badTimeExpression)
         {
-            badTimeExpression.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            badTimeExpression.printStackTrace(); 
         }
     }
 

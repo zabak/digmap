@@ -1,5 +1,7 @@
 package pt.utl.ist.lucene.utils.temporal;
 
+import org.apache.log4j.Logger;
+
 import java.util.GregorianCalendar;
 import java.util.Calendar;
 
@@ -12,6 +14,7 @@ import java.util.Calendar;
 public class TimeExpression
 {
 
+    private static final Logger logger = Logger.getLogger(TimeExpression.class);
     protected String refNLTxt;
     protected String normalizedExpression;
     int year = -1;
@@ -23,6 +26,9 @@ public class TimeExpression
     GregorianCalendar leftLimit;
     GregorianCalendar rightLimit;
 
+
+    boolean valid = true;
+    String validationError = null;
 
 
     protected TimeExpression()
@@ -37,57 +43,81 @@ public class TimeExpression
 
     public TimeExpression(int year) throws BadTimeExpression
     {
-        this(year,-1,-1,true);
+        this(year,true);
+    }
+    public TimeExpression(int year, boolean exceptionOnValidate) throws BadTimeExpression
+    {
+        init(year,-1,-1,exceptionOnValidate);
         if(year < 0)
             throw new BadTimeExpression("Bad date, args must be positive");
     }
 
     public TimeExpression(int year, int month) throws BadTimeExpression
     {
-        this(year,month,-1,true);
+        this(year,month,true);
+    }
+    public TimeExpression(int year, int month, boolean exceptionOnValidate) throws BadTimeExpression
+    {
+        init(year,month,-1,exceptionOnValidate);
         if(year < 0 || month <= 0)
             throw new BadTimeExpression("Bad date, args must be positive");
     }
 
-    public TimeExpression(int year, int month, int day) throws BadTimeExpression {
+    public TimeExpression(int year, int month, int day) throws BadTimeExpression
+    {
         this(year,month,day,true);
+    }
+    public TimeExpression(int year, int month, int day, boolean exceptionOnValidate) throws BadTimeExpression {
+        init(year,month,day,exceptionOnValidate);
         if(year < 0 || month <= 0 || day <= 0)
             throw new BadTimeExpression("Bad date, args must be positive");
     }
 
-    public TimeExpression(int year, int month, int day, String refTxt) throws BadTimeExpression {
-        this(year,month,day);
+
+    public TimeExpression(int year, int month, int day, String refTxt, boolean exceptionOnValidate) throws BadTimeExpression {
+        this(year,month,day,exceptionOnValidate);
         this.refNLTxt = refTxt;
     }
-    public TimeExpression(int year, int month, String refTxt) throws BadTimeExpression {
-        this(year,month);
+    public TimeExpression(int year, int month, String refTxt, boolean exceptionOnValidate) throws BadTimeExpression {
+        this(year,month,exceptionOnValidate);
         this.refNLTxt = refTxt;
     }
-    public TimeExpression(int year, String refTxt) throws BadTimeExpression {
-        this(year);
+    public TimeExpression(int year, String refTxt, boolean exceptionOnValidate) throws BadTimeExpression {
+        this(year,exceptionOnValidate);
         this.refNLTxt = refTxt;
     }
 
 
-    private TimeExpression(int year, int month, int day, boolean internal) throws BadTimeExpression
+    private void init(int year, int month, int day, boolean validate) throws BadTimeExpression
     {
-        this.year = year;
-        this.month = month;
-        this.day = day;
+        try
+        {
+            this.year = year;
+            this.month = month;
+            this.day = day;
 
 
-        if(day > 0)
-            type = Type.YYYYMMDD;
-        else if(month > 0)
-            type = Type.YYYYMM;
-        else
-            type = Type.YYYY;
+            if(day > 0)
+                type = Type.YYYYMMDD;
+            else if(month > 0)
+                type = Type.YYYYMM;
+            else
+                type = Type.YYYY;
 
-        validate();
+            normalizedExpression = String.format("%04d",year);
+            normalizedExpression += month > 0 ? String.format("%02d",month):"";
+            normalizedExpression += day > 0 ? String.format("%02d",day):"";
 
-        normalizedExpression = String.format("%04d",year);
-        normalizedExpression += month > 0 ? String.format("%02d",month):"";
-        normalizedExpression += day > 0 ? String.format("%02d",day):"";
+            validate();
+
+        }catch(BadTimeExpression e)
+        {
+            if(validate)
+                throw e;
+            valid = false;
+            validationError = e.getMessage();
+            logger.error(validationError);
+        }
     }
 
     public int getNumberOfDays()
@@ -109,48 +139,62 @@ public class TimeExpression
      * Expression of Type "YYYYMMDD"
      *
      * @param normalizedExpression YYYYMMDD
-     * @throws BadTimeExpression
+     * @throws BadTimeExpression on validation error
      */
     public TimeExpression(String normalizedExpression) throws BadTimeExpression
     {
+        this(normalizedExpression,true);
+    }
+    private TimeExpression(String normalizedExpression,boolean validate) throws BadTimeExpression
+    {
         this.normalizedExpression = normalizedExpression;
-        try{
-            switch(normalizedExpression.length()){
-                case 1:
-                    type = Type.Y;
-                    year = Integer.parseInt(normalizedExpression)*1000;
-                    break;
-                case 2:
-                    type = Type.YY;
-                    year = Integer.parseInt(normalizedExpression)*100;
-                    break;
-                case 3:
-                    type = Type.YYY;
-                    year = Integer.parseInt(normalizedExpression)*10;
-                    break;
-                case 4:
-                    type = Type.YYYY;
-                    year = Integer.parseInt(normalizedExpression);
-                    break;
-                case 6:
-                    type = Type.YYYYMM;
-                    year = Integer.parseInt(normalizedExpression.substring(0,4));
-                    month = Integer.parseInt(normalizedExpression.substring(4));
-                    break;
-                case 8:
-                    type = Type.YYYYMMDD;
-                    year = Integer.parseInt(normalizedExpression.substring(0,4));
-                    month = Integer.parseInt(normalizedExpression.substring(4,6));
-                    day = Integer.parseInt(normalizedExpression.substring(6));
-                    break;
-                default: throw new BadTimeExpression("wrong number of chars: " + normalizedExpression.length() + " could be only 4(YYYY), 6(YYYYMM) or 8(YYYYMMDD)");
-            }
-        }
-        catch (NumberFormatException e)
+        try
         {
-            throw new BadTimeExpression("TimeExpression must be only numbers, came:" + normalizedExpression + " could be only 4(YYYY), 6(YYYYMM) or 8(YYYYMMDD) where Y, M and D must be integers between 0 and 9");
+            try{
+                switch(normalizedExpression.length()){
+                    case 1:
+                        type = Type.Y;
+                        year = Integer.parseInt(normalizedExpression)*1000;
+                        break;
+                    case 2:
+                        type = Type.YY;
+                        year = Integer.parseInt(normalizedExpression)*100;
+                        break;
+                    case 3:
+                        type = Type.YYY;
+                        year = Integer.parseInt(normalizedExpression)*10;
+                        break;
+                    case 4:
+                        type = Type.YYYY;
+                        year = Integer.parseInt(normalizedExpression);
+                        break;
+                    case 6:
+                        type = Type.YYYYMM;
+                        year = Integer.parseInt(normalizedExpression.substring(0,4));
+                        month = Integer.parseInt(normalizedExpression.substring(4));
+                        break;
+                    case 8:
+                        type = Type.YYYYMMDD;
+                        year = Integer.parseInt(normalizedExpression.substring(0,4));
+                        month = Integer.parseInt(normalizedExpression.substring(4,6));
+                        day = Integer.parseInt(normalizedExpression.substring(6));
+                        break;
+                    default: throw new BadTimeExpression("wrong number of chars: " + normalizedExpression.length() + " could be only 4(YYYY), 6(YYYYMM) or 8(YYYYMMDD)",this);
+                }
+            }
+            catch (NumberFormatException e)
+            {
+                throw new BadTimeExpression("TimeExpression must be only numbers, came:" + normalizedExpression + " could be only 4(YYYY), 6(YYYYMM) or 8(YYYYMMDD) where Y, M and D must be integers between 0 and 9",this);
+            }
+            validate();
+        }catch(BadTimeExpression e)
+        {
+            if(validate)
+                throw e;
+            valid = false;
+            validationError = e.getMessage();
+            logger.error(validationError);
         }
-        validate();
     }
 
     /**
@@ -161,7 +205,7 @@ public class TimeExpression
      */
     public TimeExpression(String normalizedExpression, String refTxt) throws BadTimeExpression
     {
-        this(normalizedExpression);
+        this(normalizedExpression,false);
         this.refNLTxt = refTxt;
     }
 
@@ -236,19 +280,19 @@ public class TimeExpression
 
     private void validate() throws BadTimeExpression {
         if(year < 0)
-            throw new BadTimeExpression("Bad Year could be only 4(YYYY)");
+            throw new BadTimeExpression("Bad Year could be only 4(YYYY)",this);
         if(type != Type.YYYY && type != Type.YYY && type != Type.YY && type != Type.Y)
         {
             if(month < 1 || month > 12)
-                throw new BadTimeExpression("Bad Month must be between 1 and 12");
+                throw new BadTimeExpression("Bad Month must be between 1 and 12",this);
             if(type == Type.YYYYMMDD)
             {
                 if((month == 6 || month == 11 || month == 4 || month == 9)  && (day < 1 || day > 30))
-                    throw new BadTimeExpression("Bad Day. For month " + month + ", day must be between 1 and 30");
+                    throw new BadTimeExpression("Bad Day. For month " + month + ", day must be between 1 and 30",this);
                 else if(month == 2 && (day < 1 || day > 29))
-                    throw new BadTimeExpression("Bad Day. For month 2, day must be between 1 and 29");
+                    throw new BadTimeExpression("Bad Day. For month 2, day must be between 1 and 29",this);
                 else if(day < 1 || day > 31)
-                    throw new BadTimeExpression("Bad Day. For month " + month + ", day must be between 1 and 31");
+                    throw new BadTimeExpression("Bad Day. For month " + month + ", day must be between 1 and 31",this);
             }
         }
         int month = this.month <= 0 ? 1: this.month;
@@ -285,7 +329,15 @@ public class TimeExpression
 
     public class BadTimeExpression extends Exception
     {
+        private TimeExpression timeExpression;
+
         public BadTimeExpression() {
+        }
+
+        public BadTimeExpression(String message, TimeExpression timeExpression)
+        {
+            super(message);
+            this.timeExpression = timeExpression;
         }
 
         public BadTimeExpression(String message) {
@@ -299,6 +351,20 @@ public class TimeExpression
         public BadTimeExpression(Throwable cause) {
             super(cause);
         }
+
+        public TimeExpression getTimeExpression() {
+            return timeExpression;
+        }
+    }
+
+    public boolean isValid()
+    {
+        return valid;
+    }
+
+    public String getValidationError()
+    {
+        return validationError;
     }
 
     public static enum Type
@@ -336,4 +402,6 @@ public class TimeExpression
             refTxt = "";
         return type.toString() + ":" + normalizedExpression + refTxt;
     }
+
+
 }

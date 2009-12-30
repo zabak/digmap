@@ -1,10 +1,10 @@
 package pt.utl.ist.lucene.utils.temporal.tests;
 
 import junit.framework.TestCase;
-import pt.utl.ist.lucene.utils.temporal.Timex2;
+import pt.utl.ist.lucene.utils.temporal.tides.Timex2;
+import pt.utl.ist.lucene.utils.temporal.tides.Timex2TimeExpression;
 import pt.utl.ist.lucene.utils.temporal.TimeExpression;
-import pt.utl.ist.lucene.utils.temporal.Timex2TimeExpression;
-import pt.utl.ist.lucene.utils.temporal.TimexesDocument;
+import pt.utl.ist.lucene.utils.temporal.tides.TimexesDocument;
 
 import java.util.List;
 
@@ -287,33 +287,33 @@ public class Time2TimeExpressionTest extends TestCase
                 "<TIMEX2 set=\"\" rend=\"4031\" val=\"2005\" tmxclass=\"point\" rstart=\"4028\" dirclass=\"same\" parsenode=\".31 w19\" prenorm=\"|fq|_2005\">2005</TIMEX2>\n" +
                 "</TEXT>\n" +
                 "</DOC>";
-        List<Timex2TimeExpression.Timex2TimeExpressionsSet> set = new TimexesDocument(timex2).getTimex2TimeExpressionsSets();
+        List<Timex2TimeExpression> timex2TimeExpressions = new TimexesDocument(timex2).getTimex2TimeExpressions();
 
-        assertEquals(set.get(0).getStartOffset(),1);
-        assertEquals(set.get(0).getEndOffset(),10);
-        assertEquals(set.get(1).getStartOffset(),162);
-        assertEquals(set.get(1).getEndOffset(),171);
-        assertEquals(set.get(2).getStartOffset(),871);
-        assertEquals(set.get(2).getEndOffset(),898);
-        assertEquals(set.get(3).getStartOffset(),1752);
-        assertEquals(set.get(3).getEndOffset(),1760);
-        assertEquals(set.get(4).getStartOffset(),1766);
-        assertEquals(set.get(4).getEndOffset(),1785);
-        assertEquals(set.get(5).getStartOffset(),1791);
-        assertEquals(set.get(5).getEndOffset(),1801);
+        assertEquals(timex2TimeExpressions.get(0).getStartOffset(),1);
+        assertEquals(timex2TimeExpressions.get(0).getEndOffset(),10);
+        assertEquals(timex2TimeExpressions.get(1).getStartOffset(),162);
+        assertEquals(timex2TimeExpressions.get(1).getEndOffset(),171);
+        assertEquals(timex2TimeExpressions.get(2).getStartOffset(),871);
+        assertEquals(timex2TimeExpressions.get(2).getEndOffset(),898);
+        assertEquals(timex2TimeExpressions.get(3).getStartOffset(),1752);
+        assertEquals(timex2TimeExpressions.get(3).getEndOffset(),1760);
+        assertEquals(timex2TimeExpressions.get(4).getStartOffset(),1766);
+        assertEquals(timex2TimeExpressions.get(4).getEndOffset(),1785);
+        assertEquals(timex2TimeExpressions.get(5).getStartOffset(),1791);
+        assertEquals(timex2TimeExpressions.get(5).getEndOffset(),1801);
 
-        assertEquals(set.get(0).getExpressions().get(0).getNormalizedExpression(),"20051209");
-        assertEquals(set.get(1).getExpressions().get(0).getNormalizedExpression(),"200512");
-        assertEquals(set.get(2).getExpressions().size(),0);
-        assertEquals(set.get(3).getExpressions().size(),0);
-        assertEquals(set.get(4).getExpressions().get(0).getNormalizedExpression(),"1998");
-        assertEquals(set.get(4).getExpressions().get(1).getNormalizedExpression(),"1999");
-        assertEquals(set.get(4).getExpressions().get(2).getNormalizedExpression(),"2000");
-        assertEquals(set.get(4).getExpressions().get(3).getNormalizedExpression(),"2001");
-        assertEquals(set.get(4).getExpressions().get(4).getNormalizedExpression(),"2002");
-        assertEquals(set.get(4).getExpressions().get(5).getNormalizedExpression(),"2003");
-        assertEquals(set.get(4).getExpressions().get(6).getNormalizedExpression(),"2004");
-        assertEquals(set.get(4).getExpressions().get(7).getNormalizedExpression(),"2005");
+        assertEquals(timex2TimeExpressions.get(0).getTimeExpressions().get(0).getNormalizedExpression(),"20051209");
+        assertEquals(timex2TimeExpressions.get(1).getTimeExpressions().get(0).getNormalizedExpression(),"200512");
+        assertEquals(timex2TimeExpressions.get(2).getTimeExpressions().size(),0);
+        assertEquals(timex2TimeExpressions.get(3).getTimeExpressions().size(),0);
+        assertEquals(timex2TimeExpressions.get(4).getTimeExpressions().get(0).getNormalizedExpression(),"1998");
+        assertEquals(timex2TimeExpressions.get(4).getTimeExpressions().get(1).getNormalizedExpression(),"1999");
+        assertEquals(timex2TimeExpressions.get(4).getTimeExpressions().get(2).getNormalizedExpression(),"2000");
+        assertEquals(timex2TimeExpressions.get(4).getTimeExpressions().get(3).getNormalizedExpression(),"2001");
+        assertEquals(timex2TimeExpressions.get(4).getTimeExpressions().get(4).getNormalizedExpression(),"2002");
+        assertEquals(timex2TimeExpressions.get(4).getTimeExpressions().get(5).getNormalizedExpression(),"2003");
+        assertEquals(timex2TimeExpressions.get(4).getTimeExpressions().get(6).getNormalizedExpression(),"2004");
+        assertEquals(timex2TimeExpressions.get(4).getTimeExpressions().get(7).getNormalizedExpression(),"2005");
 
 
 

@@ -64,6 +64,9 @@ public class DocumentIterator
         {
             inputStream.close();
             reader.close();
+            reader = null;
+            inputStream = null;
+            System.gc();
         }
         inputStream = new GZIPInputStream(new FileInputStream(files.get(index)));
         reader = new BufferedReader(new InputStreamReader(inputStream));

@@ -1,7 +1,7 @@
 package pt.utl.ist.lucene.utils.temporal.tests;
 
 import junit.framework.TestCase;
-import pt.utl.ist.lucene.utils.temporal.TemporalMetrics;
+import pt.utl.ist.lucene.utils.temporal.metrics.TemporalMetrics;
 import pt.utl.ist.lucene.utils.temporal.TimeExpression;
 
 /**

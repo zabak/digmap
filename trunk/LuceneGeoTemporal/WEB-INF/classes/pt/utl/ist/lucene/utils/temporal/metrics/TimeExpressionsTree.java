@@ -1,8 +1,10 @@
-package pt.utl.ist.lucene.utils.temporal;
+package pt.utl.ist.lucene.utils.temporal.metrics;
 
 import org.apache.log4j.Logger;
 
 import java.util.*;
+
+import pt.utl.ist.lucene.utils.temporal.TimeExpression;
 
 /**
  * @author Jorge Machado

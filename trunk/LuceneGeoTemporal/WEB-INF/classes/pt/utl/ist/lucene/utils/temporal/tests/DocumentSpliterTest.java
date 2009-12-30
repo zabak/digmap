@@ -1,7 +1,7 @@
 package pt.utl.ist.lucene.utils.temporal.tests;
 
 import junit.framework.TestCase;
-import pt.utl.ist.lucene.utils.temporal.TimextagDocumentSpliter;
+import pt.utl.ist.lucene.utils.temporal.DocumentTemporalSentences;
 
 /**
  * @author Jorge Machado
@@ -9,7 +9,7 @@ import pt.utl.ist.lucene.utils.temporal.TimextagDocumentSpliter;
  * @time 18:12:17
  * @email machadofisher@gmail.com
  */
-public class DocmentSpliterTest extends TestCase
+public class DocumentSpliterTest extends TestCase
 {
     public void testExample1()
     {
@@ -145,7 +145,7 @@ public class DocmentSpliterTest extends TestCase
                 "</TEXT>\n" +
                 "</DOC>";
 
-         TimextagDocumentSpliter documentSpliter = new TimextagDocumentSpliter(doc,"<DOC generator=\"timexdoc.py\">\n" +
+         DocumentTemporalSentences documentTemporalSentences = new DocumentTemporalSentences(doc,"<doc id=\"NYT_ENG_20051209.0416\">\n<DOC generator=\"timexdoc.py\">\n" +
                 "<reftime rstart=\"1\" rend=\"10\" val=\"2005-12-09\">\n" +
                 "<TIMEX2 rstart=\"1\" rend=\"10\" val=\"2005-12-09\">2005-12-09</TIMEX2>\n" +
                 "</reftime>\n" +
@@ -163,38 +163,38 @@ public class DocmentSpliterTest extends TestCase
                 "day</TIMEX2>\n" +
                 "<TIMEX2 set=\"\" rend=\"4031\" val=\"2005\" tmxclass=\"point\" rstart=\"4028\" dirclass=\"same\" parsenode=\".31 w19\" prenorm=\"|fq|_2005\">2005</TIMEX2>\n" +
                 "</TEXT>\n" +
-                "</DOC>");
+                "</DOC></doc>");
 
-        assertEquals(documentSpliter.getSentences().get(8).getAllTimeExpressions().get(0).getNormalizedExpression(),"UNKNOWN");
-        assertEquals(documentSpliter.getSentences().get(8).getAllTimeExpressions().get(1).getNormalizedExpression(),"1998");
-        assertEquals(documentSpliter.getSentences().get(8).getAllTimeExpressions().get(2).getNormalizedExpression(),"1999");
-        assertEquals(documentSpliter.getSentences().get(8).getAllTimeExpressions().get(3).getNormalizedExpression(),"2000");
-        assertEquals(documentSpliter.getSentences().get(8).getAllTimeExpressions().get(4).getNormalizedExpression(),"2001");
-        assertEquals(documentSpliter.getSentences().get(8).getAllTimeExpressions().get(5).getNormalizedExpression(),"2002");
-        assertEquals(documentSpliter.getSentences().get(8).getAllTimeExpressions().get(6).getNormalizedExpression(),"2003");
-        assertEquals(documentSpliter.getSentences().get(8).getAllTimeExpressions().get(7).getNormalizedExpression(),"2004");
-        assertEquals(documentSpliter.getSentences().get(8).getAllTimeExpressions().get(8).getNormalizedExpression(),"2005");
-        assertEquals(documentSpliter.getSentences().get(8).getAllTimeExpressions().get(9).getNormalizedExpression(),"UNKNOWN");
+        assertEquals(documentTemporalSentences.getSentences().get(8).getAllTimeExpressions().get(0).getNormalizedExpression(),"UNKNOWN");
+        assertEquals(documentTemporalSentences.getSentences().get(8).getAllTimeExpressions().get(1).getNormalizedExpression(),"1998");
+        assertEquals(documentTemporalSentences.getSentences().get(8).getAllTimeExpressions().get(2).getNormalizedExpression(),"1999");
+        assertEquals(documentTemporalSentences.getSentences().get(8).getAllTimeExpressions().get(3).getNormalizedExpression(),"2000");
+        assertEquals(documentTemporalSentences.getSentences().get(8).getAllTimeExpressions().get(4).getNormalizedExpression(),"2001");
+        assertEquals(documentTemporalSentences.getSentences().get(8).getAllTimeExpressions().get(5).getNormalizedExpression(),"2002");
+        assertEquals(documentTemporalSentences.getSentences().get(8).getAllTimeExpressions().get(6).getNormalizedExpression(),"2003");
+        assertEquals(documentTemporalSentences.getSentences().get(8).getAllTimeExpressions().get(7).getNormalizedExpression(),"2004");
+        assertEquals(documentTemporalSentences.getSentences().get(8).getAllTimeExpressions().get(8).getNormalizedExpression(),"2005");
+        assertEquals(documentTemporalSentences.getSentences().get(8).getAllTimeExpressions().get(9).getNormalizedExpression(),"UNKNOWN");
 
 
-        assertEquals(documentSpliter.getAllNormalizedTimeExpressions().get(0).getNormalizedExpression(),"20051209");
-        assertEquals(documentSpliter.getAllNormalizedTimeExpressions().get(1).getNormalizedExpression(),"200512");
-        assertEquals(documentSpliter.getAllNormalizedTimeExpressions().get(2).getNormalizedExpression(),"UNKNOWN");
-        assertEquals(documentSpliter.getAllNormalizedTimeExpressions().get(3).getNormalizedExpression(),"UNKNOWN");
-        assertEquals(documentSpliter.getAllNormalizedTimeExpressions().get(4).getNormalizedExpression(),"1998");
-        assertEquals(documentSpliter.getAllNormalizedTimeExpressions().get(5).getNormalizedExpression(),"1999");
-        assertEquals(documentSpliter.getAllNormalizedTimeExpressions().get(6).getNormalizedExpression(),"2000");
-        assertEquals(documentSpliter.getAllNormalizedTimeExpressions().get(7).getNormalizedExpression(),"2001");
-        assertEquals(documentSpliter.getAllNormalizedTimeExpressions().get(8).getNormalizedExpression(),"2002");
-        assertEquals(documentSpliter.getAllNormalizedTimeExpressions().get(9).getNormalizedExpression(),"2003");
-        assertEquals(documentSpliter.getAllNormalizedTimeExpressions().get(10).getNormalizedExpression(),"2004");
-        assertEquals(documentSpliter.getAllNormalizedTimeExpressions().get(11).getNormalizedExpression(),"2005");
-        assertEquals(documentSpliter.getAllNormalizedTimeExpressions().get(12).getNormalizedExpression(),"UNKNOWN");
-        assertEquals(documentSpliter.getAllNormalizedTimeExpressions().get(13).getNormalizedExpression(),"UNKNOWN");
-        assertEquals(documentSpliter.getAllNormalizedTimeExpressions().get(14).getNormalizedExpression(),"20051204");
-        assertEquals(documentSpliter.getAllNormalizedTimeExpressions().get(15).getNormalizedExpression(),"20051208");
-        assertEquals(documentSpliter.getAllNormalizedTimeExpressions().get(16).getNormalizedExpression(),"20051209");  //P1D but anchor_dir = BEFORE is unkown
-        assertEquals(documentSpliter.getAllNormalizedTimeExpressions().get(17).getNormalizedExpression(),"2005");
+        assertEquals(documentTemporalSentences.getAllNormalizedTimeExpressions().get(0).getNormalizedExpression(),"20051209");
+        assertEquals(documentTemporalSentences.getAllNormalizedTimeExpressions().get(1).getNormalizedExpression(),"200512");
+        assertEquals(documentTemporalSentences.getAllNormalizedTimeExpressions().get(2).getNormalizedExpression(),"UNKNOWN");
+        assertEquals(documentTemporalSentences.getAllNormalizedTimeExpressions().get(3).getNormalizedExpression(),"UNKNOWN");
+        assertEquals(documentTemporalSentences.getAllNormalizedTimeExpressions().get(4).getNormalizedExpression(),"1998");
+        assertEquals(documentTemporalSentences.getAllNormalizedTimeExpressions().get(5).getNormalizedExpression(),"1999");
+        assertEquals(documentTemporalSentences.getAllNormalizedTimeExpressions().get(6).getNormalizedExpression(),"2000");
+        assertEquals(documentTemporalSentences.getAllNormalizedTimeExpressions().get(7).getNormalizedExpression(),"2001");
+        assertEquals(documentTemporalSentences.getAllNormalizedTimeExpressions().get(8).getNormalizedExpression(),"2002");
+        assertEquals(documentTemporalSentences.getAllNormalizedTimeExpressions().get(9).getNormalizedExpression(),"2003");
+        assertEquals(documentTemporalSentences.getAllNormalizedTimeExpressions().get(10).getNormalizedExpression(),"2004");
+        assertEquals(documentTemporalSentences.getAllNormalizedTimeExpressions().get(11).getNormalizedExpression(),"2005");
+        assertEquals(documentTemporalSentences.getAllNormalizedTimeExpressions().get(12).getNormalizedExpression(),"UNKNOWN");
+        assertEquals(documentTemporalSentences.getAllNormalizedTimeExpressions().get(13).getNormalizedExpression(),"UNKNOWN");
+        assertEquals(documentTemporalSentences.getAllNormalizedTimeExpressions().get(14).getNormalizedExpression(),"20051204");
+        assertEquals(documentTemporalSentences.getAllNormalizedTimeExpressions().get(15).getNormalizedExpression(),"20051208");
+        assertEquals(documentTemporalSentences.getAllNormalizedTimeExpressions().get(16).getNormalizedExpression(),"20051209");  //P1D but anchor_dir = BEFORE is unkown
+        assertEquals(documentTemporalSentences.getAllNormalizedTimeExpressions().get(17).getNormalizedExpression(),"2005");
 
 
     }

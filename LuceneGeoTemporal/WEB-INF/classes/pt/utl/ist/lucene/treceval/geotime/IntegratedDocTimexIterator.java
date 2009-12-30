@@ -215,10 +215,12 @@ public class IntegratedDocTimexIterator {
                 docsWithTimexes++;
                 docsWithTimexesMonth++;
             }
-            else
+            else if(d.getTd().getTimex2TimeExpressions() == null || d.getTd().getTimex2TimeExpressions().size() == 0)
             {
                 logger.error(d.getD().getDId() + ": FAILED Timexes anotation for Document with 0 timexes");
             }
+            else
+                logger.error(d.getD().getDId() + ": " + d.countTimexes() + " Timexes " );
             numberTimexes+=d.countTimexes();
             numberTimexesMonth+=d.countTimexes();
 

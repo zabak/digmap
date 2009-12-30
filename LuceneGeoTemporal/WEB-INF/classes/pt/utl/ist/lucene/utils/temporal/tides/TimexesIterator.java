@@ -110,7 +110,30 @@ public class TimexesIterator
             //Now that both iterators bypass the last document lets keep going
             if(secondaryDocument == null && nowDocument == null)
                 return null;
-            if(secondaryDocument == null || (nowDocument != null && nowDocument.getId().compareTo(secondaryDocument.getId()) < 0))
+            if(secondaryDocument != null && nowDocument != null && secondaryDocument.getId().equals(nowDocument.getId()))
+            {
+                if(secondaryDocument.getTimex2TimeExpressions() != null && nowDocument.getTimex2TimeExpressions() == null)
+                {
+                    goingDocument = secondaryDocument;
+                    secondaryDocument = secondaryIterator.next();
+                }
+                else if(secondaryDocument.getTimex2TimeExpressions() == null && nowDocument.getTimex2TimeExpressions() != null)
+                {
+                    goingDocument = nowDocument;
+                    readOne();
+                }
+                else if(secondaryDocument.getTimex2TimeExpressions().size() > nowDocument.getTimex2TimeExpressions().size())
+                {
+                    goingDocument = secondaryDocument;
+                    secondaryDocument = secondaryIterator.next();
+                }
+                else
+                {
+                    goingDocument = nowDocument;
+                    readOne();
+                }
+            }
+            else if(secondaryDocument == null || (nowDocument != null && nowDocument.getId().compareTo(secondaryDocument.getId()) < 0))
             {
                 goingDocument = nowDocument;
                 readOne();
@@ -149,7 +172,7 @@ public class TimexesIterator
             nowDocument = null;
 
 //        Line NULL
-        if((index+1) < files.size())
+        if(nowDocument == null  && (index+1) < files.size())
         {
             index++;
             prepareRead();

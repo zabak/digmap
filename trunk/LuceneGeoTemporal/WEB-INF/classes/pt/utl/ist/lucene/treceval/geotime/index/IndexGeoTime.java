@@ -1,4 +1,4 @@
-package pt.utl.ist.lucene.treceval.geotime;
+package pt.utl.ist.lucene.treceval.geotime.index;
 
 import pt.utl.ist.lucene.LgteIndexWriter;
 import pt.utl.ist.lucene.LgteDocumentWrapper;
@@ -7,6 +7,8 @@ import pt.utl.ist.lucene.Model;
 import pt.utl.ist.lucene.analyzer.LgteBrokerStemAnalyzer;
 import pt.utl.ist.lucene.analyzer.LgteNothingAnalyzer;
 import pt.utl.ist.lucene.treceval.IndexCollections;
+import pt.utl.ist.lucene.treceval.geotime.DocumentIterator;
+import pt.utl.ist.lucene.treceval.geotime.NyTimesDocument;
 
 import java.io.IOException;
 import java.util.Map;
@@ -29,7 +31,7 @@ public class IndexGeoTime
     {
         String path = "F:\\coleccoesIR\\ntcir\\data";
         DocumentIterator di = new DocumentIterator(path);
-        Document d;
+        NyTimesDocument d;
         Map<String, Analyzer> anaMap = new HashMap<String,Analyzer>();
         anaMap.put(Globals.DOCUMENT_ID_FIELD, new LgteNothingAnalyzer());
         anaMap.put(Globals.LUCENE_DEFAULT_FIELD,IndexCollections.en.getAnalyzerWithStemming());
@@ -46,7 +48,7 @@ public class IndexGeoTime
         writer.close();
     }
 
-    private static void indexDocument(LgteIndexWriter writer, Document d) throws IOException
+    private static void indexDocument(LgteIndexWriter writer, NyTimesDocument d) throws IOException
     {
         LgteDocumentWrapper doc = new LgteDocumentWrapper();
         doc.indexString(Globals.DOCUMENT_ID_FIELD,d.getDId());

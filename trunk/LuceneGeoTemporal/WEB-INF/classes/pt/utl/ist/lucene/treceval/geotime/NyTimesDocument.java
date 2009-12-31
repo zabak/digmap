@@ -9,8 +9,7 @@ import java.util.Date;
  * @time 12:37:34
  * @email machadofisher@gmail.com
  */
-public class Document
-{
+public class NyTimesDocument {
     StringBuilder sgml = new StringBuilder();
     int articleYear;
     int articleMonth;
@@ -31,7 +30,7 @@ public class Document
     Date pDate;
 
 
-    public Document() {
+    public NyTimesDocument() {
     }
 
 

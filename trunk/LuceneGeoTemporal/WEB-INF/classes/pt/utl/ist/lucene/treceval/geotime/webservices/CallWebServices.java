@@ -1,10 +1,9 @@
-package pt.utl.ist.lucene.treceval.geotime;
+package pt.utl.ist.lucene.treceval.geotime.webservices;
 
 import org.w3c.dom.*;
 import org.w3c.dom.Document;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.log4j.Logger;
 import org.deegree.model.spatialschema.JTSAdapter;
 import org.deegree.model.spatialschema.GMLGeometryAdapter;
@@ -13,7 +12,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.xpath.XPathConstants;
-import java.util.Date;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -24,8 +22,6 @@ import com.sun.org.apache.xml.internal.serialize.OutputFormat;
 import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 import com.sun.tools.javac.util.Pair;
 import com.vividsolutions.jts.geom.Geometry;
-import pt.utl.ist.lucene.utils.Dom4jUtil;
-import pt.utl.ist.lucene.utils.XmlUtils;
 import pt.utl.ist.lucene.config.ConfigProperties;
 
 public class CallWebServices {

@@ -23,6 +23,8 @@ public class TimeExpression
     Type type;
     GregorianCalendar c;
 
+
+
     GregorianCalendar leftLimit;
     GregorianCalendar rightLimit;
 
@@ -30,6 +32,7 @@ public class TimeExpression
     boolean valid = true;
     String validationError = null;
 
+    boolean derived; 
 
     protected TimeExpression()
     {
@@ -401,6 +404,25 @@ public class TimeExpression
         else
             refTxt = "";
         return type.toString() + ":" + normalizedExpression + refTxt;
+    }
+
+    public static enum TEClass
+    {
+        NormalizedPoint("NormalizedPoint"),
+        IntervalPoint("IntervalPoint"),
+        ;
+
+        String teclass;
+
+        private TEClass(String teclass)
+        {
+            this.teclass = teclass;
+        }
+
+        public String toString()
+        {
+            return teclass;            
+        }
     }
 
 

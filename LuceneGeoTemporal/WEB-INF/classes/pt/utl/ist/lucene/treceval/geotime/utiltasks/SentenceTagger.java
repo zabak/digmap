@@ -51,10 +51,11 @@ public class SentenceTagger
                 nowWriter.close();
                 FileInputStream fileInputStream = new FileInputStream(filePath);
                 File toDelete = new File(filePath);
-                fileId = document.getD().getDId().substring(0,14).toLowerCase();
-                filePath = output + "\\" + fileId + ".sentences.xml";
                 String fileZipPath = output + "\\" + fileId + ".sentences.zip";
                 ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream(new File(fileZipPath)));
+                fileId = document.getD().getDId().substring(0,14).toLowerCase();
+                filePath = output + "\\" + fileId + ".sentences.xml";
+
                 zipOutputStream.putNextEntry(new ZipEntry(fileId + ".sentences.zip"));
                 StreamsUtils.inputStream2OutputStream(fileInputStream,zipOutputStream);
                 nowWriter = new FileWriter(output + "\\" + fileId + ".sentences.xml",false);

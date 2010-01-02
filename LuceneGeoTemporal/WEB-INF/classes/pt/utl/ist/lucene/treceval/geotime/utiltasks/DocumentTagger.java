@@ -98,7 +98,7 @@ public class DocumentTagger
                     CenturiesAgo++;
 
                 startId = null;
-                if((d.getDParagraphs() == null || d.getDParagraphs().size() == 0) && (d.getDText() == null || d.getDText().trim().length() == 0))
+                if((d.getDParagraphs() == null || d.getDParagraphs().size() == 0) && (d.getDText() == null || d.getDText().getP().trim().length() == 0))
                     d.printOut();
                 if(d.getDType().equals("story"))
                     story++;

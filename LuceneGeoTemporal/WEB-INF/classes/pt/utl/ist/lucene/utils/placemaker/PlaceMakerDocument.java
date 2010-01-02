@@ -48,7 +48,7 @@ public class PlaceMakerDocument
 
     public PlaceMakerDocument(String xml) throws DocumentException
     {
-        xml.replace("<doc ","<doc xmlns:gml=\"gml\" ");
+
         dom = Dom4jUtil.parse(xml);
 
         XPath administrativeWoeidXPath = dom.createXPath("/doc/d:contentlocation/d:document/d:administrativeScope/d:woeId");
@@ -88,16 +88,24 @@ public class PlaceMakerDocument
         docIdXPath.setNamespaceURIs(namespaces);
         docId = ((Attribute)docIdXPath.selectSingleNode(dom)).getValue().trim();
 
-        administrativeWoeid = administrativeWoeidXPath.selectSingleNode(dom).getText().trim();
-        administrativeType = administrativeTypeXPath.selectSingleNode(dom).getText().trim();
-        administrativeCentroide = new GeoPoint(Double.parseDouble(administrativeCentroideLatitudeXPath.selectSingleNode(dom).getText()),Double.parseDouble(administrativeCentroideLongitudeXPath.selectSingleNode(dom).getText()));
+        Node adminWoeid = administrativeWoeidXPath.selectSingleNode(dom);
+        if(adminWoeid != null)
+        {
+            administrativeWoeid = adminWoeid.getText().trim();
+            administrativeType = administrativeTypeXPath.selectSingleNode(dom).getText().trim();
+            administrativeCentroide = new GeoPoint(Double.parseDouble(administrativeCentroideLatitudeXPath.selectSingleNode(dom).getText()),Double.parseDouble(administrativeCentroideLongitudeXPath.selectSingleNode(dom).getText()));
+        }
 
-        geographicWoeid = geographicWoeidXPath.selectSingleNode(dom).getText().trim();
-        geographicType = geographicTypeXPath.selectSingleNode(dom).getText().trim();
-        geographicCentroide = new GeoPoint(Double.parseDouble(geographicCentroideLatitudeXPath.selectSingleNode(dom).getText()),Double.parseDouble(geographicCentroideLongitudeXPath.selectSingleNode(dom).getText()));
+        Node geoWoeid = geographicWoeidXPath.selectSingleNode(dom);
+        if(geoWoeid != null)
+        {
+            geographicWoeid = geoWoeid.getText().trim();
+            geographicType = geographicTypeXPath.selectSingleNode(dom).getText().trim();
+            geographicCentroide = new GeoPoint(Double.parseDouble(geographicCentroideLatitudeXPath.selectSingleNode(dom).getText()),Double.parseDouble(geographicCentroideLongitudeXPath.selectSingleNode(dom).getText()));
+            boundingBoxPoint1 = new GeoPoint(Double.parseDouble(boundingBoxPointX0XPath.selectSingleNode(dom).getText()),Double.parseDouble(boundingBoxPointY0XPath.selectSingleNode(dom).getText()));
+            boundingBoxPoint2 = new GeoPoint(Double.parseDouble(boundingBoxPointX1XPath.selectSingleNode(dom).getText()),Double.parseDouble(boundingBoxPointY1XPath.selectSingleNode(dom).getText()));
+        }
 
-        boundingBoxPoint1 = new GeoPoint(Double.parseDouble(boundingBoxPointX0XPath.selectSingleNode(dom).getText()),Double.parseDouble(boundingBoxPointY0XPath.selectSingleNode(dom).getText()));
-        boundingBoxPoint2 = new GeoPoint(Double.parseDouble(boundingBoxPointX1XPath.selectSingleNode(dom).getText()),Double.parseDouble(boundingBoxPointY1XPath.selectSingleNode(dom).getText()));
 
 
         XPath placeDetailsXPath = dom.createXPath("/doc/d:contentlocation/d:document/d:placeDetails");
@@ -156,7 +164,8 @@ public class PlaceMakerDocument
                         placeRef.setStartOffset(Integer.parseInt(placeRefsStartXPath.selectSingleNode(placeRefElem).getText().trim()));
                         placeRef.setEndOffset(Integer.parseInt(placeRefsEndXPath.selectSingleNode(placeRefElem).getText().trim()));
 
-                        placeDetails.getRefs().add(placeRef);
+                        if(placeRef.getStartOffset() > 0 && placeRef.getEndOffset() > 0 && placeRef.getEndOffset() > placeRef.getStartOffset())
+                            placeDetails.getRefs().add(placeRef);
                     }
                 }
                 else

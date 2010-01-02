@@ -70,8 +70,16 @@ public class DocumentIterator
 
     public NyTimesDocument next() throws IOException
     {
+        int headLineStartOffset = 0;
+        int headLineEndOffset = 0;
+        int dateLineStartOffSet = 0;
+        int dateLineEndOffSet = 0;
+
+
+        int pos = 0;
+
         NyTimesDocument d = new NyTimesDocument();
-        d.setDParagraphs(new ArrayList<String>());
+        d.setDParagraphs(new ArrayList<NyTimesDocument.TextFragment>());
         String line;
         boolean inHeadLine = false;
         boolean inDateLine = false;
@@ -79,16 +87,28 @@ public class DocumentIterator
         boolean inText = false;
         String auxP = "";
         String auxText = "";
+        NyTimesDocument.TextFragment inParagrahp = null;
+        NyTimesDocument.TextFragment inTextFrag = null;
+
         String fileName = files.get(index).getName();
         d.setFSourceFile(fileName);
         int i_ = fileName.lastIndexOf("_")+1;
         d.setFDateYearMonthSort(fileName.substring(i_,fileName.lastIndexOf(".")));
+        boolean first = true;
         while((line = reader.readLine())!=null && !line.toUpperCase().equals("</DOC>"))
         {
+            if(first)
+            {
+                first = false;
+            }
+            else
+            {
+                pos++;
+            }
             d.appendSgmlLine(line);
             if(line.startsWith(("<DOC")))
             {
-
+                pos += line.substring(line.indexOf(">") + 1).length();
                 int iid  = line.indexOf("id=\"") + 4;
                 d.setDId(line.substring(iid,line.indexOf("\"",iid)));
 
@@ -100,68 +120,107 @@ public class DocumentIterator
                 d.setArticleYear(Integer.parseInt(d.getPDateYearMonthDaySort().substring(0,4)));
                 d.setArticleMonth(Integer.parseInt(d.getPDateYearMonthDaySort().substring(4,6)));
                 d.setArticleDay(Integer.parseInt(d.getPDateYearMonthDaySort().substring(6)));
-                d.appendSgmlLine("<DATE_TIME>" + d.getArticleYear() + "-" +d.getArticleMonth() + "-" + d.getArticleDay() + "</DATE_TIME>");
+                pos++;
+                String datetime = d.getArticleYear() + "-" +d.getArticleMonth() + "-" + d.getArticleDay();
+                d.appendSgmlLine("<DATE_TIME>" + datetime + "</DATE_TIME>");
+                pos+=datetime.length();
+
                 GregorianCalendar c = new GregorianCalendar(d.getArticleYear(),d.getArticleMonth()-1,d.getArticleDay());
                 d.setPDate(c.getTime());
 
                 int itype  = line.indexOf("type=\"") + 6;
                 d.setDType(line.substring(itype,line.indexOf("\"",itype)));
             }
-            else if(line.startsWith(("<HEADLINE")))
+            else if(line.startsWith(("<HEADLINE>")))
             {
+                pos += line.substring("<HEADLINE>".length()).length();
+                headLineStartOffset = pos;
+                headLineEndOffset = pos;
+                dateLineStartOffSet = pos;
+                dateLineEndOffSet = pos;
                 inHeadLine = true;
             }
-            else if(line.startsWith(("</HEADLINE")))
+            else if(line.startsWith(("</HEADLINE>")))
             {
+                pos += line.substring("</HEADLINE>".length()).length();
                 inHeadLine = false;
                 d.setDHeadline(auxText);
+                headLineEndOffset = pos;
+                dateLineStartOffSet = pos;
+                dateLineEndOffSet = pos;
                 auxText = "";
             }
             else if(inHeadLine)
             {
                 auxText += " " + line;
+                pos += line.length();
             }
-            else if(line.startsWith(("<DATELINE")))
+            else if(line.startsWith(("<DATELINE>")))
             {
+                pos += line.substring("<DATELINE>".length()).length();
                 inDateLine = true;
+                dateLineStartOffSet = pos;
+                dateLineEndOffSet = pos;
             }
-            else if(line.startsWith(("</DATELINE")))
+            else if(line.startsWith(("</DATELINE>")))
             {
+                dateLineEndOffSet = pos;
+                pos += line.substring("</DATELINE>".length()).length();
                 inDateLine = false;
                 d.setDDateline(auxText);
                 auxText = "";
             }
             else if(inDateLine)
             {
+                pos += line.length(); //dont use the " " because was introduced by this methos is not original
                 auxText += " " + line;
             }
             else if(line.startsWith(("<P>")))
             {
+                pos += line.substring("<P>".length()).length();
+                inParagrahp = new NyTimesDocument.TextFragment(pos);
                 inP = true;
             }
             else if(line.startsWith(("</P>")))
             {
+                pos += line.substring("</P>".length()).length();
+                inParagrahp.setEndOffset(pos);
+                inParagrahp.setP(auxP);
+
                 inP = false;
-                d.getDParagraphs().add(auxP);
+                d.getParagraphs().add(inParagrahp);
                 auxP = "";
+                inParagrahp = null;
             }
             else if(inP)
             {
+                pos += line.length();
                 auxP += " " + line;
             }
             else if(line.startsWith(("<TEXT>")))
             {
+                pos += line.substring("<TEXT>".length()).length();
+                inTextFrag = new NyTimesDocument.TextFragment(pos);
                 inText = true;
             }
             else if(line.startsWith(("</TEXT>")))
             {
+                inTextFrag.setEndOffset(pos);
+                inTextFrag.setP(auxText);
+
                 inText = false;
-                d.setDText(auxText);
+                d.setDText(inTextFrag);
                 auxText = "";
+                inTextFrag = null;
             }
             else if(inText)
             {
+                pos += line.length();
                 auxText += " " + line;
+            }
+            else
+            {
+                pos += line.length();
             }
         }
         d.appendSgmlLine(line);
@@ -176,8 +235,13 @@ public class DocumentIterator
             return null;
 
 
+        d.setHeadLineStartOffset(headLineStartOffset);
+        d.setHeadLineEndOffset(headLineEndOffset);
+        d.setDateLineStartOffSet(dateLineStartOffSet);
+        d.setDateLineEndOffSet(dateLineEndOffSet);
+
         return d;
     }
 
-   
+
 }

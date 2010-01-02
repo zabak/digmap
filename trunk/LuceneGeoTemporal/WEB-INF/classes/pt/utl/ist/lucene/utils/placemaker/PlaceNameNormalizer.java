@@ -44,6 +44,14 @@ public class PlaceNameNormalizer {
         return nameBuilder.toString();
     }
 
+    public static String shortPlaceName(String name)
+    {
+        int pos = name.indexOf(",");
+        if(name.indexOf(",")>0)
+            return name.substring(0,pos);
+        return name;
+    }
+
     public static String normalizeWoeid(String woeid)
     {
         return "WOEID-" + woeid;

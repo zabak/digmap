@@ -73,6 +73,11 @@ public class Strings
         return null;
     }
 
+    public static String cleanSpacesTabsLineBreak(String txt)
+    {
+        return txt.replaceAll("[ \t\r\n]+"," ").trim();
+    }
+
     /**
      * To represent years, if point is filled only point matters
      */

@@ -34,10 +34,12 @@ public class PlaceMakerDocument
 
     String administrativeWoeid;
     String administrativeType;
+    String administrativeName;
     GeoPoint administrativeCentroide;
 
     String geographicWoeid;
     String geographicType;
+    String geographicName;
     GeoPoint geographicCentroide;
 
 
@@ -93,6 +95,7 @@ public class PlaceMakerDocument
         {
             administrativeWoeid = adminWoeid.getText().trim();
             administrativeType = administrativeTypeXPath.selectSingleNode(dom).getText().trim();
+            administrativeName = administrativeNameXPath.selectSingleNode(dom).getText().trim();
             administrativeCentroide = new GeoPoint(Double.parseDouble(administrativeCentroideLatitudeXPath.selectSingleNode(dom).getText()),Double.parseDouble(administrativeCentroideLongitudeXPath.selectSingleNode(dom).getText()));
         }
 
@@ -101,6 +104,7 @@ public class PlaceMakerDocument
         {
             geographicWoeid = geoWoeid.getText().trim();
             geographicType = geographicTypeXPath.selectSingleNode(dom).getText().trim();
+            geographicName = geographicNameXPath.selectSingleNode(dom).getText().trim();
             geographicCentroide = new GeoPoint(Double.parseDouble(geographicCentroideLatitudeXPath.selectSingleNode(dom).getText()),Double.parseDouble(geographicCentroideLongitudeXPath.selectSingleNode(dom).getText()));
             boundingBoxPoint1 = new GeoPoint(Double.parseDouble(boundingBoxPointX0XPath.selectSingleNode(dom).getText()),Double.parseDouble(boundingBoxPointY0XPath.selectSingleNode(dom).getText()));
             boundingBoxPoint2 = new GeoPoint(Double.parseDouble(boundingBoxPointX1XPath.selectSingleNode(dom).getText()),Double.parseDouble(boundingBoxPointY1XPath.selectSingleNode(dom).getText()));
@@ -165,16 +169,15 @@ public class PlaceMakerDocument
                         placeRef.setEndOffset(Integer.parseInt(placeRefsEndXPath.selectSingleNode(placeRefElem).getText().trim()));
 
                         if(placeRef.getStartOffset() > 0 && placeRef.getEndOffset() > 0 && placeRef.getEndOffset() > placeRef.getStartOffset())
-                            placeDetails.getRefs().add(placeRef);
+                        {
+                            placeDetails.addRef(placeRef);
+                        }
                     }
                 }
                 else
                     logger.error("PlaceDetails without refs at doc " + docId + " for reference: " + placeDetails.getWoeId() + ":" + placeDetails.getName());
             }
         }
-
-
-
     }
 
 
@@ -188,6 +191,22 @@ public class PlaceMakerDocument
 
     public String getAdministrativeType() {
         return administrativeType;
+    }
+
+    public String getAdministrativeName() {
+        return administrativeName;
+    }
+
+    public String getAdministrativeShortName() {
+        return PlaceNameNormalizer.shortPlaceName(administrativeName);
+    }
+
+    public String getGeographicName() {
+        return geographicName;
+    }
+
+    public String getGeographicShortName() {
+        return PlaceNameNormalizer.shortPlaceName(geographicName);
     }
 
     public GeoPoint getAdministrativeCentroide() {
@@ -218,6 +237,18 @@ public class PlaceMakerDocument
         return placeDetails;
     }
 
+    public List<PlaceRef> getAllRefs() {
+        List<PlaceRef> placeRefs = new ArrayList<PlaceRef>();
+        if(placeDetails != null)
+        {
+            for(PlaceDetails details: placeDetails)
+            {
+                placeRefs.addAll(details.getRefs());
+            }
+        }
+        return placeRefs;
+    }
+
     public Document getDom() {
         return dom;
     }
@@ -237,6 +268,10 @@ public class PlaceMakerDocument
         public PlaceDetails() {
         }
 
+
+        public String getShortName() {
+            return PlaceNameNormalizer.shortPlaceName(name);
+        }
 
         public String getType() {
             return type;
@@ -301,16 +336,32 @@ public class PlaceMakerDocument
         public void setRefs(List<PlaceRef> refs) {
             this.refs = refs;
         }
+
+        public void addRef(PlaceRef ref)
+        {
+            refs.add(ref);
+            ref.setPlaceDetails(this);
+        }
+
     }
     public static class PlaceRef
     {
         int startOffset;
         int endOffset;
+        PlaceDetails placeDetails;
 
 
         public PlaceRef() {
         }
 
+
+        public PlaceDetails getPlaceDetails() {
+            return placeDetails;
+        }
+
+        public void setPlaceDetails(PlaceDetails placeDetails) {
+            this.placeDetails = placeDetails;
+        }
 
         public int getStartOffset() {
             return startOffset;
@@ -331,201 +382,201 @@ public class PlaceMakerDocument
 
 
 
-    public static void main(String[] args) throws DocumentException {
-        String xml = "<doc id=\"NYT_ENG_20040507.0027\"><contentlocation xmlns:yahoo=\"http://www.yahooapis.com/v1/base.rng\"\n" +
-                "    xmlns:xml=\"http://www.w3.org/XML/1998/namespace\"\n" +
-                "    xmlns=\"http://wherein.yahooapis.com/v1/schema\" xml:lang=\"en-EN\">\n" +
-                "    <processingTime>0.007809</processingTime>\n" +
-                "    <version> build 091119</version>\n" +
-                "    <documentLength>1363</documentLength>\n" +
-                "    <document>\n" +
-                "        <administrativeScope>\n" +
-                "            <woeId>12587688</woeId>\n" +
-                "            <type>County</type>\n" +
-                "            <name><![CDATA[Los Angeles, CA, US]]></name>\n" +
-                "            <centroid>\n" +
-                "                <latitude>34.2635</latitude>\n" +
-                "                <longitude>-118.296</longitude>\n" +
-                "            </centroid>\n" +
-                "        </administrativeScope>\n" +
-                "        <geographicScope>\n" +
-                "            <woeId>12587688</woeId>\n" +
-                "            <type>County</type>\n" +
-                "            <name><![CDATA[Los Angeles, CA, US]]></name>\n" +
-                "            <centroid>\n" +
-                "                <latitude>34.2635</latitude>\n" +
-                "                <longitude>-118.296</longitude>\n" +
-                "            </centroid>\n" +
-                "        </geographicScope>\n" +
-                "        <extents>\n" +
-                "            <center>\n" +
-                "                <latitude>33.7667</latitude>\n" +
-                "                <longitude>-118.192</longitude>\n" +
-                "            </center>\n" +
-                "            <southWest>\n" +
-                "                <latitude>22.3526</latitude>\n" +
-                "                <longitude>-118.476</longitude>\n" +
-                "            </southWest>\n" +
-                "            <northEast>\n" +
-                "                <latitude>33.994</latitude>\n" +
-                "                <longitude>114.267</longitude>\n" +
-                "            </northEast>\n" +
-                "        </extents>\n" +
-                "        <placeDetails>\n" +
-                "            <place>\n" +
-                "                <woeId>2441472</woeId>\n" +
-                "                <type>Town</type>\n" +
-                "                <name><![CDATA[Long Beach, CA, US]]></name>\n" +
-                "                <centroid>\n" +
-                "                    <latitude>33.7667</latitude>\n" +
-                "                    <longitude>-118.192</longitude>\n" +
-                "                </centroid>\n" +
-                "            </place>\n" +
-                "            <matchType>0</matchType>\n" +
-                "            <weight>1</weight>\n" +
-                "            <confidence>7</confidence>\n" +
-                "        </placeDetails>\n" +
-                "        <placeDetails>\n" +
-                "            <place>\n" +
-                "                <woeId>2445713</woeId>\n" +
-                "                <type>Town</type>\n" +
-                "                <name><![CDATA[Marina del Rey, CA, US]]></name>\n" +
-                "                <centroid>\n" +
-                "                    <latitude>33.9852</latitude>\n" +
-                "                    <longitude>-118.452</longitude>\n" +
-                "                </centroid>\n" +
-                "            </place>\n" +
-                "            <matchType>0</matchType>\n" +
-                "            <weight>1</weight>\n" +
-                "            <confidence>7</confidence>\n" +
-                "        </placeDetails>\n" +
-                "        <placeDetails>\n" +
-                "            <place>\n" +
-                "                <woeId>2488185</woeId>\n" +
-                "                <type>Suburb</type>\n" +
-                "                <name><![CDATA[San Pedro, Los Angeles, CA, US]]></name>\n" +
-                "                <centroid>\n" +
-                "                    <latitude>33.7409</latitude>\n" +
-                "                    <longitude>-118.298</longitude>\n" +
-                "                </centroid>\n" +
-                "            </place>\n" +
-                "            <matchType>0</matchType>\n" +
-                "            <weight>1</weight>\n" +
-                "            <confidence>7</confidence>\n" +
-                "        </placeDetails>\n" +
-                "        <placeDetails>\n" +
-                "            <place>\n" +
-                "                <woeId>56042320</woeId>\n" +
-                "                <type>Town</type>\n" +
-                "                <name><![CDATA[Fisherman Village, New Territories, HK]]></name>\n" +
-                "                <centroid>\n" +
-                "                    <latitude>22.3617</latitude>\n" +
-                "                    <longitude>114.257</longitude>\n" +
-                "                </centroid>\n" +
-                "            </place>\n" +
-                "            <matchType>0</matchType>\n" +
-                "            <weight>1</weight>\n" +
-                "            <confidence>7</confidence>\n" +
-                "        </placeDetails>\n" +
-                "        <referenceList>\n" +
-                "            <reference>\n" +
-                "                <woeIds>56042320</woeIds>\n" +
-                "                <start>1212</start>\n" +
-                "                <end>1231</end>\n" +
-                "                <isPlaintextMarker>1</isPlaintextMarker>\n" +
-                "                <text><![CDATA[Fisherman's Village]]></text>\n" +
-                "                <type>plaintext</type>\n" +
-                "                <xpath><![CDATA[]]></xpath>\n" +
-                "            </reference>\n" +
-                "            <reference>\n" +
-                "                <woeIds>56042320</woeIds>\n" +
-                "                <start>133</start>\n" +
-                "                <end>152</end>\n" +
-                "                <isPlaintextMarker>1</isPlaintextMarker>\n" +
-                "                <text><![CDATA[Fisherman's Village]]></text>\n" +
-                "                <type>plaintext</type>\n" +
-                "                <xpath><![CDATA[]]></xpath>\n" +
-                "            </reference>\n" +
-                "            <reference>\n" +
-                "                <woeIds>2445713</woeIds>\n" +
-                "                <start>156</start>\n" +
-                "                <end>170</end>\n" +
-                "                <isPlaintextMarker>1</isPlaintextMarker>\n" +
-                "                <text><![CDATA[Marina del Rey]]></text>\n" +
-                "                <type>plaintext</type>\n" +
-                "                <xpath><![CDATA[]]></xpath>\n" +
-                "            </reference>\n" +
-                "            <reference>\n" +
-                "                <woeIds>2488185</woeIds>\n" +
-                "                <start>243</start>\n" +
-                "                <end>252</end>\n" +
-                "                <isPlaintextMarker>1</isPlaintextMarker>\n" +
-                "                <text><![CDATA[San Pedro]]></text>\n" +
-                "                <type>plaintext</type>\n" +
-                "                <xpath><![CDATA[]]></xpath>\n" +
-                "            </reference>\n" +
-                "            <reference>\n" +
-                "                <woeIds>2441472</woeIds>\n" +
-                "                <start>257</start>\n" +
-                "                <end>267</end>\n" +
-                "                <isPlaintextMarker>1</isPlaintextMarker>\n" +
-                "                <text><![CDATA[Long Beach]]></text>\n" +
-                "                <type>plaintext</type>\n" +
-                "                <xpath><![CDATA[]]></xpath>\n" +
-                "            </reference>\n" +
-                "            <reference>\n" +
-                "                <woeIds>2445713</woeIds>\n" +
-                "                <start>346</start>\n" +
-                "                <end>360</end>\n" +
-                "                <isPlaintextMarker>1</isPlaintextMarker>\n" +
-                "                <text><![CDATA[Marina del Rey]]></text>\n" +
-                "                <type>plaintext</type>\n" +
-                "                <xpath><![CDATA[]]></xpath>\n" +
-                "            </reference>\n" +
-                "            <reference>\n" +
-                "                <woeIds>2445713</woeIds>\n" +
-                "                <start>35</start>\n" +
-                "                <end>49</end>\n" +
-                "                <isPlaintextMarker>1</isPlaintextMarker>\n" +
-                "                <text><![CDATA[Marina del Rey]]></text>\n" +
-                "                <type>plaintext</type>\n" +
-                "                <xpath><![CDATA[]]></xpath>\n" +
-                "            </reference>\n" +
-                "            <reference>\n" +
-                "                <woeIds>2441472</woeIds>\n" +
-                "                <start>494</start>\n" +
-                "                <end>504</end>\n" +
-                "                <isPlaintextMarker>1</isPlaintextMarker>\n" +
-                "                <text><![CDATA[Long Beach]]></text>\n" +
-                "                <type>plaintext</type>\n" +
-                "                <xpath><![CDATA[]]></xpath>\n" +
-                "            </reference>\n" +
-                "            <reference>\n" +
-                "                <woeIds>2445713</woeIds>\n" +
-                "                <start>693</start>\n" +
-                "                <end>707</end>\n" +
-                "                <isPlaintextMarker>1</isPlaintextMarker>\n" +
-                "                <text><![CDATA[Marina del Rey]]></text>\n" +
-                "                <type>plaintext</type>\n" +
-                "                <xpath><![CDATA[]]></xpath>\n" +
-                "            </reference>\n" +
-                "        </referenceList>\n" +
-                "        <gml:Box xmlns:gml=\"http://www.opengis.net/gml\">\n" +
-                "            <gml:coord>\n" +
-                "                <gml:X>-118.944817</gml:X>\n" +
-                "                <gml:Y>32.800701</gml:Y>\n" +
-                "            </gml:coord>\n" +
-                "            <gml:coord>\n" +
-                "                <gml:X>-117.646187</gml:X>\n" +
-                "                <gml:Y>34.823299</gml:Y>\n" +
-                "            </gml:coord>\n" +
-                "        </gml:Box>\n" +
-                "    </document>\n" +
-                "</contentlocation>\n" +
-                "</doc>";
-
-        PlaceMakerDocument placeMakerDocument = new PlaceMakerDocument(xml);
-    }
+//    public static void main(String[] args) throws DocumentException {
+//        String xml = "<doc id=\"NYT_ENG_20040507.0027\"><contentlocation xmlns:yahoo=\"http://www.yahooapis.com/v1/base.rng\"\n" +
+//                "    xmlns:xml=\"http://www.w3.org/XML/1998/namespace\"\n" +
+//                "    xmlns=\"http://wherein.yahooapis.com/v1/schema\" xml:lang=\"en-EN\">\n" +
+//                "    <processingTime>0.007809</processingTime>\n" +
+//                "    <version> build 091119</version>\n" +
+//                "    <documentLength>1363</documentLength>\n" +
+//                "    <document>\n" +
+//                "        <administrativeScope>\n" +
+//                "            <woeId>12587688</woeId>\n" +
+//                "            <type>County</type>\n" +
+//                "            <name><![CDATA[Los Angeles, CA, US]]></name>\n" +
+//                "            <centroid>\n" +
+//                "                <latitude>34.2635</latitude>\n" +
+//                "                <longitude>-118.296</longitude>\n" +
+//                "            </centroid>\n" +
+//                "        </administrativeScope>\n" +
+//                "        <geographicScope>\n" +
+//                "            <woeId>12587688</woeId>\n" +
+//                "            <type>County</type>\n" +
+//                "            <name><![CDATA[Los Angeles, CA, US]]></name>\n" +
+//                "            <centroid>\n" +
+//                "                <latitude>34.2635</latitude>\n" +
+//                "                <longitude>-118.296</longitude>\n" +
+//                "            </centroid>\n" +
+//                "        </geographicScope>\n" +
+//                "        <extents>\n" +
+//                "            <center>\n" +
+//                "                <latitude>33.7667</latitude>\n" +
+//                "                <longitude>-118.192</longitude>\n" +
+//                "            </center>\n" +
+//                "            <southWest>\n" +
+//                "                <latitude>22.3526</latitude>\n" +
+//                "                <longitude>-118.476</longitude>\n" +
+//                "            </southWest>\n" +
+//                "            <northEast>\n" +
+//                "                <latitude>33.994</latitude>\n" +
+//                "                <longitude>114.267</longitude>\n" +
+//                "            </northEast>\n" +
+//                "        </extents>\n" +
+//                "        <placeDetails>\n" +
+//                "            <place>\n" +
+//                "                <woeId>2441472</woeId>\n" +
+//                "                <type>Town</type>\n" +
+//                "                <name><![CDATA[Long Beach, CA, US]]></name>\n" +
+//                "                <centroid>\n" +
+//                "                    <latitude>33.7667</latitude>\n" +
+//                "                    <longitude>-118.192</longitude>\n" +
+//                "                </centroid>\n" +
+//                "            </place>\n" +
+//                "            <matchType>0</matchType>\n" +
+//                "            <weight>1</weight>\n" +
+//                "            <confidence>7</confidence>\n" +
+//                "        </placeDetails>\n" +
+//                "        <placeDetails>\n" +
+//                "            <place>\n" +
+//                "                <woeId>2445713</woeId>\n" +
+//                "                <type>Town</type>\n" +
+//                "                <name><![CDATA[Marina del Rey, CA, US]]></name>\n" +
+//                "                <centroid>\n" +
+//                "                    <latitude>33.9852</latitude>\n" +
+//                "                    <longitude>-118.452</longitude>\n" +
+//                "                </centroid>\n" +
+//                "            </place>\n" +
+//                "            <matchType>0</matchType>\n" +
+//                "            <weight>1</weight>\n" +
+//                "            <confidence>7</confidence>\n" +
+//                "        </placeDetails>\n" +
+//                "        <placeDetails>\n" +
+//                "            <place>\n" +
+//                "                <woeId>2488185</woeId>\n" +
+//                "                <type>Suburb</type>\n" +
+//                "                <name><![CDATA[San Pedro, Los Angeles, CA, US]]></name>\n" +
+//                "                <centroid>\n" +
+//                "                    <latitude>33.7409</latitude>\n" +
+//                "                    <longitude>-118.298</longitude>\n" +
+//                "                </centroid>\n" +
+//                "            </place>\n" +
+//                "            <matchType>0</matchType>\n" +
+//                "            <weight>1</weight>\n" +
+//                "            <confidence>7</confidence>\n" +
+//                "        </placeDetails>\n" +
+//                "        <placeDetails>\n" +
+//                "            <place>\n" +
+//                "                <woeId>56042320</woeId>\n" +
+//                "                <type>Town</type>\n" +
+//                "                <name><![CDATA[Fisherman Village, New Territories, HK]]></name>\n" +
+//                "                <centroid>\n" +
+//                "                    <latitude>22.3617</latitude>\n" +
+//                "                    <longitude>114.257</longitude>\n" +
+//                "                </centroid>\n" +
+//                "            </place>\n" +
+//                "            <matchType>0</matchType>\n" +
+//                "            <weight>1</weight>\n" +
+//                "            <confidence>7</confidence>\n" +
+//                "        </placeDetails>\n" +
+//                "        <referenceList>\n" +
+//                "            <reference>\n" +
+//                "                <woeIds>56042320</woeIds>\n" +
+//                "                <start>1212</start>\n" +
+//                "                <end>1231</end>\n" +
+//                "                <isPlaintextMarker>1</isPlaintextMarker>\n" +
+//                "                <text><![CDATA[Fisherman's Village]]></text>\n" +
+//                "                <type>plaintext</type>\n" +
+//                "                <xpath><![CDATA[]]></xpath>\n" +
+//                "            </reference>\n" +
+//                "            <reference>\n" +
+//                "                <woeIds>56042320</woeIds>\n" +
+//                "                <start>133</start>\n" +
+//                "                <end>152</end>\n" +
+//                "                <isPlaintextMarker>1</isPlaintextMarker>\n" +
+//                "                <text><![CDATA[Fisherman's Village]]></text>\n" +
+//                "                <type>plaintext</type>\n" +
+//                "                <xpath><![CDATA[]]></xpath>\n" +
+//                "            </reference>\n" +
+//                "            <reference>\n" +
+//                "                <woeIds>2445713</woeIds>\n" +
+//                "                <start>156</start>\n" +
+//                "                <end>170</end>\n" +
+//                "                <isPlaintextMarker>1</isPlaintextMarker>\n" +
+//                "                <text><![CDATA[Marina del Rey]]></text>\n" +
+//                "                <type>plaintext</type>\n" +
+//                "                <xpath><![CDATA[]]></xpath>\n" +
+//                "            </reference>\n" +
+//                "            <reference>\n" +
+//                "                <woeIds>2488185</woeIds>\n" +
+//                "                <start>243</start>\n" +
+//                "                <end>252</end>\n" +
+//                "                <isPlaintextMarker>1</isPlaintextMarker>\n" +
+//                "                <text><![CDATA[San Pedro]]></text>\n" +
+//                "                <type>plaintext</type>\n" +
+//                "                <xpath><![CDATA[]]></xpath>\n" +
+//                "            </reference>\n" +
+//                "            <reference>\n" +
+//                "                <woeIds>2441472</woeIds>\n" +
+//                "                <start>257</start>\n" +
+//                "                <end>267</end>\n" +
+//                "                <isPlaintextMarker>1</isPlaintextMarker>\n" +
+//                "                <text><![CDATA[Long Beach]]></text>\n" +
+//                "                <type>plaintext</type>\n" +
+//                "                <xpath><![CDATA[]]></xpath>\n" +
+//                "            </reference>\n" +
+//                "            <reference>\n" +
+//                "                <woeIds>2445713</woeIds>\n" +
+//                "                <start>346</start>\n" +
+//                "                <end>360</end>\n" +
+//                "                <isPlaintextMarker>1</isPlaintextMarker>\n" +
+//                "                <text><![CDATA[Marina del Rey]]></text>\n" +
+//                "                <type>plaintext</type>\n" +
+//                "                <xpath><![CDATA[]]></xpath>\n" +
+//                "            </reference>\n" +
+//                "            <reference>\n" +
+//                "                <woeIds>2445713</woeIds>\n" +
+//                "                <start>35</start>\n" +
+//                "                <end>49</end>\n" +
+//                "                <isPlaintextMarker>1</isPlaintextMarker>\n" +
+//                "                <text><![CDATA[Marina del Rey]]></text>\n" +
+//                "                <type>plaintext</type>\n" +
+//                "                <xpath><![CDATA[]]></xpath>\n" +
+//                "            </reference>\n" +
+//                "            <reference>\n" +
+//                "                <woeIds>2441472</woeIds>\n" +
+//                "                <start>494</start>\n" +
+//                "                <end>504</end>\n" +
+//                "                <isPlaintextMarker>1</isPlaintextMarker>\n" +
+//                "                <text><![CDATA[Long Beach]]></text>\n" +
+//                "                <type>plaintext</type>\n" +
+//                "                <xpath><![CDATA[]]></xpath>\n" +
+//                "            </reference>\n" +
+//                "            <reference>\n" +
+//                "                <woeIds>2445713</woeIds>\n" +
+//                "                <start>693</start>\n" +
+//                "                <end>707</end>\n" +
+//                "                <isPlaintextMarker>1</isPlaintextMarker>\n" +
+//                "                <text><![CDATA[Marina del Rey]]></text>\n" +
+//                "                <type>plaintext</type>\n" +
+//                "                <xpath><![CDATA[]]></xpath>\n" +
+//                "            </reference>\n" +
+//                "        </referenceList>\n" +
+//                "        <gml:Box xmlns:gml=\"http://www.opengis.net/gml\">\n" +
+//                "            <gml:coord>\n" +
+//                "                <gml:X>-118.944817</gml:X>\n" +
+//                "                <gml:Y>32.800701</gml:Y>\n" +
+//                "            </gml:coord>\n" +
+//                "            <gml:coord>\n" +
+//                "                <gml:X>-117.646187</gml:X>\n" +
+//                "                <gml:Y>34.823299</gml:Y>\n" +
+//                "            </gml:coord>\n" +
+//                "        </gml:Box>\n" +
+//                "    </document>\n" +
+//                "</contentlocation>\n" +
+//                "</doc>";
+//
+//        PlaceMakerDocument placeMakerDocument = new PlaceMakerDocument(xml);
+//    }
 
 
 

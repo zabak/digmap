@@ -20,10 +20,23 @@ public class TimeExpression
     int year = -1;
     int month = -1;
     int day = -1;
-    Type type;
+    Type type = Type.UNKNOWN;
     GregorianCalendar c;
 
+    int auxCount = 1;
 
+    public void incCount()
+    {
+        auxCount++;
+    }
+
+    /**
+     * Not filled by default
+     * @return
+     */
+    public int getCount() {
+        return auxCount;
+    }
 
     GregorianCalendar leftLimit;
     GregorianCalendar rightLimit;
@@ -32,11 +45,13 @@ public class TimeExpression
     boolean valid = true;
     String validationError = null;
 
-    boolean derived; 
+    TEClass teClass = TEClass.NormalizedPoint; //by default
 
     protected TimeExpression()
     {
         normalizedExpression = "UNKNOWN";
+        teClass = TEClass.UNKNOWN;
+        type = Type.UNKNOWN;
     }
 
     protected void setRefNLTxt(String refNLTxt)
@@ -88,6 +103,22 @@ public class TimeExpression
     public TimeExpression(int year, String refTxt, boolean exceptionOnValidate) throws BadTimeExpression {
         this(year,exceptionOnValidate);
         this.refNLTxt = refTxt;
+    }
+
+    public TimeExpression(int year, int month, int day, String refTxt, boolean exceptionOnValidate, TEClass teClass) throws BadTimeExpression {
+        this(year,month,day,exceptionOnValidate);
+        this.refNLTxt = refTxt;
+        this.teClass = teClass;
+    }
+    public TimeExpression(int year, int month, String refTxt, boolean exceptionOnValidate, TEClass teClass) throws BadTimeExpression {
+        this(year,month,exceptionOnValidate);
+        this.refNLTxt = refTxt;
+        this.teClass = teClass;
+    }
+    public TimeExpression(int year, String refTxt, boolean exceptionOnValidate, TEClass teClass) throws BadTimeExpression {
+        this(year,exceptionOnValidate);
+        this.refNLTxt = refTxt;
+        this.teClass = teClass;
     }
 
 
@@ -212,8 +243,17 @@ public class TimeExpression
         this.refNLTxt = refTxt;
     }
 
+    public TimeExpression(String normalizedExpression, String refTxt, TEClass teClass) throws BadTimeExpression
+    {
+        this(normalizedExpression,false);
+        this.refNLTxt = refTxt;
+        this.teClass = teClass;
+    }
 
 
+    public TEClass getTeClass() {
+        return teClass;
+    }
 
     public String getNormalizedExpression() {
         return normalizedExpression;
@@ -377,7 +417,9 @@ public class TimeExpression
         YYY("YYY"),
         YYYY("YYYY"),
         YYYYMM("YYYYMM"),
-        YYYYMMDD("YYYYMMDD");
+        YYYYMMDD("YYYYMMDD"),
+
+        UNKNOWN("UNKNOWN");
 
         String type;
 
@@ -410,6 +452,7 @@ public class TimeExpression
     {
         NormalizedPoint("NormalizedPoint"),
         IntervalPoint("IntervalPoint"),
+        UNKNOWN("UNKNOWN"),
         ;
 
         String teclass;

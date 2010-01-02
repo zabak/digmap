@@ -2,6 +2,7 @@ package pt.utl.ist.lucene.utils.nlp;
 
 import pt.utl.ist.lucene.utils.temporal.tides.Timex2TimeExpression;
 import pt.utl.ist.lucene.utils.temporal.TimeExpression;
+import pt.utl.ist.lucene.utils.Strings;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -47,12 +48,20 @@ public class Sentence {
         return phrase;
     }
 
+    public String getCleanedPhrase() {
+        return Strings.cleanSpacesTabsLineBreak(phrase);
+    }
+
     public void setPhrase(String phrase) {
         this.phrase = phrase;
     }
 
     public void setIndex(int index) {
         this.index = index;
+    }
+
+    public int getIndex() {
+        return index;
     }
 
     public void setStartOffset(int startOffset) {
@@ -66,5 +75,11 @@ public class Sentence {
     public String toString()
     {
         return "SENTENCE " + index + " (" + startOffset + "," + endOffset + "): [" + phrase + "]";
+    }
+
+    public static void main(String [] args)
+    {
+        System.out.println(">" + "    ola\n a    todos   \n  ".replaceAll("[ \t\r\n]+"," ").trim() + "<");
+        System.out.println("ola\n a    todos".replace("[ \t]*"," "));
     }
 }

@@ -5,6 +5,9 @@ import org.apache.log4j.Logger;
 import java.util.List;
 import java.util.Date;
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
+import java.io.BufferedReader;
+import java.io.IOException;
 
 /**
  * @author Jorge Machado
@@ -16,15 +19,15 @@ public class NyTimesDocument {
 
 
     private static final Logger logger = Logger.getLogger(NyTimesDocument.class);
-    
+
     int headLineStartOffset = 0;
     int headLineEndOffset = 0;
     int dateLineStartOffSet = 0;
     int dateLineEndOffSet = 0;
 
-    int placeMakerHeadLineStartOffset = 0;
-    int placeMakerHeadLineEndOffset = 0;
-    int placeMakerDateLineStartOffSet = 0;
+    int toStringHeadLineStartOffset = 0;
+    int toStringHeadLineEndOffset = 0;
+    int toStringDateLineStartOffSet = 0;
     int placeMakerDateLineEndOffSet = 0;
 
     StringBuilder sgml = new StringBuilder();
@@ -50,6 +53,190 @@ public class NyTimesDocument {
     public NyTimesDocument() {
     }
 
+
+    boolean sgmlValid = true;
+
+    public boolean isSgmlValid() {
+        return sgmlValid;
+    }
+
+    public NyTimesDocument(BufferedReader reader, String fileName) throws IOException, EOFException
+    {
+
+        int headLineStartOffset = 0;
+        int headLineEndOffset = 0;
+        int dateLineStartOffSet = 0;
+        int dateLineEndOffSet = 0;
+
+
+        int pos = 0;
+
+        setDParagraphs(new ArrayList<NyTimesDocument.TextFragment>());
+        String line;
+        boolean inHeadLine = false;
+        boolean inDateLine = false;
+        boolean inP = false;
+        boolean inText = false;
+        String auxP = "";
+        String auxText = "";
+        NyTimesDocument.TextFragment inParagrahp = null;
+        NyTimesDocument.TextFragment inTextFrag = null;
+
+        setFSourceFile(fileName);
+        int i_ = fileName.lastIndexOf("_")+1;
+        setFDateYearMonthSort(fileName.substring(i_,fileName.lastIndexOf(".")));
+        boolean first = true;
+        while((line = reader.readLine()) != null && !line.toUpperCase().equals("</DOC>"))
+        {
+            if(first)
+            {
+                first = false;
+            }
+            else
+            {
+                pos++;
+            }
+            appendSgmlLine(line);
+            if(line.startsWith(("<DOC")))
+            {
+                pos += line.substring(line.indexOf(">") + 1).length();
+                int iid  = line.indexOf("id=\"") + 4;
+                setDId(line.substring(iid,line.indexOf("\"",iid)));
+
+                setPArticleNumber(getDId().substring(getDId().lastIndexOf(".")+1));
+
+                int liid_ = getDId().lastIndexOf("_")+1;
+                setPDateYearMonthDaySort(getDId().substring(liid_,getDId().lastIndexOf(".")));
+
+                setArticleYear(Integer.parseInt(getPDateYearMonthDaySort().substring(0,4)));
+                setArticleMonth(Integer.parseInt(getPDateYearMonthDaySort().substring(4,6)));
+                setArticleDay(Integer.parseInt(getPDateYearMonthDaySort().substring(6)));
+                pos++;
+                String datetime = getArticleYear() + "-" +getArticleMonth() + "-" + getArticleDay();
+                appendSgmlLine("<DATE_TIME>" + datetime + "</DATE_TIME>");
+                pos+=datetime.length();
+
+                GregorianCalendar c = new GregorianCalendar(getArticleYear(),getArticleMonth()-1,getArticleDay());
+                setPDate(c.getTime());
+
+                int itype  = line.indexOf("type=\"") + 6;
+                setDType(line.substring(itype,line.indexOf("\"",itype)));
+            }
+            else if(line.startsWith(("<HEADLINE>")))
+            {
+                pos += line.substring("<HEADLINE>".length()).length();
+                headLineStartOffset = pos;
+                headLineEndOffset = pos;
+                dateLineStartOffSet = pos;
+                dateLineEndOffSet = pos;
+                inHeadLine = true;
+            }
+            else if(line.startsWith(("</HEADLINE>")))
+            {
+                pos += line.substring("</HEADLINE>".length()).length();
+                inHeadLine = false;
+                setDHeadline(auxText);
+                headLineEndOffset = pos;
+                dateLineStartOffSet = pos;
+                dateLineEndOffSet = pos;
+                auxText = "";
+            }
+            else if(inHeadLine)
+            {
+                auxText += " " + line;
+                pos += line.length();
+            }
+            else if(line.startsWith(("<DATELINE>")))
+            {
+                pos += line.substring("<DATELINE>".length()).length();
+                inDateLine = true;
+                dateLineStartOffSet = pos;
+                dateLineEndOffSet = pos;
+            }
+            else if(line.startsWith(("</DATELINE>")))
+            {
+                dateLineEndOffSet = pos;
+                pos += line.substring("</DATELINE>".length()).length();
+                inDateLine = false;
+                setDDateline(auxText);
+                auxText = "";
+            }
+            else if(inDateLine)
+            {
+                pos += line.length(); //dont use the " " because was introduced by this methos is not original
+                auxText += " " + line;
+            }
+            else if(line.startsWith(("<P>")))
+            {
+                pos += line.substring("<P>".length()).length();
+                inParagrahp = new NyTimesDocument.TextFragment(pos);
+                inP = true;
+            }
+            else if(line.startsWith(("</P>")))
+            {
+                pos += line.substring("</P>".length()).length();
+                inParagrahp.setEndOffset(pos);
+                inParagrahp.setP(auxP);
+
+                inP = false;
+                getParagraphs().add(inParagrahp);
+                auxP = "";
+                inParagrahp = null;
+            }
+            else if(inP)
+            {
+                pos += line.length();
+                auxP += " " + line;
+            }
+            else if(line.startsWith(("<TEXT>")))
+            {
+                pos += line.substring("<TEXT>".length()).length();
+                inTextFrag = new NyTimesDocument.TextFragment(pos);
+                inText = true;
+            }
+            else if(line.startsWith(("</TEXT>")))
+            {
+                inTextFrag.setEndOffset(pos);
+                inTextFrag.setP(auxText);
+
+                inText = false;
+                setDText(inTextFrag);
+                auxText = "";
+                inTextFrag = null;
+            }
+            else if(inText)
+            {
+                pos += line.length();
+                auxText += " " + line;
+            }
+            else
+            {
+                pos += line.length();
+            }
+        }
+        if(line == null && pos == 0)
+        {
+            throw new EOFException();
+        }
+        else if(line == null)
+            sgmlValid = false;
+        else
+            appendSgmlLine(line);
+
+
+
+        setHeadLineStartOffset(headLineStartOffset);
+        setHeadLineEndOffset(headLineEndOffset);
+        setDateLineStartOffSet(dateLineStartOffSet);
+        setDateLineEndOffSet(dateLineEndOffSet);
+
+        toString(); //to fill offsets
+    }
+
+    public String getSgmlWithoutTags()
+    {
+        return getSgml().replaceAll("<[^>]+>","");
+    }
 
     public String getSgml()
     {
@@ -141,28 +328,28 @@ public class NyTimesDocument {
         this.dateLineEndOffSet = dateLineEndOffSet;
     }
 
-    public int getPlaceMakerHeadLineStartOffset() {
-        return placeMakerHeadLineStartOffset;
+    public int getToStringHeadLineStartOffset() {
+        return toStringHeadLineStartOffset;
     }
 
-    public void setPlaceMakerHeadLineStartOffset(int placeMakerHeadLineStartOffset) {
-        this.placeMakerHeadLineStartOffset = placeMakerHeadLineStartOffset;
+    public void setToStringHeadLineStartOffset(int toStringHeadLineStartOffset) {
+        this.toStringHeadLineStartOffset = toStringHeadLineStartOffset;
     }
 
-    public int getPlaceMakerHeadLineEndOffset() {
-        return placeMakerHeadLineEndOffset;
+    public int getToStringHeadLineEndOffset() {
+        return toStringHeadLineEndOffset;
     }
 
-    public void setPlaceMakerHeadLineEndOffset(int placeMakerHeadLineEndOffset) {
-        this.placeMakerHeadLineEndOffset = placeMakerHeadLineEndOffset;
+    public void setToStringHeadLineEndOffset(int toStringHeadLineEndOffset) {
+        this.toStringHeadLineEndOffset = toStringHeadLineEndOffset;
     }
 
-    public int getPlaceMakerDateLineStartOffSet() {
-        return placeMakerDateLineStartOffSet;
+    public int getToStringDateLineStartOffSet() {
+        return toStringDateLineStartOffSet;
     }
 
-    public void setPlaceMakerDateLineStartOffSet(int placeMakerDateLineStartOffSet) {
-        this.placeMakerDateLineStartOffSet = placeMakerDateLineStartOffSet;
+    public void setToStringDateLineStartOffSet(int toStringDateLineStartOffSet) {
+        this.toStringDateLineStartOffSet = toStringDateLineStartOffSet;
     }
 
     public int getPlaceMakerDateLineEndOffSet() {
@@ -256,8 +443,8 @@ public class NyTimesDocument {
         int startOffset;
         int endOffset;
 
-        int placeMakerParserStartOffset;
-        int placeMakerParserEndOffset;
+        int toStringStartOffset;
+        int toStringEndOffset;
 
 
         public TextFragment(int startOffset) {
@@ -295,20 +482,20 @@ public class NyTimesDocument {
         }
 
 
-        public int getPlaceMakerParserStartOffset() {
-            return placeMakerParserStartOffset;
+        public int getToStringStartOffset() {
+            return toStringStartOffset;
         }
 
-        public void setPlaceMakerParserStartOffset(int placeMakerParserStartOffset) {
-            this.placeMakerParserStartOffset = placeMakerParserStartOffset;
+        public void setToStringStartOffset(int toStringStartOffset) {
+            this.toStringStartOffset = toStringStartOffset;
         }
 
-        public int getPlaceMakerParserEndOffset() {
-            return placeMakerParserEndOffset;
+        public int getToStringEndOffset() {
+            return toStringEndOffset;
         }
 
-        public void setPlaceMakerParserEndOffset(int placeMakerParserEndOffset) {
-            this.placeMakerParserEndOffset = placeMakerParserEndOffset;
+        public void setToStringEndOffset(int toStringEndOffset) {
+            this.toStringEndOffset = toStringEndOffset;
         }
     }
 
@@ -340,51 +527,50 @@ public class NyTimesDocument {
 
     public String toString()
     {
-
         StringBuilder sb = new StringBuilder();
-        placeMakerHeadLineStartOffset = 0;
+        toStringHeadLineStartOffset = 0;
         sb.append(dHeadline);
-        placeMakerHeadLineEndOffset = sb.length();
+        toStringHeadLineEndOffset = sb.length();
 
         sb.append(" ");
 
         if(dParagraphs != null && dParagraphs.size() > 0)
             for(TextFragment p : dParagraphs){
-                p.setPlaceMakerParserStartOffset(sb.length());
+                p.setToStringStartOffset(sb.length());
                 sb.append(p.getP()).append("\n");
-                p.setPlaceMakerParserEndOffset(sb.length());
+                p.setToStringEndOffset(sb.length());
             }
         if(dText != null)
         {
             sb.append(" ");
-            dText.setPlaceMakerParserStartOffset(sb.length());
+            dText.setToStringStartOffset(sb.length());
             sb.append(dText.getP());
-            dText.setPlaceMakerParserEndOffset(sb.length());
+            dText.setToStringEndOffset(sb.length());
         }
         return sb.toString();
     }
 
-    public int placeMakerOffset2OriginalOffset(int offset)
+    public int toStringOffset2txtwithoutTagsOffset(int offset)
     {
-        if(offset >= placeMakerDateLineStartOffSet && offset <= placeMakerHeadLineEndOffset)
+        if(offset >= toStringDateLineStartOffSet && offset <= toStringHeadLineEndOffset)
         {
-            int diff = offset - placeMakerHeadLineStartOffset;
+            int diff = offset - toStringHeadLineStartOffset;
             return headLineStartOffset + diff;
         }
         else if(dParagraphs != null && dParagraphs.size()>0)
         {
             for(TextFragment pFragment : dParagraphs)
             {
-                if(offset >= pFragment.getPlaceMakerParserStartOffset() && offset <= pFragment.getPlaceMakerParserEndOffset())
+                if(offset >= pFragment.getToStringStartOffset() && offset <= pFragment.getToStringEndOffset())
                 {
-                    int diff = offset - pFragment.getPlaceMakerParserStartOffset();
+                    int diff = offset - pFragment.getToStringStartOffset();
                     return pFragment.getStartOffset() + diff;
                 }
             }
         }
         if(dText != null)
         {
-            int diff = offset - dText.getPlaceMakerParserStartOffset();
+            int diff = offset - dText.getToStringStartOffset();
             return dText.getStartOffset() + diff;
         }
 

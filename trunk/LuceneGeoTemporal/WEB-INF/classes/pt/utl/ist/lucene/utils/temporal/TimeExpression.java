@@ -45,7 +45,7 @@ public class TimeExpression
     boolean valid = true;
     String validationError = null;
 
-    TEClass teClass = TEClass.NormalizedPoint; //by default
+    TEClass teClass = TEClass.Point; //by default
 
     protected TimeExpression()
     {
@@ -450,8 +450,9 @@ public class TimeExpression
 
     public static enum TEClass
     {
-        NormalizedPoint("NormalizedPoint"),
-        IntervalPoint("IntervalPoint"),
+        Point("Point"),
+        GenPoint("GenPoint"),
+        Duration("Duration"),
         UNKNOWN("UNKNOWN"),
         ;
 

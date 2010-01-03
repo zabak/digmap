@@ -29,6 +29,8 @@ public class DocumentPlaceMakerAndTemporalSentences {
     TimexesDocument timexesDocument;
     PlaceMakerDocument placeMakerDocument;
 
+    TimeExpression documentDate;
+
     /**
      * Creates a List of sentences with time expressions
      * @param document
@@ -52,10 +54,36 @@ public class DocumentPlaceMakerAndTemporalSentences {
     public void init(NyTimesDocument document,  TimexesDocument timexesdocument, PlaceMakerDocument placeMakerDocument)
     {
 
+        this.document = document;
         this.text = document.getSgmlWithoutTags();
         placemakerTemporalSentences = (List<PlaceMakerAndTemporalSentence>) SentenceSpliter.split(text, PlaceMakerAndTemporalSentence.class);
         this.timexesDocument = timexesdocument;
         this.placeMakerDocument = placeMakerDocument;
+
+        if(timexesdocument.getRefTime() != null)
+        {
+            documentDate = timexesdocument.getRefTime();
+            if(!documentDate.getNormalizedExpression().equals(String.format("%04d%02d%02d",document.getArticleYear(),document.getArticleMonth(), document.getArticleDay())))
+                logger.error("Document: " + document.getDId() +  "Atention ref date deferent from date formated");
+        }
+        else
+        {
+            try {
+                documentDate = new TimeExpression(String.format("%04d%02d%02d",document.getArticleYear(),document.getArticleMonth(), document.getArticleDay()));
+            } catch (TimeExpression.BadTimeExpression badTimeExpression) {
+                logger.error("IMPOSSIBLE error - Document date in ID is wrong");
+            }
+        }
+
+
+        PlaceMakerAndTemporalSentence sentence0 = placemakerTemporalSentences.get(0);
+        int indexOfLineFeedFirstLine = sentence0.getPhrase().indexOf("\n");
+
+        //Lets see if first line start with a DATE
+        if(sentence0.getPhrase().substring(0,indexOfLineFeedFirstLine).matches("[0-9]{4,4}-[0-9]{1,2}-[0-9]{1,2}"))
+        {
+            sentence0.setPhrase(sentence0.getPhrase().substring(indexOfLineFeedFirstLine));
+        }
 
         if(placeMakerDocument != null && placeMakerDocument.getPlaceDetails() != null && placeMakerDocument.getPlaceDetails().size() > 0)
         {
@@ -81,39 +109,45 @@ public class DocumentPlaceMakerAndTemporalSentences {
         }
         if(this.timexesDocument != null && this.timexesDocument.getTimex2TimeExpressions() != null && this.timexesDocument.getTimex2TimeExpressions().size()>0)
         {
-            Iterator<Timex2TimeExpression> timexExpressionSetIter = this.timexesDocument.getTimex2TimeExpressions().iterator();
-            Timex2TimeExpression timex2TimeExpressionsList = timexExpressionSetIter.next();
-
-            if(placemakerTemporalSentences != null)
+            if(this.document.getDId().indexOf(".0069")>0)
+                System.out.println("");
+            Iterator<Timex2TimeExpression> timex2timexprsIter = this.timexesDocument.getTimex2TimeExpressions().iterator();
+            
+            if(timex2timexprsIter.hasNext())
             {
-                for(PlaceMakerAndTemporalSentence temporalSentence : placemakerTemporalSentences)
+                Timex2TimeExpression timex2TimeExpressionsList = timex2timexprsIter.next();
+
+                if(placemakerTemporalSentences != null)
                 {
-                    while(timex2TimeExpressionsList.getTimeExpressions().size() == 0)
+                    for(PlaceMakerAndTemporalSentence temporalSentence : placemakerTemporalSentences)
                     {
-                        if(timexExpressionSetIter.hasNext())
-                            timex2TimeExpressionsList = timexExpressionSetIter.next();
-                        else
+                        while(timex2TimeExpressionsList.getTimeExpressions().size() == 0)
                         {
-                            timex2TimeExpressionsList = null;
-                            break;
-                        }
-                    }
-                    if(timex2TimeExpressionsList == null)
-                        break;
-                    if(timex2TimeExpressionsList.getStartOffset() >= temporalSentence.getEndOffset())
-                    {
-                        //go to next sentence
-                    }
-                    else
-                    {
-                        while(timex2TimeExpressionsList.getStartOffset() >= temporalSentence.getStartOffset() && timex2TimeExpressionsList.getEndOffset() <= temporalSentence.getEndOffset())
-                        {
-                            temporalSentence.getTimexes().add(timex2TimeExpressionsList);
-                            if(timexExpressionSetIter.hasNext())
-                                timex2TimeExpressionsList = timexExpressionSetIter.next();
+                            if(timex2timexprsIter.hasNext())
+                                timex2TimeExpressionsList = timex2timexprsIter.next();
                             else
                             {
+                                timex2TimeExpressionsList = null;
                                 break;
+                            }
+                        }
+                        if(timex2TimeExpressionsList == null)
+                            break;
+                        if(timex2TimeExpressionsList.getStartOffset() >= temporalSentence.getEndOffset())
+                        {
+                            //go to next sentence
+                        }
+                        else
+                        {
+                            while(timex2TimeExpressionsList.getStartOffset() >= temporalSentence.getStartOffset() && timex2TimeExpressionsList.getEndOffset() <= temporalSentence.getEndOffset())
+                            {
+                                temporalSentence.getTimexes().add(timex2TimeExpressionsList);
+                                if(timex2timexprsIter.hasNext())
+                                    timex2TimeExpressionsList = timex2timexprsIter.next();
+                                else
+                                {
+                                    break;
+                                }
                             }
                         }
                     }
@@ -122,6 +156,10 @@ public class DocumentPlaceMakerAndTemporalSentences {
         }
     }
 
+
+    public TimeExpression getDocumentDate() {
+        return documentDate;
+    }
 
     public List<Timex2TimeExpression> getTimex2TimeExpressionsSets() {
         return timexesDocument.getTimex2TimeExpressions();

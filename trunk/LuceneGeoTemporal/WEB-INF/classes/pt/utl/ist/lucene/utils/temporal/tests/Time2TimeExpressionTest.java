@@ -303,9 +303,9 @@ public class Time2TimeExpressionTest extends TestCase
         assertEquals(timex2TimeExpressions.get(5).getEndOffset(),1801);
 
         assertEquals(timex2TimeExpressions.get(0).getTimeExpressions().get(0).getNormalizedExpression(),"20051209");
-        assertEquals(timex2TimeExpressions.get(0).getTimeExpressions().get(0).getTeClass(), TimeExpression.TEClass.NormalizedPoint);
+        assertEquals(timex2TimeExpressions.get(0).getTimeExpressions().get(0).getTeClass(), TimeExpression.TEClass.Point);
         assertEquals(timex2TimeExpressions.get(1).getTimeExpressions().get(0).getNormalizedExpression(),"200512");
-        assertEquals(timex2TimeExpressions.get(1).getTimeExpressions().get(0).getTeClass(), TimeExpression.TEClass.NormalizedPoint);
+        assertEquals(timex2TimeExpressions.get(1).getTimeExpressions().get(0).getTeClass(), TimeExpression.TEClass.Point);
         assertEquals(timex2TimeExpressions.get(2).getTimeExpressions().size(),0);
         assertEquals(timex2TimeExpressions.get(3).getTimeExpressions().size(),0);
         assertEquals(timex2TimeExpressions.get(4).getTimeExpressions().get(0).getNormalizedExpression(),"1998");
@@ -316,14 +316,14 @@ public class Time2TimeExpressionTest extends TestCase
         assertEquals(timex2TimeExpressions.get(4).getTimeExpressions().get(5).getNormalizedExpression(),"2003");
         assertEquals(timex2TimeExpressions.get(4).getTimeExpressions().get(6).getNormalizedExpression(),"2004");
         assertEquals(timex2TimeExpressions.get(4).getTimeExpressions().get(7).getNormalizedExpression(),"2005");
-        assertEquals(timex2TimeExpressions.get(4).getTimeExpressions().get(0).getTeClass(), TimeExpression.TEClass.IntervalPoint);
-        assertEquals(timex2TimeExpressions.get(4).getTimeExpressions().get(1).getTeClass(), TimeExpression.TEClass.IntervalPoint);
-        assertEquals(timex2TimeExpressions.get(4).getTimeExpressions().get(2).getTeClass(), TimeExpression.TEClass.IntervalPoint);
-        assertEquals(timex2TimeExpressions.get(4).getTimeExpressions().get(3).getTeClass(), TimeExpression.TEClass.IntervalPoint);
-        assertEquals(timex2TimeExpressions.get(4).getTimeExpressions().get(4).getTeClass(), TimeExpression.TEClass.IntervalPoint);
-        assertEquals(timex2TimeExpressions.get(4).getTimeExpressions().get(5).getTeClass(), TimeExpression.TEClass.IntervalPoint);
-        assertEquals(timex2TimeExpressions.get(4).getTimeExpressions().get(6).getTeClass(), TimeExpression.TEClass.IntervalPoint);
-        assertEquals(timex2TimeExpressions.get(4).getTimeExpressions().get(7).getTeClass(), TimeExpression.TEClass.IntervalPoint);
+        assertEquals(timex2TimeExpressions.get(4).getTimeExpressions().get(0).getTeClass(), TimeExpression.TEClass.Duration);
+        assertEquals(timex2TimeExpressions.get(4).getTimeExpressions().get(1).getTeClass(), TimeExpression.TEClass.Duration);
+        assertEquals(timex2TimeExpressions.get(4).getTimeExpressions().get(2).getTeClass(), TimeExpression.TEClass.Duration);
+        assertEquals(timex2TimeExpressions.get(4).getTimeExpressions().get(3).getTeClass(), TimeExpression.TEClass.Duration);
+        assertEquals(timex2TimeExpressions.get(4).getTimeExpressions().get(4).getTeClass(), TimeExpression.TEClass.Duration);
+        assertEquals(timex2TimeExpressions.get(4).getTimeExpressions().get(5).getTeClass(), TimeExpression.TEClass.Duration);
+        assertEquals(timex2TimeExpressions.get(4).getTimeExpressions().get(6).getTeClass(), TimeExpression.TEClass.Duration);
+        assertEquals(timex2TimeExpressions.get(4).getTimeExpressions().get(7).getTeClass(), TimeExpression.TEClass.Duration);
 
 
 

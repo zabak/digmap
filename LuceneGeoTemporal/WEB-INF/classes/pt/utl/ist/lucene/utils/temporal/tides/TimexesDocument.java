@@ -34,30 +34,37 @@ public class TimexesDocument
             try {
                 dom = Dom4jUtil.parse(timexesXml);
 
+                XPath xPathRefTime = dom.createXPath("//reftime/TIMEX2");
+                Element refTimeTimex2 = (Element) xPathRefTime.selectSingleNode(dom.getRootElement());
+                Timex2 timex2 = new Timex2(refTimeTimex2);
+                try {
+                    refTime =  new Timex2TimeExpression(timex2).getTimeExpressions().get(0);
+                } catch (TimeExpression.BadTimeExpression badTimeExpression) {
+                    logger.error(badTimeExpression + ": val(" + timex2.getVal() + ") anchor_val(" + timex2.getAnchorVal() + ") anchor_dir(" + timex2.getAnchorDir() + ")",badTimeExpression);
+                }
+
                 XPath xPathId = dom.createXPath("//doc/@id");
                 Attribute id = (Attribute) xPathId.selectSingleNode(dom);
                 this.id = id.getValue();
+                if(this.id.indexOf(".0069")>0)
+                    System.out.println("");
                 XPath xPath = dom.createXPath("//TIMEX2");
                 List<Element> timexes2 = xPath.selectNodes(dom.getRootElement());
                 if(timexes2 != null && timexes2.size() > 0)
                 {
-                    boolean first = true;
                     for(Element timexElement: timexes2)
                     {
-                        Timex2 timex2 = new Timex2(timexElement);
-
-                        try {
-                            Timex2TimeExpression timex2TimeExpression = new Timex2TimeExpression(timex2);
-                            if(first && timex2TimeExpression.getTimeExpressions().size() > 0)
-                            {
-                                refTime = timex2TimeExpression.getTimeExpressions().get(0); //The first off all timeExpressions is the REFTIME of the document
-                                first = false;
-                            }
-                            timex2TimeExpressionsList.add(timex2TimeExpression);
-                        } catch (TimeExpression.BadTimeExpression badTimeExpression)
+                        if(timexElement != refTimeTimex2)
                         {
-                            first = false;
-                            logger.error(badTimeExpression + ": val(" + timex2.getVal() + ") anchor_val(" + timex2.getAnchorVal() + ") anchor_dir(" + timex2.getAnchorDir() + ")",badTimeExpression);
+                            timex2 = new Timex2(timexElement);
+
+                            try {
+                                Timex2TimeExpression timex2TimeExpression = new Timex2TimeExpression(timex2);
+                                timex2TimeExpressionsList.add(timex2TimeExpression);
+                            } catch (TimeExpression.BadTimeExpression badTimeExpression)
+                            {
+                                logger.error(badTimeExpression + ": val(" + timex2.getVal() + ") anchor_val(" + timex2.getAnchorVal() + ") anchor_dir(" + timex2.getAnchorDir() + ")",badTimeExpression);
+                            }
                         }
                     }
                 }

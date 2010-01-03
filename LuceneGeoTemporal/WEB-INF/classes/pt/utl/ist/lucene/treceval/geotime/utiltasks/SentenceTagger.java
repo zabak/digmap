@@ -89,13 +89,17 @@ public class SentenceTagger
     static String last = "";
     public static void writeSentences(FileWriter fw, IntegratedDocPlaceMakerAndTimexIterator.DocumentWithPlacesAndTimexes document) throws IOException {
 
+        /*Log Info*/
         if(!document.getD().getDId().substring(0,16).equals(last))
             System.out.println("Doc:" + document.getD().getDId());
         last = document.getD().getDId().substring(0,16);
+
+        if(document.getD().getDId().indexOf(".0068")>0)
+            System.out.println("");
+        /**/
         DocumentPlaceMakerAndTemporalSentences documentPlaceMakerAndTemporalSentences = new DocumentPlaceMakerAndTemporalSentences(document.getD(),document.getTd(),document.getPm());
         fw.write("<DOC id=\"" + document.getD().getDId() + "\">\n");
-        String date = String.format("%04d%02d%02d",document.getD().getArticleYear(),document.getD().getArticleMonth(), document.getD().getArticleDay());
-        fw.write("<DATE_TIME>" + date + "</DATE_TIME>\n");
+        fw.write("<DATE_TIME>" + documentPlaceMakerAndTemporalSentences.getDocumentDate().getNormalizedExpression() + "</DATE_TIME>\n");
         if(document.getPm()!=null && document.getPm().getGeographicWoeid() != null || document.getPm().getAdministrativeWoeid() != null)
         {
             fw.write("<DOC_GEO_SIGNATURE>\n");
@@ -158,19 +162,9 @@ public class SentenceTagger
                     fw.write("</GEO_SIGNATURE>\n");
                 }
             }
-            if(timeExpressions != null)
+            if(timeExpressions != null && timeExpressions.size() > 0)
             {
                 fw.write("<TIME_SIGNATURE>\n");
-
-//                Map<String,TimeExpression> map = new HashMap<String,TimeExpression>();
-//                for(TimeExpression timeExpression: timeExpressions)
-//                {
-//                    TimeExpression te = map.get(timeExpression.getNormalizedExpression());
-//                    if(te == null)
-//                        map.put(timeExpression.getNormalizedExpression(), timeExpression);
-//                    else
-//                        te.incCount();
-//                }
                 for(TimeExpression timeExpression: timeExpressions)
                 {
                     fw.write("<TIME_EXPRESSION teClass=\"" + timeExpression.getTeClass().toString() + "\" type=\"" + timeExpression.getType().toString() + "\" index=\""+timeExpression.getNormalizedExpression()+"\">" + timeExpression.getRefNLTxt() + "</TIME_EXPRESSION>\n");

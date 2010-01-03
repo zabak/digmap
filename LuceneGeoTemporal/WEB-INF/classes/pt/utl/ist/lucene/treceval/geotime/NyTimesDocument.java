@@ -28,7 +28,7 @@ public class NyTimesDocument {
     int toStringHeadLineStartOffset = 0;
     int toStringHeadLineEndOffset = 0;
     int toStringDateLineStartOffSet = 0;
-    int placeMakerDateLineEndOffSet = 0;
+    int toStringDateLineEndOffSet = 0;
 
     StringBuilder sgml = new StringBuilder();
     int articleYear;
@@ -352,12 +352,12 @@ public class NyTimesDocument {
         this.toStringDateLineStartOffSet = toStringDateLineStartOffSet;
     }
 
-    public int getPlaceMakerDateLineEndOffSet() {
-        return placeMakerDateLineEndOffSet;
+    public int getToStringDateLineEndOffSet() {
+        return toStringDateLineEndOffSet;
     }
 
-    public void setPlaceMakerDateLineEndOffSet(int placeMakerDateLineEndOffSet) {
-        this.placeMakerDateLineEndOffSet = placeMakerDateLineEndOffSet;
+    public void setToStringDateLineEndOffSet(int toStringDateLineEndOffSet) {
+        this.toStringDateLineEndOffSet = toStringDateLineEndOffSet;
     }
 
     public String getDType() {
@@ -556,6 +556,11 @@ public class NyTimesDocument {
         {
             int diff = offset - toStringHeadLineStartOffset;
             return headLineStartOffset + diff;
+        }
+        else if(offset >= toStringDateLineStartOffSet && offset <= toStringDateLineEndOffSet)
+        {
+            int diff = offset - toStringDateLineStartOffSet;
+            return toStringDateLineStartOffSet + diff;
         }
         else if(dParagraphs != null && dParagraphs.size()>0)
         {

@@ -109,8 +109,6 @@ public class DocumentPlaceMakerAndTemporalSentences {
         }
         if(this.timexesDocument != null && this.timexesDocument.getTimex2TimeExpressions() != null && this.timexesDocument.getTimex2TimeExpressions().size()>0)
         {
-            if(this.document.getDId().indexOf(".0069")>0)
-                System.out.println("");
             Iterator<Timex2TimeExpression> timex2timexprsIter = this.timexesDocument.getTimex2TimeExpressions().iterator();
             
             if(timex2timexprsIter.hasNext())

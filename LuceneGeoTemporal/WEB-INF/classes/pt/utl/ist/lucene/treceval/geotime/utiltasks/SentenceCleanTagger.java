@@ -23,8 +23,7 @@ import jomm.utils.StreamsUtils;
  * @time 16:05:13
  * @email machadofisher@gmail.com
  */
-public class SentenceTagger
-{
+public class SentenceCleanTagger {
     public static void main(String [] args) throws IOException {
 
 
@@ -93,9 +92,6 @@ public class SentenceTagger
         if(!document.getD().getDId().substring(0,16).equals(last))
             System.out.println("Doc:" + document.getD().getDId());
         last = document.getD().getDId().substring(0,16);
-
-        if(document.getD().getDId().indexOf(".0068")>0)
-            System.out.println("");
         /**/
         DocumentPlaceMakerAndTemporalSentences documentPlaceMakerAndTemporalSentences = new DocumentPlaceMakerAndTemporalSentences(document.getD(),document.getTd(),document.getPm());
         fw.write("<DOC id=\"" + document.getD().getDId() + "\">\n");

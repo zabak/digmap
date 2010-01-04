@@ -4,11 +4,14 @@ import org.apache.log4j.Logger;
 import org.dom4j.DocumentException;
 import pt.utl.ist.lucene.utils.temporal.tides.TimexesIterator;
 import pt.utl.ist.lucene.utils.temporal.tides.TimexesDocument;
+import pt.utl.ist.lucene.utils.temporal.TimeExpression;
 import pt.utl.ist.lucene.utils.placemaker.PlaceMakerIterator;
 import pt.utl.ist.lucene.utils.placemaker.PlaceMakerDocument;
 import pt.utl.ist.lucene.exceptions.NotImplementedException;
 
 import java.io.IOException;
+import java.util.Map;
+import java.util.HashMap;
 
 /**
  * @author Jorge Machado
@@ -23,6 +26,8 @@ public class IntegratedDocPlaceMakerAndTimexIterator {
     String documentsPath;
     String timexesPath;
     String placeMakerPath;
+
+   
 
     DocumentIterator documentIterator;
     TimexesIterator timexesIterator;

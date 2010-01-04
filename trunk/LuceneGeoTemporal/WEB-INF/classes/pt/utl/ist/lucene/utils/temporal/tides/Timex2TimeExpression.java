@@ -20,14 +20,15 @@ public class Timex2TimeExpression
     Timex2 timex2;
     List<TimeExpression> expressions;
     private static final Logger logger = Logger.getLogger(DocumentTemporalSentences.class);
-
-
-
+    TimeExpression.TEClass teClass = TimeExpression.TEClass.Point;
 
 
     public Timex2TimeExpression(Timex2 timex2) throws TimeExpression.BadTimeExpression
     {
         this.timex2 = timex2;
+        if(timex2.getTmxclass() != null && timex2.getTmxclass().equals("genpoint"))
+            teClass = TimeExpression.TEClass.GenPoint;
+
         if(timex2.getVal()!=null && timex2.getVal().trim().length() > 0)
             expressions = getTimeExpressions(timex2.getVal(),timex2.getAnchorVal(),timex2.getAnchorDir());
 
@@ -139,16 +140,16 @@ public class Timex2TimeExpression
 
         if(Timex2ValRegExprs.YYYY_MM_DD_ANY == type)
         {
-            timeExpressions.add(new TimeExpression(timeExpr.substring(0,10).replace("-",""),timex2.getText()));
+            timeExpressions.add(new TimeExpression(timeExpr.substring(0,10).replace("-",""),timex2.getText(),teClass));
         }
         if(Timex2ValRegExprs.YYYY_MM == type)
         {
-            timeExpressions.add(new TimeExpression(timeExpr.substring(0,7).replace("-",""),timex2.getText()));
+            timeExpressions.add(new TimeExpression(timeExpr.substring(0,7).replace("-",""),timex2.getText(),teClass));
         }
         else if(Timex2ValRegExprs.YYYY_or_YYY_or_YY_or_Y == type || Timex2ValRegExprs.YYYY == type
                 || Timex2ValRegExprs.YYY == type || Timex2ValRegExprs.YY == type || Timex2ValRegExprs.Y == type)
         {
-            timeExpressions.add(new TimeExpression(timeExpr,timex2.getText()));
+            timeExpressions.add(new TimeExpression(timeExpr,timex2.getText(),teClass));
         }
         else if(Timex2ValRegExprs.YYYY_Wweek == type)
         {
@@ -165,7 +166,8 @@ public class Timex2TimeExpression
             if(internalDuration)
                 timeExpressions.add(new TimeExpression(startYear,startMonth,startDay,timex2.getText(), false, TimeExpression.TEClass.Duration)); //(This is comming from PweeksW)
             else
-                timeExpressions.add(new TimeExpression(startYear,startMonth,startDay,timex2.getText(), false, TimeExpression.TEClass.Point));//cosidering the first day of the week a point
+                timeExpressions.add(new TimeExpression(startYear,startMonth,startDay,timex2.getText(), false, teClass));//cosidering the first day of the week a point
+
             for(int i = 1; i < 7; i++)
             {
                 calendar.set(Calendar.DAY_OF_YEAR,calendar.get(Calendar.DAY_OF_YEAR) + 1);
@@ -358,6 +360,8 @@ public class Timex2TimeExpression
         });
         return timeExpressions;
     }
+
+
 
 
     public Timex2 getTimex2() {

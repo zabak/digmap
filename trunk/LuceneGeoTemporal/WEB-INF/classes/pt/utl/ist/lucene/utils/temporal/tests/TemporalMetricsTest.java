@@ -39,6 +39,10 @@ public class TemporalMetricsTest extends TestCase
             temporalMetrics = new TemporalMetrics("1990 199001 199001 199002 19900101 1988");
             assertEquals(temporalMetrics.getTemporalCentroideTimeExpression().getNormalizedExpression(),"19890724");
             assertEquals(temporalMetrics.getTemporalIntervalPointsCentroideTimeExpression().getNormalizedExpression(),"19891113");
+
+            temporalMetrics = new TemporalMetrics("1990 199001 199001 199002 19900101 1988");
+            assertEquals(temporalMetrics.getTemporalCentroideTimeExpression().getNormalizedExpression(),"19890724");
+            assertEquals(temporalMetrics.getTemporalPointsCentroideTimeExpression().getNormalizedExpression(),"19890906");
         }
         catch (TimeExpression.BadTimeExpression badTimeExpression)
         {

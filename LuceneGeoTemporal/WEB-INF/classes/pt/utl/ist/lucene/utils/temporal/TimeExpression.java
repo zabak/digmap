@@ -405,6 +405,11 @@ public class TimeExpression
         return valid;
     }
 
+    public boolean isMetric()
+    {
+        return valid && type != Type.UNKNOWN;
+    }
+
     public String getValidationError()
     {
         return validationError;

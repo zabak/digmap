@@ -3,19 +3,21 @@ package pt.utl.ist.lucene.treceval.geotime.utiltasks;
 import pt.utl.ist.lucene.treceval.geotime.IntegratedDocPlaceMakerAndTimexIterator;
 import pt.utl.ist.lucene.utils.DocumentPlaceMakerAndTemporalSentences;
 import pt.utl.ist.lucene.utils.PlaceMakerAndTemporalSentence;
-import pt.utl.ist.lucene.utils.Files;
+import pt.utl.ist.lucene.utils.XmlUtils;
 import pt.utl.ist.lucene.utils.placemaker.PlaceMakerDocument;
 import pt.utl.ist.lucene.utils.temporal.TimeExpression;
+import pt.utl.ist.lucene.utils.temporal.metrics.TemporalMetrics;
 
 import java.io.*;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
-import java.util.ArrayList;
 import java.util.zip.ZipOutputStream;
 import java.util.zip.ZipEntry;
 
 import jomm.utils.StreamsUtils;
+
+import javax.management.timer.TimerMBean;
 
 /**
  * @author Jorge Machado
@@ -27,13 +29,14 @@ public class SentenceCleanTagger {
     public static void main(String [] args) throws IOException {
 
 
-        String documentPath = "D:\\Servidores\\DATA\\ntcir\\TEMPORAL\\teste\\docs";
-        String timexesPath = "D:\\Servidores\\DATA\\ntcir\\TEMPORAL\\teste\\timexes";
+        String documentPath = "D:\\Servidores\\DATA\\ntcir\\data";
+        String timexesPath = "D:\\Servidores\\DATA\\ntcir\\TIMEXTAG";
         String placemakerPath = "D:\\Servidores\\DATA\\ntcir\\PlaceMaker";
         IntegratedDocPlaceMakerAndTimexIterator iterator = new IntegratedDocPlaceMakerAndTimexIterator(documentPath,timexesPath,placemakerPath);
 
 
-        String output = "D:\\Servidores\\DATA\\ntcir\\sentencesGeoTemporais";
+//        String output = "D:\\Servidores\\DATA\\ntcir\\sentencesGeoTemporais";
+        String output = "F:\\coleccoesIR\\ntcir\\sentencesAnotations";
         String fileId = "nyt_eng_200201";
         String filePath = output + "\\" + fileId + ".sentences.xml";
         FileWriter nowWriter = new FileWriter(filePath,false);
@@ -85,6 +88,7 @@ public class SentenceCleanTagger {
 
     }
 
+
     static String last = "";
     public static void writeSentences(FileWriter fw, IntegratedDocPlaceMakerAndTimexIterator.DocumentWithPlacesAndTimexes document) throws IOException {
 
@@ -92,42 +96,74 @@ public class SentenceCleanTagger {
         if(!document.getD().getDId().substring(0,16).equals(last))
             System.out.println("Doc:" + document.getD().getDId());
         last = document.getD().getDId().substring(0,16);
-        /**/
+         /**/
         DocumentPlaceMakerAndTemporalSentences documentPlaceMakerAndTemporalSentences = new DocumentPlaceMakerAndTemporalSentences(document.getD(),document.getTd(),document.getPm());
         fw.write("<DOC id=\"" + document.getD().getDId() + "\">\n");
-        fw.write("<DATE_TIME>" + documentPlaceMakerAndTemporalSentences.getDocumentDate().getNormalizedExpression() + "</DATE_TIME>\n");
+        fw.write("\t<DATE_TIME>" + documentPlaceMakerAndTemporalSentences.getDocumentDate().getNormalizedExpression() + "</DATE_TIME>\n");
         if(document.getPm()!=null && document.getPm().getGeographicWoeid() != null || document.getPm().getAdministrativeWoeid() != null)
         {
-            fw.write("<DOC_GEO_SIGNATURE>\n");
+            fw.write("\t<DOC_GEO_SCOPE>\n");
             if(document.getPm().getAdministrativeWoeid() != null)
             {
-                fw.write("<ADMINISTRATIVE_SCOPE woeid=\"" + document.getPm().getAdministrativeWoeid() + "\">\n");
-                fw.write("<TYPE>" + document.getPm().getAdministrativeType() + "</TYPE>\n");
-                fw.write("<SHORT>" + document.getPm().getAdministrativeShortName() + "</SHORT>\n");
-                fw.write("<NAME>" + document.getPm().getAdministrativeName() + "</NAME>\n");
-                fw.write("<CENTROIDE LAT=\"" + document.getPm().getAdministrativeCentroide().getLat() + "\" LNG=\"" + document.getPm().getAdministrativeCentroide().getLng() + "\"/>\n");
-                fw.write("</ADMINISTRATIVE_SCOPE>\n");
+                fw.write("\t\t<ADMINISTRATIVE_SCOPE woeid=\"" + document.getPm().getAdministrativeWoeid() + "\">\n");
+                fw.write("\t\t\t<TYPE>" + document.getPm().getAdministrativeType() + "</TYPE>\n");
+                fw.write("\t\t\t<SHORT>" + document.getPm().getAdministrativeShortName() + "</SHORT>\n");
+                fw.write("\t\t\t<NAME>" + document.getPm().getAdministrativeName() + "</NAME>\n");
+                fw.write("\t\t\t<CENTROIDE LAT=\"" + document.getPm().getAdministrativeCentroide().getLat() + "\" LNG=\"" + document.getPm().getAdministrativeCentroide().getLng() + "\"/>\n");
+                fw.write("\t\t</ADMINISTRATIVE_SCOPE>\n");
             }
             if(document.getPm().getGeographicWoeid() != null)
             {
-                fw.write("<GEOGRAPHIC_SCOPE woeid=\"" + document.getPm().getGeographicWoeid() + "\">\n");
-                fw.write("<TYPE>" + document.getPm().getGeographicType() + "</TYPE>\n");
-                fw.write("<SHORT>" + document.getPm().getGeographicShortName() + "</SHORT>\n");
-                fw.write("<NAME>" + document.getPm().getGeographicName() + "</NAME>\n");
-                fw.write("<CENTROIDE LAT=\"" + document.getPm().getGeographicCentroide().getLat() + "\" LNG=\"" + document.getPm().getGeographicCentroide().getLng() + "\"/>\n");
-                fw.write("<BOX LAT1=\"" + document.getPm().getBoundingBoxPoint1().getLat() + "\" LNG1=\""+ document.getPm().getBoundingBoxPoint1().getLng() +"\" LAT2=\"" + + document.getPm().getBoundingBoxPoint2().getLat() + "\" LNG2=\"" + + document.getPm().getBoundingBoxPoint2().getLng() + "\"/>\n");
-                fw.write("</GEOGRAPHIC_SCOPE>\n");
+                fw.write("\t\t<GEOGRAPHIC_SCOPE woeid=\"" + document.getPm().getGeographicWoeid() + "\">\n");
+                fw.write("\t\t\t<TYPE>" + document.getPm().getGeographicType() + "</TYPE>\n");
+                fw.write("\t\t\t<SHORT>" + document.getPm().getGeographicShortName() + "</SHORT>\n");
+                fw.write("\t\t\t<NAME>" + document.getPm().getGeographicName() + "</NAME>\n");
+                fw.write("\t\t\t<CENTROIDE LAT=\"" + document.getPm().getGeographicCentroide().getLat() + "\" LNG=\"" + document.getPm().getGeographicCentroide().getLng() + "\"/>\n");
+                fw.write("\t\t\t<BOX LAT1=\"" + document.getPm().getBoundingBoxPoint1().getLat() + "\" LNG1=\""+ document.getPm().getBoundingBoxPoint1().getLng() +"\" LAT2=\"" + + document.getPm().getBoundingBoxPoint2().getLat() + "\" LNG2=\"" + + document.getPm().getBoundingBoxPoint2().getLng() + "\"/>\n");
+                fw.write("\t\t</GEOGRAPHIC_SCOPE>\n");
             }
-            fw.write("</DOC_GEO_SIGNATURE>\n");
+            fw.write("\t</DOC_GEO_SCOPE>\n");
         }
+
+        boolean centroides = false;
+        if(document.getTd() != null)
+        {
+            List<TimeExpression> timeExpressions = document.getTd().getAllTimeExpressions();
+            if(timeExpressions != null && timeExpressions.size() > 0)
+            {
+                fw.write("\t<DOC_TEMPORAL_SCOPE timexes=\"" + document.getTd().getTimex2TimeExpressions().size() + "\" expressions=\"" + timeExpressions.size() + "\">\n");
+                for(Map.Entry<TimeExpression.TEClass,Integer> entry: document.getTd().getStats().entrySet())
+                {
+                    fw.write("\t\t<TYPE name=\"" + entry.getKey().toString() + "\">" + entry.getValue() + "</TYPE>\n");
+                }
+                List<TimeExpression> metricTimeExpressions = document.getTd().getAllMetricTimeExpressions();
+                if(metricTimeExpressions.size() > 0)
+                {
+                    try {
+                        TemporalMetrics temporalMetrics = new TemporalMetrics(metricTimeExpressions);
+                        fw.write("\t\t<CENTROIDE type=\"dAbsolute\">" + temporalMetrics.getTemporalCentroideTimeExpression().getNormalizedExpression() + "</CENTROIDE>\n");
+                        fw.write("\t\t<CENTROIDE type=\"dLimits\">" + temporalMetrics.getTemporalIntervalPointsCentroideTimeExpression().getNormalizedExpression() + "</CENTROIDE>\n");
+                        fw.write("\t\t<CENTROIDE type=\"dLeftLimit\">" + temporalMetrics.getTemporalPointsCentroideTimeExpression().getNormalizedExpression() + "</CENTROIDE>\n");
+                        fw.write("\t\t<CENTROIDE type=\"nRefs\">" + temporalMetrics.getNumberRefsCentroide() + "</CENTROIDE>\n");
+                        fw.write("\t\t<LEFT>" + document.getTd().getMin().getNormalizedExpression() + "</LEFT>\n");
+                        fw.write("\t\t<RIGHT>" + document.getTd().getMax().getNormalizedExpression() + "</RIGHT>\n");
+                    } catch (TimeExpression.BadTimeExpression badTimeExpression) {
+                        fw.write("\t\t<CENTROIDE>ERROR " + (XmlUtils.escape(badTimeExpression.toString())) + "</CENTROIDE>\n");
+                    }
+                }
+                fw.write("\t</DOC_TEMPORAL_SCOPE>\n");
+            }
+        }
+
+
 
 
         for(PlaceMakerAndTemporalSentence sentence: documentPlaceMakerAndTemporalSentences.getSentences())
         {
-            fw.write("<SENTENCE id=\"" + document.getD().getDId() + "." + sentence.getIndex() + "\">\n");
-            fw.write("<TEXT start=\"" +  sentence.getStartOffset() + "\" end=\"" + sentence.getEndOffset() + "\" >\n");
-            fw.write(sentence.getCleanedPhrase() + "\n");
-            fw.write("</TEXT>\n");
+            fw.write("\t<SENTENCE id=\"" + document.getD().getDId() + "." + sentence.getIndex() + "\">\n");
+            fw.write("\t\t<TEXT start=\"" +  sentence.getStartOffset() + "\" end=\"" + sentence.getEndOffset() + "\" >\n");
+            fw.write("\t\t"+sentence.getCleanedPhrase() + "\n");
+            fw.write("\t\t</TEXT>\n");
             List<TimeExpression> timeExpressions = sentence.getAllTimeExpressions();
 
             if(sentence.getPlaceRefs() != null)
@@ -144,30 +180,31 @@ public class SentenceCleanTagger {
                 }
                 if(mapDetails.size() > 0)
                 {
-                    fw.write("<GEO_SIGNATURE>\n");
+                    fw.write("\t\t<GEO_SIGNATURE>\n");
                     for(Map.Entry<PlaceMakerDocument.PlaceDetails,Integer> placeDetailsEntry : mapDetails.entrySet())
                     {
                         PlaceMakerDocument.PlaceDetails placeDetails = placeDetailsEntry.getKey();
-                        fw.write("<PLACE count=\"" + placeDetailsEntry.getValue() + "\" woeid=\"" + placeDetails.getWoeId() + "\" yahooConfidence=\"" + placeDetails.getConfidence() + "\">\n");
-                        fw.write("<TYPE>" + placeDetails.getType() + "</TYPE>\n");
-                        fw.write("<SHORT>" + placeDetails.getShortName() + "</SHORT>\n");
-                        fw.write("<NAME>" + placeDetails.getName() + "</NAME>\n");
-                        fw.write("<CENTROIDE LAT=\"" + placeDetails.getCentroide().getLat() + "\" LNG=\"" + placeDetails.getCentroide().getLng() + "\"/>\n");
-                        fw.write("</PLACE>\n");
+                        fw.write("\t\t\t<PLACE count=\"" + placeDetailsEntry.getValue() + "\" woeid=\"" + placeDetails.getWoeId() + "\" yahooConfidence=\"" + placeDetails.getConfidence() + "\">\n");
+                        fw.write("\t\t\t\t<TYPE>" + placeDetails.getType() + "</TYPE>\n");
+                        fw.write("\t\t\t\t<SHORT>" + placeDetails.getShortName() + "</SHORT>\n");
+                        fw.write("\t\t\t\t<NAME>" + placeDetails.getName() + "</NAME>\n");
+                        fw.write("\t\t\t\t<CENTROIDE LAT=\"" + placeDetails.getCentroide().getLat() + "\" LNG=\"" + placeDetails.getCentroide().getLng() + "\"/>\n");
+                        fw.write("\t\t\t</PLACE>\n");
                     }
-                    fw.write("</GEO_SIGNATURE>\n");
+                    fw.write("\t\t</GEO_SIGNATURE>\n");
                 }
             }
             if(timeExpressions != null && timeExpressions.size() > 0)
             {
-                fw.write("<TIME_SIGNATURE>\n");
+
+                fw.write("\t\t<TIME_SIGNATURE>\n");
                 for(TimeExpression timeExpression: timeExpressions)
                 {
-                    fw.write("<TIME_EXPRESSION teClass=\"" + timeExpression.getTeClass().toString() + "\" type=\"" + timeExpression.getType().toString() + "\" index=\""+timeExpression.getNormalizedExpression()+"\">" + timeExpression.getRefNLTxt() + "</TIME_EXPRESSION>\n");
+                    fw.write("\t\t\t<TIME_EXPRESSION valid=\"" + timeExpression.isValid() + "\" teClass=\"" + timeExpression.getTeClass().toString() + "\" type=\"" + timeExpression.getType().toString() + "\" index=\""+timeExpression.getNormalizedExpression()+"\">" + timeExpression.getRefNLTxt() + "</TIME_EXPRESSION>\n");
                 }
-                fw.write("</TIME_SIGNATURE>\n");
+                fw.write("\t\t</TIME_SIGNATURE>\n");
             }
-            fw.write("</SENTENCE>\n");
+            fw.write("\t</SENTENCE>\n");
         }
 
         fw.write("</DOC>\n");

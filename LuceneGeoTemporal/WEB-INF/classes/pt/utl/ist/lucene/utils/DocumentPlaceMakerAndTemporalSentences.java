@@ -60,7 +60,7 @@ public class DocumentPlaceMakerAndTemporalSentences {
         this.timexesDocument = timexesdocument;
         this.placeMakerDocument = placeMakerDocument;
 
-        if(timexesdocument.getRefTime() != null)
+        if(timexesdocument != null && timexesdocument.getRefTime() != null)
         {
             documentDate = timexesdocument.getRefTime();
             if(!documentDate.getNormalizedExpression().equals(String.format("%04d%02d%02d",document.getArticleYear(),document.getArticleMonth(), document.getArticleDay())))

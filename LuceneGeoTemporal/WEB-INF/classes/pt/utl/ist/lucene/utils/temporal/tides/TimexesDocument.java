@@ -7,6 +7,8 @@ import pt.utl.ist.lucene.utils.temporal.TimeExpression;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 /**
  * @author Jorge Machado
@@ -23,6 +25,10 @@ public class TimexesDocument
     String xml;
     TimeExpression refTime;
 
+    TimeExpression min = null;
+    TimeExpression max = null;
+
+    Map<TimeExpression.TEClass, Integer> stats = new HashMap<TimeExpression.TEClass, Integer>();
 
     public TimexesDocument(String timexesXml) {
 
@@ -36,18 +42,23 @@ public class TimexesDocument
 
                 XPath xPathRefTime = dom.createXPath("//reftime/TIMEX2");
                 Element refTimeTimex2 = (Element) xPathRefTime.selectSingleNode(dom.getRootElement());
-                Timex2 timex2 = new Timex2(refTimeTimex2);
-                try {
-                    refTime =  new Timex2TimeExpression(timex2).getTimeExpressions().get(0);
-                } catch (TimeExpression.BadTimeExpression badTimeExpression) {
-                    logger.error(badTimeExpression + ": val(" + timex2.getVal() + ") anchor_val(" + timex2.getAnchorVal() + ") anchor_dir(" + timex2.getAnchorDir() + ")",badTimeExpression);
+                if(refTimeTimex2 != null)
+                {
+                    Timex2 timex2 = new Timex2(refTimeTimex2);
+                    try {
+                        refTime =  new Timex2TimeExpression(timex2).getTimeExpressions().get(0);
+                    } catch (TimeExpression.BadTimeExpression badTimeExpression) {
+                        logger.error(badTimeExpression + ": val(" + timex2.getVal() + ") anchor_val(" + timex2.getAnchorVal() + ") anchor_dir(" + timex2.getAnchorDir() + ")",badTimeExpression);
+                    }
+                }
+                else
+                {
+                    refTime = null;
                 }
 
                 XPath xPathId = dom.createXPath("//doc/@id");
                 Attribute id = (Attribute) xPathId.selectSingleNode(dom);
                 this.id = id.getValue();
-                if(this.id.indexOf(".0069")>0)
-                    System.out.println("");
                 XPath xPath = dom.createXPath("//TIMEX2");
                 List<Element> timexes2 = xPath.selectNodes(dom.getRootElement());
                 if(timexes2 != null && timexes2.size() > 0)
@@ -56,12 +67,27 @@ public class TimexesDocument
                     {
                         if(timexElement != refTimeTimex2)
                         {
-                            timex2 = new Timex2(timexElement);
+
+                            Timex2 timex2 = new Timex2(timexElement);
 
                             try {
                                 Timex2TimeExpression timex2TimeExpression = new Timex2TimeExpression(timex2);
                                 timex2TimeExpressionsList.add(timex2TimeExpression);
-                            } catch (TimeExpression.BadTimeExpression badTimeExpression)
+                                for(TimeExpression t: timex2TimeExpression.getTimeExpressions())
+                                {
+                                    if(t.isMetric() && (max == null || t.getC().getTimeInMillis() > max.getC().getTimeInMillis()))
+                                        max = t;
+                                    if(t.isMetric() && (min == null || t.getC().getTimeInMillis() < min.getC().getTimeInMillis()))
+                                        min = t;
+
+                                    Integer stat = stats.get(t.getTeClass());
+                                    if(stat == null)
+                                        stats.put(t.getTeClass(),1);
+                                    else
+                                        stats.put(t.getTeClass(),stat+1);
+                                }
+                            }
+                            catch (TimeExpression.BadTimeExpression badTimeExpression)
                             {
                                 logger.error(badTimeExpression + ": val(" + timex2.getVal() + ") anchor_val(" + timex2.getAnchorVal() + ") anchor_dir(" + timex2.getAnchorDir() + ")",badTimeExpression);
                             }
@@ -77,8 +103,20 @@ public class TimexesDocument
 
     }
 
+    public TimeExpression getMin() {
+        return min;
+    }
+
+    public TimeExpression getMax() {
+        return max;
+    }
+
     public List<Timex2TimeExpression> getTimex2TimeExpressions() {
         return timex2TimeExpressionsList;
+    }
+
+    public Map<TimeExpression.TEClass, Integer> getStats() {
+        return stats;
     }
 
     public List<TimeExpression> getAllTimeExpressions()
@@ -106,6 +144,34 @@ public class TimexesDocument
             }
         }
         return invalidTimeExpressions;
+    }
+
+    public List<TimeExpression> getAllValidTimeExpressions()
+    {
+        List<TimeExpression> validTimeExpressions = new ArrayList<TimeExpression>();
+        if(timex2TimeExpressionsList != null)
+        {
+            for(TimeExpression t: getAllTimeExpressions())
+            {
+                if(t.isValid())
+                    validTimeExpressions.add(t);
+            }
+        }
+        return validTimeExpressions;
+    }
+
+    public List<TimeExpression> getAllMetricTimeExpressions()
+    {
+        List<TimeExpression> validTimeExpressions = new ArrayList<TimeExpression>();
+        if(timex2TimeExpressionsList != null)
+        {
+            for(TimeExpression t: getAllTimeExpressions())
+            {
+                if(t.isValid() && t.getType() != TimeExpression.Type.UNKNOWN)
+                    validTimeExpressions.add(t);
+            }
+        }
+        return validTimeExpressions;
     }
 
     public void setTimex2TimeExpressions(List<Timex2TimeExpression> timex2TimeExpressionsList) {

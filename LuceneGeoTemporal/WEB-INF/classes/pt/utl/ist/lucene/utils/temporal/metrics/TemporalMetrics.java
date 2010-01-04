@@ -29,6 +29,20 @@ public class TemporalMetrics
         init(expressions);
     }
 
+    /**
+     * @param expressions temporal expressions must be of the type YYYYMMDD or YYYYMM or YYYY
+     * @throws TimeExpression.BadTimeExpression on bad expression format
+     */
+    public TemporalMetrics(List<TimeExpression> expressions) throws TimeExpression.BadTimeExpression
+    {
+        String[] expressionsStr = new String[expressions.size()];
+        for(int i = 0; i < expressions.size();i++)
+        {
+            expressionsStr[i] = expressions.get(i).getNormalizedExpression();
+        }
+        init(expressionsStr);
+    }
+
     public TemporalMetrics(String expressions) throws TimeExpression.BadTimeExpression
     {
         String[] exprs = expressions.split(" ");
@@ -118,6 +132,16 @@ public class TemporalMetrics
     static final long halfYearMiliseconds = (long) ((1000d*60d*60d*24d*365d)/2d);
     static final long halfMonthMiliseconds = (long) (1000d*60d*60d*24d*15d);
 
+    /**
+     * This formula uses granularity of days to calculate the centroide
+     * For example for a year all the 365 days will be used to calculate the avarege point
+     * In the set of expressions 1990 1990-1-1  the last one will contribute to the final average
+     * with 1/366 factor
+     *
+     * centroide = (2*1990-1-1 + 1990-1-2 + 1990-1-3 .... + 1990-12-31) / 366
+     *
+     * @return the centroide
+     */
     public Date getTemporalCentroide()
     {
         if(temporalCentroide != null)
@@ -163,6 +187,11 @@ public class TemporalMetrics
     Date temporalIntervalPointsCentroide = null;
 
     /**
+     * With this formula the centroide will e calculated as the average of the limits of all timeexpressions
+     * For example in the set 1990-1-1 and 1990 1990-1-1 will contribute with 2/4 parts and the same is true for 1990
+     *
+     *  (1990-1-1 + 1990-1-1   +   1990-1-1 + 1990-12-31) / 4
+     *
      *  Example using the terms 1990  199001 199001 199002  19900101
      *
      * The formula Centroide = [For each Expression e in exprs  Sum ( e.leftLimit + e.rightLimit )] / 2*exprs.size 
@@ -187,6 +216,40 @@ public class TemporalMetrics
     public TimeExpression getTemporalIntervalPointsCentroideTimeExpression() throws TimeExpression.BadTimeExpression
     {
         Date d = getTemporalIntervalPointsCentroide();
+        DateFormat df = new SimpleDateFormat("yyyyMMdd");
+        return new TimeExpression(df.format(d));
+    }
+
+
+    /**
+     * With this formula the centroide will e calculated as the average of the left points off all timeexpressions
+     * For example in the set 1990-1-1 and 1990 1990-1-1 will contribute with 1/2 parts and the same is true for 1990
+     *
+     *  left limit for 1990 = 1990-1-1
+     *  left limit for 1990-1-1 = 1990-1-1
+     *  (1990-1-1 + 1990-1-1) / 2
+     *
+     * @return a temporal centroide
+     */
+    public Date getTemporalPointsCentroide()
+    {
+        if(temporalIntervalPointsCentroide != null)
+            return temporalIntervalPointsCentroide;
+
+        double total = 0;
+        double points = 0;
+        for(TimeExpression expression : expressions)
+        {
+            total += expression.getLeftLimit().getTimeInMillis();
+            points ++;
+        }
+        temporalIntervalPointsCentroide = new Date((long)(total / points));
+        return temporalIntervalPointsCentroide;
+    }
+
+    public TimeExpression getTemporalPointsCentroideTimeExpression() throws TimeExpression.BadTimeExpression
+    {
+        Date d = getTemporalPointsCentroide();
         DateFormat df = new SimpleDateFormat("yyyyMMdd");
         return new TimeExpression(df.format(d));
     }

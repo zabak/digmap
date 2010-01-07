@@ -78,8 +78,7 @@ public class DocumentGeoTemporalSentencesTest extends TestCase
                  "</TEXT>\n" +
                  "</DOC>";
 
-        NyTimesDocument document = new NyTimesDocument(new BufferedReader(new StringReader(doc)),"dummy.txt");
-        DocumentPlaceMakerAndTemporalSentences documentPlaceMakerAndTemporalSentences = new DocumentPlaceMakerAndTemporalSentences(document,"<doc id=\"NYT_ENG_20020101.0001\">\n" +
+        String timex2Doc = "<doc id=\"NYT_ENG_20020101.0001\">\n" +
                 "<DOC generator=\"timexdoc.py\">\n" +
                 "    <reftime rstart=\"1\" rend=\"8\" val=\"2002-01-01\">\n" +
                 "        <TIMEX2 rstart=\"1\" rend=\"8\" val=\"2002-01-01\">2002-1-1</TIMEX2>\n" +
@@ -109,8 +108,8 @@ public class DocumentGeoTemporalSentencesTest extends TestCase
                 "            rstart=\"1458\" dirclass=\"before\" parsenode=\".11 p7\" prenorm=\"|fq|_1999\">1999</TIMEX2>\n" +
                 "    </TEXT>\n" +
                 "</DOC>\n" +
-                "</doc>",
-
+                "</doc>";
+                String placeMakerDoc =
                 "<doc id=\"NYT_ENG_20020101.0001\"><contentlocation xmlns:yahoo=\"http://www.yahooapis.com/v1/base.rng\"\n" +
                         "    xmlns:xml=\"http://www.w3.org/XML/1998/namespace\"\n" +
                         "    xmlns=\"http://wherein.yahooapis.com/v1/schema\" xml:lang=\"en-EN\">\n" +
@@ -412,8 +411,10 @@ public class DocumentGeoTemporalSentencesTest extends TestCase
                         "        </gml:Box>\n" +
                         "    </document>\n" +
                         "</contentlocation>\n" +
-                        "</doc>"
-                );
+                        "</doc>";
+
+        NyTimesDocument document = new NyTimesDocument(new BufferedReader(new StringReader(doc)),"dummy.txt");
+        DocumentPlaceMakerAndTemporalSentences documentPlaceMakerAndTemporalSentences = new DocumentPlaceMakerAndTemporalSentences(document,timex2Doc,placeMakerDoc);
         System.out.println(documentPlaceMakerAndTemporalSentences);
 
 

@@ -110,7 +110,7 @@ public class DocumentPlaceMakerAndTemporalSentences {
         if(this.timexesDocument != null && this.timexesDocument.getTimex2TimeExpressions() != null && this.timexesDocument.getTimex2TimeExpressions().size()>0)
         {
             Iterator<Timex2TimeExpression> timex2timexprsIter = this.timexesDocument.getTimex2TimeExpressions().iterator();
-            
+
             if(timex2timexprsIter.hasNext())
             {
                 Timex2TimeExpression timex2TimeExpressionsList = timex2timexprsIter.next();

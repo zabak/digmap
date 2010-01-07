@@ -2,6 +2,7 @@ package org.apache.lucene.index;
 
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.InputStream;
+import org.apache.log4j.Logger;
 
 import java.io.IOException;
 
@@ -113,10 +114,12 @@ class TermVectorsReader {
     }
     else
     {
-      System.out.println("No tvx file");
+      logger.info("No tvx file for Field:" + field);
     }
     return result;
   }
+
+    private static final Logger logger = Logger.getLogger(TermVectorsReader.class);
 
 
   /** Return all term vectors stored for this document or null if the could not be read in. */
@@ -158,7 +161,7 @@ class TermVectorsReader {
     }
     else
     {
-      System.out.println("No tvx file");
+      logger.info("No tvx file");
     }
     return result;
   }
@@ -279,7 +282,7 @@ class TermVectorsReader {
         e.printStackTrace();
       }
     } else {
-      System.out.println("No tvx file");
+      logger.info("No tvx file for field number: " + fieldNumber);
     }
     return result;
   }

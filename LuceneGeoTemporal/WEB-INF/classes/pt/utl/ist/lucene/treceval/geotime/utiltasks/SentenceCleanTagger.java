@@ -35,8 +35,8 @@ public class SentenceCleanTagger {
         IntegratedDocPlaceMakerAndTimexIterator iterator = new IntegratedDocPlaceMakerAndTimexIterator(documentPath,timexesPath,placemakerPath);
 
 
-//        String output = "D:\\Servidores\\DATA\\ntcir\\sentencesGeoTemporais";
-        String output = "F:\\coleccoesIR\\ntcir\\sentencesAnotations";
+        String output = "D:\\Servidores\\DATA\\ntcir\\sentencesGeoTemporais";
+//        String output = "F:\\coleccoesIR\\ntcir\\sentencesAnotations";
         String fileId = "nyt_eng_200201";
         String filePath = output + "\\" + fileId + ".sentences.xml";
         FileWriter nowWriter = new FileWriter(filePath,false);
@@ -97,9 +97,10 @@ public class SentenceCleanTagger {
             System.out.println("Doc:" + document.getD().getDId());
         last = document.getD().getDId().substring(0,16);
          /**/
+
         DocumentPlaceMakerAndTemporalSentences documentPlaceMakerAndTemporalSentences = new DocumentPlaceMakerAndTemporalSentences(document.getD(),document.getTd(),document.getPm());
         fw.write("<DOC id=\"" + document.getD().getDId() + "\">\n");
-        fw.write("\t<DATE_TIME>" + documentPlaceMakerAndTemporalSentences.getDocumentDate().getNormalizedExpression() + "</DATE_TIME>\n");
+        fw.write("\t<DATE_TIME timex2id=\">" + documentPlaceMakerAndTemporalSentences.getDocumentDate().getNormalizedExpression() + "</DATE_TIME>\n");
         if(document.getPm()!=null && document.getPm().getGeographicWoeid() != null || document.getPm().getAdministrativeWoeid() != null)
         {
             fw.write("\t<DOC_GEO_SCOPE>\n");
@@ -125,7 +126,6 @@ public class SentenceCleanTagger {
             fw.write("\t</DOC_GEO_SCOPE>\n");
         }
 
-        boolean centroides = false;
         if(document.getTd() != null)
         {
             List<TimeExpression> timeExpressions = document.getTd().getAllTimeExpressions();
@@ -141,9 +141,9 @@ public class SentenceCleanTagger {
                 {
                     try {
                         TemporalMetrics temporalMetrics = new TemporalMetrics(metricTimeExpressions);
-                        fw.write("\t\t<CENTROIDE type=\"dAbsolute\">" + temporalMetrics.getTemporalCentroideTimeExpression().getNormalizedExpression() + "</CENTROIDE>\n");
-                        fw.write("\t\t<CENTROIDE type=\"dLimits\">" + temporalMetrics.getTemporalIntervalPointsCentroideTimeExpression().getNormalizedExpression() + "</CENTROIDE>\n");
-                        fw.write("\t\t<CENTROIDE type=\"dLeftLimit\">" + temporalMetrics.getTemporalPointsCentroideTimeExpression().getNormalizedExpression() + "</CENTROIDE>\n");
+                        fw.write("\t\t<CENTROIDE type=\"timeAbsolute\">" + temporalMetrics.getTemporalCentroideTimeExpression().getNormalizedExpression() + "</CENTROIDE>\n");
+                        fw.write("\t\t<CENTROIDE type=\"timeLimits\">" + temporalMetrics.getTemporalIntervalPointsCentroideTimeExpression().getNormalizedExpression() + "</CENTROIDE>\n");
+                        fw.write("\t\t<CENTROIDE type=\"timeLeftLimit\">" + temporalMetrics.getTemporalPointsCentroideTimeExpression().getNormalizedExpression() + "</CENTROIDE>\n");
                         fw.write("\t\t<CENTROIDE type=\"nRefs\">" + temporalMetrics.getNumberRefsCentroide() + "</CENTROIDE>\n");
                         fw.write("\t\t<LEFT>" + document.getTd().getMin().getNormalizedExpression() + "</LEFT>\n");
                         fw.write("\t\t<RIGHT>" + document.getTd().getMax().getNormalizedExpression() + "</RIGHT>\n");
@@ -165,6 +165,7 @@ public class SentenceCleanTagger {
             fw.write("\t\t"+sentence.getCleanedPhrase() + "\n");
             fw.write("\t\t</TEXT>\n");
             List<TimeExpression> timeExpressions = sentence.getAllTimeExpressions();
+
 
             if(sentence.getPlaceRefs() != null)
             {
@@ -200,7 +201,18 @@ public class SentenceCleanTagger {
                 fw.write("\t\t<TIME_SIGNATURE>\n");
                 for(TimeExpression timeExpression: timeExpressions)
                 {
-                    fw.write("\t\t\t<TIME_EXPRESSION valid=\"" + timeExpression.isValid() + "\" teClass=\"" + timeExpression.getTeClass().toString() + "\" type=\"" + timeExpression.getType().toString() + "\" index=\""+timeExpression.getNormalizedExpression()+"\">" + timeExpression.getRefNLTxt() + "</TIME_EXPRESSION>\n");
+                    String more = "";
+                    if(timeExpression.isWeekDuration())
+                        more += " week=\"true\"";
+                    if(timeExpression.getTimex2LimitType() != TimeExpression.Timex2LimitType.NONE)
+                    {
+                        more += " durationPos=\"" + timeExpression.getTimex2LimitType().name() + "\"";
+                    }
+                    if(timeExpression.getAnchor() != null)
+                    {
+                        more += " anchor=\"" + timeExpression.getAnchor().getNormalizedExpression() + "\"";    
+                    }
+                    fw.write("\t\t\t<TIME_EXPRESSION valid=\"" + timeExpression.isValid() + "\" teClass=\"" + timeExpression.getTeClass().toString() + "\" type=\"" + timeExpression.getType().toString() + "\" index=\""+timeExpression.getNormalizedExpression()+"\" timex2id=\"" + timeExpression.getTimex2id() + "\"" + more + ">" + timeExpression.getRefNLTxt() + "</TIME_EXPRESSION>\n");
                 }
                 fw.write("\t\t</TIME_SIGNATURE>\n");
             }

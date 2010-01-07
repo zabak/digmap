@@ -22,6 +22,21 @@ public class TimeExpression
     int day = -1;
     Type type = Type.UNKNOWN;
     GregorianCalendar c;
+    TimeExpression anchor = null;
+
+    long timex2id;
+
+    Timex2LimitType timex2LimitType = Timex2LimitType.NONE;
+
+    boolean weekDuration = false;
+
+    public static enum Timex2LimitType
+    {
+        NONE,
+        LEFT,
+        INSIDE,
+        RIGHT;
+    }
 
     int auxCount = 1;
 
@@ -38,9 +53,34 @@ public class TimeExpression
         return auxCount;
     }
 
+
+    public TimeExpression getAnchor() {
+        return anchor;
+    }
+
+    public void setAnchor(TimeExpression anchor) {
+        this.anchor = anchor;
+    }
+
+    public boolean isWeekDuration() {
+        return weekDuration;
+    }
+
+    public void setWeekDuration(boolean weekDuration) {
+        this.weekDuration = weekDuration;
+    }
+
     GregorianCalendar leftLimit;
     GregorianCalendar rightLimit;
 
+
+    public Timex2LimitType getTimex2LimitType() {
+        return timex2LimitType;
+    }
+
+    public void setTimex2LimitType(Timex2LimitType timex2LimitType) {
+        this.timex2LimitType = timex2LimitType;
+    }
 
     boolean valid = true;
     String validationError = null;
@@ -152,6 +192,16 @@ public class TimeExpression
             validationError = e.getMessage();
             logger.error(validationError);
         }
+    }
+
+    public long getTimex2id() {
+        return timex2id;
+    }
+
+
+
+    public void setTimex2id(long timex2id) {
+        this.timex2id = timex2id;
     }
 
     public int getNumberOfDays()

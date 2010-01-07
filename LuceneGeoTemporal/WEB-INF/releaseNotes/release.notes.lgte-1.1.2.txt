@@ -1,0 +1,26 @@
+
+
+LGTE
+
+RELEASE NOTES 1.1.2
+
+1. "no tvx" printlns removed, replaced by log4j.info
+2. OkapiBM25 optimized with static maps for field lenghts
+3. ireval.Main NullPointer Exception bug removed (See pt.utl.ist.lucene.treceval.CranfieldExample for usage, 
+   To run example first copy the WEB-INF/test-data to folder WEB-INF/build/webapp/lgte/WEB-INF/ and remove 
+   .svn folders from the final destination)
+4. CranField Collection tested with OkapiBM25 resulting in 30% MAP, which was better than LanguageModel wiuth 29.7%
+5. All Models and MultiIndexes Tests passed
+
+
+
+LGTE Features
+
+Classes to deal with TimeXTag Anotations at utils.temporal and expansion of TimePeriods defined in TIDES schema
+Classes to split text in statements at utils.nlp
+Classes to parse yahoo PlaceMaker
+Classes to generate annotation with both schemas at treceval.geotime to structure documents in sentences with GeoTemporal annotations
+
+
+See example pt.utl.ist.lucene.utils.tests.DocumentGeoTemporalSentencesTest
+And for a HighLevel iterator see pt.utl.ist.lucene.treceval.geotime.utiltasks.SentenceCleanTagger

@@ -16,7 +16,6 @@ import pt.utl.ist.lucene.treceval.handlers.collections.CDirectory;
 import pt.utl.ist.lucene.Model;
 import pt.utl.ist.lucene.QueryConfiguration;
 import pt.utl.ist.lucene.QEEnum;
-import pt.utl.ist.lucene.config.ConfigProperties;
 import pt.utl.ist.lucene.utils.LgteAnalyzerManager;
 import pt.utl.ist.lucene.analyzer.LgteBrokerStemAnalyzer;
 

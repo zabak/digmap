@@ -108,6 +108,18 @@ public class Time2TimeExpressionTest extends TestCase
             badTimeExpression.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
     }
+
+    private void assertIntervalLimits(List<TimeExpression> timeExpressions)
+    {
+        assertEquals(timeExpressions.get(0).getTimex2LimitType(), TimeExpression.Timex2LimitType.LEFT);
+        for(int i = 1; i < timeExpressions.size()-1; i++)
+        {
+            assertEquals(timeExpressions.get(i).getTimex2LimitType(), TimeExpression.Timex2LimitType.INSIDE);
+            assertNotNull(timeExpressions.get(i).getAnchor());
+        }
+        assertEquals(timeExpressions.get(timeExpressions.size()-1).getTimex2LimitType(), TimeExpression.Timex2LimitType.RIGHT);
+    }
+
     public void testMappingWeeksOfYear()
     {
         Timex2 t = new Timex2("2010-W1");
@@ -120,6 +132,8 @@ public class Time2TimeExpressionTest extends TestCase
             assertEquals(mapping.getTimeExpressions().get(4).getNormalizedExpression(),"20100101");
             assertEquals(mapping.getTimeExpressions().get(5).getNormalizedExpression(),"20100102");
             assertEquals(mapping.getTimeExpressions().get(6).getNormalizedExpression(),"20100103");
+            assertIntervalLimits( mapping.getTimeExpressions() );
+
 
         } catch (TimeExpression.BadTimeExpression badTimeExpression) {
             fail(badTimeExpression.toString());
@@ -136,7 +150,7 @@ public class Time2TimeExpressionTest extends TestCase
             assertEquals(mapping.getTimeExpressions().get(4).getNormalizedExpression(),"20100101");
             assertEquals(mapping.getTimeExpressions().get(5).getNormalizedExpression(),"20100102");
             assertEquals(mapping.getTimeExpressions().get(6).getNormalizedExpression(),"20100103");
-
+            assertIntervalLimits( mapping.getTimeExpressions() );
         } catch (TimeExpression.BadTimeExpression badTimeExpression) {
             fail(badTimeExpression.toString());
             badTimeExpression.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -152,7 +166,7 @@ public class Time2TimeExpressionTest extends TestCase
             assertEquals(mapping.getTimeExpressions().get(4).getNormalizedExpression(),"20091218");
             assertEquals(mapping.getTimeExpressions().get(5).getNormalizedExpression(),"20091219");
             assertEquals(mapping.getTimeExpressions().get(6).getNormalizedExpression(),"20091220");
-
+            assertIntervalLimits( mapping.getTimeExpressions() );
         } catch (TimeExpression.BadTimeExpression badTimeExpression) {
             fail(badTimeExpression.toString());
             badTimeExpression.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -182,25 +196,30 @@ public class Time2TimeExpressionTest extends TestCase
 
             assertEquals(t2wStartingTimex2TimeExpression.getTimeExpressions().get(0).getNormalizedExpression(),"20091228");
             assertEquals(t2wStartingTimex2TimeExpression.getTimeExpressions().get(20).getNormalizedExpression(),"20100117");    //14 + 7 of the start week
+            assertIntervalLimits( t2wStartingTimex2TimeExpression.getTimeExpressions() );
 
             assertEquals(t2dStartingTimex2TimeExpression.getTimeExpressions().get(0).getNormalizedExpression(),"20091230");
             assertEquals(t2dStartingTimex2TimeExpression.getTimeExpressions().get(1).getNormalizedExpression(),"20091231");
             assertEquals(t2dStartingTimex2TimeExpression.getTimeExpressions().get(2).getNormalizedExpression(),"20100101");
+            assertIntervalLimits( t2dStartingTimex2TimeExpression.getTimeExpressions() );
 
             assertEquals(t2mStartingTimex2TimeExpression.getTimeExpressions().get(0).getNormalizedExpression(),"200912");
             assertEquals(t2mStartingTimex2TimeExpression.getTimeExpressions().get(1).getNormalizedExpression(),"201001");
             assertEquals(t2mStartingTimex2TimeExpression.getTimeExpressions().get(2).getNormalizedExpression(),"201002");
+            assertIntervalLimits( t2mStartingTimex2TimeExpression.getTimeExpressions() );
 
             assertEquals(t2yStartingTimex2TimeExpression.getTimeExpressions().get(0).getNormalizedExpression(),"2009");
             assertEquals(t2yStartingTimex2TimeExpression.getTimeExpressions().get(1).getNormalizedExpression(),"2010");
             assertEquals(t2yStartingTimex2TimeExpression.getTimeExpressions().get(2).getNormalizedExpression(),"2011");
+            assertIntervalLimits( t2yStartingTimex2TimeExpression.getTimeExpressions() );
 
             assertEquals(t40dStartingTimex2TimeExpression.getTimeExpressions().get(0).getNormalizedExpression(),"20091230");
             assertEquals(t40dStartingTimex2TimeExpression.getTimeExpressions().get(40).getNormalizedExpression(),"20100208"); //40 plus the start day
+            assertIntervalLimits( t40dStartingTimex2TimeExpression.getTimeExpressions() );
 
             assertEquals(t20mStartingTimex2TimeExpression.getTimeExpressions().get(0).getNormalizedExpression(),"200912");
             assertEquals(t20mStartingTimex2TimeExpression.getTimeExpressions().get(20).getNormalizedExpression(),"201108"); //20 plus the start month
-
+            assertIntervalLimits( t20mStartingTimex2TimeExpression.getTimeExpressions() );
 
         }
         catch (TimeExpression.BadTimeExpression badTimeExpression)

@@ -77,6 +77,11 @@ public class Timex2
     private Timex2ValRegExprs type = null;
     private Timex2ValRegExprs typeAnchorVal = null;
 
+    static long timex2idCounter = 0;
+
+    private long timex2Id = ++timex2idCounter;
+    
+
 
     public Timex2(String val, String anchorVal)
     {
@@ -143,6 +148,10 @@ public class Timex2
         typeAnchorVal = Timex2ValRegExprs.getType(this.anchorVal);
     }
 
+
+    public long getTimex2Id() {
+        return timex2Id;
+    }
 
     public Timex2ValRegExprs getType() {
         return type;

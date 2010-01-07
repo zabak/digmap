@@ -95,19 +95,19 @@ final class TermScorerDFR extends Scorer  {
         return true;
     }
 
-    double tokenNumber = -1;
-    double totalFreqs ;
-    double avgLen;
-    double collSize;
-    double numDocs;
-    Map<String,Double> avgLenFields;
+    static double tokenNumber = -1;
+    static double totalFreqs ;
+    static double avgLen;
+    static double collSize;
+    static double numDocs;
+    static Map<String,Double> avgLenFields;
 
 
 
     
     public void initCollectionDetails(LanguageModelIndexReader indexReader) throws IOException
     {
-        System.out.println("Calling initCollection Details");
+//        System.out.println("Calling initCollection Details");
         if(tokenNumber < 0)
         {
             numDocs = indexReader.maxDoc();
@@ -128,12 +128,12 @@ final class TermScorerDFR extends Scorer  {
 
         if (useFieldLengths)
         {
-            System.out.println("Using Fields useFieldLengths = true");
+//            System.out.println("Using Fields useFieldLengths = true");
             docLen = indexReader.getFieldLength(doc, term.field());
             avgDocLen = avgLenFields.get(term.field());
             if(avgDocLen == null)
             {
-                System.out.println("Inicializando o AVG Doc Len");
+//                System.out.println("Inicializando o AVG Doc Len");
                 avgDocLen = (((double)indexReader.getCollectionTokenNumber(term.field()))+1.0) / numDocs;
                 avgLenFields.put(term.field(),avgDocLen);
             }
@@ -188,11 +188,11 @@ final class TermScorerDFR extends Scorer  {
                                         ( tfDoc + k1*(1.0 - b + b*(docLen/avgDocLen)))
                         );
 
-                System.out.println("doc-Id");
-                System.out.println("Doc-Len:" + docLen);
-                System.out.println("Avg-Doc-Len:" + avgDocLen);
-                System.out.println("docFreq:" + docFreq);
-                System.out.println("tfDoc:" + tfDoc);
+//                System.out.println("doc-Id");
+//                System.out.println("Doc-Len:" + docLen);
+//                System.out.println("Avg-Doc-Len:" + avgDocLen);
+//                System.out.println("docFreq:" + docFreq);
+//                System.out.println("tfDoc:" + tfDoc);
                 break;
             }
             case BM25b:

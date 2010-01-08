@@ -20,7 +20,7 @@ public class ModelManager
         return instance;
     }
 
-    private static long THREAD_TIMEOUT = 10000;
+    private static long THREAD_TIMEOUT = 600000;
 
     private long lastCheck = 0;
 

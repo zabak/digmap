@@ -26,16 +26,20 @@ import javax.management.timer.TimerMBean;
  * @email machadofisher@gmail.com
  */
 public class SentenceCleanTagger {
+
+    public static String output = "D:\\Servidores\\DATA\\ntcir\\sentencesGeoTemporais";
+    static String documentPath = "D:\\Servidores\\DATA\\ntcir\\data";
+    static String timexesPath = "D:\\Servidores\\DATA\\ntcir\\TIMEXTAG";
+    static String placemakerPath = "D:\\Servidores\\DATA\\ntcir\\PlaceMaker";
+
     public static void main(String [] args) throws IOException {
 
 
-        String documentPath = "D:\\Servidores\\DATA\\ntcir\\data";
-        String timexesPath = "D:\\Servidores\\DATA\\ntcir\\TIMEXTAG";
-        String placemakerPath = "D:\\Servidores\\DATA\\ntcir\\PlaceMaker";
+
         IntegratedDocPlaceMakerAndTimexIterator iterator = new IntegratedDocPlaceMakerAndTimexIterator(documentPath,timexesPath,placemakerPath);
 
 
-        String output = "D:\\Servidores\\DATA\\ntcir\\sentencesGeoTemporais";
+
 //        String output = "F:\\coleccoesIR\\ntcir\\sentencesAnotations";
         String fileId = "nyt_eng_200201";
         String filePath = output + "\\" + fileId + ".sentences.xml";
@@ -100,7 +104,7 @@ public class SentenceCleanTagger {
 
         DocumentPlaceMakerAndTemporalSentences documentPlaceMakerAndTemporalSentences = new DocumentPlaceMakerAndTemporalSentences(document.getD(),document.getTd(),document.getPm());
         fw.write("<DOC id=\"" + document.getD().getDId() + "\">\n");
-        fw.write("\t<DATE_TIME timex2id=\">" + documentPlaceMakerAndTemporalSentences.getDocumentDate().getNormalizedExpression() + "</DATE_TIME>\n");
+        fw.write("\t<DATE_TIME>" + documentPlaceMakerAndTemporalSentences.getDocumentDate().getNormalizedExpression() + "</DATE_TIME>\n");
         if(document.getPm()!=null && document.getPm().getGeographicWoeid() != null || document.getPm().getAdministrativeWoeid() != null)
         {
             fw.write("\t<DOC_GEO_SCOPE>\n");

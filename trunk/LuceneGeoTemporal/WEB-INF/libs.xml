@@ -41,6 +41,13 @@
         <stop url="${url}" username="${username}" password="${password}" path="${path}" />
     </target>
 
+    <target name="deployContext" depends="">
+        <echo message="${url} file://${basedir}/build/lgte_war_context.xml"/>
+        <install url="${url}" path="/lgte"
+                        config="file://${basedir}/build/lgte_war_context.xml"
+                        username="${username}" password="${password}" />
+    </target>
+
 
     <target name="javadoc">
         <javadoc destdir="${webapp.path}/WEB-INF/javadoc">

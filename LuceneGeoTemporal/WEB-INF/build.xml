@@ -58,17 +58,55 @@
         </javac>
     </target>
 
-    <target name="prepareWar" depends="compile">
-        <copy todir="${webapp.path}">
-            <fileset dir="${webapp}">
-                <exclude name="${base.dir}/build" />
-                <exclude name="${base.dir}/lib/servlet-api.jar" />
-                <exclude name="${base.dir}/lib/jsp-api.jar" />
+    <target name="prepareWarWithTestData">
+        <mkdir dir="${webapp.path}/WEB-INF"/>
+        <mkdir dir="${webapp.path}/WEB-INF/test-data"/>
+        <mkdir dir="${webapp.path}/WEB-INF/test-index"/>
+        <antcall target="prepareWar"/>
+        <copy todir="${webapp.path}/WEB-INF/test-data">
+            <fileset dir="${base.dir}/test-data">
+                <exclude name="**/*.*" />
             </fileset>
         </copy>
-        <jasper2 validateXml="false" uriroot="${webapp.path}" webXmlFragment="${webapp.path}/WEB-INF/generated_web.xml" addWebXmlMappings="true" outputDir="${webapp.path}/WEB-INF/classes" />
-        <mkdir dir="${webapp.path}/WEB-INF/lib" />
-        <mkdir dir="${webapp.path}/WEB-INF/classes" />
+        <copy todir="${webapp.path}/WEB-INF/test-index">
+            <fileset dir="${base.dir}/test-index">
+                <exclude name="**/*.*" />
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="prepareWar" depends="compile">
+        <mkdir dir="${webapp.path}/WEB-INF"/>
+
+        <mkdir dir="${webapp.path}/WEB-INF/classes"/>
+        <mkdir dir="${webapp.path}/WEB-INF/lib"/>
+        <copy todir="${webapp.path}/WEB-INF/classes">
+            <fileset dir="${base.dir}/classes">
+                <include name="**/*" />
+            </fileset>
+        </copy>
+        <copy todir="${webapp.path}/WEB-INF/lib">
+            <fileset dir="${base.dir}/lib">
+                <include name="*.jar" />
+                <exclude name="${base.dir}/lib/servlet-api.jar" />
+                <exclude name="${base.dir}/lib/jsp-api.jar" />
+                <exclude name="${base.dir}/lib/jasper*" />
+            </fileset>
+        </copy>
+        <copy todir="${webapp.path}/WEB-INF">
+            <fileset dir="${base.dir}">
+                <include name="*.xml" />
+            </fileset>
+        </copy>
+        <copy todir="${webapp.path}">
+            <fileset dir="${webapp}">
+                <include name="*.jsp" />
+            </fileset>
+        </copy>
+
+
+        <!--<jasper2 validateXml="false" uriroot="${webapp.path}" webXmlFragment="${webapp.path}/WEB-INF/generated_web.xml" addWebXmlMappings="true" outputDir="${webapp.path}/WEB-INF/classes" />-->
+
         <javac destdir="${webapp.path}/WEB-INF/classes" optimize="off" debug="true" debuglevel="lines,vars,source" nowarn="true" deprecation="${compile.deprecation}" failonerror="false" srcdir="${webapp.path}/WEB-INF/classes" encoding="UTF-8" excludes="**/*.smap">
             <classpath>
                 <fileset dir="${base.dir}/lib">
@@ -85,6 +123,8 @@
         </javac>
         <delete file="${webapp.path}/WEB-INF/lib/servlet-api.jar" />
         <delete file="${webapp.path}/WEB-INF/lib/jsp-api.jar" />
+        <delete file="${webapp.path}/WEB-INF/lib/jasper-runtime.jar" />
+        <delete file="${webapp.path}/WEB-INF/lib/jasper-compiler.jar" />
     </target>
 
     <target name="war" description="Compile web application">

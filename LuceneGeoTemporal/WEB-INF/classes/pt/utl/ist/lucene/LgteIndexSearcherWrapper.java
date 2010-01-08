@@ -33,6 +33,8 @@ public class LgteIndexSearcherWrapper
 
     Model defaultModel = Model.parse(ConfigProperties.getProperty("lucene.model"));
 
+    Model model = Model.parse(ConfigProperties.getProperty("lucene.model"));
+
     LuceneVersion luceneVersion = LuceneVersionFactory.getLuceneVersion();
 
     private static final Logger logger = Logger.getLogger(LgteIndexSearcherWrapper.class);

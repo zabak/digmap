@@ -1,18 +1,11 @@
 package pt.utl.ist.lucene.analyzer;
 
 import org.apache.log4j.Logger;
-import org.apache.lucene.analysis.*;
-import org.apache.lucene.analysis.standard.StandardTokenizer;
-import org.apache.lucene.analysis.standard.StandardFilter;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.analysis.de.WordlistLoader;
+import org.apache.lucene.analysis.TokenStream;
+import org.apache.lucene.analysis.WhitespaceTokenizer;
 
 import java.io.IOException;
-import java.io.File;
 import java.io.Reader;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.Hashtable;
 
 /**
  * LgteAnalyzer for brazilian language. Supports an external list of stopwords (words that

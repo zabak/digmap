@@ -1,0 +1,10 @@
+<Context path="/lgte" docBase="D:\Servidores\workspace\lgte\WEB-INF\build\webapp\lgte\WEB-INF\build\webapp\lgte\"
+         debug="0">
+    <!-- Link to the user database we will get roles from -->
+    <ResourceLink name="users" global="UserDatabase"
+                  type="org.apache.catalina.UserDatabase"/>
+
+    <Logger className="org.apache.catalina.logger.FileLogger"
+            prefix="lgte_log." suffix=".txt"
+            timestamp="true"/>
+</Context>

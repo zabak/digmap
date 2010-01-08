@@ -30,7 +30,7 @@ import org.apache.lucene.analysis.Analyzer;
 public class IndexGeoTime
 {
 
-
+    public static String indexPath =  "D:\\Servidores\\DATA\\INDEXES\\TEXT_TEMP_GEO_INDEXED";
 
     static final String TEMPORAL_INDEXED = "TEMPORAL_INDEXED";
     static final String GEO_INDEXED = "GEO_INDEXED";
@@ -55,7 +55,7 @@ public class IndexGeoTime
         LgteBrokerStemAnalyzer analyzer = new LgteBrokerStemAnalyzer(anaMap);
 
 //        LgteIndexWriter writer = new LgteIndexWriter("F:\\INDEXES\\lmstem\\version1\\NTCIR",analyzer, true, Model.BM25b);
-        LgteIndexWriter writer = new LgteIndexWriter("D:\\Servidores\\DATA\\INDEXES\\TEXT_TEMP_GEO_INDEXED",analyzer, true, Model.BM25b);
+        LgteIndexWriter writer = new LgteIndexWriter(indexPath,analyzer, true, Model.BM25b);
         int i = 1;
         while((d = iterator.next())!=null)
         {
@@ -79,14 +79,31 @@ public class IndexGeoTime
         LgteDocumentWrapper doc = new LgteDocumentWrapper();
         doc.indexString(Globals.DOCUMENT_ID_FIELD,d.getD().getDId());
 
-        String text =  d.toString();
+        String text =  d.getD().toString();
         List<Sentence> sentences = SentenceSpliter.split(d.getD().getSgmlWithoutTags(), Sentence.class);
 
         try{
-            String textIndex = d.getD().getDHeadline() + " " + sentences.get(0).getPhrase() + " " + sentences.get(1).getPhrase() + " " + text;
-            doc.indexText(Globals.LUCENE_DEFAULT_FIELD,textIndex);
+            StringBuilder textIndexBuilder = new StringBuilder();
+            if(d.getD().getDHeadline() != null)
+                textIndexBuilder.append(d.getD().getDHeadline()).append(" ");
+            else
+                System.out.println( d.getD().getDId() + " don't have HeadLine ");
+            if(sentences.size() > 0)
+                textIndexBuilder.append(sentences.get(0).getPhrase()).append(" ");
+            else
+                System.out.println( d.getD().getDId() + " don't have sentences ");
+            if(sentences.size() > 1)
+                textIndexBuilder.append(sentences.get(1).getPhrase()).append(" ");
+            else
+                System.out.println( d.getD().getDId() + " only have one sentence ");
+            if(text != null)
+                textIndexBuilder.append(text);
+
+
+            doc.indexText(Globals.LUCENE_DEFAULT_FIELD,textIndexBuilder.toString());
         }catch(Throwable e){
-            System.out.println("Error:" + d.getD().getDId());
+            System.out.println("Error:" + d.getD().getDId() + " : " + e.toString());
+            e.printStackTrace();
         }
 
         if(d.hasTimexes())

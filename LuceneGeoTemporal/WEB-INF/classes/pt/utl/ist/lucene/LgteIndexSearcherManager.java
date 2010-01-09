@@ -297,7 +297,7 @@ public class LgteIndexSearcherManager
         //todo with previous results.
         //todo It is necessary to understand wha is DataCacher of IPLS and be sure
         //todo that this clear will not afect performance
-        DataCacher.Instance().clear();
+//        DataCacher.Instance().clear();
         if (DataCacher.Instance().get("LM-beta") == null)
             if(modelProperties == null || modelProperties.get("LM-beta") == null)
                 DataCacher.Instance().put("LM-beta", ConfigProperties.getProperty("LM-beta"));

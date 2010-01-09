@@ -37,7 +37,7 @@ public class IndexGeoTime
 
     public static void main(String[] args) throws IOException
     {
-//        String path = "F:\\coleccoesIR\\ntcir\\data";
+        String path = "F:\\coleccoesIR\\ntcir\\data";
         String documentPath = "D:\\Servidores\\DATA\\ntcir\\data";
         String timexesPath = "D:\\Servidores\\DATA\\ntcir\\TIMEXTAG";
         String placemakerPath = "D:\\Servidores\\DATA\\ntcir\\PlaceMaker";
@@ -54,18 +54,19 @@ public class IndexGeoTime
 
         LgteBrokerStemAnalyzer analyzer = new LgteBrokerStemAnalyzer(anaMap);
 
-//        LgteIndexWriter writer = new LgteIndexWriter("F:\\INDEXES\\lmstem\\version1\\NTCIR",analyzer, true, Model.BM25b);
-        LgteIndexWriter writer = new LgteIndexWriter(indexPath,analyzer, true, Model.BM25b);
+        LgteIndexWriter writer = new LgteIndexWriter("F:\\INDEXES\\lmstem\\version1\\NTCIR",analyzer, true, Model.BM25b);
+
+        
         int i = 1;
         while((d = iterator.next())!=null)
         {
-            
+
             indexDocument(writer,d);
             i++ ;
 
             if(i % 1000 == 0)
             {
-                
+
                 System.out.println(i + ":" + d.getD().getDId());
             }
 

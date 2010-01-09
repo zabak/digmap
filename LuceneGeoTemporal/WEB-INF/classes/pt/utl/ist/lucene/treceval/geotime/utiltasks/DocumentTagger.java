@@ -62,7 +62,7 @@ public class DocumentTagger
         int ok = 0;
         int fail = 0;
         String startId = null;
-        if(mode.equals("PlaceMaker") && args.length > 2)
+        if(mode.equals("placemaker") && args.length > 2)
             startId = args[2];
         else if(mode.equals("timextag") && args.length > 3)
             startId = args[3];
@@ -126,8 +126,12 @@ public class DocumentTagger
                 try {
 
                     org.w3c.dom.Document dxml = null;
-                    if(mode.equals("PlaceMaker"))
-                        dxml = CallWebServices.callServices(d.toString().replace("&AMP;","&amp;"),d.getDHeadline(),d.getArticleYear(),d.getArticleMonth(), d.getArticleDay(),d.getFSourceFile(),d.getDId());
+                    if(mode.equals("placemaker"))
+                    {   //TimeXtag first remove TAGS to SGML to anotate the document and Offsets come relative to text without SGML tags
+                        //to have the same offsets
+                        String text = d.getSgmlWithoutTags();
+                        dxml = CallWebServices.callServices(text.replace("&AMP;","&amp;"),d.getDHeadline(),d.getArticleYear(),d.getArticleMonth(), d.getArticleDay(),d.getFSourceFile(),d.getDId());
+                    }
                     else if(mode.equals("timextag"))
                     {
                         String url = args[2];

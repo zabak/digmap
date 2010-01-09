@@ -7,15 +7,11 @@ import org.apache.lucene.search.DefaultSimilarity;
 import org.apache.lucene.search.IndexSearcherLanguageModel;
 import org.apache.lucene.search.LangModelSimilarity;
 import org.apache.lucene.store.Directory;
-import org.apache.lucene.document.Document;
 import pt.utl.ist.lucene.analyzer.LgteAnalyzer;
 import pt.utl.ist.lucene.versioning.LuceneVersionFactory;
 import pt.utl.ist.lucene.versioning.LuceneVersion;
-import pt.utl.ist.lucene.context.Context;
 
 import java.io.*;
-import java.util.List;
-import java.util.ArrayList;
 
 /**
  * @author Jorge Machado
@@ -34,7 +30,7 @@ public class LgteIndexWriter extends IndexWriter
     private Directory directory = null;
     private File file = null;
     private Model model = Model.defaultModel;
-    private boolean storeTermVectors = false;
+    private boolean storeProbabilisticCaches = false;
 
     public LgteIndexWriter(String s, Analyzer analyzer, boolean b)
             throws IOException
@@ -116,7 +112,7 @@ public class LgteIndexWriter extends IndexWriter
         else if (model.isProbabilistcModel())
         {
             System.setProperty("RetrievalModel", model.getName());
-            storeTermVectors = true;
+            storeProbabilisticCaches = true;
             setSimilarity(new LangModelSimilarity());
         }
         else
@@ -146,7 +142,7 @@ public class LgteIndexWriter extends IndexWriter
         super.close();
         optimizeOpeningNewIndex();
 
-        if (storeTermVectors)
+        if (storeProbabilisticCaches)
         {
             // store some cached data
             IndexSearcherLanguageModel searcher = new IndexSearcherLanguageModel(getIndexPath());
@@ -179,6 +175,7 @@ public class LgteIndexWriter extends IndexWriter
         fileOutput.close();
         outFile.close();
         reader.close();
+        
     }
 
 

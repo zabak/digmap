@@ -2,8 +2,7 @@ package pt.utl.ist.lucene;
 
 import pt.utl.ist.lucene.config.ConfigProperties;
 
-import java.util.Properties;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
@@ -21,6 +20,9 @@ public class QueryConfiguration
     private Properties queryProperties = null;
     private QEEnum forceQE = QEEnum.defaultQE;
     private Analyzer analyzer;
+
+    static int cacheSize = 32;
+    private Object[] cache = new Object[32];
 
 
     public QueryConfiguration()
@@ -208,4 +210,26 @@ public class QueryConfiguration
         }
         return ConfigProperties.getPlugin(pluginStr);
     }
+
+
+    public void addCacheObject(Object o, int index)
+    {
+        if(cache == null)
+            cache = new Object[cacheSize];
+        cache[index] = o;
+    }
+
+    public Object getCacheObject(int index)
+    {
+        if(cache == null)
+            return null;
+       return cache[index];
+    }
+
+    public int getCacheSize()
+    {
+        return cacheSize;
+    }
+
+
 }

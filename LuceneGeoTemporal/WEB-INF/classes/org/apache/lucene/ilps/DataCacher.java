@@ -1,5 +1,7 @@
 package org.apache.lucene.ilps;
 
+import pt.utl.ist.lucene.config.ConfigProperties;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -11,6 +13,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
+
+import org.apache.log4j.Logger;
 //import java.util.StringTokenizer;
 //import java.util.Vector;
 
@@ -100,24 +104,34 @@ public class DataCacher {
 				if (files != null) {
 					for (int i = 0; i < files.length; i++) {
 						if (files[i].indexOf(".cache") != -1)
-							loadFromFile(directory + "/" + files[i]);
-					}
+                        {
+                            if(ConfigProperties.getBooleanProperty("cache.use." + files[i]))
+                                loadFromFile(directory + "/" + files[i]);
+                        }
+                    }
 				}
 			}
 		}
 	}
 
-	public void loadFromFile(String fileName) {
+    private static final Logger logger = Logger.getLogger(DataCacher.class);
+    public void loadFromFile(String fileName) {
 		BufferedReader input = null;
 		String line = "";
 		String table = fileName;
-		table = table.substring(table.lastIndexOf("/") + 1);
-		table = table.substring(0, table.indexOf("."));
+        File file = new File(fileName);
+//        table = table.substring(table.lastIndexOf("/") + 1);
+		table = file.getName().substring(0, file.getName().indexOf("."));
 		try {
 			input = new BufferedReader(new FileReader(fileName));
 
 			int fileLength = getNumLines(fileName) + 1;
-			createCache(table, fileLength);                                    
+            if(caches.get(table) != null)
+            {
+                logger.info("Cache: " + table + ".cache already exist in other index, will ignore this one - Opening index " + fileName);
+                return;
+            }
+            createCache(table, fileLength);
 
 			int k = -1;
 			String key = null;

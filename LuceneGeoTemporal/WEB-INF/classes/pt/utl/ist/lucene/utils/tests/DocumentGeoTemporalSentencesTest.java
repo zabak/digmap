@@ -417,6 +417,7 @@ public class DocumentGeoTemporalSentencesTest extends TestCase
         DocumentPlaceMakerAndTemporalSentences documentPlaceMakerAndTemporalSentences = new DocumentPlaceMakerAndTemporalSentences(document,timex2Doc,placeMakerDoc);
         System.out.println(documentPlaceMakerAndTemporalSentences);
 
+        System.out.println(document.getSgmlWithoutTags().substring(925,938));
 
     }
 }

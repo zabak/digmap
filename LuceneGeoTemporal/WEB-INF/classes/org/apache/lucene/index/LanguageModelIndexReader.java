@@ -258,12 +258,25 @@ public class LanguageModelIndexReader extends IndexReader {
      */
     public int getCollectionTokenNumber(String field) throws IOException {
 
-        int collSize = 0;
-        for (int doc = 0; doc < in.maxDoc(); ++doc) {
-            collSize += in.getFieldLength(doc, field);
+        Object collSizeTotalObj = DataCacher.Instance().get(collSizeString + "-" + field);
+        if (collSizeTotalObj != null) {
+            return ((Integer) DataCacher.Instance().get(collSizeString + "-" + field))
+                    .intValue();
         }
-        return collSize;
+        else
+        {
+            int collSize = 0;
+            for (int doc = 0; doc < in.maxDoc(); ++doc) {
+                collSize += in.getFieldLength(doc, field);
+            }
+            DataCacher.Instance().put(
+                        collSizeString + "-" + field,
+                        new Integer(collSize));
+            return collSize;
+        }
     }
+
+
 
     /**
      * @return Number of tokens in collection (tokens = occurances of terms)
@@ -352,8 +365,14 @@ public class LanguageModelIndexReader extends IndexReader {
      */
     public void storeExtendedData(String directory) {
         // request information to make the DataCacher store it, then dump
+
         try {
             int totalDocFreqs = getTotalDocFreqs();
+            Collection<String> fields = getFieldNames(true);
+            for(String field: fields)
+            {
+                int totalFreqs = getCollectionTokenNumber(field);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -62,11 +62,18 @@
              <hr>
     <%
             try {
-                LgteIndexSearcherWrapper searcher = new LgteIndexSearcherWrapper(Model.OkapiBM25Model, IndexGeoTime.indexPath);
+                LgteIndexSearcherWrapper searcher = new LgteIndexSearcherWrapper(Model.LanguageModelHiemstra, IndexGeoTime.indexPath);
                 Analyzer analyzer = IndexCollections.en.getAnalyzerWithStemming();
 //                LgteQuery query = LgteQueryParser.parseQuery(request.getParameter("q"), analyzer);
                 System.out.println("Searching for: " + request.getParameter("q"));
-                LgteHits hits = searcher.search(request.getParameter("q"), analyzer);
+                QueryConfiguration queryConfiguration = new QueryConfiguration();
+                queryConfiguration.getQueryProperties().put("bm25.k1","1.2d");
+                queryConfiguration.getQueryProperties().put("bm25.b","0.75d");
+                queryConfiguration.getQueryProperties().put("bm25.k3","0.75d");
+                LgteQuery query = LgteQueryParser.parseQuery(request.getParameter("q"),searcher,analyzer, queryConfiguration);
+                LgteHits hits = searcher.search(query);
+                
+//                LgteHits hits = searcher.search(request.getParameter("q"),analyzer);
 
 
                 out.println("<h3>Number of matching documents = " + hits.length() + "</h3>");

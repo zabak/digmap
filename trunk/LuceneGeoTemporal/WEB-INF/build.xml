@@ -65,12 +65,12 @@
         <antcall target="prepareWar"/>
         <copy todir="${webapp.path}/WEB-INF/test-data">
             <fileset dir="${base.dir}/test-data">
-                <exclude name="**/*.*" />
+                <include name="**/*" />
             </fileset>
         </copy>
         <copy todir="${webapp.path}/WEB-INF/test-index">
             <fileset dir="${base.dir}/test-index">
-                <exclude name="**/*.*" />
+                <include name="**/*" />
             </fileset>
         </copy>
     </target>

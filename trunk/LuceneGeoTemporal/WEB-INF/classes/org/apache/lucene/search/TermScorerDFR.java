@@ -470,11 +470,18 @@ final class TermScorerDFR extends Scorer  {
 
     public static void main(String [] args) throws IOException, ParseException {
         long time = System.currentTimeMillis();
-        LgteIndexSearcherWrapper searcher = new LgteIndexSearcherWrapper(Model.OkapiBM25Model, IndexGeoTime.indexPath);
+        LgteIndexSearcherWrapper searcher = new LgteIndexSearcherWrapper(Model.LanguageModelHiemstra, IndexGeoTime.indexPath);
         Analyzer analyzer = IndexCollections.en.getAnalyzerWithStemming();
 //                LgteQuery query = LgteQueryParser.parseQuery(request.getParameter("q"), analyzer);
 //        System.out.println("Searching for: " + request.getParameter("q"));
-        LgteHits hits = searcher.search("final flight of concorde", analyzer);
+
+        QueryConfiguration queryConfiguration = new QueryConfiguration();
+        queryConfiguration.getQueryProperties().put("bm25.k1","40");
+        queryConfiguration.getQueryProperties().put("bm25.b","0.2");
+        queryConfiguration.getQueryProperties().put("bm25.k3","0.2");
+        LgteQuery query = LgteQueryParser.parseQuery("final flight of concorde",searcher,analyzer,queryConfiguration);
+
+        LgteHits hits = searcher.search(query);
         time = System.currentTimeMillis() - time;
         System.out.println(time);
 

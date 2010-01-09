@@ -6,6 +6,7 @@ import org.apache.lucene.analysis.ngram.EdgeNGramTokenFilter;
 import org.dom4j.DocumentException;
 
 import java.io.IOException;
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
@@ -54,6 +55,7 @@ public class CranfieldExample
         logger.info("Writing indexes to:" + Globals.INDEX_DIR);
         logger.info("Reading data from:" + Globals.DATA_DIR);
 
+        new File(outputDir).mkdirs();
 
         /**
          * Lets create Cranfield Collection preprocessor
@@ -86,7 +88,7 @@ public class CranfieldExample
         //The handlers will be the same in 6 different fields, each one associated with different analyzers
         //The fields suffixed with NX will have XGrams Tokenizers
         List<XmlFieldHandler> xmlFieldHandlers = new ArrayList<XmlFieldHandler>();
-//        addFields(xmlFieldHandlers, "contents");
+        addFields(xmlFieldHandlers, "contents");
 //        addFields(xmlFieldHandlers, "contentsN2");
 //        addFields(xmlFieldHandlers, "contentsN3");
 //        addFields(xmlFieldHandlers, "contentsN4");
@@ -151,7 +153,7 @@ public class CranfieldExample
         Configuration VS_CRAN = new Configuration("version1", "cran","lm", Model.VectorSpaceModel, IndexCollections.en.getAnalyzerNoStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.en.getWordList(),outputDir,maxResults);
         Configuration LM_CRAN = new Configuration("version1", "cran","lm",Model.LanguageModel , IndexCollections.en.getAnalyzerNoStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.en.getWordList(),outputDir,maxResults);
         Configuration VS_STEMMER_CRAN = new Configuration("version1", "cran","lmstem", Model.VectorSpaceModel, IndexCollections.en.getAnalyzerWithStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.en.getWordList(),outputDir,maxResults);
-        Configuration LM_STEMMER_CRAN = new Configuration("version1", "cran","lmstem", Model.LanguageModel, IndexCollections.en.getAnalyzerWithStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.en.getWordList(),outputDir,maxResults);
+        Configuration LM_STEMMER_CRAN = new Configuration("version1", "cran","lmstem", Model.LanguageModelHiemstra, IndexCollections.en.getAnalyzerWithStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.en.getWordList(),outputDir,maxResults);
 
 
         Configuration BM25_STEMMER_CRAN = new Configuration("version1", "cran","lmstem", Model.OkapiBM25Model, IndexCollections.en.getAnalyzerWithStemming(),collectionPath,collectionsDirectory,topicsPath, topicsDirectory,"contents", IndexCollections.en.getWordList(),outputDir,maxResults);
@@ -190,7 +192,7 @@ public class CranfieldExample
         configurations.add(LM_STEMMER_CRAN);
 //        configurations.add(LM_2_6GRAMS_CRAN);
 
-        IndexCollections.indexConfiguration(configurations,Globals.DOCUMENT_ID_FIELD);
+//        IndexCollections.indexConfiguration(configurations,Globals.DOCUMENT_ID_FIELD);
 
 
         /***
@@ -199,6 +201,7 @@ public class CranfieldExample
         QueryConfiguration queryConfiguration1 = new QueryConfiguration();
         queryConfiguration1.setForceQE(QEEnum.no);
         queryConfiguration1.getQueryProperties().setProperty("lgte.default.order", "sc");
+        queryConfiguration1.getQueryProperties().setProperty("LM-cmodel","cf");
 
 //        QueryConfiguration queryConfiguration1_grams = new QueryConfiguration();
 //        queryConfiguration1_grams.setForceQE(QEEnum.no);
@@ -232,8 +235,8 @@ public class CranfieldExample
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, LM_CRAN));
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, VS_STEMMER_CRAN));
         searchConfigurations.add(new SearchConfiguration(queryConfiguration1, LM_STEMMER_CRAN));
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, BM25_STEMMER_CRAN));
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, BM25B_STEMMER_CRAN));
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, BM25_STEMMER_CRAN));
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, BM25B_STEMMER_CRAN));
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration1_grams, VS_2_6GRAMS_CRAN));
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration1_grams, LM_2_6GRAMS_CRAN));
 

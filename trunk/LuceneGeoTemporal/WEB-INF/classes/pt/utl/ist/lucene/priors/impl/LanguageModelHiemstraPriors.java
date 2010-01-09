@@ -28,15 +28,22 @@ public class LanguageModelHiemstraPriors implements DocumentPriors
     {
         try
         {
+//            float collSize = getColSize((LanguageModelIndexReader) reader);
+//            float probabilityDocument = docLen / collSize;
+//            return sumOfTermsScores + (float) Math.log10(1.0f + probabilityDocument); //- (float)Math.exp(Math.log10(1.0f/collSize));
+
+
             float collSize = getColSize((LanguageModelIndexReader) reader);
-            float probabilityDocument = docLen / collSize;
-            return sumOfTermsScores + (float) Math.log10(1.0f + probabilityDocument); //- (float)Math.exp(Math.log10(1.0f/collSize));
+//            float probabilityDocument = docLen / collSize;
+//            return sumOfTermsScores + (float) Math.log10(1.0f + probabilityDocument); //- (float)Math.exp(Math.log10(1.0f/collSize));
+            return (float) (Math.exp(sumOfTermsScores + Math.log(docLen / collSize)) * Math.log(docLen)) ;
         }
         catch (IOException e)
         {
             logger.error(e,e);
+            return 0;
         }
-        return sumOfTermsScores;
+//        return sumOfTermsScores;
     }
 
     public static void main(String[] args)

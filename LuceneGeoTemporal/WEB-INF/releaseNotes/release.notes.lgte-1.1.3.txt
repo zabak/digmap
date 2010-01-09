@@ -1,0 +1,10 @@
+LGTE version 1.0.3
+
+Release Notes:
+
+1 - OkabiBM25 and BM25b were optimized and now run in less than one second 
+2 - DataCacher keeps the global statistics of all collection fields, using multi indexes or single indexes, and also the pair <DocID, Field ID>
+    2.1 - See app.properties to configure the load or not of these statistics
+    2.2 - The load of the pairs <DocID,FieldID> is slower for big collections it is turned off by default
+3 - To update the indexes previously created just open and close the index with LgteIndexWriter choosing any probabilistic model like BM25 and setting create to false
+4 - All tests of models and multiindexes pass this update

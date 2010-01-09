@@ -267,7 +267,9 @@ public class LanguageModelIndexReader extends IndexReader {
         {
             int collSize = 0;
             for (int doc = 0; doc < in.maxDoc(); ++doc) {
-                collSize += in.getFieldLength(doc, field);
+                int len = in.getFieldLength(doc, field);
+                if(len > 0)
+                    collSize += len;
             }
             DataCacher.Instance().put(
                         collSizeString + "-" + field,

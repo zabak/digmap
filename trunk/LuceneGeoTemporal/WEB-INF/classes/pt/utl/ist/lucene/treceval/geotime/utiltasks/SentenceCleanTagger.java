@@ -27,14 +27,14 @@ import javax.management.timer.TimerMBean;
  */
 public class SentenceCleanTagger {
 
-    public static String output = "D:\\Servidores\\DATA\\ntcir\\sentencesGeoTemporais";
+    public static String output = "D:\\Servidores\\DATA\\ntcir\\sentencesGeoTemporais2";
     static String documentPath = "D:\\Servidores\\DATA\\ntcir\\data";
     static String timexesPath = "D:\\Servidores\\DATA\\ntcir\\TIMEXTAG";
     static String placemakerPath = "D:\\Servidores\\DATA\\ntcir\\PlaceMaker";
 
     public static void main(String [] args) throws IOException {
 
-
+        new File(output).mkdir();
 
         IntegratedDocPlaceMakerAndTimexIterator iterator = new IntegratedDocPlaceMakerAndTimexIterator(documentPath,timexesPath,placemakerPath);
 
@@ -214,7 +214,7 @@ public class SentenceCleanTagger {
                     }
                     if(timeExpression.getAnchor() != null)
                     {
-                        more += " anchor=\"" + timeExpression.getAnchor().getNormalizedExpression() + "\"";    
+                        more += " anchor=\"" + timeExpression.getAnchor().getNormalizedExpression() + "\"";
                     }
                     fw.write("\t\t\t<TIME_EXPRESSION valid=\"" + timeExpression.isValid() + "\" teClass=\"" + timeExpression.getTeClass().toString() + "\" type=\"" + timeExpression.getType().toString() + "\" index=\""+timeExpression.getNormalizedExpression()+"\" timex2id=\"" + timeExpression.getTimex2id() + "\"" + more + ">" + timeExpression.getRefNLTxt() + "</TIME_EXPRESSION>\n");
                 }

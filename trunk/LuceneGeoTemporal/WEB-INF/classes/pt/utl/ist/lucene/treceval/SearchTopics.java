@@ -32,6 +32,7 @@ public class SearchTopics implements ISearchCallBack
     public static LgteIndexSearcherWrapper indexSearcher = null;
 
     public static boolean useAllaysTheSameSearcher = false;
+    public boolean externalSearcher = false;
 
 
 
@@ -39,16 +40,38 @@ public class SearchTopics implements ISearchCallBack
      * constructor
      *
      * @param searchConfiguration to search topics in index
+     * @param lgeIndexSearcherWrapper to search
      * @throws IOException opening indexes
      */
 
-    public SearchTopics(SearchConfiguration searchConfiguration) throws IOException
+    public SearchTopics(SearchConfiguration searchConfiguration,LgteIndexSearcherWrapper lgeIndexSearcherWrapper) throws IOException
     {
         this.maxResultsForOutput = searchConfiguration.getConfiguration().getMaxResultsPerTopic();
         this.searchConfiguration = searchConfiguration;
         configuration = searchConfiguration.getConfiguration();
         if(!useAllaysTheSameSearcher || indexSearcher == null)
-            indexSearcher = new LgteIndexSearcherWrapper(configuration.getModel(), configuration.getIndexPath(),searchConfiguration.getQueryConfiguration().getQueryProperties());
+        {
+            if(lgeIndexSearcherWrapper == null)
+                indexSearcher = new LgteIndexSearcherWrapper(configuration.getModel(), configuration.getIndexPath(),searchConfiguration.getQueryConfiguration().getQueryProperties());
+            else
+                indexSearcher = lgeIndexSearcherWrapper;
+        }
+
+        if(lgeIndexSearcherWrapper != null)
+            externalSearcher = true;
+    }
+
+    /**
+     * constructor
+     *
+     * build the searchr using the searchConfiguration
+     *
+     * @param searchConfiguration to search topics in index
+     * @throws IOException opening indexes
+     */
+    public SearchTopics(SearchConfiguration searchConfiguration) throws IOException
+    {
+        this(searchConfiguration,null);
     }
 
 
@@ -57,7 +80,7 @@ public class SearchTopics implements ISearchCallBack
 
     public static void search(List<SearchConfiguration> searchConfigurations) throws IOException, DocumentException
     {
-        search(searchConfigurations,searchConfigurations.get(0).getConfiguration().getOutputDir());
+        search(searchConfigurations,null);
     }
 
     public static void evaluateMetrics(List<SearchConfiguration> searchConfigurations, String assessementsFile) throws IOException, DocumentException
@@ -81,7 +104,7 @@ public class SearchTopics implements ISearchCallBack
      * @throws IOException       opening indexes
      * @throws DocumentException opening topics xml
      */
-    public static void search(List<SearchConfiguration> searchConfigurations, String runPackageFileOutputDir) throws IOException, DocumentException
+    public static void search(List<SearchConfiguration> searchConfigurations,LgteIndexSearcherWrapper searcherWrapper) throws IOException, DocumentException
     {
 
         //topicTotalResults = new FileWriter("D:/topicTotalResults.csv");
@@ -89,7 +112,7 @@ public class SearchTopics implements ISearchCallBack
 
         for (SearchConfiguration c : searchConfigurations)
         {
-            SearchTopics searchTopics = new SearchTopics(c);
+            SearchTopics searchTopics = new SearchTopics(c,searcherWrapper);
             searchTopics.searchTopics();
             searchTopics.close();
         }
@@ -157,29 +180,39 @@ public class SearchTopics implements ISearchCallBack
                     indexSearcher,
                     searchConfiguration.getQueryConfiguration());
 
-            LgteHits hits = indexSearcher.search(lgteQuery);
 
-            int total0_99 = 0;
-            int total0_98 = 0;
-            int total0_95 = 0;
-            int total0_9 = 0;
-            int total0_8 = 0;
-            int total0_5 = 0;
-            for(int i = 0; i < hits.length();i++)
-            {
-                if(hits.spatialScore(i) >= 0.99f)
-                    total0_99++;
-                if(hits.spatialScore(i) >= 0.98f)
-                    total0_98++;
-                if(hits.spatialScore(i) > 0.95f)
-                    total0_95++;
-                if(hits.spatialScore(i) > 0.9f)
-                    total0_9++;
-                if(hits.spatialScore(i) > 0.8f)
-                    total0_8++;
-                if(hits.spatialScore(i) > 0.5f)
-                    total0_5++;
-            }
+            LgteHits hits;
+            if(searchConfiguration.getSort() != null && searchConfiguration.getFilter() != null)
+                hits = indexSearcher.search(lgteQuery,searchConfiguration.getFilter(),searchConfiguration.getSort());
+            else if(searchConfiguration.getSort() != null)
+                hits = indexSearcher.search(lgteQuery,searchConfiguration.getSort());
+            else if(searchConfiguration.getFilter() != null)
+                hits = indexSearcher.search(lgteQuery,searchConfiguration.getFilter());
+            else
+                hits = indexSearcher.search(lgteQuery);
+
+
+//            int total0_99 = 0;
+//            int total0_98 = 0;
+//            int total0_95 = 0;
+//            int total0_9 = 0;
+//            int total0_8 = 0;
+//            int total0_5 = 0;
+//            for(int i = 0; i < hits.length();i++)
+//            {
+//                if(hits.spatialScore(i) >= 0.99f)
+//                    total0_99++;
+//                if(hits.spatialScore(i) >= 0.98f)
+//                    total0_98++;
+//                if(hits.spatialScore(i) > 0.95f)
+//                    total0_95++;
+//                if(hits.spatialScore(i) > 0.9f)
+//                    total0_9++;
+//                if(hits.spatialScore(i) > 0.8f)
+//                    total0_8++;
+//                if(hits.spatialScore(i) > 0.5f)
+//                    total0_5++;
+//            }
 
             //topicTotalResults.write(t.getIdentifier() + ";" + hits.length() + ";" + total0_99 + ";" + total0_98+ ";" + total0_95+ ";" + total0_9+ ";" + total0_8+ ";" + total0_5+ ";\n");
             //topicTotalResults.flush();
@@ -221,7 +254,7 @@ public class SearchTopics implements ISearchCallBack
 
     public void close() throws IOException
     {
-        if(!useAllaysTheSameSearcher)
+        if(!useAllaysTheSameSearcher && !externalSearcher)
             indexSearcher.close();
     }
 
@@ -270,7 +303,7 @@ public class SearchTopics implements ISearchCallBack
 
         fw.write("<configuration>");
         fw.write("<base>");
-        writeProps(fw, ConfigProperties.getProperties());     
+        writeProps(fw, ConfigProperties.getProperties());
         fw.write("</base>");
         fw.write("<override>");
         writeProps(fw,searchConfiguration.getQueryConfiguration().getQueryProperties());

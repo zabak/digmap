@@ -103,6 +103,10 @@ public class TimexesDocument
 
     }
 
+    public String getXml() {
+        return xml;
+    }
+
     public TimeExpression getMin() {
         return min;
     }

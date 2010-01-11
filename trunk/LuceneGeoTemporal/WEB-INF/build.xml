@@ -5,7 +5,7 @@
 
     <import file="libs.xml"/>
     <import file="tests.xml"/>
-    
+
 
     <target name="jarTest" depends="clean,jar,testXml">
         <echo message="Please CHECK WEB-INF/build/test/report"/>
@@ -14,7 +14,30 @@
 
 
     <target name="jar" depends="compile">
-        <jar destfile="${jar.file}" basedir="${webapp.path}/WEB-INF/classes/" />
+
+        <replace file="${webapp.path}/WEB-INF/classes/pt/utl/ist/lucene/app.properties" value="">
+            <replacefilter token="cache.use.docid.cache=true" value="cache.use.docid.cache=false" />
+        </replace>
+        <replace file="${webapp.path}/WEB-INF/classes/log4j.properties" value="">
+            <replacefilter token="log4j.rootLogger = info" value="log4j.rootLogger = error" />
+            <replacefilter token="log4j.rootLogger=info" value="log4j.rootLogger=error" />
+        </replace>
+        <jar destfile="${jar.file}" basedir="${webapp.path}/WEB-INF/classes/">
+            <manifest>
+                <attribute name="Built-By" value="${user.name}" />
+                <!--<attribute name="Main-Class" value="my.path.to.the.main.Application" />-->
+                <section name="lgte">
+                    <attribute name="Specification-Title" value="LGTE - Lucene GeoTemporal Extensions" />
+                    <attribute name="Specification-Version" value="${version.number}" />
+                    <attribute name="Specification-Vendor" value="Jorge Machado" />
+                    <attribute name="Implementation-Version" value="${version.number}" />
+                    <attribute name="Implementation-Vendor" value="Jorge Machado" />
+                </section>
+
+                <!-- finally, use the magically generated libs path -->
+                <!--<attribute name="Class-Path" value="${libs.project}" />-->
+            </manifest>
+        </jar>
         <copy file="${jar.file}" todir="${webapp}"/>
     </target>
 
@@ -42,6 +65,12 @@
         <copy todir="${webapp.path}/WEB-INF/classes">
             <fileset dir="${base.dir}/classes">
                 <include name="**/*.*"/>
+            </fileset>
+        </copy>
+        <copy todir="${webapp.path}/WEB-INF/classes" overwrite="true">
+            <fileset dir="${base.dir}/classes">
+                <include name="**/*.properties"/>
+                <include name="**/*.xml"/>
             </fileset>
         </copy>
         <antcall target="configuration"/>

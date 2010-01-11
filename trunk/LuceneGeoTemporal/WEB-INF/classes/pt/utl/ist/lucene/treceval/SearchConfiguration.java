@@ -1,10 +1,11 @@
 package pt.utl.ist.lucene.treceval;
 
-import pt.utl.ist.lucene.QueryConfiguration;
+import org.apache.lucene.search.Filter;
 import pt.utl.ist.lucene.FilterEnum;
 import pt.utl.ist.lucene.OrderEnum;
+import pt.utl.ist.lucene.QueryConfiguration;
+import pt.utl.ist.lucene.sort.LgteSort;
 
-import java.util.Map;
 import java.io.File;
 
 /**
@@ -17,7 +18,9 @@ public class SearchConfiguration
     int id;
     QueryConfiguration queryConfiguration;
     Configuration configuration;
-    
+    private LgteSort sort = null;
+    private Filter filter = null;
+
 
     static int count = 0;
 
@@ -25,7 +28,7 @@ public class SearchConfiguration
     {
         this(queryConfiguration,configuration,++count);
     }
-    
+
     public SearchConfiguration(QueryConfiguration queryConfiguration, Configuration configuration,int id)
     {
         this.queryConfiguration = queryConfiguration;
@@ -33,6 +36,17 @@ public class SearchConfiguration
         if(queryConfiguration.getAnalyzer() == null)
             queryConfiguration.setAnalyzer(configuration.getAnalyzer());
         this.id = id;
+    }
+
+    public SearchConfiguration(QueryConfiguration queryConfiguration, Configuration configuration,int id, LgteSort sort, Filter filter)
+    {
+        this.queryConfiguration = queryConfiguration;
+        this.configuration = configuration;
+        if(queryConfiguration.getAnalyzer() == null)
+            queryConfiguration.setAnalyzer(configuration.getAnalyzer());
+        this.id = id;
+        this.sort = sort;
+        this.filter = filter;
     }
 
     public QueryConfiguration getQueryConfiguration()
@@ -45,6 +59,22 @@ public class SearchConfiguration
         return configuration;
     }
 
+
+    public LgteSort getSort() {
+        return sort;
+    }
+
+    public Filter getFilter() {
+        return filter;
+    }
+
+    public void setSort(LgteSort sort) {
+        this.sort = sort;
+    }
+
+    public void setFilter(Filter filter) {
+        this.filter = filter;
+    }
 
     public String getFileId()
     {
@@ -60,10 +90,10 @@ public class SearchConfiguration
                 order = "-order_" + order2;
         }
 
-            String stem = "no";
-            if(configuration.getDir().indexOf("stem")>=0)
-                stem=configuration.getDir();
-         return getRun() + "-" +  configuration.getModel().getShortName() + "-Stemming_" + stem + "-qe_" + getQueryConfiguration().getForceQE() +filter+order + ".txt";
+        String stem = "no";
+        if(configuration.getDir().indexOf("stem")>=0)
+            stem=configuration.getDir();
+        return getRun() + "-" +  configuration.getModel().getShortName() + "-Stemming_" + stem + "-qe_" + getQueryConfiguration().getForceQE() +filter+order + ".txt";
     }
 
     public File getOutputFile()

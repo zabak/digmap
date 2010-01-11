@@ -6,6 +6,7 @@ import java.util.*;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.ilps.DataCacher;
 
 /**
  * @author Jorge Machado
@@ -61,6 +62,9 @@ public class QueryConfiguration
             if (property != null)
                 return property;
         }
+        String property = (String) DataCacher.Instance().get(key);
+        if(property != null)
+            return property;
         return ConfigProperties.getProperty(key);
     }
 
@@ -87,6 +91,9 @@ public class QueryConfiguration
                 }
             }
         }
+        String property = (String) DataCacher.Instance().get(key);
+        if(property != null)
+            return Integer.parseInt(property);
         return ConfigProperties.getIntProperty(key);
     }
 
@@ -113,6 +120,9 @@ public class QueryConfiguration
                 }
             }
         }
+        String property = (String) DataCacher.Instance().get(key);
+        if(property != null)
+            return Float.parseFloat(property);
         return ConfigProperties.getFloatProperty(key);
     }
 
@@ -139,6 +149,9 @@ public class QueryConfiguration
                 }
             }
         }
+        String property = (String) DataCacher.Instance().get(key);
+        if(property != null)
+            return Double.parseDouble(property);
         return ConfigProperties.getDoubleProperty(key);
     }
 
@@ -165,6 +178,9 @@ public class QueryConfiguration
                 }
             }
         }
+        String property = (String) DataCacher.Instance().get(key);
+        if(property != null)
+            return Boolean.parseBoolean(property);    
         return ConfigProperties.getBooleanProperty(key);
     }
 

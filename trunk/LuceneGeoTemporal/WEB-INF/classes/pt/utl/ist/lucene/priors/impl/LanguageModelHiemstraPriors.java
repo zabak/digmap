@@ -36,7 +36,7 @@ public class LanguageModelHiemstraPriors implements DocumentPriors
             float collSize = getColSize((LanguageModelIndexReader) reader);
 //            float probabilityDocument = docLen / collSize;
 //            return sumOfTermsScores + (float) Math.log10(1.0f + probabilityDocument); //- (float)Math.exp(Math.log10(1.0f/collSize));
-            return (float) (Math.exp(sumOfTermsScores + Math.log(docLen / collSize)) * Math.log(docLen)) ;
+            return (float) (Math.exp(sumOfTermsScores + Math.log10(docLen/collSize))) ;
         }
         catch (IOException e)
         {

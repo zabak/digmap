@@ -465,6 +465,7 @@ public class LgteIsolatedIndexReader extends IndexReader
         public void seek(Term term) throws IOException
         {
             current = readers.get(term.field()).termDocs();
+            current.seek(term);
             this.term = term;
         }
 

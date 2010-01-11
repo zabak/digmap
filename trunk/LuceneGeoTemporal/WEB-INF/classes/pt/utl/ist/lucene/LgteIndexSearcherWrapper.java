@@ -252,7 +252,7 @@ public class LgteIndexSearcherWrapper
 
     public LgteHits search(LgteQuery lgteQuery, Filter filter) throws java.io.IOException
     {
-        return searchAndFilter(lgteQuery);
+        return searchAndFilter(lgteQuery,filter);
     }
 
 

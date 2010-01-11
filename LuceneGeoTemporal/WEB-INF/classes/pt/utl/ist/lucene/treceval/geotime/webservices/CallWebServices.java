@@ -23,6 +23,7 @@ import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 import com.sun.tools.javac.util.Pair;
 import com.vividsolutions.jts.geom.Geometry;
 import pt.utl.ist.lucene.config.ConfigProperties;
+import pt.utl.ist.lucene.analyzer.LgteDiacriticFilter;
 
 public class CallWebServices {
 
@@ -56,12 +57,13 @@ public class CallWebServices {
 
             String url = "http://wherein.yahooapis.com/v1/document";
             PostMethod post = new PostMethod(url);
+            
 
             post.addParameter("documentType","text/plain");
             post.addParameter("appid", yahooAppId);
-            post.addParameter("documentContent", data);
+            post.addParameter("documentContent", LgteDiacriticFilter.clean(data));
             if(title != null)
-                post.addParameter("documentTitle", title);
+                post.addParameter("documentTitle", LgteDiacriticFilter.clean(title));
             post.addParameter("inputLanguage", "en-EN");
             post.setDoAuthentication( false );
             client.executeMethod( post );

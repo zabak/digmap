@@ -1,22 +1,16 @@
 package pt.utl.ist.lucene.treceval.geotime.index;
 
-import org.apache.lucene.analysis.Analyzer;
 import org.dom4j.DocumentException;
 import pt.utl.ist.lucene.Globals;
 import pt.utl.ist.lucene.LgteDocumentWrapper;
 import pt.utl.ist.lucene.LgteIndexWriter;
 import pt.utl.ist.lucene.Model;
-import pt.utl.ist.lucene.analyzer.LgteBrokerStemAnalyzer;
 import pt.utl.ist.lucene.analyzer.LgteNothingAnalyzer;
-import pt.utl.ist.lucene.treceval.geotime.NyTimesDocument;
 import pt.utl.ist.lucene.treceval.geotime.IntegratedDocTimexIterator;
 import pt.utl.ist.lucene.utils.temporal.TimeExpression;
-import pt.utl.ist.lucene.utils.temporal.tides.TimexesDocument;
-import pt.utl.ist.lucene.utils.temporal.tides.TimexesIterator;
 
+import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author Jorge Machado
@@ -26,27 +20,27 @@ import java.util.Map;
  */
 public class CreateTimeExprIndex {
 
-    public static String INDEX_TIME_EXPRESSIONS = "timeExpr";
 
 
-    public static void main(String[] args) throws IOException, DocumentException {
+    public static String indexPath = Config.indexBase + "\\timexes";
 
-
-        String indexPath = "D:\\Servidores\\DATA\\ntcir\\INDEXES\\timexes";
-//        DocumentIterator di = new DocumentIterator("D:\\Servidores\\DATA\\ntcir\\data");
-
-        IntegratedDocTimexIterator integratedDocTimexIterator = new IntegratedDocTimexIterator("D:\\Servidores\\DATA\\ntcir\\data","D:\\Servidores\\DATA\\ntcir\\TEMPORAL\\teste\\timexes");
+    public static void main(String[] args) throws IOException, DocumentException
+    {
+        new File(indexPath).mkdir();
+        IntegratedDocTimexIterator integratedDocTimexIterator = new IntegratedDocTimexIterator(Config.documentPath,Config.timexesPath);
         IntegratedDocTimexIterator.DocumentWithTimexes timexesDocument;
-        Map<String, Analyzer> anaMap = new HashMap<String,Analyzer>();
-        anaMap.put(Globals.DOCUMENT_ID_FIELD, new LgteNothingAnalyzer());
-        anaMap.put(INDEX_TIME_EXPRESSIONS, new LgteNothingAnalyzer());
-        LgteBrokerStemAnalyzer analyzer = new LgteBrokerStemAnalyzer(anaMap);
-        LgteIndexWriter writer = new LgteIndexWriter(indexPath,analyzer, true, Model.BM25b);
+
+        LgteIndexWriter writer = new LgteIndexWriter(indexPath,new LgteNothingAnalyzer(), true, Model.OkapiBM25Model);
         int i = 1;
+        String previousID = "";
         while((timexesDocument = integratedDocTimexIterator.next())!=null)
         {
-            System.out.println(i + ":" + timexesDocument.getD().getDId());
+            if(previousID.length() > 0 && !previousID.substring(0,14).equals(timexesDocument.getD().getDId().substring(0,14)))
+            {
+                System.out.println(i + ":" + timexesDocument.getD().getDId());
+            }
             indexDocument(writer,timexesDocument);
+            previousID = timexesDocument.getD().getDId();
             i++ ;
         }
         writer.close();
@@ -54,13 +48,73 @@ public class CreateTimeExprIndex {
 
     private static void indexDocument(LgteIndexWriter writer, IntegratedDocTimexIterator.DocumentWithTimexes timexesDocument) throws IOException
     {
+
+
         LgteDocumentWrapper doc = new LgteDocumentWrapper();
         doc.indexString(Globals.DOCUMENT_ID_FIELD,timexesDocument.getD().getDId());
+
+        doc.indexString(Config.T_TIME_DOCUMENT,timexesDocument.getD().getTimeExpressionDocumentNormalized());
+        doc.indexString(Config.T_ALL_EXPRESSIONS_AND_TIME_DOC,timexesDocument.getD().getTimeExpressionDocumentNormalized());
+        doc.indexString(Config.T_ALL_NOT_DURATION,timexesDocument.getD().getTimeExpressionDocumentNormalized());
+
 
         if(timexesDocument.getTd() != null)
             for(TimeExpression timeExpression : timexesDocument.getTd().getAllTimeExpressions())
             {
-                doc.indexString(INDEX_TIME_EXPRESSIONS,timeExpression.getNormalizedExpression());
+                if(timeExpression.isWeekDuration())
+                    doc.indexString(Config.T_IS_WEEK,"true");
+                else
+                    doc.indexString(Config.T_IS_WEEK,"false");
+
+                if(timeExpression.getType() == TimeExpression.Type.Y) doc.indexString(Config.T_Y,timeExpression.getNormalizedExpression());
+                else if(timeExpression.getType() == TimeExpression.Type.YY) doc.indexString(Config.T_YY,timeExpression.getNormalizedExpression());
+                else if(timeExpression.getType() == TimeExpression.Type.YYY) doc.indexString(Config.T_YYY,timeExpression.getNormalizedExpression());
+                else if(timeExpression.getType() == TimeExpression.Type.YYYY) doc.indexString(Config.T_YYYY,timeExpression.getNormalizedExpression());
+                else if(timeExpression.getType() == TimeExpression.Type.YYYYMM) doc.indexString(Config.T_YYYYMM,timeExpression.getNormalizedExpression());
+                else if(timeExpression.getType() == TimeExpression.Type.YYYYMMDD) doc.indexString(Config.T_YYYYMMDD,timeExpression.getNormalizedExpression());
+
+                if(timeExpression.getTeClass() == TimeExpression.TEClass.Point)
+                {
+                    doc.indexString(Config.T_ALL_EXPRESSIONS_AND_TIME_DOC,timeExpression.getNormalizedExpression());
+                    doc.indexString(Config.T_ALL_NOT_DURATION,timeExpression.getNormalizedExpression());
+                    doc.indexString(Config.T_NOT_DURATION_EXPRESSIONS,timeExpression.getNormalizedExpression());
+                    doc.indexString(Config.T_TIME_EXPRESSIONS,timeExpression.getNormalizedExpression());
+                    doc.indexString(Config.T_POINT,timeExpression.getNormalizedExpression());
+                }
+                else if(timeExpression.getTeClass() == TimeExpression.TEClass.GenPoint)
+                {
+                    doc.indexString(Config.T_ALL_EXPRESSIONS_AND_TIME_DOC,timeExpression.getNormalizedExpression());
+                    doc.indexString(Config.T_ALL_NOT_DURATION,timeExpression.getNormalizedExpression());
+                    doc.indexString(Config.T_NOT_DURATION_EXPRESSIONS,timeExpression.getNormalizedExpression());
+                    doc.indexString(Config.T_TIME_EXPRESSIONS,timeExpression.getNormalizedExpression());
+                    doc.indexString(Config.T_GENPOINT,timeExpression.getNormalizedExpression());
+                }
+                else if(timeExpression.getTeClass() == TimeExpression.TEClass.Duration)
+                {
+                    doc.indexString(Config.T_ALL_EXPRESSIONS_AND_TIME_DOC,timeExpression.getNormalizedExpression());
+                    doc.indexString(Config.T_TIME_EXPRESSIONS,timeExpression.getNormalizedExpression());
+                    doc.indexString(Config.T_DURATION,timeExpression.getNormalizedExpression());
+
+                    if(timeExpression.getTimex2LimitType() == TimeExpression.Timex2LimitType.LEFT)
+                        doc.indexString(Config.T_LEFT_LIMIT_WEEK,"true");
+                    else
+                        doc.indexString(Config.T_LEFT_LIMIT_WEEK,"false");
+
+                    if(timeExpression.getTimex2LimitType() == TimeExpression.Timex2LimitType.RIGHT)
+                        doc.indexString(Config.T_RIGHT_LIMIT_WEEK,"true");
+                    else
+                        doc.indexString(Config.T_RIGHT_LIMIT_WEEK,"false");
+                    
+                    if(timeExpression.getTimex2LimitType() == TimeExpression.Timex2LimitType.INSIDE)
+                        doc.indexString(Config.T_INSIDE_LIMIT_WEEK,"true");
+                    else
+                        doc.indexString(Config.T_INSIDE_LIMIT_WEEK,"false");
+
+                }
+                else if(timeExpression.getTeClass() == TimeExpression.TEClass.UNKNOWN)
+                {
+                    doc.indexString(Config.T_UNKNOWN,timeExpression.getNormalizedExpression());
+                }
             }
         writer.addDocument(doc);
     }

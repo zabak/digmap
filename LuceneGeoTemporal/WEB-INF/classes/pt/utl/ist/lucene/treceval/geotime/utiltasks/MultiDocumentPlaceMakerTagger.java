@@ -79,12 +79,12 @@ public class MultiDocumentPlaceMakerTagger implements Runnable{
                 startFile = startFile.substring(1,startFile.length()-1);
         }
 //
-//        if(args.length > 3)
-//        {
-//            startDocument = args[3];
-//            if(startDocument.startsWith("\""))
-//                startDocument = startDocument.substring(1,startDocument.length()-1);
-//        }
+        if(args.length > 2)
+        {
+            startDocument = args[2];
+            if(startDocument.startsWith("\""))
+                startDocument = startDocument.substring(1,startDocument.length()-1);
+        }
 
 
         File d = new File(path);

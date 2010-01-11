@@ -14,6 +14,7 @@ import pt.utl.ist.lucene.analyzer.LgteNothingAnalyzer;
 import pt.utl.ist.lucene.analyzer.LgteBrokerStemAnalyzer;
 
 import java.io.IOException;
+import java.io.File;
 import java.util.Map;
 import java.util.HashMap;
 
@@ -28,32 +29,36 @@ import org.dom4j.DocumentException;
  */
 public class CreateWoeidIndex {
 
-    public static String INDEX_PLACE_REF_WOEID = "placeRefWoeid";
-    public static String INDEX_ADMIN_SCOPE_WOEID = "administrativeWoeid";
-    public static String INDEX_GEO_SCOPE_WOEID = "geographicWoeid";
 
-    public static void main(String[] args) throws IOException, DocumentException {
+    public static String indexPath = Config.indexBase + "\\woeid";
 
+    public static void main(String[] args) throws IOException, DocumentException
+    {
 
-        String indexPath = "D:\\Servidores\\DATA\\ntcir\\INDEXES\\woeid";
-//        DocumentIterator di = new DocumentIterator("D:\\Servidores\\DATA\\ntcir\\data");
-        PlaceMakerIterator placeMakerIterator = new PlaceMakerIterator("D:\\Servidores\\DATA\\ntcir\\PlaceMaker");
+        new File(indexPath).mkdir();
+        
+        PlaceMakerIterator placeMakerIterator = new PlaceMakerIterator(Config.placemakerPath);
 
-        NyTimesDocument d;
         PlaceMakerDocument placeMakerDocument;
         Map<String, Analyzer> anaMap = new HashMap<String,Analyzer>();
         anaMap.put(Globals.DOCUMENT_ID_FIELD, new LgteNothingAnalyzer());
-        anaMap.put(INDEX_PLACE_REF_WOEID, new LgteNothingAnalyzer());
+        anaMap.put(Config.G_ADMIN_SCOPE_WOEID, new LgteNothingAnalyzer());
+        anaMap.put(Config.G_GEO_SCOPE_WOEID, new LgteNothingAnalyzer());
+        anaMap.put(Config.G_PLACE_REF_WOEID, new LgteNothingAnalyzer());
+        anaMap.put(Config.G_GEO_ALL_WOEID, new LgteNothingAnalyzer());
         LgteBrokerStemAnalyzer analyzer = new LgteBrokerStemAnalyzer(anaMap);
-        LgteIndexWriter writer = new LgteIndexWriter(indexPath,analyzer, true, Model.BM25b);
+
+        LgteIndexWriter writer = new LgteIndexWriter(indexPath,analyzer, true, Model.OkapiBM25Model);
         int i = 1;
+        String previousID = "";
         while((placeMakerDocument = placeMakerIterator.next())!=null)
         {
-            System.out.println(i + ":" + placeMakerDocument.getDocId());
+
+            if(previousID.length() > 0 && !previousID.substring(0,14).equals(placeMakerDocument.getDocId().substring(0,14)))
+                System.out.println(i + ":" + placeMakerDocument.getDocId());
+            previousID = placeMakerDocument.getDocId();
             indexDocument(writer,placeMakerDocument);
             i++ ;
-            
-
         }
         writer.close();
     }
@@ -62,18 +67,25 @@ public class CreateWoeidIndex {
     {
         LgteDocumentWrapper doc = new LgteDocumentWrapper();
         doc.indexString(Globals.DOCUMENT_ID_FIELD,placeMakerDocument.getDocId());
+
         if(placeMakerDocument.getAdministrativeWoeid() != null)
-            doc.indexString(INDEX_ADMIN_SCOPE_WOEID, PlaceNameNormalizer.normalizeWoeid(placeMakerDocument.getAdministrativeWoeid()));
+        {
+            doc.indexString(Config.G_ADMIN_SCOPE_WOEID, PlaceNameNormalizer.normalizeWoeid(placeMakerDocument.getAdministrativeWoeid()));
+            doc.indexString(Config.G_GEO_ALL_WOEID, PlaceNameNormalizer.normalizeWoeid(placeMakerDocument.getAdministrativeWoeid()));
+        }
         if(placeMakerDocument.getGeographicWoeid() != null)
-            doc.indexString(INDEX_GEO_SCOPE_WOEID, PlaceNameNormalizer.normalizeWoeid(placeMakerDocument.getGeographicWoeid()));
+        {
+            doc.indexString(Config.G_GEO_SCOPE_WOEID, PlaceNameNormalizer.normalizeWoeid(placeMakerDocument.getGeographicWoeid()));
+            doc.indexString(Config.G_GEO_ALL_WOEID, PlaceNameNormalizer.normalizeWoeid(placeMakerDocument.getGeographicWoeid()));
+        }
         if(placeMakerDocument.getPlaceDetails() != null && placeMakerDocument.getPlaceDetails().size()>0)
         {
             for(PlaceMakerDocument.PlaceDetails placeDetails: placeMakerDocument.getPlaceDetails())
             {
-                for(PlaceMakerDocument.PlaceRef ref : placeDetails.getRefs())
+                for(int i =0; i <  placeDetails.getRefs().size();i++)
                 {
-                    doc.indexString(INDEX_PLACE_REF_WOEID, PlaceNameNormalizer.normalizeWoeid(placeDetails.getWoeId()));
-
+                    doc.indexString(Config.G_PLACE_REF_WOEID, PlaceNameNormalizer.normalizeWoeid(placeDetails.getWoeId()));
+                    doc.indexString(Config.G_GEO_ALL_WOEID, PlaceNameNormalizer.normalizeWoeid(placeDetails.getWoeId()));
                 }
             }
         }

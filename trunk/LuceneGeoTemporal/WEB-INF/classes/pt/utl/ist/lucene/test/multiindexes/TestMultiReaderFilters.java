@@ -77,6 +77,7 @@ public class TestMultiReaderFilters extends TestCase {
         writer.close();
 
         writer = new LgteIndexWriter(pathMulti2,true);
+        doc1 = new LgteDocumentWrapper();
         doc1.indexText(Globals.DOCUMENT_ID_FIELD, "1");
         doc1.indexText("flag1",flag1Doc1);
 
@@ -101,6 +102,7 @@ public class TestMultiReaderFilters extends TestCase {
 
 
         writer = new LgteIndexWriter(pathMulti3,true);
+        doc1 = new LgteDocumentWrapper();
         doc1.indexText(Globals.DOCUMENT_ID_FIELD, "1");
         doc1.indexText("flag2",flag2Doc1);
 
@@ -187,8 +189,24 @@ public class TestMultiReaderFilters extends TestCase {
             assertFalse(lgteHits.doc(0).get(Globals.DOCUMENT_ID_FIELD).equals("1"));
             assertEquals(lgteHits.length(),1);
 
+            //Repiting the tests to see if nothing stay in caches
+            lgteHits = searcherMulti.search("word234",serialChainFilter);
+            assertFalse(lgteHits.doc(0).get(Globals.DOCUMENT_ID_FIELD).equals("1"));
+            assertEquals(lgteHits.length(),1);
+
+            lgteHits = searcherMulti.search("word234",filterFlag1FalseFlag2False);
+            assertFalse(lgteHits.doc(0).get(Globals.DOCUMENT_ID_FIELD).equals("1"));
+            assertFalse(lgteHits.doc(1).get(Globals.DOCUMENT_ID_FIELD).equals("1"));
+            assertFalse(lgteHits.doc(2).get(Globals.DOCUMENT_ID_FIELD).equals("1"));
+            assertEquals(lgteHits.length(),3);
 
 
+
+
+            serialChainFilter = new SerialChainFilter(new Filter[]{filterFlag1True,filterFlag2False},new int[]{SerialChainFilter.AND,SerialChainFilter.AND});
+            lgteHits = searcherMulti.search("word123",serialChainFilter);
+            assertEquals(lgteHits.doc(0).get(Globals.DOCUMENT_ID_FIELD),"2");
+            assertEquals(lgteHits.length(),1);
 
         }
         catch (ParseException e)

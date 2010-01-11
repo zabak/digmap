@@ -78,14 +78,9 @@ public class BaseLine {
         int maxResults = 500;
         Configuration BM25_STEMMER = new Configuration("version1", "geotime","bm25", Model.OkapiBM25Model, IndexCollections.en.getAnalyzerWithStemming(),null,null,topicsPath, topicsDirectory,"contents", IndexCollections.en.getWordList(),outputDir,maxResults);
 
-
-
-        LgteSort lgteSort = new LgteSort(new SortField[] {new SortField(Config.GEO_AND_TEMPORAL_INDEXED),new SortField(Config.GEO_OR_TEMPORAL_INDEXED)});
-        TermsFilter filter1 = new TermsFilter();
-        filter1.addTerm(new Term(Config.GEO_INDEXED,"true"));
-
-        TermsFilter filter2 = new TermsFilter();
-        filter2.addTerm(new Term(Config.GEO_INDEXED,"false"));
+//        LgteSort lgteSort = new LgteSort(new SortField[] {new SortField(Config.GEO_AND_TEMPORAL_INDEXED),new SortField(Config.GEO_OR_TEMPORAL_INDEXED)});
+        TermsFilter filter = new TermsFilter();
+        filter.addTerm(new Term(Config.GEO_OR_TEMPORAL_INDEXED,"true"));
 
 
         /***
@@ -96,28 +91,13 @@ public class BaseLine {
         queryConfiguration.setProperty("bm25.idf.policy","standard");
         queryConfiguration.setProperty("bm25.k1","1.2d");
         queryConfiguration.setProperty("bm25.b","0.75d");
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration, BM25_STEMMER,1,null,null));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration, BM25_STEMMER,1,null,filter));
 
 
         LgteIndexSearcherWrapper searcherMulti = Config.openMultiSearcher();
 
-        try {
-            LgteHits hits = searcherMulti.search("GEO_INDEXED:true");
-            System.out.println("GEO_INDEXED:true = " + hits.length());
-
-            hits = searcherMulti.search("GEO_INDEXED:false");
-            System.out.println("GEO_INDEXED:false = " + hits.length());
-
-            hits = searcherMulti.search("TEMPORAL_INDEXED:true OR TEMPORAL_INDEXED:false",filter1);
-            System.out.println("GEO_INDEXED:true (FILTER) = " + hits.length());
-
-            hits = searcherMulti.search("TEMPORAL_INDEXED:true OR TEMPORAL_INDEXED:false",filter2);
-            System.out.println("GEO_INDEXED:false (FILTER) = " + hits.length());
-        } catch (ParseException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
 //        //Search Topics Runs to submission
-//        SearchTopics.search(searchConfigurations,searcherMulti);
+        SearchTopics.search(searchConfigurations,searcherMulti);
 
         searcherMulti.close();
 

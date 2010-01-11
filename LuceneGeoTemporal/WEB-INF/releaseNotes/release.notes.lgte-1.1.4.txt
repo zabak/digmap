@@ -1,0 +1,6 @@
+LGTE version 1.0.4
+
+Release Notes:
+
+1 - Removed a bug in filter queries when using MultiReaders see Test Example pt.utl.ist.lucene.test.multiindexes.TestMultiReaderFilters AT google code
+

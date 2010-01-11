@@ -80,7 +80,7 @@ public class BaseLine {
 
 //        LgteSort lgteSort = new LgteSort(new SortField[] {new SortField(Config.GEO_AND_TEMPORAL_INDEXED),new SortField(Config.GEO_OR_TEMPORAL_INDEXED)});
         TermsFilter filter = new TermsFilter();
-        filter.addTerm(new Term(Config.GEO_OR_TEMPORAL_INDEXED,"true"));
+        filter.addTerm(new Term(Config.S_GEO_OR_TEMPORAL_INDEXED,"true"));
 
 
         /***

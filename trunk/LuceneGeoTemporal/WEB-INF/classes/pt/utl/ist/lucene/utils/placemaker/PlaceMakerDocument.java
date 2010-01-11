@@ -182,6 +182,10 @@ public class PlaceMakerDocument
     }
 
 
+    public boolean hasPlaces()
+    {
+        return placeDetails != null && placeDetails.size()>0;
+    }
     public String getXml() {
         return xml;
     }

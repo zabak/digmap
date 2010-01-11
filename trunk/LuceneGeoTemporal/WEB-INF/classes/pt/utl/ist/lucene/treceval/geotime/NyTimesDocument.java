@@ -233,6 +233,11 @@ public class NyTimesDocument {
         toString(); //to fill offsets
     }
 
+
+    public String getTimeExpressionDocumentNormalized()
+    {
+        return String.format("%04d%02d%02d",getArticleYear(),getArticleMonth(), getArticleDay());
+    }
     public String getSgmlWithoutTags()
     {
         return getSgml().replaceAll("<[^>]+>","");

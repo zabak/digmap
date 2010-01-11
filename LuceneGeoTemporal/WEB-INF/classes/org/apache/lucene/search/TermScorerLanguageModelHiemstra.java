@@ -8,6 +8,9 @@ import org.apache.lucene.ilps.DataCacher;
 
 import java.io.IOException;
 
+import pt.utl.ist.lucene.ModelManager;
+import pt.utl.ist.lucene.QueryConfiguration;
+
 final class TermScorerLanguageModelHiemstra extends Scorer {
     private Weight weight;
     private TermDocs termDocs;
@@ -31,6 +34,8 @@ final class TermScorerLanguageModelHiemstra extends Scorer {
 
     int fieldLen;
 
+    QueryConfiguration queryConfiguration;
+
     TermScorerLanguageModelHiemstra(
             Weight weight,
             TermDocs td,
@@ -47,14 +52,12 @@ final class TermScorerLanguageModelHiemstra extends Scorer {
         this.indexReader = new LanguageModelIndexReader(reader);
         this.term = ((TermQueryProbabilisticModel) weight.getQuery()).getTerm();
 
-        // Get data for the collection model
-        String collectionModel =
-                (String) DataCacher.Instance().get("LM-cmodel");
-        this.lambda =
-                (Float.valueOf((String) DataCacher.Instance().get("LM-lambda")))
-                        .floatValue();
-        String docLengthType =
-                (String) DataCacher.Instance().get("LM-lengths");
+        queryConfiguration = ModelManager.getInstance().getQueryConfiguration();
+        if(queryConfiguration == null) queryConfiguration = new QueryConfiguration();
+
+        String collectionModel = queryConfiguration.getProperty("LM-cmodel");
+        String docLengthType = queryConfiguration.getProperty("LM-lengths");
+        this.lambda = queryConfiguration.getFloatProperty("LM-lambda");
 
         if (collectionModel.equals("cf")){
             this.collSize = (float) indexReader.getCollectionTokenNumber();
@@ -103,12 +106,12 @@ final class TermScorerLanguageModelHiemstra extends Scorer {
         }
         float tfDoc = freqs[pointer];
 //		float sim =
-//			(float) Math.log(1.0f + ((lambda * tfDoc * collSize) /  ((1.0f - lambda) * tfCollection * fieldLen)));
+//			(float) Math.log(1.0f + ((lambda * tfDoc * collSize) /  ((1.0f - lambda) * tfCollection * docLen)));
 //		sim /= log10;
 
 
 //        float probabilityTermCollection = tfCollection / collSize;
-//        float probabilityTermDocument = tfDoc / fieldLen;
+//        float probabilityTermDocument = tfDoc / docLen;
 //        return weightValue * (float) Math.log10( 1.0f + (lambda * (probabilityTermDocument) / ((1-lambda)*probabilityTermCollection)));
 
 

@@ -5,6 +5,7 @@ import pt.utl.ist.lucene.treceval.handlers.topics.output.Topic;
 import pt.utl.ist.lucene.treceval.Globals;
 import org.apache.log4j.Logger;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.ilps.DataCacher;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -100,13 +101,17 @@ public class TrecEvalOutputFormat implements OutputFormat
         try
         {
 
-            String id = d.get(idField1);
+            String id = (String) DataCacher.Instance().get("docid",docId);
+
+            if (id == null)
+                id = d.get(idField1);
             if (id == null)
                 id = d.get(idField2);
             if (id == null)
                 logger.error("Record " + d.get("id") + " come with null id");
             else
             {
+                logger.debug("TRECEVAL OUTPUT: " + topic.getIdentifier().trim() + " Q0 " + id + " " + rank + " " + score + " " + run);
                 writer.write(topic.getIdentifier().trim());
                 writer.write(" ");
                 writer.write("Q0");

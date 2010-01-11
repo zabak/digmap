@@ -29,7 +29,7 @@ public class PlaceMakerDocument
 
     }
     Document dom;
-
+    String xml;
     String docId;
 
     String administrativeWoeid;
@@ -51,6 +51,7 @@ public class PlaceMakerDocument
     public PlaceMakerDocument(String xml) throws DocumentException
     {
 
+        this.xml = xml;
         dom = Dom4jUtil.parse(xml);
 
         XPath administrativeWoeidXPath = dom.createXPath("/doc/d:contentlocation/d:document/d:administrativeScope/d:woeId");
@@ -180,6 +181,10 @@ public class PlaceMakerDocument
         }
     }
 
+
+    public String getXml() {
+        return xml;
+    }
 
     public String getDocId() {
         return docId;

@@ -116,7 +116,8 @@ public class DataCacher {
 
     private static final Logger logger = Logger.getLogger(DataCacher.class);
     public void loadFromFile(String fileName) {
-		BufferedReader input = null;
+        logger.info("loading cache: " + fileName);
+        BufferedReader input = null;
 		String line = "";
 		String table = fileName;
         File file = new File(fileName);

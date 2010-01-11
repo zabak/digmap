@@ -48,7 +48,7 @@ final class TermScorerDFR extends Scorer  {
     private Term term;
     double docFreq;
 
-
+    QueryConfiguration queryConfiguration;
 
     TermScorerDFR(
             Weight weight,
@@ -68,6 +68,8 @@ final class TermScorerDFR extends Scorer  {
         this.indexReader = new LanguageModelIndexReader(reader);
         this.term = ((TermQueryProbabilisticModel) weight.getQuery()).getTerm();
 
+        queryConfiguration = ModelManager.getInstance().getQueryConfiguration();
+        if(queryConfiguration == null) queryConfiguration = new QueryConfiguration();
 
         // Get data for the collection model
 
@@ -155,8 +157,7 @@ final class TermScorerDFR extends Scorer  {
         float tfDoc = freqs[pointer];
         double sim = 0;
 
-        QueryConfiguration queryConfiguration = ModelManager.getInstance().getQueryConfiguration();
-        if(queryConfiguration == null) queryConfiguration = new QueryConfiguration();
+
 
 
         if(model == Model.OkapiBM25Model || model == Model.BM25b)
@@ -286,7 +287,7 @@ final class TermScorerDFR extends Scorer  {
        *
        * */
 
-        if(sim < 0)
+        if(sim < 0 && model != Model.OkapiBM25Model  && model != Model.BM25b )
             System.out.println(">>>>>>>>>>>>>>>>>>>>>>>FATAL  : PLEASE CHECK DFR Formulas similarity come negative for doc:" + doc + " term: " + term.text());
         return weightValue * (float)sim;
     }
@@ -443,6 +444,7 @@ final class TermScorerDFR extends Scorer  {
 
     public static enum Bm25Policy
     {
+        Standard("standard"),
         DontSubtractNt("dont_subtract_n_t"),
         FloorZero("floor_zero"),
         FloorEpslon("floor_epslon");
@@ -457,20 +459,20 @@ final class TermScorerDFR extends Scorer  {
         public static Bm25Policy parse(String policy)
         {
             if(policy == null)
-                return DontSubtractNt;
+                return Standard;
             for(Bm25Policy bm25Policy: values())
             {
                 if(bm25Policy.policy.equals(policy))
                     return bm25Policy;
             }
-            return DontSubtractNt;
+            return Standard;
         }
     }
 
 
     public static void main(String [] args) throws IOException, ParseException {
         long time = System.currentTimeMillis();
-        LgteIndexSearcherWrapper searcher = new LgteIndexSearcherWrapper(Model.LanguageModelHiemstra, IndexGeoTime.indexPath);
+        LgteIndexSearcherWrapper searcher = new LgteIndexSearcherWrapper(Model.OkapiBM25Model, IndexGeoTime.indexPath);
         Analyzer analyzer = IndexCollections.en.getAnalyzerWithStemming();
 //                LgteQuery query = LgteQueryParser.parseQuery(request.getParameter("q"), analyzer);
 //        System.out.println("Searching for: " + request.getParameter("q"));
@@ -479,9 +481,18 @@ final class TermScorerDFR extends Scorer  {
         queryConfiguration.getQueryProperties().put("bm25.k1","40");
         queryConfiguration.getQueryProperties().put("bm25.b","0.2");
         queryConfiguration.getQueryProperties().put("bm25.k3","0.2");
-        LgteQuery query = LgteQueryParser.parseQuery("final flight of concorde",searcher,analyzer,queryConfiguration);
+        LgteQuery query = LgteQueryParser.parseQuery("What is the controversy surrounding the use of the Stealth Fighter in Yugoslavia",searcher,analyzer,queryConfiguration);
 
         LgteHits hits = searcher.search(query);
+
+
+
+        System.out.println(System.currentTimeMillis() - time);
+        time = System.currentTimeMillis();
+        query = LgteQueryParser.parseQuery("What is the controversy surrounding the use of the Stealth Fighter in Yugoslavia",searcher,analyzer,queryConfiguration);
+
+        hits = searcher.search(query);
+
         time = System.currentTimeMillis() - time;
         System.out.println(time);
 

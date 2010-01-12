@@ -1,4 +1,4 @@
-LGTE version 1.0.4
+LGTE version 1.1.4
 
 Release Notes:
 

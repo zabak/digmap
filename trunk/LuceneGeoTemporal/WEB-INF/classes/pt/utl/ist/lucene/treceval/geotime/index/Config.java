@@ -49,10 +49,15 @@ public class Config
     public static String T_UNKNOWN  = "t_unknown";
     public static String T_TIME_DOCUMENT = "t_time_doc";
 
-    public static String T_IS_WEEK  = "t_is_week";
-    public static String T_LEFT_LIMIT_WEEK  = "t_is_l_limit";
-    public static String T_INSIDE_LIMIT_WEEK  = "t_is_l_inside";
-    public static String T_RIGHT_LIMIT_WEEK  = "t_is_r_limit";
+    public static String T_WEEK_NORM  = "t_week_norm";
+    public static String T_DURATION_NORM  = "t_dur_norm";
+    public static String T_DURATION_LEFT  = "t_dur_left";
+    public static String T_DURATION_RIGHT = "t_dur_right";
+
+    public static String T_IS_WEEK  =      "t_is_week";
+    public static String T_LEFT_LIMIT  =   "t_is_dur_left";
+    public static String T_INSIDE_LIMIT  = "t_is_dur_inside";
+    public static String T_RIGHT_LIMIT  =  "t_is_dur_right";
 
     public static String T_Y    = "t_y";
     public static String T_YY    = "t_yy";

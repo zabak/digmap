@@ -1,0 +1,8 @@
+LGTE version 1.1.5
+
+Release Notes:
+
+1 - Removed bug from LGTE Sorter  @see text example on how to use it at google code:
+  pt.utl.ist.lucene.test.TestSort
+  pt.utl.ist.lucene.test.multiindexes.TestMultiReaderSort
+

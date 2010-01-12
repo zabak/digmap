@@ -37,9 +37,9 @@ public class CreateDBGeoTimexes {
     {
 
         new File(indexPath).mkdirs();
-        String documentPath = IndexGeoTime.documentPath;
-        String timexesPath = IndexGeoTime.timexesPath;
-        String placemakerPath = IndexGeoTime.placemakerPath;
+        String documentPath = Config.documentPath;
+        String timexesPath = Config.timexesPath;
+        String placemakerPath = Config.placemakerPath;
 
         IntegratedDocPlaceMakerAndTimexIterator iterator = new IntegratedDocPlaceMakerAndTimexIterator(documentPath,timexesPath,placemakerPath);
 

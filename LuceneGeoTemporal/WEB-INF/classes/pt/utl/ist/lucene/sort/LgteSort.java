@@ -26,6 +26,7 @@ public class LgteSort extends Sort implements LgteScorer
 
     public LgteSort(org.apache.lucene.search.SortField[] sortFields)
     {
+        super(sortFields);
         this.sortFields = sortFields;
     }
 

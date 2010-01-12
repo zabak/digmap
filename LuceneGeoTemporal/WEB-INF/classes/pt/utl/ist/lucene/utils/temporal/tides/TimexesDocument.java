@@ -58,7 +58,10 @@ public class TimexesDocument
 
                 XPath xPathId = dom.createXPath("//doc/@id");
                 Attribute id = (Attribute) xPathId.selectSingleNode(dom);
+                
                 this.id = id.getValue();
+//                if(id.getValue().equals("NYT_ENG_20020107.0019"))
+//                    System.out.println("");
                 XPath xPath = dom.createXPath("//TIMEX2");
                 List<Element> timexes2 = xPath.selectNodes(dom.getRootElement());
                 if(timexes2 != null && timexes2.size() > 0)

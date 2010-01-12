@@ -42,24 +42,24 @@ public class IndexGeoTime
         LgteDocumentWrapper doc = new LgteDocumentWrapper();
         doc.indexString(Config.ID,d.getD().getDId());
         if(d.hasTimexes() && d.hasPlaces())
-            doc.indexString(Config.GEO_AND_TEMPORAL_INDEXED,"true");
+            doc.indexString(Config.S_GEO_AND_TEMPORAL_INDEXED,"true");
         else
-            doc.indexString(Config.GEO_AND_TEMPORAL_INDEXED,"false");
+            doc.indexString(Config.S_GEO_AND_TEMPORAL_INDEXED,"false");
 
         if(d.hasTimexes() || d.hasPlaces())
-            doc.indexString(Config.GEO_OR_TEMPORAL_INDEXED,"true");
+            doc.indexString(Config.S_GEO_OR_TEMPORAL_INDEXED,"true");
         else
-            doc.indexString(Config.GEO_OR_TEMPORAL_INDEXED,"false");
+            doc.indexString(Config.S_GEO_OR_TEMPORAL_INDEXED,"false");
 
         if(d.hasTimexes())
-            doc.indexString(Config.TEMPORAL_INDEXED,"true");
+            doc.indexString(Config.S_TEMPORAL_INDEXED,"true");
         else
-            doc.indexString(Config.TEMPORAL_INDEXED,"false");
+            doc.indexString(Config.S_TEMPORAL_INDEXED,"false");
 
         if(d.hasPlaces())
-            doc.indexString(Config.GEO_INDEXED, "true");
+            doc.indexString(Config.S_GEO_INDEXED, "true");
         else
-            doc.indexString(Config.GEO_INDEXED,"false");
+            doc.indexString(Config.S_GEO_INDEXED,"false");
         writer.addDocument(doc);
     }
 }

@@ -5,6 +5,8 @@ import org.apache.log4j.Logger;
 import java.util.GregorianCalendar;
 import java.util.Calendar;
 
+import pt.utl.ist.lucene.utils.temporal.tides.Timex2;
+
 /**
  * @author Jorge Machado
  * @date 11/Dez/2009
@@ -27,6 +29,7 @@ public class TimeExpression
     long timex2id;
 
     Timex2LimitType timex2LimitType = Timex2LimitType.NONE;
+    Timex2 timex2;
 
     boolean weekDuration = false;
 
@@ -195,14 +198,19 @@ public class TimeExpression
     }
 
     public long getTimex2id() {
-        return timex2id;
+        return timex2.getTimex2Id();
     }
 
 
-
-    public void setTimex2id(long timex2id) {
-        this.timex2id = timex2id;
+    public Timex2 getTimex2() {
+        return timex2;
     }
+
+    public void setTimex2(Timex2 timex2) {
+        this.timex2 = timex2;
+    }
+
+
 
     public int getNumberOfDays()
     {
@@ -497,10 +505,10 @@ public class TimeExpression
     {
         String refTxt;
         if(withRefNLtxt)
-            refTxt = " : (" + this.refNLTxt + ")";
+            refTxt = " : (" + this.refNLTxt + ") ";
         else
             refTxt = "";
-        return type.toString() + ":" + normalizedExpression + refTxt;
+        return type.toString() + ":" + normalizedExpression + refTxt + " - " +  teClass.name() + " - " + timex2LimitType.name();
     }
 
     public static enum TEClass

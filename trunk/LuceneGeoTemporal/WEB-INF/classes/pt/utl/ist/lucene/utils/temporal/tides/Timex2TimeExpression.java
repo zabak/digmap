@@ -36,11 +36,11 @@ public class Timex2TimeExpression
         if(timex2.getVal()!=null && timex2.getVal().trim().length() > 0)
             expressions = getTimeExpressions(timex2.getVal(),timex2.getAnchorVal(),timex2.getAnchorDir());
 
-        if(expressions == null || expressions.size() == 0)
+        if(expressions == null)
         {
-            if(timex2.getAnchorVal() != null && timex2.getAnchorVal().trim().length() > 0)
-                expressions = getTimeExpressions(timex2.getAnchorVal(),null,null);
-            else if(expressions == null)
+//            if(timex2.getAnchorVal() != null && timex2.getAnchorVal().trim().length() > 0)
+//                expressions = getTimeExpressions(timex2.getAnchorVal(),null,null);
+//            else if(expressions == null)
                 expressions = new ArrayList<TimeExpression>();
         }
 

@@ -80,9 +80,10 @@ public class CreateTimeExprIndex {
                     leftId = timexesDocument.getD().getDId();
                     doc.indexString(Config.T_LEFT_LIMIT,"true");
                     doc.indexString(Config.T_DURATION_LEFT,timeExpression.getNormalizedExpression());
-                    if(!timeExpression.getTimex2().getType().isP())
+                    
+                    if(timeExpression.getTimex2().getType().isP())
                         doc.indexString(Config.T_DURATION_NORM,timeExpression.getTimex2().getVal() + "-" + timeExpression.getTimex2().getAnchorVal() + "-" + timeExpression.getTimex2().getAnchorDir());
-                    if(!timeExpression.isWeekDuration())
+                    if(timeExpression.isWeekDuration())
                         doc.indexString(Config.T_WEEK_NORM,timeExpression.getTimex2().getVal());
 
                 }

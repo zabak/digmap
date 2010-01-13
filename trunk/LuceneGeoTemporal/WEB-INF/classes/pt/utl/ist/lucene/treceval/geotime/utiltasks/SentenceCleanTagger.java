@@ -17,8 +17,6 @@ import java.util.zip.ZipEntry;
 
 import jomm.utils.StreamsUtils;
 
-import javax.management.timer.TimerMBean;
-
 /**
  * @author Jorge Machado
  * @date 2/Jan/2010
@@ -140,14 +138,14 @@ public class SentenceCleanTagger {
                 {
                     fw.write("\t\t<TYPE name=\"" + entry.getKey().toString() + "\">" + entry.getValue() + "</TYPE>\n");
                 }
-                List<TimeExpression> metricTimeExpressions = document.getTd().getAllMetricTimeExpressions();
+                List<TimeExpression> metricTimeExpressions = document.getTd().getAllIndexableTimeExpressions();
                 if(metricTimeExpressions.size() > 0)
                 {
                     try {
                         TemporalMetrics temporalMetrics = new TemporalMetrics(metricTimeExpressions);
                         fw.write("\t\t<CENTROIDE type=\"timeAbsolute\">" + temporalMetrics.getTemporalCentroideTimeExpression().getNormalizedExpression() + "</CENTROIDE>\n");
-                        fw.write("\t\t<CENTROIDE type=\"timeLimits\">" + temporalMetrics.getTemporalIntervalPointsCentroideTimeExpression().getNormalizedExpression() + "</CENTROIDE>\n");
-                        fw.write("\t\t<CENTROIDE type=\"timeLeftLimit\">" + temporalMetrics.getTemporalPointsCentroideTimeExpression().getNormalizedExpression() + "</CENTROIDE>\n");
+                        fw.write("\t\t<CENTROIDE type=\"timeLimits\">" + temporalMetrics.getIntervalCentroideTimeExpression().getNormalizedExpression() + "</CENTROIDE>\n");
+                        fw.write("\t\t<CENTROIDE type=\"timeLeftLimit\">" + temporalMetrics.getLeftLimitsCentroideTimeExpression().getNormalizedExpression() + "</CENTROIDE>\n");
                         fw.write("\t\t<CENTROIDE type=\"nRefs\">" + temporalMetrics.getNumberRefsCentroide() + "</CENTROIDE>\n");
                         fw.write("\t\t<LEFT>" + document.getTd().getMin().getNormalizedExpression() + "</LEFT>\n");
                         fw.write("\t\t<RIGHT>" + document.getTd().getMax().getNormalizedExpression() + "</RIGHT>\n");

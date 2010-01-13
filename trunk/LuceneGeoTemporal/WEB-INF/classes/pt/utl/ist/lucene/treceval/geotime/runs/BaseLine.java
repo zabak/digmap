@@ -79,19 +79,39 @@ public class BaseLine {
         Configuration BM25_STEMMER = new Configuration("version1", "geotime","bm25", Model.OkapiBM25Model, IndexCollections.en.getAnalyzerWithStemming(),null,null,topicsPath, topicsDirectory,"contents", IndexCollections.en.getWordList(),outputDir,maxResults);
 
 //        LgteSort lgteSort = new LgteSort(new SortField[] {new SortField(Config.GEO_AND_TEMPORAL_INDEXED),new SortField(Config.GEO_OR_TEMPORAL_INDEXED)});
-        TermsFilter filter = new TermsFilter();
-        filter.addTerm(new Term(Config.S_GEO_OR_TEMPORAL_INDEXED,"true"));
+
 
 
         /***
          * Search Configurations
          */
         List<SearchConfiguration> searchConfigurations = new ArrayList<SearchConfiguration>();
-        QueryConfiguration queryConfiguration = new QueryConfiguration();
-        queryConfiguration.setProperty("bm25.idf.policy","standard");
-        queryConfiguration.setProperty("bm25.k1","1.2d");
-        queryConfiguration.setProperty("bm25.b","0.75d");
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration, BM25_STEMMER,1,null,filter));
+
+        QueryConfiguration queryConfigurationBase = new QueryConfiguration();
+        queryConfigurationBase.setProperty("bm25.idf.policy","standard");
+        queryConfigurationBase.setProperty("bm25.k1","1.2d");
+        queryConfigurationBase.setProperty("bm25.b","0.75d");
+        searchConfigurations.add(new SearchConfiguration(queryConfigurationBase, BM25_STEMMER,0,null,null));
+
+        /***
+         * Search Configurations
+         */
+        TermsFilter filterGeoOrTemp = new TermsFilter();
+        filterGeoOrTemp.addTerm(new Term(Config.S_GEO_OR_TEMPORAL_INDEXED,"true"));
+        QueryConfiguration queryConfiguration1 = new QueryConfiguration();
+        queryConfiguration1.setProperty("bm25.idf.policy","standard");
+        queryConfiguration1.setProperty("bm25.k1","1.2d");
+        queryConfiguration1.setProperty("bm25.b","0.75d");
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, BM25_STEMMER,1,null,filterGeoOrTemp));
+
+
+        TermsFilter filterGeoAndTemp = new TermsFilter();
+        filterGeoAndTemp.addTerm(new Term(Config.S_GEO_AND_TEMPORAL_INDEXED,"true"));
+        QueryConfiguration queryConfiguration2 = new QueryConfiguration();
+        queryConfiguration2.setProperty("bm25.idf.policy","standard");
+        queryConfiguration2.setProperty("bm25.k1","1.2d");
+        queryConfiguration2.setProperty("bm25.b","0.75d");
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, BM25_STEMMER,2,null,filterGeoAndTemp));
 
 
         LgteIndexSearcherWrapper searcherMulti = Config.openMultiSearcher();

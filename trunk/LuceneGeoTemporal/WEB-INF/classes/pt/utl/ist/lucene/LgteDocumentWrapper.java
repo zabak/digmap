@@ -597,6 +597,19 @@ we     */
         return getTimeBoxFields(middleMili,width/2);
     }
 
+    public void addTimeBoxFields(Date left,Date right, Date centroide)
+    {
+        long width = right.getTime() - left.getTime();
+        List<Field> fields = getTimeFields(centroide.getTime());
+        fields.add(getField(Globals.LUCENE_TIMEWIDTH_ORIGINAL_INDEX,""+width,true,false,false));
+        fields.add(getField(Globals.LUCENE_START_TIME_LIMIT_INDEX_ORIGINAL,""+left.getTime(),true,false,false));
+        fields.add(getField(Globals.LUCENE_END_TIME_LIMIT_INDEX_ORIGINAL,""+right.getTime(),true,false,false));
+
+        fields.add(getField(Globals.LUCENE_TIMEWIDTH_INDEX, NumberUtils.long2sortableStr(width),false,true,false,true));
+        fields.add(getField(Globals.LUCENE_START_TIME_LIMIT_INDEX,NumberUtils.long2sortableStr(left.getTime()),false,true,false,true));
+        fields.add(getField(Globals.LUCENE_END_TIME_LIMIT_INDEX,NumberUtils.long2sortableStr(right.getTime()),false,true,false,true));
+    }
+
     /**
      * Add new time field and width
      *

@@ -41,25 +41,22 @@ public class IndexGeoTime
     {
         LgteDocumentWrapper doc = new LgteDocumentWrapper();
         doc.indexString(Config.ID,d.getD().getDId());
-        if(d.hasTimexes() && d.hasPlaces())
-            doc.indexString(Config.S_GEO_AND_TEMPORAL_INDEXED,"true");
-        else
-            doc.indexString(Config.S_GEO_AND_TEMPORAL_INDEXED,"false");
-
-        if(d.hasTimexes() || d.hasPlaces())
-            doc.indexString(Config.S_GEO_OR_TEMPORAL_INDEXED,"true");
-        else
-            doc.indexString(Config.S_GEO_OR_TEMPORAL_INDEXED,"false");
 
         if(d.hasTimexes())
+            doc.indexString(Config.S_HAS_TIMEXES,"true");
+
+        if(d.hasIndexableTimeExpressions() && d.hasPlaces())
+            doc.indexString(Config.S_GEO_AND_TEMPORAL_INDEXED,"true");
+
+        if(d.hasIndexableTimeExpressions() || d.hasPlaces())
+            doc.indexString(Config.S_GEO_OR_TEMPORAL_INDEXED,"true");
+
+        if(d.hasIndexableTimeExpressions())
             doc.indexString(Config.S_TEMPORAL_INDEXED,"true");
-        else
-            doc.indexString(Config.S_TEMPORAL_INDEXED,"false");
 
         if(d.hasPlaces())
             doc.indexString(Config.S_GEO_INDEXED, "true");
-        else
-            doc.indexString(Config.S_GEO_INDEXED,"false");
+
         writer.addDocument(doc);
     }
 }

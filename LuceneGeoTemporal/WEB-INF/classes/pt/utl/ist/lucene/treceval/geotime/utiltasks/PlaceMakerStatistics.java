@@ -95,26 +95,49 @@ public class PlaceMakerStatistics
                 {
                     //KEY: ExpressionType-Month VAL: Count
                     String key = placeDetails.getType();
+
+
                     Integer count = expressionsTypeMonth.get(key);
                     if(count == null)
                         count = 0;
-                    expressionsTypeMonth.put(key,count+1);
+                    expressionsTypeMonth.put(key,count+placeDetails.getRefs().size());
 
                     Integer countTotal = expressionsTypeTotals.get(key);
                     if(countTotal == null)
                         countTotal = 0;
-                    expressionsTypeTotals.put(key,countTotal+1);
+                    expressionsTypeTotals.put(key,countTotal+placeDetails.getRefs().size());
 
                     Integer countCofidence = expressionsTypeMonth.get("confidence-" + placeDetails.getConfidence());
                     if(countCofidence == null)
-                        countCofidence = 0;
-
-                    expressionsTypeMonth.put("confidence-" + placeDetails.getConfidence(),countCofidence + 1);
+                    countCofidence = 0;
+                    expressionsTypeMonth.put("confidence-" + placeDetails.getConfidence(),countCofidence + placeDetails.getRefs().size());
 
                     Integer countCofidenceTotals = expressionsTypeTotals.get("confidence-" + placeDetails.getConfidence());
                     if(countCofidenceTotals == null)
                         countCofidenceTotals = 0;
-                    expressionsTypeTotals.put("confidence-" + placeDetails.getConfidence(),countCofidenceTotals + 1);
+                    expressionsTypeTotals.put("confidence-" + placeDetails.getConfidence(),countCofidenceTotals + placeDetails.getRefs().size());
+
+
+
+//                    Integer countDocDf = expressionsTypeMonth.get(key + "-df");
+//                    if(countDocDf == null)
+//                        countDocDf = 0;
+//                    expressionsTypeMonth.put(key + "-df",countDocDf+1);
+//
+//                    Integer countTotalDf = expressionsTypeTotals.get(key + "-df");
+//                    if(countTotalDf == null)
+//                        countTotalDf = 0;
+//                    expressionsTypeTotals.put(key + "-df",countTotalDf+1);
+//
+//                    Integer countCofidenceDf = expressionsTypeMonth.get("confidence-" + placeDetails.getConfidence() + "-df");
+//                    if(countCofidenceDf == null)
+//                    countCofidenceDf = 0;
+//                    expressionsTypeMonth.put("confidence-" + placeDetails.getConfidence() + "-df",countCofidenceDf + 1);
+//
+//                    Integer countCofidenceTotalsDf = expressionsTypeTotals.get("confidence-" + placeDetails.getConfidence() + "-df");
+//                    if(countCofidenceTotalsDf == null)
+//                        countCofidenceTotalsDf = 0;
+//                    expressionsTypeTotals.put("confidence-" + placeDetails.getConfidence() + "-df",countCofidenceTotalsDf + 1);
 
                 }
             }

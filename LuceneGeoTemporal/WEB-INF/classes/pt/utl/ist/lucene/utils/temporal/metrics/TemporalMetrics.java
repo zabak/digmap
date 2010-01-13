@@ -213,7 +213,36 @@ public class TemporalMetrics
         return temporalIntervalPointsCentroide;
     }
 
-    public TimeExpression getTemporalIntervalPointsCentroideTimeExpression() throws TimeExpression.BadTimeExpression
+    /**
+     * The same as the getTemporalIntervalPointsCentroide but days only contribute with 1 part and not with 2 like the intervals
+     * Example 1990-1-1 and 1990 will be (1990-1-1 + 1990-1-1 + 1990-12-31) / 3
+     * @return
+     */
+    public Date getTemporalIntervalPointsCentroide2()
+    {
+        if(temporalIntervalPointsCentroide != null)
+            return temporalIntervalPointsCentroide;
+
+        double total = 0;
+        double points = 0;
+        for(TimeExpression expression : expressions)
+        {
+            if(expression.getType() == TimeExpression.Type.YYYYMMDD)
+            {
+                total += expression.getLeftLimit().getTimeInMillis();
+                points += 1;
+            }
+            else
+            {
+                total += expression.getLeftLimit().getTimeInMillis() + expression.getRightLimit().getTimeInMillis();
+                points += 2;
+            }
+        }
+        temporalIntervalPointsCentroide = new Date((long)(total / points));
+        return temporalIntervalPointsCentroide;
+    }
+
+    public TimeExpression getIntervalCentroideTimeExpression() throws TimeExpression.BadTimeExpression
     {
         Date d = getTemporalIntervalPointsCentroide();
         DateFormat df = new SimpleDateFormat("yyyyMMdd");
@@ -247,7 +276,7 @@ public class TemporalMetrics
         return temporalIntervalPointsCentroide;
     }
 
-    public TimeExpression getTemporalPointsCentroideTimeExpression() throws TimeExpression.BadTimeExpression
+    public TimeExpression getLeftLimitsCentroideTimeExpression() throws TimeExpression.BadTimeExpression
     {
         Date d = getTemporalPointsCentroide();
         DateFormat df = new SimpleDateFormat("yyyyMMdd");

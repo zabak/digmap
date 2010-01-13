@@ -60,8 +60,25 @@ public class LgteIsolatedIndexReader extends IndexReader
         public IndexReader getReader(String field)
         {
             IndexReader reader = readers.get(field);
+
             if(reader == null)
-                reader = readers.get("*");
+            {
+                for(Map.Entry<String,IndexReader> entry: readers.entrySet())
+                {
+                    if(entry.getKey().matches("regexpr(.*)"))
+                    {
+                        String regExpr = entry.getKey().substring("regexpr(".length(),entry.getKey().length() -1);
+                        if(field.matches(regExpr))
+                        {
+                            reader = entry.getValue();
+                            readers.put(field,reader);
+                            break;
+                        }
+                    }
+                }
+                if(reader == null)
+                    reader = readers.get("*");
+            }
             return reader;
         }
 
@@ -97,7 +114,7 @@ public class LgteIsolatedIndexReader extends IndexReader
      * Constructor used if IndexReader is not owner of its directory.
      * This is used for IndexReaders that are used within other IndexReaders that take care or locking directories.
      *
-     * @param paths Pairs FieldName, Path
+     * @param paths Pair<FieldName, Path> - The field name can be a regular expression
      * @param model model
      * @throws java.io.IOException on open
      */
@@ -375,11 +392,11 @@ public class LgteIsolatedIndexReader extends IndexReader
     }
 
     public TermDocs termDocs() throws IOException {
-        return new MultiTermDocs(readers.getReadersMap());
+        return new MultiTermDocs(readers);
     }
 
     public TermPositions termPositions() throws IOException {
-        return new MultiTermPositions(readers.getReadersMap());
+        return new MultiTermPositions(readers);
     }
 
 
@@ -445,12 +462,12 @@ public class LgteIsolatedIndexReader extends IndexReader
     }
 
     class MultiTermDocs implements TermDocs {
-        Map<String, IndexReader> readers;
+        Readers readers;
         protected Term term;
 
         protected TermDocs current;              // == readerTermDocs[pointer]
 
-        public MultiTermDocs(Map<String, IndexReader> r) {
+        public MultiTermDocs(Readers r) {
             readers = r;
 
         }
@@ -464,7 +481,7 @@ public class LgteIsolatedIndexReader extends IndexReader
 
         public void seek(Term term) throws IOException
         {
-            current = readers.get(term.field()).termDocs();
+            current = readers.getReader(term.field()).termDocs();
             current.seek(term);
             this.term = term;
         }
@@ -487,7 +504,10 @@ public class LgteIsolatedIndexReader extends IndexReader
                     return 0;
                 }
                 int end = current.read(docs, freqs);
-                if (end == 0) {          // none left in segment
+                if (end == 0) {
+                    // none left in segment
+                    if(current != null)
+                        current.close();
                     current = null;
                 } else {            // got some
 //                    final int b = base;        // adjust doc numbers
@@ -510,17 +530,18 @@ public class LgteIsolatedIndexReader extends IndexReader
 
 
         public void close() throws IOException {
-            current.close();
+            if(current != null)
+                current.close();
         }
     }
 
     class MultiTermPositions extends MultiTermDocs implements TermPositions {
-        public MultiTermPositions(Map<String, IndexReader> r) {
+        public MultiTermPositions(Readers r) {
             super(r);
         }
 
         protected TermDocs termDocs(IndexReader reader) throws IOException {
-            return (TermDocs)reader.termPositions();
+            return reader.termPositions();
         }
 
         public int nextPosition() throws IOException {

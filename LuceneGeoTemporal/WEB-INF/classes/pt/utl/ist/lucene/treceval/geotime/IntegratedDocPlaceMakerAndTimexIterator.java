@@ -149,7 +149,13 @@ public class IntegratedDocPlaceMakerAndTimexIterator {
         public boolean hasTimexes()
         {
             //we are ignoring the article publication date
-            return td != null && td.getTimex2TimeExpressions() != null && td.getTimex2TimeExpressions().size() > 1;
+            return td != null && td.getTimex2TimeExpressions() != null && td.getTimex2TimeExpressions().size() > 0;
+        }
+
+        public boolean hasIndexableTimeExpressions()
+        {
+            //we are ignoring the article publication date
+            return td != null && td.getTimex2TimeExpressions() != null && td.getAllIndexableTimeExpressions().size() > 0;
         }
 
         public boolean hasPlaces()
@@ -161,9 +167,9 @@ public class IntegratedDocPlaceMakerAndTimexIterator {
         public int countTimexes()
         {
             //we are ignoring the article publication date
-            if(td != null && td.getTimex2TimeExpressions() != null && td.getTimex2TimeExpressions().size() > 1)
+            if(td != null && td.getTimex2TimeExpressions() != null && td.getTimex2TimeExpressions().size() > 0)
             {
-                return td.getTimex2TimeExpressions().size() - 1;
+                return td.getTimex2TimeExpressions().size();
             }
             return 0;
         }
@@ -171,9 +177,19 @@ public class IntegratedDocPlaceMakerAndTimexIterator {
         public int countTimeExpressions()
         {
             //we are ignoring the article publication date
-            if(td != null && td.getTimex2TimeExpressions() != null && td.getTimex2TimeExpressions().size() > 1)
+            if(td != null && td.getTimex2TimeExpressions() != null && td.getTimex2TimeExpressions().size() > 0)
             {
-                return td.getAllTimeExpressions().size() - 1;
+                return td.getAllTimeExpressions().size();
+            }
+            return 0;
+        }
+
+        public int countIndexableTimeExpressions()
+        {
+            //we are ignoring the article publication date
+            if(td != null && td.getTimex2TimeExpressions() != null && td.getTimex2TimeExpressions().size() > 0)
+            {
+                return td.getAllIndexableTimeExpressions().size();
             }
             return 0;
         }

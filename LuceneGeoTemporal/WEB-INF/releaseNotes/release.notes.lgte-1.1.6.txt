@@ -1,25 +1,18 @@
-package pt.utl.ist.lucene.treceval.geotime.index;
+LGTE version 1.1.6
 
-import pt.utl.ist.lucene.Globals;
-import pt.utl.ist.lucene.LgteIndexSearcherWrapper;
-import pt.utl.ist.lucene.Model;
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.LanguageModelIndexReader;
-import org.apache.lucene.index.LgteIsolatedIndexReader;
+Release Notes:
 
-import java.util.Map;
-import java.util.HashMap;
-import java.io.IOException;
 
-/**
- * @author Jorge Machado
- * @date 10/Jan/2010
- * @time 17:54:44
- * @email machadofisher@gmail.com
- */
-public class Config
-{
-    public static final String indexBase =  "D:\\Servidores\\DATA\\ntcir\\INDEXES";
+1 - Removed Introduced Bug (NullPointerException at org.apache.lucene.index.LgteIsolatedIndexReader$MultiTermDocs.seek(LgteIsolatedIndexReader.java:480)) in version 1.1.5
+     cause: when using filters and regular expressions with LgteIsolatedReader several mehtods were using directly the readers map instead of vcall the method getReader which uses
+            the regular expressions
+2 - Bug removed from LgteIsolatedReader (try to close a null TermDocs object)
+3 - The readers map at LgteIsolatedIndexReader constructor can be made of regular expressions instead of field names, or both cases
+    @see pt.utl.ist.lucene.test.multiindexes.TestMultiReaderRegularExpressions
+    @see pt.utl.ist.lucene.treceval.geotime.index.Config 
+
+    Example taked from Config class. See regular expressions examples at the bottom of this file
+
 
     public static final String ID = Globals.DOCUMENT_ID_FIELD;
     public static final String CONTENTS = Globals.LUCENE_DEFAULT_FIELD;
@@ -28,7 +21,7 @@ public class Config
     public static final String S_TEMPORAL_INDEXED = "S_TEMPORAL_INDEXED";
     public static final String S_GEO_INDEXED = "S_GEO_INDEXED";
     public static final String S_GEO_AND_TEMPORAL_INDEXED = "S_GEO_AND_TEMPORAL_INDEXED";
-    public static final String S_GEO_OR_TEMPORAL_INDEXED =  "S_GEO_OR_TEMPORAL_INDEXED";
+    public static final String S_GEO_OR_TEMPORAL_INDEXED = "S_GEO_OR_TEMPORAL_INDEXED";
     public static final String S_HAS_TIMEXES = "S_HAS_TIMEXES";
 
     //Geo Indexes
@@ -76,15 +69,8 @@ public class Config
 
 
 
-    public static String documentPath = "D:\\Servidores\\DATA\\ntcir\\data";
-    public static String timexesPath = "D:\\Servidores\\DATA\\ntcir\\TIMEXTAG";
-    public static String placemakerPath = "D:\\Servidores\\DATA\\ntcir\\PlaceMaker";
-
-    public static LgteIndexSearcherWrapper openMultiSearcher() throws IOException
+   public static LgteIndexSearcherWrapper openMultiSearcher() throws IOException
     {
-
-
-
         IndexReader readerContents = new LanguageModelIndexReader(IndexReader.open(IndexContents.indexPath));
         IndexReader readerGeoTime = new LanguageModelIndexReader(IndexReader.open(IndexGeoTime.indexPath));
         IndexReader readerTimeRefs = new LanguageModelIndexReader(IndexReader.open(CreateTimeExprIndex.indexPath));
@@ -103,16 +89,3 @@ public class Config
 
         return new LgteIndexSearcherWrapper(Model.OkapiBM25Model,new LgteIsolatedIndexReader(readers));
     }
-
-    public static void main(String[] args)
-    {
-        System.out.println(Config.T_YYYYMMDD.matches("^S_.*"));
-        System.out.println(Config.T_YYYYMMDD.matches("^t_.*"));
-        System.out.println(Config.S_GEO_AND_TEMPORAL_INDEXED.matches("^S_.*"));
-        System.out.println(Config.S_GEO_INDEXED.matches("^S_.*"));
-        System.out.println(Config.S_TEMPORAL_INDEXED.matches("^S_.*"));
-        System.out.println(Config.S_GEO_OR_TEMPORAL_INDEXED.matches("^S_.*"));
-        System.out.println(Config.S_TEMPORAL_INDEXED.matches("^S_.*"));
-        System.out.println(Config.S_HAS_TIMEXES.matches("^S_.*"));
-    }
-}

@@ -167,7 +167,7 @@ public class TimexesDocument
         return validTimeExpressions;
     }
 
-    public List<TimeExpression> getAllMetricTimeExpressions()
+    public List<TimeExpression> getAllIndexableTimeExpressions()
     {
         List<TimeExpression> validTimeExpressions = new ArrayList<TimeExpression>();
         if(timex2TimeExpressionsList != null)
@@ -179,6 +179,11 @@ public class TimexesDocument
             }
         }
         return validTimeExpressions;
+    }
+
+    public boolean hasIndexableTimeExpressions()
+    {
+        return getAllIndexableTimeExpressions().size() > 0;    
     }
 
     public void setTimex2TimeExpressions(List<Timex2TimeExpression> timex2TimeExpressionsList) {

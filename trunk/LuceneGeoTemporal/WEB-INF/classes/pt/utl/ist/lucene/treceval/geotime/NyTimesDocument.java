@@ -109,6 +109,8 @@ public class NyTimesDocument {
         while((line = reader.readLine()) != null && !line.toUpperCase().equals("</DOC>"))
         {
 
+            if(line.startsWith("<DATE_TIME>"))
+                continue;
 //            if(!test(line.getBytes(),"UTF-8"))
 //            {
 //                StringBuilder lineBuilder = new StringBuilder();

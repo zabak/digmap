@@ -40,6 +40,7 @@ public class IndexContents {
         Map<String, Analyzer> anaMap = new HashMap<String,Analyzer>();
         anaMap.put(Config.ID, new LgteNothingAnalyzer());
         anaMap.put(Config.CONTENTS, IndexCollections.en.getAnalyzerWithStemming());
+        anaMap.put(Config.TITLE, IndexCollections.en.getAnalyzerWithStemming());
 
         LgteBrokerStemAnalyzer analyzer = new LgteBrokerStemAnalyzer(anaMap);
 

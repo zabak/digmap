@@ -7,6 +7,15 @@
 <%@ page import="pt.utl.ist.lucene.utils.temporal.tides.Timex2TimeExpression" %>
 <%@ page import="pt.utl.ist.lucene.utils.temporal.tides.TimexesDocument" %>
 <%@ page import="java.util.*" %>
+<%@ page import="org.apache.commons.fileupload.servlet.ServletFileUpload" %>
+<%@ page import="org.apache.commons.fileupload.FileItemFactory" %>
+<%@ page import="org.apache.commons.fileupload.disk.DiskFileItemFactory" %>
+<%@ page import="java.io.File" %>
+<%@ page import="org.apache.commons.fileupload.FileUploadException" %>
+<%@ page import="org.apache.commons.fileupload.FileItem" %>
+<%@ page import="pt.utl.ist.lucene.config.ConfigProperties" %>
+<%@ page import="java.io.BufferedReader" %>
+<%@ page import="java.io.InputStreamReader" %>
 <html>
 <head><title>Example Web Application for Search with Lucene GeoTemporal Extensions</title>
 <script type="text/javascript" src="<%=request.getContextPath()%>/scripts.js"></script>
@@ -23,9 +32,14 @@
     #fields ul li{margin:0}
     #fields li{font-size:11px;font-family: Verdana, Helvetica, sans-serif;}
 
+    label.PLACE
+    {
+        background-color:lightcoral;
+    }
+
     label.TIMEX
     {
-        background-color:red;
+        background-color:lightskyblue;
     }
     #results
     {
@@ -129,7 +143,7 @@
     <div class="form">
         <input type="hidden" name="topicID" value=""/>
         <%
-        String testQuery = "Worldwide Natural Disasters What are the natural disasters caused by abnormal phenomena, such as floods, earthquakes, and famines, that appear worldwide?";
+            String testQuery = "Worldwide Natural Disasters What are the natural disasters caused by abnormal phenomena, such as floods, earthquakes, and famines, that appear worldwide?";
         %>
         <textarea rows="10" cols="200" name="q" value="<%=request.getParameter("q") == null ? testQuery:request.getParameter("q")%>"></textarea> <br/>
         <input type="submit" value="Search Documents"/>
@@ -155,25 +169,9 @@
     Map<String, String> topicsDesc = (Map<String, String>) request.getSession().getAttribute("topicsDesc");
     Map<String, String> topicsNarr = (Map<String, String>) request.getSession().getAttribute("topicsNarr");
 
-    Map<String, Map<String,String>> relevantTopicDoc = (Map<String, Map<String,String>>) request.getSession().getAttribute("relevantTopicDocs");
-    if(relevantTopicDoc == null)
-    {
-        relevantTopicDoc = new HashMap<String, Map<String,String>>();
-        request.getSession().setAttribute("relevantTopicDocs",relevantTopicDoc);
-    }
-    Map<String,String> topicJudgements = null;
-    if(request.getParameter("topicID") != null && request.getParameter("topicID").length() > 0)
-    {
-        topicJudgements = relevantTopicDoc.get(request.getParameter("topicID"));
-        if(topicJudgements == null)
-        {
-            topicJudgements = new HashMap<String, String>();
-            relevantTopicDoc.put(request.getParameter("topicID"),topicJudgements);
-        }
-    }
-
-    if (request.getParameter("topicOp") != null && request.getParameter("topicOp").equals("clean")) {
-        relevantTopicDoc = new HashMap<String, Map<String,String>>();
+    Map<String, Map<String, String>> relevantTopicDoc = (Map<String, Map<String, String>>) request.getSession().getAttribute("relevantTopicDocs");
+    if (relevantTopicDoc == null) {
+        relevantTopicDoc = new HashMap<String, Map<String, String>>();
         topics = new HashMap<String, String>();
         topicsDesc = new HashMap<String, String>();
         topicsNarr = new HashMap<String, String>();
@@ -182,25 +180,116 @@
         request.getSession().setAttribute("topicsDesc", topicsDesc);
         request.getSession().setAttribute("topicsNarr", topicsNarr);
     }
-    System.out.println(request.getParameter("topicOp"));
+
+    if (ServletFileUpload.isMultipartContent(request)) {
+        try {
+            // Create a factory for disk-based file items
+            FileItemFactory factory = new DiskFileItemFactory();
+
+            // Create a new file upload handler
+            ServletFileUpload upload = new ServletFileUpload(factory);
+
+            // Parse the request
+            List items = upload.parseRequest(request); /* FileItem */
+
+            File repositoryPath = new File(ConfigProperties.getProperty("output.tmp.dir"));
+            DiskFileItemFactory diskFileItemFactory = new DiskFileItemFactory();
+            diskFileItemFactory.setRepository(repositoryPath);
+
+            Iterator iter = items.iterator();
+            for (Object item1 : items) {
+                FileItem item = (FileItem) item1;
+                BufferedReader reader = new BufferedReader(new InputStreamReader(item.getInputStream()));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    if(line.trim().length() == 0)
+                    {
+
+                    }
+                    else if (line.startsWith("#TOPIC$$")) {
+                        int startId = "#TOPIC$$".length();
+                        int endId = line.indexOf("$$", startId);
+                        int startType = endId + 2;
+                        int endType = line.indexOf(":", startType);
+                        String docId = line.substring(startId, line.indexOf("$$", startId));
+                        String type = line.substring(startType, endType);
+                        String text = line.substring(line.indexOf(":",endType)+1);
+                        if(type.equals("TITLE"))
+                            topics.put(docId,text);
+                        else if(type.equals("DESC"))
+                            topicsDesc.put(docId,text);
+                        else if(type.equals("NARR"))
+                            topicsNarr.put(docId,text);
+                    }
+                    else
+                    {
+                        int firstSpace = line.indexOf(" ");
+                        int secondSpace = line.indexOf(" ",firstSpace+1);
+                        int thirdSpace = line.indexOf(" ",secondSpace+1);
+                        String topicId = line.substring(0, firstSpace).trim();
+                        String docid = line.substring(secondSpace,thirdSpace).trim();
+                        String relevance = line.substring(thirdSpace).trim();
+
+                        Map<String,String> topicJudgementsAux = relevantTopicDoc.get(topicId);
+                        if(topicJudgementsAux == null)
+                        {
+                            topicJudgementsAux = new HashMap<String,String>();
+                            relevantTopicDoc.put(topicId,topicJudgementsAux);
+                        }
+                        topicJudgementsAux.put(docid,relevance);
+                    }
+                }
+            }
+        }
+        catch (FileUploadException ex) {
+            System.out.println(ex);
+            ex.printStackTrace();
+        }
+        catch (Exception ex) {
+            System.out.println(ex);
+            ex.printStackTrace();
+        }
+    }
+
+
+    Map<String, String> topicJudgements = null;
+
+    if (request.getParameter("topicID") != null && request.getParameter("topicID").length() > 0) {
+        topicJudgements = relevantTopicDoc.get(request.getParameter("topicID"));
+        if (topicJudgements == null) {
+            topicJudgements = new HashMap<String, String>();
+            relevantTopicDoc.put(request.getParameter("topicID"), topicJudgements);
+        }
+    }
+
+
+
+
+
+    if (request.getParameter("topicOp") != null && request.getParameter("topicOp").equals("clean")) {
+        relevantTopicDoc = new HashMap<String, Map<String, String>>();
+        topics = new HashMap<String, String>();
+        topicsDesc = new HashMap<String, String>();
+        topicsNarr = new HashMap<String, String>();
+        request.getSession().setAttribute("relevantTopicDocs", relevantTopicDoc);
+        request.getSession().setAttribute("topics", topics);
+        request.getSession().setAttribute("topicsDesc", topicsDesc);
+        request.getSession().setAttribute("topicsNarr", topicsNarr);
+    }
+
 
     if (request.getParameter("topicOp") != null && request.getParameter("topicOp").equals("confirm")) {
 
         Enumeration params = request.getParameterNames();
         while (params.hasMoreElements()) {
             String param = (String) params.nextElement();
-            if(param.startsWith("NYT_"))
-            {
+            if (param.startsWith("NYT_")) {
                 String relevance = request.getParameter(param);
-                if(relevance != null && relevance.length() > 0)
-                {
-                    if(relevance.equals("relevant"))
-                    {
-                        topicJudgements.put(param,"1");
-                    }
-                    else if(relevance.equals("irrelevant"))
-                    {
-                        topicJudgements.put(param,"0");
+                if (relevance != null && relevance.length() > 0) {
+                    if (relevance.equals("relevant")) {
+                        topicJudgements.put(param, "1");
+                    } else if (relevance.equals("irrelevant")) {
+                        topicJudgements.put(param, "0");
                     }
                 }
             }
@@ -220,12 +309,23 @@
         topicsNarr.put(request.getParameter("topicID"), request.getParameter("topicNarr"));
     }
 
+%>
+<form action="indexNtcir.jsp" method="post" >
+    <div class="form">
+        <% if (topics != null && topics.size() > 0)
+        {%>
+        <p><a href="<%=request.getContextPath()%>/exportNtcirJudgments.jsp" target="_blank">Export my judgments</a></p>
+        <%}%>
+        <p>Import Judgements<input type="file" name="judgments"> <input type="button" value="Import" onclick="this.form.enctype='multipart/form-data'; this.form.submit()"></p>
+    </div>
+</form>
+<%
 
     if (topics != null && topics.size() > 0) {
 %>
 <form action="indexNtcir.jsp" method="post">
 <div class="form">
-    <p>After a search choose a Topic to judge and mark te relevant documents:</p>
+    <p>After a search choose a Topic to judge and mark it as relevant or irrelevant:</p>
     <%
         for(Map.Entry<String,String> entry: topics.entrySet())
         {
@@ -246,9 +346,7 @@
 
 
 </div>
-<div class="form">
-    <p><a href="<%=request.getContextPath()%>/exportNtcirJudgments.jsp" target="_blank">Export my judgments</a></p>
-</div>
+
 
 <%
     }
@@ -272,7 +370,7 @@
         LgteIndexSearcherWrapper searcher = Config.openMultiSearcher();
         Analyzer analyzer = IndexCollections.en.getAnalyzerWithStemming();
 //                LgteQuery query = LgteQueryParser.parseQuery(request.getParameter("q"), analyzer);
-        System.out.println("Searching for: " + request.getParameter("q"));
+//        System.out.println("Searching for: " + request.getParameter("q"));
         QueryConfiguration queryConfiguration = new QueryConfiguration();
         queryConfiguration.getQueryProperties().put("bm25.k1", "1.2d");
         queryConfiguration.getQueryProperties().put("bm25.b", "0.75d");
@@ -293,86 +391,123 @@
             String timexes = doc.get(Config.TEMPORAL_DB);
             StringBuilder annotatedText = new StringBuilder();
             int pos = 0;
+            PlaceMakerDocument placeMakerDocument = null;
             if (placeMaker != null) {
-                PlaceMakerDocument placeMakerDocument = new PlaceMakerDocument(placeMaker);
-
+                placeMakerDocument = new PlaceMakerDocument(placeMaker);
             }
+            TimexesDocument timexesDocument = null;
             if (timexes != null) {
 
-                TimexesDocument timexesDocument = new TimexesDocument(timexes);
-                System.out.println(docno);
+                timexesDocument = new TimexesDocument(timexes);
+//                System.out.println(docno);
                 List<Timex2TimeExpression> timexesList = timexesDocument.getTimex2TimeExpressions();
                 Collections.sort(timexesList, new Comparator<Timex2TimeExpression>() {
 
                     public int compare(Timex2TimeExpression o1, Timex2TimeExpression o2) {
-                        if(o1.getStartOffset() > o2.getStartOffset())
+                        if (o1.getStartOffset() > o2.getStartOffset())
                             return 1;
-                        else if(o1.getStartOffset() < o2.getStartOffset())
+                        else if (o1.getStartOffset() < o2.getStartOffset())
                             return -1;
                         else return 0;
 
                     }
                 }
                 );
-                int lastOffset = 0;
-                for (Timex2TimeExpression timex2 : timexesDocument.getTimex2TimeExpressions()) {
-                    if (lastOffset <= timex2.getStartOffset() && timex2.getStartOffset() < timex2.getEndOffset() && timex2.getStartOffset() < sgmlWithOutTags.length() && timex2.getEndOffset() < sgmlWithOutTags.length() && timex2.getStartOffset() > 0 && timex2.getEndOffset() > 0) {
-                        System.out.println(timex2.getStartOffset() + ":" + timex2.getEndOffset());
-                        annotatedText.append(sgmlWithOutTags.substring(pos, timex2.getStartOffset()));
-                        annotatedText.append("<label class=\"TIMEX\">");
-                        annotatedText.append(sgmlWithOutTags.substring(timex2.getStartOffset(), timex2.getEndOffset() + 1));
-                        annotatedText.append("</label>");
-                        lastOffset = timex2.getEndOffset();
-                        pos = timex2.getEndOffset() + 1;
-                    }
-                }
-                if (sgmlWithOutTags.length() > pos + 1)
-                    annotatedText.append(sgmlWithOutTags.substring(pos + 1));
             }
+            Iterator<Timex2TimeExpression> timexesIter;
+            if (timexesDocument != null)
+                timexesIter = timexesDocument.getTimex2TimeExpressions().iterator();
+            else
+                timexesIter = new ArrayList<Timex2TimeExpression>().iterator();
+
+            Iterator<PlaceMakerDocument.PlaceRef> placesIter;
+            if (placeMakerDocument != null)
+                placesIter = placeMakerDocument.getAllRefs().iterator();
+            else
+                placesIter = new ArrayList<PlaceMakerDocument.PlaceRef>().iterator();
 
 
-            String fileAnnotatedPath; //doc.get(SentenceCleanTagger.output + "\\" + docno.substring(0, 14) + ".sentences.zip");
-//                    out.print("<p><b>TITLE</b>: <a href=\"downloadCran.jsp?docno=" + docno + "&filepath=" + filepath + "\">" + doc.get(pt.utl.ist.lucene.treceval.Globals.DOCUMENT_TITLE) + "</a></p>");
-            String style="";
+            int lastOffset = 0;
+            Timex2TimeExpression nowTimex = null;
+            PlaceMakerDocument.PlaceRef nowPlaceRef = null;
+            while (timexesIter.hasNext() || placesIter.hasNext())
+            {
+                if(nowPlaceRef == null && placesIter.hasNext())
+                    nowPlaceRef = placesIter.next();
+                if(nowTimex == null && timexesIter.hasNext())
+                    nowTimex = timexesIter.next();
+
+                if((nowTimex != null &&  nowPlaceRef != null && nowTimex.getStartOffset() < nowPlaceRef.getStartOffset()) || nowTimex != null && nowPlaceRef == null)
+                {
+                    if (lastOffset <= nowTimex.getStartOffset() && nowTimex.getStartOffset() < nowTimex.getEndOffset() && nowTimex.getStartOffset() < sgmlWithOutTags.length() && nowTimex.getEndOffset() < sgmlWithOutTags.length() && nowTimex.getStartOffset() > 0 && nowTimex.getEndOffset() > 0 && nowTimex.getStartOffset() > pos) {
+//                        System.out.println(nowTimex.getStartOffset() + ":" + nowTimex.getEndOffset());
+                        annotatedText.append(sgmlWithOutTags.substring(pos, nowTimex.getStartOffset()));
+                        annotatedText.append("<label class=\"TIMEX\">");
+                        annotatedText.append(sgmlWithOutTags.substring(nowTimex.getStartOffset(), nowTimex.getEndOffset() + 1));
+                        annotatedText.append("</label>");
+                        lastOffset = nowTimex.getEndOffset();
+                        pos = nowTimex.getEndOffset() + 1;
+                    }
+                    nowTimex = null;
+                }
+                else if(nowPlaceRef != null)
+                {
+                    if (lastOffset <= nowPlaceRef.getStartOffset() && nowPlaceRef.getStartOffset() < nowPlaceRef.getEndOffset() && nowPlaceRef.getStartOffset() < sgmlWithOutTags.length() && nowPlaceRef.getEndOffset() < sgmlWithOutTags.length() && nowPlaceRef.getStartOffset() > 0 && nowPlaceRef.getEndOffset() > 0 && nowPlaceRef.getStartOffset() > pos) {
+//                        System.out.println(nowPlaceRef.getStartOffset() + ":" + nowPlaceRef.getEndOffset());
+                        annotatedText.append(sgmlWithOutTags.substring(pos, nowPlaceRef.getStartOffset()));
+                        annotatedText.append("<label class=\"PLACE\">");
+                        annotatedText.append(sgmlWithOutTags.substring(nowPlaceRef.getStartOffset(), nowPlaceRef.getEndOffset() + 1));
+                        annotatedText.append("</label>");
+                        lastOffset = nowPlaceRef.getEndOffset();
+                        pos = nowPlaceRef.getEndOffset() + 1;
+                    }
+                    nowPlaceRef = null;
+                }
+                else
+                {
+
+                }
+            }
+            if (sgmlWithOutTags.length() > pos + 1)
+                annotatedText.append(sgmlWithOutTags.substring(pos + 1));
+
+
+
+
+            String style = "";
             String relevance = "";
             String relevantSelected = "";
             String irrelevantSelected = "";
-            System.out.println("TOPICID " + request.getParameter("topicID"));
-            if(request.getParameter("topicID") != null && request.getParameter("topicID").length() > 0)
-            {
+//            System.out.println("TOPICID " + request.getParameter("topicID"));
+            if (request.getParameter("topicID") != null && request.getParameter("topicID").length() > 0) {
 
                 topicJudgements = relevantTopicDoc.get(request.getParameter("topicID"));
-                System.out.println("JUDGMENTS: " + topicJudgements.size());
-                if(topicJudgements.get(docno) != null)
-                {
+//                System.out.println("JUDGMENTS: " + topicJudgements.size());
+                if (topicJudgements.get(docno) != null) {
 
-                    relevance =  topicJudgements.get(docno);
-                    System.out.println("Found DOCNO: " + relevance);
-                    if(relevance!= null)
-                    {
-                        if(relevance.equals("0"))
-                        {
-                            style="style=\"background-color:red\"";
+                    relevance = topicJudgements.get(docno);
+//                    System.out.println("Found DOCNO: " + relevance);
+                    if (relevance != null) {
+                        if (relevance.equals("0")) {
+                            style = "style=\"background-color:red\"";
                             irrelevantSelected = " selected";
-                        }
-                        else
-                        {
-                            style="style=\"background-color:green\"";
+                        } else {
+                            style = "style=\"background-color:green\"";
                             relevantSelected = " selected";
                         }
                     }
                 }
             }
-            out.print("<table><tr><td " + style + " id=\"table" + docno + "\"><a name=\"" + docno + "\">\n");
-            out.print("<p>" + i + " - <b>DOCNO</b> " + docno + "</p>\n");
+             out.print("<a name=\"" + docno + "\"></a>\n");
+            out.print("<table><tr><td " + style + " id=\"table" + docno + "\">");
+            out.print("<p>" + i + " - <b>DOCNO</b>" + docno +"</p>\n");
 
             out.print("<p><b>score</b>: " + hits.textScore(i) + "</p>\n");
             out.print("<p><b>summary</b>" + hits.summary(i, pt.utl.ist.lucene.Globals.LUCENE_DEFAULT_FIELD, 100, 4) + "</p>\n");
 //            out.print("<p><a onclick=\"popup('doc" + i +"');\" href=\"#\">Show Anotations:</a></p>\n");
-            out.print("<p><a onclick=\"getObjectById('table" + docno+ "').style.backgroundColor='lightgray';return !showPopup('doc" + i + "', event);\" href=\"#\">Show Anotations:</a></p>\n");
+            out.print("<p><a onclick=\"getObjectById('table" + docno + "').style.backgroundColor='lightgray';return !showPopup('doc" + i + "', event);\" href=\"#\">Show Anotations:</a></p>\n");
             out.print("</td><td>\n");
-            if(topics.size() > 0)
-            {
+            if (topics.size() > 0) {
 
 %>
 <select onchange="if(this.value == 'relevant'){getObjectById('table<%=docno%>').style.backgroundColor='green';}else if(this.value == 'irrelevant'){getObjectById('table<%=docno%>').style.backgroundColor='red';}" name="<%=docno%>">

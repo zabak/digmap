@@ -45,7 +45,7 @@ public class Config
     public static String timexesPath;
     public static String placemakerPath;
 
-    public static final String TITLE = "title";
+    public static final String TITLE = pt.utl.ist.lucene.treceval.Globals.DOCUMENT_TITLE;
 
     public static final String TEXT_DB = "TEXT_DB";
     public static final String TEMPORAL_DB = "TEMPORAL_DB";

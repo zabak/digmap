@@ -16,6 +16,8 @@
 <%@ page import="pt.utl.ist.lucene.config.ConfigProperties" %>
 <%@ page import="java.io.BufferedReader" %>
 <%@ page import="java.io.InputStreamReader" %>
+<%@ page import="pt.utl.ist.lucene.treceval.geotime.NyTimesDocument" %>
+<%@ page import="java.io.StringReader" %>
 <html>
 <head><title>Example Web Application for Search with Lucene GeoTemporal Extensions</title>
 <script type="text/javascript" src="<%=request.getContextPath()%>/scripts.js"></script>
@@ -146,6 +148,32 @@
             String testQuery = "Worldwide Natural Disasters What are the natural disasters caused by abnormal phenomena, such as floods, earthquakes, and famines, that appear worldwide?";
         %>
         <textarea rows="10" cols="200" name="q" value="<%=request.getParameter("q") == null ? testQuery:request.getParameter("q")%>"></textarea> <br/>
+        <input type="hidden" name="startAt" value="0">
+
+        <%
+            String sel10 = "";
+            String sel20 = "";
+            String sel50 = "";
+            String sel100 = "";
+            if(request.getParameter("docs")!=null)
+            {
+                Integer docs = Integer.parseInt(request.getParameter("docs"));
+                if(docs == 10)
+                    sel10 = " selected=\"selected\"";
+                if(docs == 20)
+                    sel20 = " selected=\"selected\"";
+                if(docs == 50)
+                    sel50 = " selected=\"selected\"";
+                if(docs == 100)
+                    sel100 = " selected=\"selected\"";
+            }
+        %>
+        <select name="docs">
+            <option value="10" <%=sel10%>>10</option>
+            <option value="20" <%=sel20%>>20</option>
+            <option value="50" <%=sel50%>>50</option>
+            <option value="100" <%=sel100%>>100</option>
+        </select>
         <input type="submit" value="Search Documents"/>
     </div>
 </form>
@@ -336,7 +364,7 @@
             }
     %>
 
-    <p><input <%=checked%> onclick="document.canconfirm=true;document.SearchForm.topicID.value=this.value" type="radio" name="topicID" value="<%=entry.getKey()%>"/> <%=entry.getKey()%> - <a href="indexNtcir.jsp?topicID=<%=entry.getKey()%>&q=<%=entry.getValue() + " " + topicsDesc.get(entry.getKey())%>"><%=entry.getValue()%></a></p>
+    <p><input <%=checked%> onclick="document.canconfirm=true;document.SearchForm.topicID.value=this.value" type="radio" name="topicID" value="<%=entry.getKey()%>"/> <%=entry.getKey()%> - <a href="indexNtcir.jsp?startAt=0&docs=20&topicID=<%=entry.getKey()%>&q=<%=entry.getValue() + " " + topicsDesc.get(entry.getKey())%>"><%=entry.getValue()%></a></p>
     <%
         }
     %>
@@ -380,17 +408,24 @@
 
 //                LgteHits hits = searcher.search(request.getParameter("q"),analyzer);
 
+        int startAt = Integer.parseInt(request.getParameter("startAt"));
+        int docs = Integer.parseInt(request.getParameter("docs"));
 
         out.println("<h3>Number of matching documents = " + hits.length() + "</h3>");
-        for (int i = 0; i < 50; i++) {
+        for (int i = startAt; i < startAt + docs; i++) {
             LgteDocumentWrapper doc = hits.doc(i);
             String docno = doc.get(pt.utl.ist.lucene.treceval.Globals.DOCUMENT_ID_FIELD);
 
-            String sgmlWithOutTags = doc.get(Config.TEXT_DB);
+            String sgml = doc.get(Config.TEXT_DB);
+            NyTimesDocument nyt = new NyTimesDocument(new BufferedReader(new StringReader(sgml)),"dummy.txt");
+            String sgmlWithOutTags = sgml.replaceAll("<[^>]+>","");
+
+//            System.out.println(sgml);
             String placeMaker = doc.get(Config.GEO_DB);
             String timexes = doc.get(Config.TEMPORAL_DB);
             StringBuilder annotatedText = new StringBuilder();
             int pos = 0;
+
             PlaceMakerDocument placeMakerDocument = null;
             if (placeMaker != null) {
                 placeMakerDocument = new PlaceMakerDocument(placeMaker);
@@ -430,48 +465,48 @@
             int lastOffset = 0;
             Timex2TimeExpression nowTimex = null;
             PlaceMakerDocument.PlaceRef nowPlaceRef = null;
-            while (timexesIter.hasNext() || placesIter.hasNext())
-            {
-                if(nowPlaceRef == null && placesIter.hasNext())
+            while (timexesIter.hasNext() || placesIter.hasNext()) {
+                if (nowPlaceRef == null && placesIter.hasNext())
                     nowPlaceRef = placesIter.next();
-                if(nowTimex == null && timexesIter.hasNext())
+                if (nowTimex == null && timexesIter.hasNext())
                     nowTimex = timexesIter.next();
 
-                if((nowTimex != null &&  nowPlaceRef != null && nowTimex.getStartOffset() < nowPlaceRef.getStartOffset()) || nowTimex != null && nowPlaceRef == null)
+                int startOffsetPlaceRef=0;
+                int endOffsetPlaceRef = 0;
+                if(nowPlaceRef != null)
                 {
+                    startOffsetPlaceRef = nyt.toStringOffset2txtwithoutTagsOffset(nowPlaceRef.getStartOffset());
+                    endOffsetPlaceRef = nyt.toStringOffset2txtwithoutTagsOffset(nowPlaceRef.getEndOffset());
+                }
+                if ((nowTimex != null && nowPlaceRef != null && nowTimex.getStartOffset() < startOffsetPlaceRef) || nowTimex != null && nowPlaceRef == null) {
                     if (lastOffset <= nowTimex.getStartOffset() && nowTimex.getStartOffset() < nowTimex.getEndOffset() && nowTimex.getStartOffset() < sgmlWithOutTags.length() && nowTimex.getEndOffset() < sgmlWithOutTags.length() && nowTimex.getStartOffset() > 0 && nowTimex.getEndOffset() > 0 && nowTimex.getStartOffset() > pos) {
 //                        System.out.println(nowTimex.getStartOffset() + ":" + nowTimex.getEndOffset());
                         annotatedText.append(sgmlWithOutTags.substring(pos, nowTimex.getStartOffset()));
-                        annotatedText.append("<label class=\"TIMEX\">");
+                        annotatedText.append("<label class=\"TIMEX\" start=\"" + nowTimex.getStartOffset() + "\">");
                         annotatedText.append(sgmlWithOutTags.substring(nowTimex.getStartOffset(), nowTimex.getEndOffset() + 1));
                         annotatedText.append("</label>");
                         lastOffset = nowTimex.getEndOffset();
                         pos = nowTimex.getEndOffset() + 1;
                     }
                     nowTimex = null;
-                }
-                else if(nowPlaceRef != null)
-                {
-                    if (lastOffset <= nowPlaceRef.getStartOffset() && nowPlaceRef.getStartOffset() < nowPlaceRef.getEndOffset() && nowPlaceRef.getStartOffset() < sgmlWithOutTags.length() && nowPlaceRef.getEndOffset() < sgmlWithOutTags.length() && nowPlaceRef.getStartOffset() > 0 && nowPlaceRef.getEndOffset() > 0 && nowPlaceRef.getStartOffset() > pos) {
+                } else if (nowPlaceRef != null) {
+
+                    if (lastOffset <= startOffsetPlaceRef && startOffsetPlaceRef < endOffsetPlaceRef && startOffsetPlaceRef < sgmlWithOutTags.length() && endOffsetPlaceRef < sgmlWithOutTags.length() && startOffsetPlaceRef > 0 && endOffsetPlaceRef > 0 && startOffsetPlaceRef > pos) {
 //                        System.out.println(nowPlaceRef.getStartOffset() + ":" + nowPlaceRef.getEndOffset());
-                        annotatedText.append(sgmlWithOutTags.substring(pos, nowPlaceRef.getStartOffset()));
+                        annotatedText.append(sgmlWithOutTags.substring(pos, startOffsetPlaceRef));
                         annotatedText.append("<label class=\"PLACE\">");
-                        annotatedText.append(sgmlWithOutTags.substring(nowPlaceRef.getStartOffset(), nowPlaceRef.getEndOffset() + 1));
+                        annotatedText.append(sgmlWithOutTags.substring(startOffsetPlaceRef, endOffsetPlaceRef + 1));
                         annotatedText.append("</label>");
-                        lastOffset = nowPlaceRef.getEndOffset();
-                        pos = nowPlaceRef.getEndOffset() + 1;
+                        lastOffset = endOffsetPlaceRef;
+                        pos = endOffsetPlaceRef + 1;
                     }
                     nowPlaceRef = null;
-                }
-                else
-                {
+                } else {
 
                 }
             }
             if (sgmlWithOutTags.length() > pos + 1)
                 annotatedText.append(sgmlWithOutTags.substring(pos + 1));
-
-
 
 
             String style = "";
@@ -498,9 +533,13 @@
                     }
                 }
             }
-             out.print("<a name=\"" + docno + "\"></a>\n");
+            out.print("<a name=\"" + docno + "\"></a>\n");
             out.print("<table><tr><td " + style + " id=\"table" + docno + "\">");
-            out.print("<p>" + i + " - <b>DOCNO</b>" + docno +"</p>\n");
+            String title = hits.doc(i).get(Config.TITLE);
+            if (title != null)
+                out.print("<p>" + i + " - " + title + " <b> - DOCNO</b>" + docno + "</p>\n");
+            else
+                out.print("<p>" + i + " - <b>DOCNO</b>" + docno + "</p>\n");
 
             out.print("<p><b>score</b>: " + hits.textScore(i) + "</p>\n");
             out.print("<p><b>summary</b>" + hits.summary(i, pt.utl.ist.lucene.Globals.LUCENE_DEFAULT_FIELD, 100, 4) + "</p>\n");
@@ -537,6 +576,7 @@
     %>
 </div>
 <hr>
+
 <%
                 //                out.print("<div id=\"doc" + i + "\" style=\"display:none;\">" + annotatedText.toString().replace("\n","<br>"));
 //                out.print("<p><a href=\"javascript:showOrHideOne('doc"+ i + "')\">Close Notes: " + docno  + "</a></p>\n");
@@ -544,6 +584,24 @@
 //                out.print("<hr>\n");
             }
             searcher.close();
+%>
+<p>
+<%
+            if(startAt > 0)
+            {
+%>
+<a href="<%=request.getContextPath()%>/indexNtcir.jsp?startAt=<%=startAt-docs%>&docs=<%=docs%>q=<%=request.getParameter("q")%>"> Next Results </a>
+<%
+            }
+            if(startAt + docs < hits.length())
+            {
+%>
+<a href="<%=request.getContextPath()%>/indexNtcir.jsp?startAt=<%=startAt+docs%>&docs=<%=docs%>q=<%=request.getParameter("q")%>"> Next Results </a>
+<%
+            }
+%>
+</p>
+<%
         }
         catch (Exception ee) {
             out.println("<b><p>Error: " + ee + "</p></b>");

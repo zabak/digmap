@@ -27,8 +27,8 @@ import org.apache.lucene.analysis.Analyzer;
  */
 public class CreateDBGeoTimexes {
 
-//    public static String indexPath = Config.indexBase + File.separator + "TEXT_TEMP_GEO_DB";
-    public static String indexPath = "F:\\TEXT_TEMP_GEO_DB";
+    public static String indexPath = Config.indexBase + File.separator + "TEXT_TEMP_GEO_DB";
+//    public static String indexPath = "F:\\TEXT_TEMP_GEO_DB";
     
 
 

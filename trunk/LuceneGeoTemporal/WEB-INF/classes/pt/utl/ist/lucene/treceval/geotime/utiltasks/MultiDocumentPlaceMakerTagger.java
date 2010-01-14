@@ -8,6 +8,8 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
+import pt.utl.ist.lucene.treceval.geotime.index.Config;
+
 /**
  * @author Jorge Machado
  * @date 31/Dez/2009
@@ -53,9 +55,14 @@ public class MultiDocumentPlaceMakerTagger implements Runnable{
 //        args = new String[] {path,url};
 //        args = new String[] {path,url,"nyt_eng_200201.gz"};
 //        String path = null;
+//        args = new String[3];
+//        args[0] = Config.documentPath;
+//        args[1] = "nyt_eng_200501.gz";
+//        args[2] = "NYT_ENG_20050105.0263";
+
+
         String startFile = null;
         String path;
-        String url;
         String startDocument = null;
         if(args!=null)
         {

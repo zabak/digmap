@@ -3,12 +3,14 @@ package pt.utl.ist.lucene.treceval.geotime.index;
 import pt.utl.ist.lucene.Globals;
 import pt.utl.ist.lucene.LgteIndexSearcherWrapper;
 import pt.utl.ist.lucene.Model;
+import pt.utl.ist.lucene.config.LocalProperties;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.LanguageModelIndexReader;
 import org.apache.lucene.index.LgteIsolatedIndexReader;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Properties;
 import java.io.IOException;
 
 /**
@@ -19,10 +21,40 @@ import java.io.IOException;
  */
 public class Config
 {
-    public static final String indexBase =  "D:\\Servidores\\DATA\\ntcir\\INDEXES";
+
+    static Properties props;
+    static
+    {
+        try
+        {
+            props = new LocalProperties("pt/utl/ist/lucene/treceval/geotime/index/config.properties");
+            indexBase = props.getProperty("indexBase");
+            ntcirBase = props.getProperty("ntcirBase");
+            documentPath = props.getProperty("documentPath");
+            timexesPath = props.getProperty("timexesPath");
+            placemakerPath = props.getProperty("placemakerPath");
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+    }
+    public static String ntcirBase;
+    public static String indexBase;
+    public static String documentPath;
+    public static String timexesPath;
+    public static String placemakerPath;
+
+    public static final String TITLE = "title";
+
+    public static final String TEXT_DB = "TEXT_DB";
+    public static final String TEMPORAL_DB = "TEMPORAL_DB";
+    public static final String GEO_DB = "GEO_DB";
+
 
     public static final String ID = Globals.DOCUMENT_ID_FIELD;
     public static final String CONTENTS = Globals.LUCENE_DEFAULT_FIELD;
+
 
     //FOUND Expressions
     public static final String S_TEMPORAL_INDEXED = "S_TEMPORAL_INDEXED";
@@ -67,7 +99,7 @@ public class Config
     public static String T_YYYYMM = "t_yyyymm";
     public static String T_YYYYMMDD = "t_yyyymmdd";
 
-  //Metrics
+    //Metrics
     //All the Lgte internal GeoTemp Indexes to calculate distances are considered metric indexes
     public static String METRIC_T_CENTROIDE_1 = "metric_t_centroide_1";
     public static String METRIC_T_CENTROIDE_2 = "metric_t_centroide_2";
@@ -76,12 +108,11 @@ public class Config
 
 
 
-    public static String documentPath = "D:\\Servidores\\DATA\\ntcir\\data";
-    public static String timexesPath = "D:\\Servidores\\DATA\\ntcir\\TIMEXTAG";
-    public static String placemakerPath = "D:\\Servidores\\DATA\\ntcir\\PlaceMaker";
+
 
     public static LgteIndexSearcherWrapper openMultiSearcher() throws IOException
     {
+
 
 
 
@@ -90,15 +121,18 @@ public class Config
         IndexReader readerTimeRefs = new LanguageModelIndexReader(IndexReader.open(CreateTimeExprIndex.indexPath));
         IndexReader readerGeoRefs = new LanguageModelIndexReader(IndexReader.open(CreateWoeidIndex.indexPath));
         IndexReader readerMetrics = new LanguageModelIndexReader(IndexReader.open(IndexMetrics.indexPath));
+        IndexReader readerDB = new LanguageModelIndexReader(IndexReader.open(CreateDBGeoTimexes.indexPath));
 
         Map<String,IndexReader> readers = new HashMap<String,IndexReader>();
 
         readers.put(Config.CONTENTS,readerContents);
+        readers.put(Config.TITLE,readerContents);
         readers.put(Config.ID,readerContents);
 
         readers.put("regexpr(^S_.*)",readerGeoTime);
         readers.put("regexpr(^t_.*)",readerTimeRefs);
         readers.put("regexpr(^g_.*)",readerGeoRefs);
+        readers.put("regexpr(.*_DB$)",readerDB);
         readers.put("*",readerMetrics);
 
         return new LgteIndexSearcherWrapper(Model.OkapiBM25Model,new LgteIsolatedIndexReader(readers));
@@ -114,5 +148,9 @@ public class Config
         System.out.println(Config.S_GEO_OR_TEMPORAL_INDEXED.matches("^S_.*"));
         System.out.println(Config.S_TEMPORAL_INDEXED.matches("^S_.*"));
         System.out.println(Config.S_HAS_TIMEXES.matches("^S_.*"));
+        System.out.println(TEXT_DB.matches(".*_DB$"));
+        System.out.println(GEO_DB.matches(".*_DB$"));
+        System.out.println(TEMPORAL_DB.matches(".*_DB$"));
+        System.out.println("teste_db".matches(".*_DB$"));
     }
 }

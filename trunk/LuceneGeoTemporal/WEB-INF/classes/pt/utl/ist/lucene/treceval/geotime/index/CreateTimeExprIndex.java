@@ -22,7 +22,7 @@ public class CreateTimeExprIndex {
 
 
 
-    public static String indexPath = Config.indexBase + "\\timexes";
+    public static String indexPath = Config.indexBase + File.separator + "timexes";
 
     public static void main(String[] args) throws IOException, DocumentException
     {

@@ -21,7 +21,7 @@ import org.apache.solr.util.NumberUtils;
  * @email machadofisher@gmail.com
  */
 public class IndexMetrics {
-    public static String indexPath =  Config.indexBase + "\\METRICS_INDEXED";
+    public static String indexPath =  Config.indexBase + File.separator + "METRICS_INDEXED";
 
     public static void main(String[] args) throws IOException {
         new File(indexPath).mkdir();

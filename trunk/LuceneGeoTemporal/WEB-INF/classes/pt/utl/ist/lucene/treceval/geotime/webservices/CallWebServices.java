@@ -17,6 +17,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.io.*;
 import java.net.*;
+import java.nio.charset.CharsetDecoder;
+import java.nio.charset.Charset;
+import java.nio.charset.CharacterCodingException;
+import java.nio.ByteBuffer;
 
 import com.sun.org.apache.xml.internal.serialize.OutputFormat;
 import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
@@ -34,6 +38,17 @@ public class CallWebServices {
     private static Proxy httpProxy = Proxy.NO_PROXY;
     protected static String yahooAppId = "AVNVvo3V34EOqIaAO7Uo.CrlQeGg8Ss43EhQfPm0HMZjqnkSUtA2MkhAiTkQ6T3XE6FWGg--";
 
+
+    public static boolean test(byte[] b, String csnam) {
+        CharsetDecoder cd =
+                Charset.availableCharsets().get(csnam).newDecoder( );
+        try {
+            cd.decode(ByteBuffer.wrap(b));
+        } catch (CharacterCodingException e) {
+            return false;
+        }
+        return true;
+    }
 
     public static org.w3c.dom.Document callServices ( String data, String title, int year, int month, int day ,String file, String id) throws Exception {
         if(proxyHost != null && !proxyHost.equals("proxy.host"))
@@ -57,25 +72,89 @@ public class CallWebServices {
 
             String url = "http://wherein.yahooapis.com/v1/document";
             PostMethod post = new PostMethod(url);
-            
+
 
             post.addParameter("documentType","text/plain");
             post.addParameter("appid", yahooAppId);
-            post.addParameter("documentContent", LgteDiacriticFilter.clean(data));
+            data = LgteDiacriticFilter.clean(data);
+            post.addParameter("documentContent",data );
             if(title != null)
                 post.addParameter("documentTitle", LgteDiacriticFilter.clean(title));
             post.addParameter("inputLanguage", "en-EN");
             post.setDoAuthentication( false );
             client.executeMethod( post );
             String response = post.getResponseBodyAsString();
-            Document document;
+            Document document = null;
+            Node elmDest  = null;
             try{
                 document = loader.parse(new ByteArrayInputStream(response.getBytes("UTF-8")));
-            }catch(Exception e)
+                elmDest = ((Element)(document.getFirstChild())).getElementsByTagName("document").item(0);
+            }
+            catch(NullPointerException ne)
+            {
+
+
+            }
+            catch(Exception e)
             {
                 logger.error("Trying this XML");
                 logger.error(response);
                 throw e;
+            }
+            if(elmDest == null)
+            {
+                BufferedReader reader = new BufferedReader(new StringReader(data));
+                String line;
+                StringBuilder dataBuilder = new StringBuilder();
+                while((line = reader.readLine()) != null && !line.toUpperCase().equals("</DOC>"))
+                {
+                    if(test(line.getBytes(),"UTF-8"))
+                    {
+                        dataBuilder.append(line).append("\n");
+                    }
+                    else{
+                        StringBuilder lineBuilder = new StringBuilder();
+                        for(int i = 0; i < line.length();i++)
+                        {
+                            char c = line.charAt(i);
+                            if(!test(new String("" + c).getBytes(),"UTF-8"))
+                            {
+                                lineBuilder.append("?");
+                            }
+                            else
+                            {
+                                lineBuilder.append(c);
+                            }
+                        }
+                        logger.error("BAD character encoding at line: " + line + " using line: " + lineBuilder.toString());
+                        dataBuilder.append(lineBuilder.toString());
+                    }
+                }
+                data = dataBuilder.toString();
+                post.releaseConnection();
+
+                post = new PostMethod(url);
+                post.addParameter("documentType","text/plain");
+                post.addParameter("appid", yahooAppId);
+                data = LgteDiacriticFilter.clean(data);
+                post.addParameter("documentContent",data );
+                if(title != null)
+                    post.addParameter("documentTitle", LgteDiacriticFilter.clean(title));
+                post.addParameter("inputLanguage", "en-EN");
+                post.setDoAuthentication( false );
+                client.executeMethod( post );
+                response = post.getResponseBodyAsString();
+
+                try{
+                    document = loader.parse(new ByteArrayInputStream(response.getBytes("UTF-8")));
+                    elmDest = ((Element)(document.getFirstChild())).getElementsByTagName("document").item(0);
+                }
+                catch(Exception e)
+                {
+                    logger.error("Trying this XML");
+                    logger.error(response);
+                    throw e;
+                }
             }
             post.releaseConnection();
             String geo = getGeometryString(document);
@@ -86,7 +165,7 @@ public class CallWebServices {
 
             Document docGmlBox = loader.parse(new ByteArrayInputStream(xml.getBytes()));
 
-            Node elmDest = ((Element)(document.getFirstChild())).getElementsByTagName("document").item(0);
+
             if(elmDest == null)
             {
                 logger.error("PlaceMaker dont did not bring doc tag >>>>>>");

@@ -139,43 +139,50 @@ public class LgteIndexWriter extends IndexWriter
 
     public void close() throws IOException
     {
+        close(true);
+    }
+    public void close(boolean optimizeAndCreateGlobals) throws IOException
+    {
         super.close();
-        optimizeOpeningNewIndex();
-
-        if (storeProbabilisticCaches)
+        if(optimizeAndCreateGlobals)
         {
-            // store some cached data
-            IndexSearcherLanguageModel searcher = new IndexSearcherLanguageModel(getIndexPath());
-            searcher.storeExtendedData(indexPath);
+            optimizeOpeningNewIndex();
+
+            if (storeProbabilisticCaches)
+            {
+                // store some cached data
+                IndexSearcherLanguageModel searcher = new IndexSearcherLanguageModel(getIndexPath());
+                searcher.storeExtendedData(indexPath);
+            }
+
+            // write docid to internal id mapping
+            String docidFile = indexPath + docId_txt;
+            logger.info("Writing docid file to " + docidFile);
+            FileWriter outFile = new FileWriter(docidFile);
+            PrintWriter fileOutput = new PrintWriter(outFile);
+
+
+            IndexReader reader;
+            if (directory != null)
+                reader = IndexReader.open(directory);
+            else if (file != null)
+                reader = IndexReader.open(file);
+            else
+                reader = IndexReader.open(indexPath);
+
+            String docid;
+            org.apache.lucene.document.Document doc;
+            for (int i = 0; i < reader.maxDoc(); ++i)
+            {
+                doc = reader.document(i);
+                docid = doc.get(Globals.DOCUMENT_ID_FIELD);
+                fileOutput.println(i + " " + docid);
+            }
+            fileOutput.close();
+            outFile.close();
+            reader.close();
         }
 
-        // write docid to internal id mapping
-        String docidFile = indexPath + docId_txt;
-        logger.info("Writing docid file to " + docidFile);
-        FileWriter outFile = new FileWriter(docidFile);
-        PrintWriter fileOutput = new PrintWriter(outFile);
-
-
-        IndexReader reader;
-        if (directory != null)
-            reader = IndexReader.open(directory);
-        else if (file != null)
-            reader = IndexReader.open(file);
-        else
-            reader = IndexReader.open(indexPath);
-
-        String docid;
-        org.apache.lucene.document.Document doc;
-        for (int i = 0; i < reader.maxDoc(); ++i)
-        {
-            doc = reader.document(i);
-            docid = doc.get(Globals.DOCUMENT_ID_FIELD);
-            fileOutput.println(i + " " + docid);
-        }
-        fileOutput.close();
-        outFile.close();
-        reader.close();
-        
     }
 
 

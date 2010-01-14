@@ -30,7 +30,7 @@ import org.dom4j.DocumentException;
 public class CreateWoeidIndex {
 
 
-    public static String indexPath = Config.indexBase + "\\woeid";
+    public static String indexPath = Config.indexBase + File.separator + "woeid";
 
     public static void main(String[] args) throws IOException, DocumentException
     {

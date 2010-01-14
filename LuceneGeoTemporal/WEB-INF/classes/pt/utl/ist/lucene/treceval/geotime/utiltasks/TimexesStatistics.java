@@ -2,6 +2,7 @@ package pt.utl.ist.lucene.treceval.geotime.utiltasks;
 
 import org.apache.log4j.Logger;
 import pt.utl.ist.lucene.treceval.geotime.IntegratedDocTimexIterator;
+import pt.utl.ist.lucene.treceval.geotime.index.Config;
 import pt.utl.ist.lucene.utils.temporal.TimeExpression;
 import pt.utl.ist.lucene.utils.temporal.tides.Timex2TimeExpression;
 
@@ -40,7 +41,7 @@ public class TimexesStatistics {
 
 
 
-        IntegratedDocTimexIterator documentTimexesIterator = new IntegratedDocTimexIterator("D:\\Servidores\\DATA\\ntcir\\TEMPORAL\\teste\\docs","D:\\Servidores\\DATA\\ntcir\\TEMPORAL\\teste\\timexes");
+        IntegratedDocTimexIterator documentTimexesIterator = new IntegratedDocTimexIterator(Config.documentPath,Config.timexesPath);
 
         String previousID = "";
         IntegratedDocTimexIterator.DocumentWithTimexes d;

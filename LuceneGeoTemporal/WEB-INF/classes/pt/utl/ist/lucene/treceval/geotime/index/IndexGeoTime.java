@@ -7,6 +7,7 @@ import pt.utl.ist.lucene.analyzer.LgteNothingAnalyzer;
 import pt.utl.ist.lucene.treceval.geotime.IntegratedDocPlaceMakerAndTimexIterator;
 
 import java.io.IOException;
+import java.io.File;
 
 /**
  * @author Jorge Machado
@@ -16,7 +17,7 @@ import java.io.IOException;
  */
 public class IndexGeoTime
 {
-    public static String indexPath =  Config.indexBase + "\\GEO_TEMP_INDEXED";
+    public static String indexPath =  Config.indexBase + File.separator + "GEO_TEMP_INDEXED";
 
     public static void main(String[] args) throws IOException
     {

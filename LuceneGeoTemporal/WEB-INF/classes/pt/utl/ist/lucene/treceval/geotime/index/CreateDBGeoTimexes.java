@@ -27,10 +27,9 @@ import org.apache.lucene.analysis.Analyzer;
  */
 public class CreateDBGeoTimexes {
 
-    public static String indexPath = "D:\\Servidores\\DATA\\INDEXES\\TEXT_TEMP_GEO_DB";
-    static final String TEXT_DB = "TEXT_DB";
-    static final String TEMPORAL_DB = "TEMPORAL_DB";
-    static final String GEO_DB = "GEO_DB";
+//    public static String indexPath = Config.indexBase + File.separator + "TEXT_TEMP_GEO_DB";
+    public static String indexPath = "F:\\TEXT_TEMP_GEO_DB";
+    
 
 
     public static void main(String[] args) throws IOException
@@ -73,12 +72,12 @@ public class CreateDBGeoTimexes {
         LgteDocumentWrapper doc = new LgteDocumentWrapper();
         doc.indexString(Globals.DOCUMENT_ID_FIELD,d.getD().getDId());
 
-        doc.storeUtokenized(TEXT_DB,d.getD().getSgmlWithoutTags());
+        doc.storeUtokenized(Config.TEXT_DB,d.getD().getSgmlWithoutTags());
 
         if(d.hasPlaces())
-            doc.storeUtokenized(GEO_DB,d.getPm().getXml());
+            doc.storeUtokenized(Config.GEO_DB,d.getPm().getXml());
         if(d.hasTimexes())
-            doc.storeUtokenized(TEMPORAL_DB,d.getTd().getXml());
+            doc.storeUtokenized(Config.TEMPORAL_DB,d.getTd().getXml());
 
 
         writer.addDocument(doc);

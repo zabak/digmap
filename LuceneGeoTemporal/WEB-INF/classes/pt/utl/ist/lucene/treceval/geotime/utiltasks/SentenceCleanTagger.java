@@ -1,6 +1,7 @@
 package pt.utl.ist.lucene.treceval.geotime.utiltasks;
 
 import pt.utl.ist.lucene.treceval.geotime.IntegratedDocPlaceMakerAndTimexIterator;
+import pt.utl.ist.lucene.treceval.geotime.index.Config;
 import pt.utl.ist.lucene.utils.DocumentPlaceMakerAndTemporalSentences;
 import pt.utl.ist.lucene.utils.PlaceMakerAndTemporalSentence;
 import pt.utl.ist.lucene.utils.XmlUtils;
@@ -25,10 +26,10 @@ import jomm.utils.StreamsUtils;
  */
 public class SentenceCleanTagger {
 
-    public static String output = "D:\\Servidores\\DATA\\ntcir\\sentencesGeoTemporais2";
-    static String documentPath = "D:\\Servidores\\DATA\\ntcir\\data";
-    static String timexesPath = "D:\\Servidores\\DATA\\ntcir\\TIMEXTAG";
-    static String placemakerPath = "D:\\Servidores\\DATA\\ntcir\\PlaceMaker";
+    public static String output = Config.ntcirBase + File.separator + "sentencesGeoTemporais";
+    static String documentPath = Config.documentPath;
+    static String timexesPath = Config.timexesPath;
+    static String placemakerPath = Config.placemakerPath;
 
     public static void main(String [] args) throws IOException {
 

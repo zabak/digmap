@@ -8,6 +8,11 @@ import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.nio.charset.CharsetDecoder;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.Charset;
+import java.nio.ByteBuffer;
+
 
 /**
  * @author Jorge Machado
@@ -60,6 +65,16 @@ public class NyTimesDocument {
         return sgmlValid;
     }
 
+    public static boolean test(byte[] b, String csnam) {
+        CharsetDecoder cd =
+                Charset.availableCharsets().get(csnam).newDecoder( );
+        try {
+            cd.decode(ByteBuffer.wrap(b));
+        } catch (CharacterCodingException e) {
+            return false;
+        }
+        return true;
+    }
     public NyTimesDocument(BufferedReader reader, String fileName) throws IOException, EOFException
     {
 
@@ -86,8 +101,35 @@ public class NyTimesDocument {
         int i_ = fileName.lastIndexOf("_")+1;
         setFDateYearMonthSort(fileName.substring(i_,fileName.lastIndexOf(".")));
         boolean first = true;
+//        try {
+//            Thread.sleep(100);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
         while((line = reader.readLine()) != null && !line.toUpperCase().equals("</DOC>"))
         {
+
+//            if(!test(line.getBytes(),"UTF-8"))
+//            {
+//                StringBuilder lineBuilder = new StringBuilder();
+//                for(int i = 0; i < line.length();i++)
+//                {
+//                    char c = line.charAt(i);
+//                    if(!test(new String("" + c).getBytes(),"UTF-8"))
+//                    {
+//                        lineBuilder.append("?");
+//                    }
+//                    else
+//                    {
+//                        lineBuilder.append(c);
+//                    }
+//                }
+//                logger.error("BAD character encoding at line: " + line + " using line: " + lineBuilder.toString());
+//                line = lineBuilder.toString();
+//            }
+
+
+
             if(first)
             {
                 first = false;

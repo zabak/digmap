@@ -28,7 +28,7 @@ import org.apache.lucene.analysis.Analyzer;
  */
 public class IndexContents {
 
-    public static String indexPath =  Config.indexBase + "\\contents";
+    public static String indexPath =  Config.indexBase + File.separator + "contents";
     public static String documentPath = Config.documentPath;
 
     public static void main(String[] args) throws IOException {
@@ -69,13 +69,17 @@ public class IndexContents {
         LgteDocumentWrapper doc = new LgteDocumentWrapper();
         doc.indexString(Globals.DOCUMENT_ID_FIELD,d.getDId());
 
+
         String text =  d.toString();
         List<Sentence> sentences = SentenceSpliter.split(d.getSgmlWithoutTags(), Sentence.class);
 
         try{
             StringBuilder textIndexBuilder = new StringBuilder();
             if(d.getDHeadline() != null)
+            {
+                doc.indexString(Config.TITLE,d.getDHeadline());
                 textIndexBuilder.append(d.getDHeadline()).append(" ");
+            }
             else
                 System.out.println( d.getDId() + " don't have HeadLine ");
             if(sentences.size() > 0)

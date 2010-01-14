@@ -130,6 +130,8 @@
         <copy todir="${webapp.path}">
             <fileset dir="${webapp}">
                 <include name="*.jsp" />
+                <include name="*.js" />
+                <include name="*.txt" />
             </fileset>
         </copy>
 
@@ -154,6 +156,18 @@
         <delete file="${webapp.path}/WEB-INF/lib/jsp-api.jar" />
         <delete file="${webapp.path}/WEB-INF/lib/jasper-runtime.jar" />
         <delete file="${webapp.path}/WEB-INF/lib/jasper-compiler.jar" />
+    </target>
+
+    <target name="copyJsps">
+
+        <copy todir="${webapp.path}">
+            <fileset dir="${webapp}">
+                <include name="*.jsp" />
+                <include name="*.js" />
+                <include name="*.txt" />
+            </fileset>
+        </copy>
+
     </target>
 
     <target name="war" description="Compile web application">

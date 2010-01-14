@@ -72,7 +72,7 @@ public class CreateDBGeoTimexes {
         LgteDocumentWrapper doc = new LgteDocumentWrapper();
         doc.indexString(Globals.DOCUMENT_ID_FIELD,d.getD().getDId());
 
-        doc.storeUtokenized(Config.TEXT_DB,d.getD().getSgmlWithoutTags());
+        doc.storeUtokenized(Config.TEXT_DB,d.getD().getSgml());
 
         if(d.hasPlaces())
             doc.storeUtokenized(Config.GEO_DB,d.getPm().getXml());

@@ -19,7 +19,8 @@
 <%@ page import="pt.utl.ist.lucene.treceval.geotime.NyTimesDocument" %>
 <%@ page import="java.io.StringReader" %>
 <html>
-<head><title>Example Web Application for Search with Lucene GeoTemporal Extensions</title>
+<head>
+<title>NTCIR/GeoTime - Tool fot Relevance Judgements creation with Lucene GeoTemporal Extensions (LGTE) AT GeoTime NTCIR</title>
 <script type="text/javascript" src="<%=request.getContextPath()%>/scripts.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/popup.txt"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/utility.txt"></script>
@@ -43,6 +44,10 @@
     {
         background-color:lightskyblue;
     }
+    label.word
+    {
+        background-color:yellow;
+    }
     #results
     {
     }
@@ -53,6 +58,25 @@
         border: 1px solid black;
         padding: 5px;
         background-color: lightgray;
+    
+	}
+	#adminbox
+	{
+		background-color: #dddddd;
+		border:1px solid gray;
+		margin:10px;
+
+	}
+	#adminboxContent
+	{
+        border-top:1px solid black;
+		padding:10px;
+		margin:10px;
+	}
+    #adminbox .header
+    {
+		padding:10px;
+
     }
     .result th
     {
@@ -134,21 +158,88 @@
 <body>
 <%--<div id="blanket" style="display:none;"></div>--%>
 <div id="header">
-    <a href="http://code.google.com/p/digmap/wiki/LuceneGeoTemporal"><img border="0"  height="80" src="lgtesmall.png" alt="LGTE"/></a> <a href="http://code.google.com/p/digmap/wiki/LuceneGeoTemporal">go to project home page</a> | <a href="indexDigmap.jsp">go to Georeferenced Collection</a> | <a href="http://digmap.googlecode.com/files/lgte1_0_1b.war">download LGTE last version</a>
+    <table width="100%">
+        <tr>
+            <td>
+                <a href="http://metadata.berkeley.edu/NTCIR-GeoTime/"><img alt="NTCIR GeoTime" border="0" src="ntcir.gif"><label style="font-size:24px">GeoTime</label></a>  <a href="http://code.google.com/p/digmap/wiki/LuceneGeoTemporal"><img border="0"  height="80" src="lgtesmall.png" alt="LGTE"/></a>
+            </td>
+            <td align="right">
+                <a href="http://www.inesc-id.pt"><img width="100px" border="0" src="inesc-id.jpg" alt="INESC-ID Lisbon"></a> <a href="http://www.ist.utl.pt"><img width="50px"  border="0" src="ist.jpg" alt="Instituto Superior Técnico"></a> <a href="http://www.estgp.pt"><img width="50px" src="estg-ipp.jpg" border="0" alt="Escola Superior de Tecnologia e Gestão de Portalegre"></a>                
+            </td>
+        </tr>
+    </table>
+    <a href="http://code.google.com/p/digmap/wiki/LuceneGeoTemporal">go to project home page</a> | <a href="http://digmap2.ist.utl.pt:8080/mitra">Digmap Collection</a> | <a href="http://digmap2.ist.utl.pt:8080/lgte/">DEMO Online</a>
 </div>
-<a href="index.jsp">go back</a>
-<h3>Please enter your search query:</h3>
 
-<p>try for example: <a href="indexNtcir.jsp?q=final flight of concorde">final flight of concorde</a></p>
+<%
+    if(request.getParameter("agree")!=null)
+    {
+        System.out.println(new java.util.Date() + " : NTCIR AGREE : session[" + request.getSession().getId() + "] ip[" + request.getRemoteAddr() + "]");
+        request.getSession().setAttribute("agree","true");
+    }
+    if(request.getSession().getAttribute("agree")==null)
+    {
+%>
 
+
+<div class="form">
+    <form action="indexNtcir.jsp" method="post">
+    <h2>All operations performed in this tool (queries, relevance judgements, topic management) will be saved in the system log for future investigation purposes. 	<br>Please click in the box below if you agree with these conditions in order to proceed.</h2>
+
+    <p><input type="checkbox" name="agree"> I declare that I agree with these conditions and I want start use the system</p>
+    <input type="button" value="I declare that I agree with these conditions" onclick="if(!this.form.agree.checked){alert('You need to agree with the conditions in order to proceed.');}else{this.form.submit();}">
+    </form>
+</div>
+<%
+    }
+    else
+    {
+%>
+
+
+<p>The LGTE tool was developed at Technical University of Lisbon under the DIGMAP project (Project co-funded by the Community programme <a class="footerlink" href="http://europa.eu.int/information_society/activities/econtentplus/" title="eContentplus"> eContent<em>plus</em></a>) and provides a set of services over the GeoTime collection: manage topics, search the documents (marking with colors the time expressions and the places names found in text), create relevance judgements and finally import and export the judgements in the treceval format. </p>
+<p>After add one or more topics, please choose the right one before submit a search. You can use the text you want in the search bar, since you select the desired topic in order to join the judgements of the results with the selected topic. You don't need to judge all the results returned but you need to click in <b>"confirm judgements"</b> in order to save them in the session. You could also click in one of your topics from the list taht will appear to you, that search will use the title and the description fields of the topic.</p>
+<p>Please use the export/import judgements service to save your work. This application is using only the server session to keep the judgements.</p>
+<p>The export format should be used in the import proccess and is based in the assessements format used in the treceval tool plus the topic id, title, description and narrative.</p>
+<p><i>contact: Jorge Machado [machadofisher AT gmail DOT com]</i></p>
+
+<div class="form">
 <form name="SearchForm" action="indexNtcir.jsp" method="post">
-    <div class="form">
-        <input type="hidden" name="topicID" value=""/>
+    
+	<h3>Please enter your search query:</h3>
+	
+	<center>
+        
         <%
-            String testQuery = "Worldwide Natural Disasters What are the natural disasters caused by abnormal phenomena, such as floods, earthquakes, and famines, that appear worldwide?";
+            if(request.getParameter("topicDesc")!=null)
+            {
         %>
-        <textarea rows="10" cols="200" name="q" value="<%=request.getParameter("q") == null ? testQuery:request.getParameter("q")%>"></textarea> <br/>
+        <textarea style="width:95%" rows="5" name="q" ><%=request.getParameter("topic") + " " + request.getParameter("topicDesc")%></textarea> <br/>
+        <%
+            }
+            else
+            {
+        %>
+        <textarea style="width:95%" rows="5"  name="q"><%=request.getParameter("q")%></textarea> <br/>
+
+        <%
+            }
+        %>
         <input type="hidden" name="startAt" value="0">
+        <%
+            if(request.getParameter("topicID") != null)
+            {
+        %>
+            <input type="hidden" name="topicID" value="<%=request.getParameter("topicID")%>">
+        <%
+            }
+            else
+            {
+        %>
+            <input type="hidden" name="topicID" value="">
+        <%
+            }
+        %>
 
         <%
             String sel10 = "";
@@ -174,21 +265,28 @@
             <option value="50" <%=sel50%>>50</option>
             <option value="100" <%=sel100%>>100</option>
         </select>
-        <input type="submit" value="Search Documents"/>
-    </div>
-</form>
+        <input type="button" onclick="if(canconfirm=='true'){this.form.submit();}else{alert('Please choose a Topic before search. If you don\'t have any topics defined please add one topic with the form below')}" value="Search Documents"/>
 
-<form class="box" action="indexNtcir.jsp" method="post">
-    <div class="form">
-        <table>
-            <tr><td>TopicID</td><td><input type="text" size="200" name="topicID" value="NTCIR3-98-043" /></td></tr>
-            <tr><td>Topic</td><td><input type="text" size="200" name="topic" value="Worldwide Natural Disasters"/> </td></tr>
-            <tr><td>Topic Desc</td><td><textarea rows="5" cols="200" name="topicDesc">  What are the natural disasters caused by abnormal phenomena, such as floods, earthquakes, and famines, that appear worldwide?</textarea></td></tr>
-            <tr><td>Topic Narr</td><td><textarea rows="5" cols="200" name="topicNarr">  Relevant documents include the name of the area where the abnormal phenomenon occurs, its details, and figures for the loss of lives and property damages. Without figures, the document is partially relevant. Documents without the name of the area or details about the abnormal phenomenon are not relevant</textarea></td></tr>
-            <tr><td colspan="2"><input type="submit" value="Add Topic"/></td></tr>
-        </table>
-    </div>
+</center>
 </form>
+</div>
+
+<div id="adminbox">
+   <div class="header">
+      TOPICS ADMINISTRATION:  <a href="javascript:showOrHideOne('adminboxContent')"> Open/close</a>
+	</div>
+	<div id="adminboxContent"  style="display:none">
+     <form class="box" action="indexNtcir.jsp" method="post">
+       <div class="form">
+            <table id="topicsTable" style="width:100%">
+		        <tr><td width="10%">TopicID</td><td><input type="text" style="width:100%" name="topicID" value="NTCIR3-98-043" /></td></tr>
+			    <tr><td width="10%">Topic</td><td><input type="text" style="width:100%" name="topic" value="Worldwide Natural Disasters"/> </td></tr>
+				<tr><td width="10%">Topic Desc</td><td><textarea rows="5" style="width:100%" name="topicDesc">  What are the natural disasters caused by abnormal phenomena, such as floods, earthquakes, and famines, that appear worldwide?</textarea></td></tr>
+				<tr><td width="10%">Topic Narr</td><td><textarea rows="5" style="width:100%" name="topicNarr">  Relevant documents include the name of the area where the abnormal phenomenon occurs, its details, and figures for the loss of lives and property damages. Without figures, the document is partially relevant. Documents without the name of the area or details about the abnormal phenomenon are not relevant</textarea></td></tr>
+	            <tr><td colspan="2"><input type="submit" value="Add Topic"/></td></tr>
+			</table>
+		</div>
+	</form>
 
 
 <%
@@ -210,6 +308,7 @@
     }
 
     if (ServletFileUpload.isMultipartContent(request)) {
+        System.out.println(new java.util.Date() + " : NTCIR IMPORT : session[" + request.getSession().getId() + "] ip[" + request.getRemoteAddr() + "]");
         try {
             // Create a factory for disk-based file items
             FileItemFactory factory = new DiskFileItemFactory();
@@ -232,9 +331,12 @@
                 while ((line = reader.readLine()) != null) {
                     if(line.trim().length() == 0)
                     {
-
                     }
-                    else if (line.startsWith("#TOPIC$$")) {
+		    else if(line.startsWith("##"))
+		    {
+		    }
+                    else if(line.startsWith("#TOPIC$$")) 
+		    {
                         int startId = "#TOPIC$$".length();
                         int endId = line.indexOf("$$", startId);
                         int startType = endId + 2;
@@ -295,14 +397,17 @@
 
 
     if (request.getParameter("topicOp") != null && request.getParameter("topicOp").equals("clean")) {
+        System.out.println(new java.util.Date() + " : NTCIR CLEAN : session[" + request.getSession().getId() + "] ip[" + request.getRemoteAddr() + "]");
         relevantTopicDoc = new HashMap<String, Map<String, String>>();
         topics = new HashMap<String, String>();
         topicsDesc = new HashMap<String, String>();
         topicsNarr = new HashMap<String, String>();
+	
         request.getSession().setAttribute("relevantTopicDocs", relevantTopicDoc);
         request.getSession().setAttribute("topics", topics);
         request.getSession().setAttribute("topicsDesc", topicsDesc);
         request.getSession().setAttribute("topicsNarr", topicsNarr);
+	request.getSession().removeAttribute("logs");
     }
 
 
@@ -312,11 +417,14 @@
         while (params.hasMoreElements()) {
             String param = (String) params.nextElement();
             if (param.startsWith("NYT_")) {
+
                 String relevance = request.getParameter(param);
                 if (relevance != null && relevance.length() > 0) {
                     if (relevance.equals("relevant")) {
                         topicJudgements.put(param, "1");
+                        System.out.println(new java.util.Date() + " : NTCIR CONFIRM : session[" + request.getSession().getId() + "] ip[" + request.getRemoteAddr() + "] judgement[" + request.getParameter("topicID") + " 0 " + param + " 1]");
                     } else if (relevance.equals("irrelevant")) {
+                        System.out.println(new java.util.Date() + " : NTCIR CONFIRM : session[" + request.getSession().getId() + "] ip[" + request.getRemoteAddr() + "] judgement[" + request.getParameter("topicID") + " 0 " + param + " 0]");
                         topicJudgements.put(param, "0");
                     }
                 }
@@ -332,28 +440,32 @@
             request.getSession().setAttribute("topicsDesc", topicsDesc);
             request.getSession().setAttribute("topicsNarr", topicsNarr);
         }
+        System.out.println(new java.util.Date() + " : NTCIR TOPIC : session[" + request.getSession().getId() + "] ip[" + request.getRemoteAddr() + "] topicID[" + request.getParameter("topicID") + "] topic[" + request.getParameter("topic").replace("\n"," ") + "] topicDesc[" + request.getParameter("topicDesc").replace("\n"," ") + "] topicNarr[" + request.getParameter("topicNarr").replace("\n"," ") + "]" );
+
         topics.put(request.getParameter("topicID"), request.getParameter("topic"));
         topicsDesc.put(request.getParameter("topicID"), request.getParameter("topicDesc"));
         topicsNarr.put(request.getParameter("topicID"), request.getParameter("topicNarr"));
     }
 
 %>
-<form action="indexNtcir.jsp" method="post" >
-    <div class="form">
-        <% if (topics != null && topics.size() > 0)
-        {%>
-        <p><a href="<%=request.getContextPath()%>/exportNtcirJudgments.jsp" target="_blank">Export my judgments</a></p>
-        <%}%>
-        <p>Import Judgements<input type="file" name="judgments"> <input type="button" value="Import" onclick="this.form.enctype='multipart/form-data'; this.form.submit()"></p>
-    </div>
-</form>
+		<form action="indexNtcir.jsp" method="post" enctype="multipart/form-data" >
+			<div class="form">
+
+				<table style="width:100%">
+				<tr><td width="10%">Import Judgements</td><td><input type="file" name="judgments"> <input type="button" value="Import" onclick="this.form.submit()"></td></tr>
+				</table>
+			</div>
+		</form>
+  </div> <!--//TOPICS ADMIN CONTENT-->
+</div><!--//TOPICS ADMIN-->
 <%
 
     if (topics != null && topics.size() > 0) {
 %>
 <form action="indexNtcir.jsp" method="post">
 <div class="form">
-    <p>After a search choose a Topic to judge and mark it as relevant or irrelevant:</p>
+    <p>Choose a Topic, submit a search and mark the documents as relevant or irrelevant, use the Annotations Link to see the places and the time expressions marked with colors in the document body:</p>
+
     <%
         for(Map.Entry<String,String> entry: topics.entrySet())
         {
@@ -364,15 +476,19 @@
             }
     %>
 
-    <p><input <%=checked%> onclick="document.canconfirm=true;document.SearchForm.topicID.value=this.value" type="radio" name="topicID" value="<%=entry.getKey()%>"/> <%=entry.getKey()%> - <a href="indexNtcir.jsp?startAt=0&docs=20&topicID=<%=entry.getKey()%>&q=<%=entry.getValue() + " " + topicsDesc.get(entry.getKey())%>"><%=entry.getValue()%></a></p>
+    <p><input <%=checked%>  onclick="document.canconfirm='true';document.SearchForm.topicID.value=this.value" type="radio" name="topicID" value="<%=entry.getKey()%>"/> <%=entry.getKey()%> - <a href="indexNtcir.jsp?startAt=0&docs=20&topicID=<%=entry.getKey()%>&q=<%=entry.getValue() + " " + topicsDesc.get(entry.getKey())%>"><%=entry.getValue()%></a></p>
     <%
         }
     %>
     <input type="hidden" name="topicOp" value="clean"/>
     <input type="button" onclick="if(confirm('Are you sure about cleaning all judgments?')){this.form.topicOp.value='clean';this.form.submit()}" value="Clean Topics"/>
-    <input type="button" onclick="if(canconfirm == 'false'){alert('Please choose a Topic');}else if(confirm('Are you sure about confirm these judgements all judgments?')){this.form.topicOp.value='confirm';this.form.submit()}" value="Confirm Judgements"/>
+    
+    <input style="background-color:yellow;padding:3px;" type="button" onclick="if(canconfirm == 'false'){alert('Please choose a Topic');}else if(confirm('Are you sure about confirm these judgements all judgments?')){this.form.topicOp.value='confirm';this.form.submit()}" value="Click here to confirm your Judgements after you choose the relevance of the documents"/>
 
-
+	<% if (topics != null && topics.size() > 0)
+	{%>
+	<a href="<%=request.getContextPath()%>/exportNtcirJudgments.jsp">Export my judgements to treceval format</a>
+	<%}%>
 </div>
 
 
@@ -385,8 +501,15 @@
 
     if (request.getParameter("q") != null && request.getParameter("q").length() > 1) {
 
-
-
+	String log = "[" + (new java.util.Date()).toString() + "] : NTCIR QUERY: session[" + request.getSession().getId() + "] topic[" + request.getParameter("topicID") + "] query[" + request.getParameter("q").replace("\n", " ") + "] ip[" + request.getRemoteAddr() + "]";
+	System.out.println(log);
+	java.util.List<String> logs = (java.util.List<String>)request.getSession().getAttribute("logs");
+	if(logs == null)
+	{
+		logs = new java.util.ArrayList<String>();
+		request.getSession().setAttribute("logs",logs);
+	}
+	logs.add(log);
 
 
 
@@ -411,7 +534,7 @@
         int startAt = Integer.parseInt(request.getParameter("startAt"));
         int docs = Integer.parseInt(request.getParameter("docs"));
 
-        out.println("<h3>Number of matching documents = " + hits.length() + "</h3>");
+        out.println("<h3>Number of matching documents = " + hits.length() + " - showing from " + startAt + " to " + (startAt+docs) + "</h3><hr/>");
         for (int i = startAt; i < startAt + docs; i++) {
             LgteDocumentWrapper doc = hits.doc(i);
             String docno = doc.get(pt.utl.ist.lucene.treceval.Globals.DOCUMENT_ID_FIELD);
@@ -537,14 +660,14 @@
             out.print("<table><tr><td " + style + " id=\"table" + docno + "\">");
             String title = hits.doc(i).get(Config.TITLE);
             if (title != null)
-                out.print("<p>" + i + " - " + title + " <b> - DOCNO</b>" + docno + "</p>\n");
+                out.print("<h3>" + i + " - " + title + " - (DOCNO: " + docno + ")</h3>\n");
             else
-                out.print("<p>" + i + " - <b>DOCNO</b>" + docno + "</p>\n");
+                out.print("<h3>" + i + " - (DOCNO: " + docno + ")</h3>\n");
 
             out.print("<p><b>score</b>: " + hits.textScore(i) + "</p>\n");
             out.print("<p><b>summary</b>" + hits.summary(i, pt.utl.ist.lucene.Globals.LUCENE_DEFAULT_FIELD, 100, 4) + "</p>\n");
 //            out.print("<p><a onclick=\"popup('doc" + i +"');\" href=\"#\">Show Anotations:</a></p>\n");
-            out.print("<p><a onclick=\"getObjectById('table" + docno + "').style.backgroundColor='lightgray';return !showPopup('doc" + i + "', event);\" href=\"#\">Show Anotations:</a></p>\n");
+            out.print("<p><a onclick=\"getObjectById('table" + docno + "').style.backgroundColor='lightgray';return !showPopup('doc" + i + "', event);\" href=\"#\">Show Anotations</a></p>\n");
             out.print("</td><td>\n");
             if (topics.size() > 0) {
 
@@ -561,8 +684,45 @@
 
 <%--<div class="popUpDiv" id="<%="doc" + i%>" style="display:none;">--%>
 <div class="popup" id="doc<%=i%>" onclick="event.cancelBubble = true;">
-    [<A onclick="hideCurrentPopup(); window.location='#<%=docno%>'; return false;" href="#"><font size="4">Close</font></A>]<br>
-    <%=annotatedText.toString().replace("\n","<br>")%>
+    [<A onclick="hideCurrentPopup(); window.location='#<%=docno%>'; return false;" href="#"><font size="4">Close</font></A>]
+	<%
+        if(topics.size() > 0)
+        {
+    %>
+    <input type="button" value="Mark relevant" onclick="this.form['<%=docno%>'].value='relevant';hideCurrentPopup();getObjectById('table<%=docno%>').style.backgroundColor='green';window.location='#<%=docno%>';"/>
+    <input type="button" value="Mark irrelevant" onclick="this.form['<%=docno%>'].value='irrelevant';hideCurrentPopup();getObjectById('table<%=docno%>').style.backgroundColor='red';window.location='#<%=docno%>';"/>
+    <%
+        }
+    %>
+    
+	<br>
+    <%  String annotatedTextStr = annotatedText.toString().replace("\n","<br>");
+	
+	String qq= request.getParameter("q");
+	/*org.apache.lucene.analysis.TokenStream stream = pt.utl.ist.lucene.treceval.IndexCollections.en.getAnalyzerWithStemming().tokenStream("",new java.io.StringReader(qq));
+	org.apache.lucene.analysis.Token t;	
+	while((t=stream.next())!=null)
+	{
+		String s = t.termText(); 
+		if(s.trim().length()>1)
+		    annotatedTextStr = annotatedTextStr.replaceAll(s,"<label class=\"word\">" + s + "</label>");
+	}*/
+	org.apache.lucene.analysis.TokenStream stream = pt.utl.ist.lucene.treceval.IndexCollections.en.getAnalyzerWithStemming().tokenStream("",new java.io.StringReader(qq));
+	org.apache.lucene.analysis.Token t;
+	while((t=stream.next())!=null)
+	{
+		String str = t.termText();
+        String Str = str.substring(0,1).toUpperCase()+str.substring(1);
+        String STR = str.toUpperCase();
+		if(str.trim().length()>1)
+		{
+			annotatedTextStr = annotatedTextStr.replaceAll(str,"<label class=\"word\">"  + str + "</label>");
+			annotatedTextStr = annotatedTextStr.replaceAll(Str,"<label class=\"word\">" + Str + "</label>");
+			annotatedTextStr = annotatedTextStr.replaceAll(STR,"<label class=\"word\">" + STR + "</label>");
+		}
+	}
+    %>
+	<%=annotatedTextStr%>
     [<A onclick="hideCurrentPopup(); window.location='#<%=docno%>'; return false;" href="#"><font size="4">Close</font></A>]
     <%--[<A onclick="popup('<%="doc" + i%>');" href="#"><font size="4">Close</font></A>]--%>
     <%
@@ -590,13 +750,13 @@
             if(startAt > 0)
             {
 %>
-<a href="<%=request.getContextPath()%>/indexNtcir.jsp?startAt=<%=startAt-docs%>&docs=<%=docs%>q=<%=request.getParameter("q")%>"> Next Results </a>
+<a href="<%=request.getContextPath()%>/indexNtcir.jsp?topicID=<%=request.getParameter("topicID")%>&startAt=<%=startAt-docs%>&docs=<%=docs%>&q=<%=request.getParameter("q")%>"> Previous Results</a> &nbsp; &nbsp; <%=startAt%> to <%=startAt+docs%>
 <%
             }
             if(startAt + docs < hits.length())
             {
 %>
-<a href="<%=request.getContextPath()%>/indexNtcir.jsp?startAt=<%=startAt+docs%>&docs=<%=docs%>q=<%=request.getParameter("q")%>"> Next Results </a>
+<a href="<%=request.getContextPath()%>/indexNtcir.jsp?topicID=<%=request.getParameter("topicID")%>&startAt=<%=startAt+docs%>&docs=<%=docs%>&q=<%=request.getParameter("q")%>"> Next Results </a>
 <%
             }
 %>
@@ -611,6 +771,7 @@
     }
 %>
 </form>
+<%}%>
 <jsp:include page="footer.jsp"/>
 </body>
 </html>

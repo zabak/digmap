@@ -7,7 +7,6 @@ import java.util.HashMap;
 import org.apache.lucene.ilps.DataCacher;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.LanguageModelIndexReader;
-import org.apache.lucene.index.Term;
 import org.apache.lucene.index.TermDocs;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.queryParser.ParseException;
@@ -23,7 +22,7 @@ import pt.utl.ist.lucene.config.ConfigProperties;
  * See a description at http://ir.dcs.gla.ac.uk/wiki/FormulasOfDFRModels
  * 
  */
-final class TermScorerDFR extends Scorer  {
+final class TermScorerDFR extends LgteFieldedTermScorer {
 
 
     private static final Logger logger = Logger.getLogger(TermScorerDFR.class);
@@ -37,7 +36,7 @@ final class TermScorerDFR extends Scorer  {
     private TermDocs termDocs;
     private byte[] norms;
     private float weightValue;
-    private int doc;
+
     private LanguageModelIndexReader indexReader;
     private boolean useFieldLengths;
 
@@ -45,7 +44,7 @@ final class TermScorerDFR extends Scorer  {
     private final int[] freqs = new int[32]; // buffered term freqs
     private int pointer;
     private int pointerMax;
-    private Term term;
+
     double docFreq;
 
     QueryConfiguration queryConfiguration;
@@ -349,7 +348,7 @@ final class TermScorerDFR extends Scorer  {
             return Math.log((numDocs + 0.5)/(docFreq+0.5))/Math.log(2.0d);
         }
         double idf = Math.log((numDocs - docFreq + 0.5)/(docFreq+0.5))/Math.log(2.0d);
-        if(idf <  0)
+        if(idf <=  0)
         {
             if(idfPolicy == Bm25Policy.FloorZero)
                 idf = 0d;
@@ -439,6 +438,11 @@ final class TermScorerDFR extends Scorer  {
 
     public String toString() {
         return "scorer(" + weight + ")";
+    }
+
+    public String getField()
+    {
+        return term.field();
     }
 
 

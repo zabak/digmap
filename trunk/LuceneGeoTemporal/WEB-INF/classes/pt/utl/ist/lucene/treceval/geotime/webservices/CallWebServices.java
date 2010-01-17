@@ -28,6 +28,8 @@ import com.sun.tools.javac.util.Pair;
 import com.vividsolutions.jts.geom.Geometry;
 import pt.utl.ist.lucene.config.ConfigProperties;
 import pt.utl.ist.lucene.analyzer.LgteDiacriticFilter;
+import pt.utl.ist.lucene.utils.placemaker.BelongTosDocument;
+import pt.utl.ist.lucene.utils.Dom4jUtil;
 
 public class CallWebServices {
 
@@ -48,6 +50,50 @@ public class CallWebServices {
             return false;
         }
         return true;
+    }
+
+
+      public static BelongTosDocument belongTos(String woeid) throws Exception
+      {
+        if(proxyHost != null && !proxyHost.equals("proxy.host"))
+        {
+            System.getProperties().setProperty("http.proxyHost",proxyHost);
+            System.getProperties().setProperty("http.proxyPort","" + proxyPort);
+            InetSocketAddress addr = new InetSocketAddress(proxyHost,proxyPort);
+            httpProxy = new Proxy(Proxy.Type.HTTP, addr);
+            System.out.println("Using Proxy:" + proxyHost + ":" + proxyPort);
+        }
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setValidating(false);
+        factory.setNamespaceAware(true);
+        DocumentBuilder loader = factory.newDocumentBuilder();
+        HttpClient client = new HttpClient();
+        if(proxyHost != null && !proxyHost.equals("proxy.host"))
+            client.getHostConfiguration().setProxy(proxyHost,proxyPort);
+        try{
+
+
+
+            URL url = new URL("http://where.yahooapis.com/v1/place/" + woeid + "/belongtos;count=0?appid=" + yahooAppId);
+            org.dom4j.Document document = null;
+            Node elmDest  = null;
+            try{
+                document = Dom4jUtil.parse(url);
+            }
+            catch(Exception e)
+            {
+                logger.error("Trying this woeid");
+                logger.error(woeid);
+                throw e;
+            }
+            
+            return new BelongTosDocument(woeid,document);
+        }
+        catch(Exception e)
+        {
+            logger.error(woeid + " " + e.toString(),e);
+            throw e;
+        }
     }
 
     public static org.w3c.dom.Document callServices ( String data, String title, int year, int month, int day ,String file, String id) throws Exception {

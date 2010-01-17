@@ -1,0 +1,5 @@
+LGTE version 1.1.7
+
+Release Notes:
+
+1 - Phrase Query tested with multiindexes @see example at pt.utl.ist.lucene.test.models.TestBm25ExactPhrase 

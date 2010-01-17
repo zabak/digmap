@@ -78,7 +78,7 @@ public class IndexContents {
             StringBuilder textIndexBuilder = new StringBuilder();
             if(d.getDHeadline() != null)
             {
-                doc.indexString(Config.TITLE,d.getDHeadline());
+                doc.indexText(Config.TITLE,d.getDHeadline());
                 textIndexBuilder.append(d.getDHeadline()).append(" ");
             }
             else

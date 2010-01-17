@@ -20,7 +20,8 @@ import java.io.IOException;
 
 import org.apache.lucene.index.*;
 
-abstract class PhraseScorer extends Scorer {
+abstract class PhraseScorer extends LgteFieldedTermScorer
+{
   private Weight weight;
   protected byte[] norms;
   protected float value;
@@ -33,7 +34,11 @@ abstract class PhraseScorer extends Scorer {
   private float freq;
 
 
-  PhraseScorer(Weight weight, TermPositions[] tps, int[] positions, Similarity similarity,
+    public Weight getWeight() {
+        return weight;
+    }
+
+    PhraseScorer(Weight weight, TermPositions[] tps, int[] positions, Similarity similarity,
                byte[] norms) {
     super(similarity);
     this.norms = norms;

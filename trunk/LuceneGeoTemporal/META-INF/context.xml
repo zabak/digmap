@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context>
+	<Manager  className="org.apache.catalina.session.PersistentManager"
+              debug="0"
+              saveOnRestart="true"
+              maxActiveSessions="-1"
+              minIdleSwap="5"
+              maxIdleSwap="10"
+              maxIdleBackup="-1">
+		<Store className="org.apache.catalina.session.FileStore"/>
+	</Manager>
+</Context>

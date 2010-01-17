@@ -281,22 +281,27 @@ public class QueryParser implements QueryParserConstants {
       return new TermQuery(new Term(field, (String) v.elementAt(0)));
     else {
 
-//      PhraseQuery q = new PhraseQuery();
-//
-//      q.setSlop(phraseSlop);
-//      for (int i=0; i<v.size(); i++) {
-//        q.add(new Term(field, (String) v.elementAt(i)));
-//      }
-    //Jorge Machado LGTE CHANGE
-    BooleanQuery q = new BooleanQuery();
+          /********CODIGO ANTIGO  ******/
 
-//      q.setSlop(phraseSlop);
+          PhraseQuery q = new PhraseQuery();
+          q.setSlop(phraseSlop);
+          for (int i=0; i<v.size(); i++) {
+            q.add(new Term(field, (String) v.elementAt(i)));
+          }
+          return q;
+
+           /***********************/
+
+    /*** NEW CODE COMMENTED  ...back to old code
+      //Jorge Machado LGTE CHANGE  Why?? dont remember
+      BooleanQuery q = new BooleanQuery();
+
       for (int i=0; i<v.size(); i++) {
         TermQuery tQ =  new TermQuery(new Term(field, (String) v.elementAt(i)));
-//          tQ.setBoost();
         q.add(tQ,false,false);
       }
       return q;
+     ****/
     }
   }
 

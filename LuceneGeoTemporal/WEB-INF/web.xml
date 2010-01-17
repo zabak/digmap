@@ -3,7 +3,42 @@
 <web-app>
         <display-name>Lucene With Geo-Temporal Extensions</display-name>
 
+
+    
+
+    <!--<context-param>-->
+      <!--<param-name>maxIdleBackup</param-name>-->
+      <!--<param-value></param-value>-->
+    <!--</context-param>-->
+
     <welcome-file-list>
-        <welcome-file>index.jsp</welcome-file>
+        <welcome-file>indexNtcir.jsp</welcome-file>
     </welcome-file-list>
+
+
+    <!-- Define a Security Constraint on this Application -->
+    <security-constraint>
+      <web-resource-collection>
+        <web-resource-name>NTCIR  GeoTime Relevance Judgements Service powered by LGTE. Please use Username and Password for participants area at GeoTime TestCollection</web-resource-name>
+        <url-pattern>/*</url-pattern>
+      </web-resource-collection>
+      <auth-constraint>
+         <!-- NOTE:  This role is not present in the default users file -->
+         <role-name>ntcir</role-name>
+      </auth-constraint>
+    </security-constraint>
+
+    <!-- Define the Login Configuration for this Application -->
+    <login-config>
+      <auth-method>BASIC</auth-method>
+      <realm-name>NTCIR  GeoTime Relevance Judgements Service powered by LGTE. Please use Username and Password for participants area at GeoTime TestCollection</realm-name>
+    </login-config>
+
+    <!-- Security roles referenced by this web application -->
+    <security-role>
+      <description>
+        The role that is required to log in to the LGTE NTCIR JUDGMENT SERVICE
+      </description>
+      <role-name>ntcir</role-name>
+    </security-role>
 </web-app>

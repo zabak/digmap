@@ -54,6 +54,8 @@ public class Config
 
     public static final String ID = Globals.DOCUMENT_ID_FIELD;
     public static final String CONTENTS = Globals.LUCENE_DEFAULT_FIELD;
+    public static final String DOC_ID = "doc_id";
+    public static final String SENTENCES = "sentences";
 
 
     //FOUND Expressions
@@ -64,18 +66,24 @@ public class Config
     public static final String S_HAS_TIMEXES = "S_HAS_TIMEXES";
 
     //Geo Indexes
+    public static String G_PLACE_BELONG_TOS = "g_placeBelongToosWoeid"; //todo falta isto
     public static String G_PLACE_REF_WOEID = "g_placeRefWoeid";
     public static String G_ADMIN_SCOPE_WOEID = "g_administrativeScopeWoeid";
     public static String G_GEO_SCOPE_WOEID = "g_geographicScopeWoeid";
     public static String G_GEO_ALL_WOEID = "g_allWoeid";
+    public static String G_PLACE_NAME_TEXT = "g_text";
 
     //Time Indexes
+    public static String T_TIME_EXPRESSION_TEXT = "t_text";
+
     public static String T_ALL_EXPRESSIONS_AND_TIME_DOC = "t_all"; //point genpoint duration timeDocument
     public static String T_ALL_NOT_DURATION = "t_all_except_duration";  //all except duration ( point genpoint timeDocument)
     public static String T_TIME_EXPRESSIONS = "t_exprs";  //all except TimeDocument
     public static String T_NOT_DURATION_EXPRESSIONS = "t_not_duration_exprs";  //all except time document and duration
 
 
+    public static String T_POINT_KEY      = "t_point_key";
+    public static String T_POINT_RELATIVE = "t_point_relative";
     public static String T_POINT    = "t_point";
     public static String T_GENPOINT = "t_genpoint";
     public static String T_DURATION = "t_duration";

@@ -151,9 +151,9 @@ public class TestBm25bWithFields extends TestCase {
         double idfWord1 = idf(numDocs,docFreqWord1);
         double idfWord2 = idf(numDocs,docFreqWord2);
         //epslon policy
-        if(idfWord1 < 0)
+        if(idfWord1 <= 0)
             idfWord1 = epslon;
-        if(idfWord2 < 0)
+        if(idfWord2 <= 0)
             idfWord2 = epslon;
         double tfDoc1Word1 = 2;
         double tfDoc2Word1 = 0;

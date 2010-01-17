@@ -16,6 +16,9 @@ package org.apache.lucene.search;
  * limitations under the License.
  */
 
+import pt.utl.ist.lucene.ModelManager;
+import pt.utl.ist.lucene.QueryConfiguration;
+
 import java.io.IOException;
 
 final class BooleanScorer extends Scorer {
@@ -107,10 +110,41 @@ final class BooleanScorer extends Scorer {
             end += BucketTable.SIZE;
             for (SubScorer sub = scorers; sub != null; sub = sub.next) {
                 Scorer scorer = sub.scorer;
-                while (!sub.done && scorer.doc() < end) {
-                    sub.collector.collect(scorer.doc(), scorer.score());
-                    sub.done = !scorer.next();
+                /**
+                 * LGTE MODIFICATION TO IMPLEMENT HIERARCHIC INDEXES
+                 * THE OLD CODE
+                 * In Hierarchic Indexes a document has a list of children documents in other indexes.
+                 * During the search these childrens are the returned documents
+                 * Parent document id in his own index is diferent from the id's of the childrens
+                 * This is a problem of id's mapping.
+                 * The objective of this modification is to calculate the score of the parent just one time
+                 * and collect that score for all the childrens
+                 * Jorge Machado
+                 *
+                    while (!sub.done && scorer.doc() < end)
+                    {
+                        sub.collector.collect(scorer.doc(), scorer.score());
+                        sub.done = !scorer.next();
+                    }
+                 */
+                while (!sub.done && scorer.doc() < end)
+                {
+//                    QueryConfiguration queryConfiguration = ModelManager.getInstance().getQueryConfiguration();
+//                    boolean indexTree = queryConfiguration.getBooleanProperty("index.tree");
+//
+//                    if(sub.scorer instanceof LgteFieldedTermScorer)
+//                    {
+//
+//                    }
+//                    else
+//                    {   //keeping for the old classes
+                        sub.collector.collect(scorer.doc(), scorer.score());
+                        sub.done = !scorer.next();
+//                    }
                 }
+                /**
+                 * End here
+                 */
                 if (!sub.done) {
                     more = true;
                 }

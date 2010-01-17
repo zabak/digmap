@@ -106,6 +106,7 @@
 
     <target name="prepareWar" depends="compile">
         <mkdir dir="${webapp.path}/WEB-INF"/>
+        <mkdir dir="${webapp.path}/META-INF"/>
 
         <mkdir dir="${webapp.path}/WEB-INF/classes"/>
         <mkdir dir="${webapp.path}/WEB-INF/lib"/>
@@ -127,11 +128,20 @@
                 <include name="*.xml" />
             </fileset>
         </copy>
+        <copy todir="${webapp.path}/META-INF">
+            <fileset dir="${webapp}/META-INF">
+                <include name="**/*" />
+            </fileset>
+        </copy>
         <copy todir="${webapp.path}">
             <fileset dir="${webapp}">
+                <include name="*.png" />
+                <include name="*.jpg" />
+                <include name="*.gif" />
                 <include name="*.jsp" />
                 <include name="*.js" />
                 <include name="*.txt" />
+                <include name="*.PNG" />
             </fileset>
         </copy>
 
@@ -165,6 +175,10 @@
                 <include name="*.jsp" />
                 <include name="*.js" />
                 <include name="*.txt" />
+                <include name="*.png" />
+                <include name="*.jpg" />
+                <include name="*.gif" />
+                <include name="*.PNG" />
             </fileset>
         </copy>
 
@@ -172,7 +186,23 @@
 
     <target name="war" description="Compile web application">
         <antcall target="prepareWar"/>
-        <jar destfile="${webapp.path}.war" basedir="${webapp.path}" />
+        <jar destfile="${webapp.path}.war" basedir="${webapp.path}" >
+            <manifest>
+                <attribute name="Built-By" value="${user.name}" />
+                <!--<attribute name="Main-Class" value="my.path.to.the.main.Application" />-->
+                <section name="lgte">
+                    <attribute name="Specification-Title" value="LGTE - Lucene GeoTemporal Extensions" />
+                    <attribute name="Specification-Version" value="${version.number}" />
+                    <attribute name="Specification-Vendor" value="Jorge Machado" />
+                    <attribute name="Implementation-Version" value="${version.number}" />
+                    <attribute name="Implementation-Vendor" value="Jorge Machado" />
+                </section>
+
+                <!-- finally, use the magically generated libs path -->
+                <!--<attribute name="Class-Path" value="${libs.project}" />-->
+            </manifest>
+
+        </jar>
     </target>
 
 

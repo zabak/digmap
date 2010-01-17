@@ -1,16 +1,22 @@
 package pt.utl.ist.lucene.treceval.geotime.index;
 
 import org.dom4j.DocumentException;
+import org.apache.lucene.analysis.Analyzer;
 import pt.utl.ist.lucene.Globals;
 import pt.utl.ist.lucene.LgteDocumentWrapper;
 import pt.utl.ist.lucene.LgteIndexWriter;
 import pt.utl.ist.lucene.Model;
 import pt.utl.ist.lucene.analyzer.LgteNothingAnalyzer;
+import pt.utl.ist.lucene.analyzer.LgteBrokerStemAnalyzer;
 import pt.utl.ist.lucene.treceval.geotime.IntegratedDocTimexIterator;
+import pt.utl.ist.lucene.treceval.IndexCollections;
 import pt.utl.ist.lucene.utils.temporal.TimeExpression;
+import pt.utl.ist.lucene.utils.temporal.tides.Timex2TimeExpression;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
+import java.util.HashMap;
 
 /**
  * @author Jorge Machado
@@ -30,7 +36,12 @@ public class CreateTimeExprIndex {
         IntegratedDocTimexIterator integratedDocTimexIterator = new IntegratedDocTimexIterator(Config.documentPath,Config.timexesPath);
         IntegratedDocTimexIterator.DocumentWithTimexes timexesDocument;
 
-        LgteIndexWriter writer = new LgteIndexWriter(indexPath,new LgteNothingAnalyzer(), true, Model.OkapiBM25Model);
+        Map<String, Analyzer> anaMap = new HashMap<String,Analyzer>();
+        anaMap.put(Config.T_TIME_EXPRESSION_TEXT,IndexCollections.en.getAnalyzerWithStemming());
+        LgteBrokerStemAnalyzer analyzer = new LgteBrokerStemAnalyzer(anaMap,new LgteNothingAnalyzer());
+
+        LgteIndexWriter writer = new LgteIndexWriter(indexPath,analyzer, true, Model.OkapiBM25Model);
+        
         int i = 1;
         String previousID = "";
         while((timexesDocument = integratedDocTimexIterator.next())!=null)
@@ -64,6 +75,11 @@ public class CreateTimeExprIndex {
 //        if(timexesDocument.getD().getDId().equals("NYT_ENG_20020107.0019"))
 //            System.out.println("");
         if(timexesDocument.getTd() != null)
+        {
+            for(Timex2TimeExpression timex2: timexesDocument.getTd().getTimex2TimeExpressions())
+            {
+                doc.indexText(Config.T_TIME_EXPRESSION_TEXT,timex2.getTimex2().getText());
+            }
             for(TimeExpression timeExpression : timexesDocument.getTd().getAllTimeExpressions())
             {
                 if(timeExpression.isWeekDuration())
@@ -112,7 +128,12 @@ public class CreateTimeExprIndex {
                 else if(timeExpression.getType() == TimeExpression.Type.YYYYMMDD) doc.indexString(Config.T_YYYYMMDD,timeExpression.getNormalizedExpression());
 
                 if(timeExpression.getTeClass() == TimeExpression.TEClass.Point)
-                {
+                {                                                            
+                    if(timeExpression.getTimex2().getPrenorm() != null && timeExpression.getTimex2().getPrenorm().startsWith("|fq|"))
+                        doc.indexString(Config.T_POINT_KEY,timeExpression.getNormalizedExpression());
+                    else
+                        doc.indexString(Config.T_POINT_RELATIVE,timeExpression.getNormalizedExpression());
+
                     doc.indexString(Config.T_ALL_EXPRESSIONS_AND_TIME_DOC,timeExpression.getNormalizedExpression());
                     doc.indexString(Config.T_ALL_NOT_DURATION,timeExpression.getNormalizedExpression());
                     doc.indexString(Config.T_NOT_DURATION_EXPRESSIONS,timeExpression.getNormalizedExpression());
@@ -138,6 +159,8 @@ public class CreateTimeExprIndex {
                     doc.indexString(Config.T_UNKNOWN,timeExpression.getNormalizedExpression());
                 }
             }
+        }
         writer.addDocument(doc);
+
     }
 }

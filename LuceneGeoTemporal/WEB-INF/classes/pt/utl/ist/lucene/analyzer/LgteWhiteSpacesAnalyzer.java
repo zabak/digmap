@@ -23,9 +23,9 @@ public class LgteWhiteSpacesAnalyzer extends org.apache.lucene.analysis.Analyzer
 
 
 
+
     public LgteWhiteSpacesAnalyzer( ) throws IOException
     {
-        System.out.println("");
     }
 
     public final TokenStream tokenStream(String fieldName, Reader reader)

@@ -45,7 +45,7 @@ public class Main {
         // get the synset
 
 
-        IIndexWord idxWord = dict.getIndexWord("dog", POS.NOUN);
+        IIndexWord idxWord = dict.getIndexWord("country", POS.NOUN);
         IWordID wordID = idxWord.getWordIDs().get(0); // 1st meaning
         IWord word = dict.getWord(wordID);
         ISynset synset = word.getSynset();

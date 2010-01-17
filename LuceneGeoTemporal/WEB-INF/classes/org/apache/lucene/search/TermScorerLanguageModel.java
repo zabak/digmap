@@ -18,17 +18,15 @@ package org.apache.lucene.search;
 
 import java.io.IOException;
 
-import org.apache.lucene.ilps.DataCacher;
 import org.apache.lucene.index.*;
 import pt.utl.ist.lucene.QueryConfiguration;
 import pt.utl.ist.lucene.ModelManager;
 
-final class TermScorerLanguageModel extends Scorer {
+final class TermScorerLanguageModel extends LgteFieldedTermScorer {
     private Weight weight;
     private TermDocs termDocs;
     private byte[] norms;
     private float weightValue;
-    private int doc;
     //private float collSizeDFS; // sum of docFreq for all terms
     //private float collSizeCFS; // sum of collFreq for all terms
     private float collSize = 0.0f;
@@ -42,7 +40,6 @@ final class TermScorerLanguageModel extends Scorer {
     //    private int[][] freqsDist;
     private int pointer;
     private int pointerMax;
-    private Term term;
     private float log10 = (float) Math.log(10);
 
     int docLen;
@@ -89,8 +86,10 @@ final class TermScorerLanguageModel extends Scorer {
         }
     }
 
-    public int doc() {
-        return doc;
+    
+    public String getField()
+    {
+        return term.field();
     }
 
     public boolean next() throws IOException {

@@ -31,6 +31,11 @@ public class LgteBrokerStemAnalyzer extends org.apache.lucene.analysis.Analyzer
     Analyzer defaultAnalyzer = LgteAnalyzer.defaultAnalyzer;
 
 
+    public LgteBrokerStemAnalyzer(Map<String, Analyzer> analizers, Analyzer defaultAnalyzer)
+    {
+        this.analizers = analizers;
+        this.defaultAnalyzer = defaultAnalyzer;
+    }
     public LgteBrokerStemAnalyzer(Map<String, Analyzer> analizers)
     {
         this.analizers = analizers;

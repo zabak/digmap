@@ -2,21 +2,18 @@ package org.apache.lucene.search;
 
 import org.apache.lucene.index.TermDocs;
 import org.apache.lucene.index.LanguageModelIndexReader;
-import org.apache.lucene.index.Term;
 import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.ilps.DataCacher;
 
 import java.io.IOException;
 
 import pt.utl.ist.lucene.ModelManager;
 import pt.utl.ist.lucene.QueryConfiguration;
 
-final class TermScorerLanguageModelHiemstra extends Scorer {
+final class TermScorerLanguageModelHiemstra extends LgteFieldedTermScorer {
     private Weight weight;
     private TermDocs termDocs;
     private byte[] norms;
     private float weightValue;
-    private int doc;
     //private float collSizeDFS; // sum of docFreq for all terms
     //private float collSizeCFS; // sum of collFreq for all terms
     private float collSize = 0.0f;
@@ -29,7 +26,6 @@ final class TermScorerLanguageModelHiemstra extends Scorer {
     private final int[] freqs = new int[32]; // buffered term freqs
     private int pointer;
     private int pointerMax;
-    private Term term;
     private float log10 = (float) Math.log(10);
 
     int fieldLen;
@@ -77,9 +73,6 @@ final class TermScorerLanguageModelHiemstra extends Scorer {
         }
     }
 
-    public int doc() {
-        return doc;
-    }
 
     public boolean next() throws IOException {
         pointer++;

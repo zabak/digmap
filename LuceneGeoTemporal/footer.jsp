@@ -12,11 +12,16 @@
                                             </span>
                         <script type="text/javascript">
                             <!--
-                            emailE='digmap.eu'
-                            emailE=('digmap' + '@' + emailE)
+                            emailE='gmail.com'
+                            emailE=('machadofisher' + '@' + emailE)
                             document.write('<a class="footerlink" title="DIGMAP e-mail" href="mailto:' + emailE + '">' + emailE + '</a>')
                                 //-->
                         </script>
+                    </td>
+                    <td>
+                           <span class="footerText">
+                                                LGTE powers the Digmap <a href="http://digmap2.ist.utl.pt:8080/mitra">Search Engine</a>
+                                            </span>
                     </td>
                     <td align="right" valign="middle">
 

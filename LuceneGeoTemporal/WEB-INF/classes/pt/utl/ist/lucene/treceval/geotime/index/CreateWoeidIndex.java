@@ -46,6 +46,7 @@ public class CreateWoeidIndex {
         anaMap.put(Config.G_GEO_SCOPE_WOEID, new LgteNothingAnalyzer());
         anaMap.put(Config.G_PLACE_REF_WOEID, new LgteNothingAnalyzer());
         anaMap.put(Config.G_GEO_ALL_WOEID, new LgteNothingAnalyzer());
+        anaMap.put(Config.G_PLACE_NAME_TEXT, IndexCollections.en.getAnalyzerWithStemming());
         LgteBrokerStemAnalyzer analyzer = new LgteBrokerStemAnalyzer(anaMap);
 
         LgteIndexWriter writer = new LgteIndexWriter(indexPath,analyzer, true, Model.OkapiBM25Model);
@@ -72,11 +73,13 @@ public class CreateWoeidIndex {
         {
             doc.indexString(Config.G_ADMIN_SCOPE_WOEID, PlaceNameNormalizer.normalizeWoeid(placeMakerDocument.getAdministrativeWoeid()));
             doc.indexString(Config.G_GEO_ALL_WOEID, PlaceNameNormalizer.normalizeWoeid(placeMakerDocument.getAdministrativeWoeid()));
+            doc.indexText(Config.G_PLACE_NAME_TEXT,placeMakerDocument.getAdministrativeName());
         }
         if(placeMakerDocument.getGeographicWoeid() != null)
         {
             doc.indexString(Config.G_GEO_SCOPE_WOEID, PlaceNameNormalizer.normalizeWoeid(placeMakerDocument.getGeographicWoeid()));
             doc.indexString(Config.G_GEO_ALL_WOEID, PlaceNameNormalizer.normalizeWoeid(placeMakerDocument.getGeographicWoeid()));
+            doc.indexText(Config.G_PLACE_NAME_TEXT,placeMakerDocument.getGeographicName());
         }
         if(placeMakerDocument.getPlaceDetails() != null && placeMakerDocument.getPlaceDetails().size()>0)
         {
@@ -86,6 +89,7 @@ public class CreateWoeidIndex {
                 {
                     doc.indexString(Config.G_PLACE_REF_WOEID, PlaceNameNormalizer.normalizeWoeid(placeDetails.getWoeId()));
                     doc.indexString(Config.G_GEO_ALL_WOEID, PlaceNameNormalizer.normalizeWoeid(placeDetails.getWoeId()));
+                    doc.indexText(Config.G_PLACE_NAME_TEXT,placeDetails.getName());
                 }
             }
         }

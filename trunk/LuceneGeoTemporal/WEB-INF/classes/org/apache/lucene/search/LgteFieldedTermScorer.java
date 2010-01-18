@@ -1,6 +1,9 @@
 package org.apache.lucene.search;
 
 import org.apache.lucene.index.Term;
+import org.apache.lucene.index.IndexReader;
+
+import java.io.Reader;
 
 /**
  * @author Jorge Machado
@@ -15,12 +18,16 @@ public abstract class LgteFieldedTermScorer extends Scorer
 {
     protected Term term = null;
     protected int doc;
+    protected IndexReader reader;
+
     /**
      * Constructs a Scorer.
      * @param similarity similarity
      */
-    protected LgteFieldedTermScorer(Similarity similarity) {
+    protected LgteFieldedTermScorer(IndexReader reader, Similarity similarity)
+    {
         super(similarity);
+        this.reader = reader;
     }
 
     public String getField()
@@ -45,5 +52,11 @@ public abstract class LgteFieldedTermScorer extends Scorer
     public int doc()
     {
         return doc;
+    }
+    
+
+    public IndexReader getIndexReader()
+    {
+        return reader;
     }
 }

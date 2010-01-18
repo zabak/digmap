@@ -1,8 +1,11 @@
 package pt.utl.ist.lucene.priors.impl;
 
 import pt.utl.ist.lucene.priors.DocumentPriors;
+import pt.utl.ist.lucene.ModelManager;
+import pt.utl.ist.lucene.QueryConfiguration;
 import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.ilps.DataCacher;
+
+import java.util.Properties;
 
 /**
  * @author Jorge
@@ -17,9 +20,11 @@ public class LanguageModelPriors implements DocumentPriors
     private float getLmBeta()
     {
         if (beta == -1.0f)
-            beta = (DataCacher.Instance().get("LM-beta") != null)
-                    ? (Float.valueOf((String) DataCacher.Instance().get("LM-beta")))
-                    .floatValue() : 1.0f;
+        {
+            Properties modelProperties = ModelManager.getInstance().getModelProperties();
+            QueryConfiguration queryConfiguration = ModelManager.getInstance().getQueryConfiguration();
+            beta = queryConfiguration.getFloatProperty("LM-beta",modelProperties);
+        }
         return beta;
     }
 

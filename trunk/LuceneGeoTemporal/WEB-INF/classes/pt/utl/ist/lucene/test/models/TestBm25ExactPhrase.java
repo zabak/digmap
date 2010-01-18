@@ -67,7 +67,7 @@ public class TestBm25ExactPhrase extends TestCase {
             queryConfiguration.setProperty("bm25.k1","" + k1);
             queryConfiguration.setProperty("bm25.b","" + b);
 
-            LgteQuery lgteQuery = LgteQueryParser.parseQuery("\"word1 word3\"",searcher,queryConfiguration);
+            LgteQuery lgteQuery = LgteQueryParser.parseQuery("contents:\"word1 word3\"^0.7 contents:(word1 word3)^0.3",searcher,queryConfiguration);
 
             LgteHits lgteHits = searcher.search(lgteQuery);
 

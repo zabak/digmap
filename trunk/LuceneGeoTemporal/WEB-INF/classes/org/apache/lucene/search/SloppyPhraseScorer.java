@@ -17,15 +17,16 @@ package org.apache.lucene.search;
  */
 
 import org.apache.lucene.index.TermPositions;
+import org.apache.lucene.index.IndexReader;
 
 import java.io.IOException;
 
 final class SloppyPhraseScorer extends PhraseScorer {
     private int slop;
 
-    SloppyPhraseScorer(Weight weight, TermPositions[] tps, int[] positions, Similarity similarity,
+    SloppyPhraseScorer(IndexReader reader, Weight weight, TermPositions[] tps, int[] positions, Similarity similarity,
                        int slop, byte[] norms) {
-        super(weight, tps, positions, similarity, norms);
+        super(reader, weight, tps, positions, similarity, norms);
         this.slop = slop;
     }
 

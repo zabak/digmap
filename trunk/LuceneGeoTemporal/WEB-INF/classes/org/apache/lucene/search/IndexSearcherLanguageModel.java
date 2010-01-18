@@ -19,7 +19,6 @@ package org.apache.lucene.search;
 import java.io.IOException;
 import java.util.BitSet;
 
-import org.apache.lucene.ilps.DataCacher;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.search.Filter;
 import org.apache.lucene.search.HitCollector;
@@ -90,10 +89,9 @@ public class IndexSearcherLanguageModel extends ProbabilisticIndexSearcher
                     float prior = 1.0f;
                     if (docLen > 0)
                     {
-
 //                  System.out.println("add prior " + docLen + " (" + (float)Math.log(docLen) / log10 + ")");
                     //Changed in LGTE by Jorge Machado @see pt.utl.ist.lucene.priors
-                    score = Model.LanguageModel.getDocumentFinalScorer().computeFinalScore(score,reader,docLen);
+                        score = Model.LanguageModel.getDocumentFinalScorer().computeFinalScore(score,reader,docLen);
 //                  System.out.println("final: " + score);
                     }
                     else
@@ -101,31 +99,31 @@ public class IndexSearcherLanguageModel extends ProbabilisticIndexSearcher
                         System.err.println("Zero doc length for doc " + doc);
                     }
 
-                    if (usePriors)
-                    {
-                        Object priorObj = DataCacher.Instance().get("priors", doc);
-                        if (priorObj != null)
-                        {
-                            try
-                            {
-                                prior = ((Float) priorObj).floatValue();
-                            }
-                            catch (Exception e)
-                            {
-                                try
-                                {
-                                    int i = ((Integer) priorObj).intValue();
-                                    prior = (float) i;
-                                }
-                                catch (Exception e1)
-                                {
-                                    e1.printStackTrace();
-                                }
-                            }
-                            // TODO: replace with better combination of prior
-                            score *= prior;
-                        }
-                    }
+//                    if (usePriors)
+//                    {
+//                        Object priorObj = DataCacher.Instance().get("priors", doc);
+//                        if (priorObj != null)
+//                        {
+//                            try
+//                            {
+//                                prior = ((Float) priorObj).floatValue();
+//                            }
+//                            catch (Exception e)
+//                            {
+//                                try
+//                                {
+//                                    int i = ((Integer) priorObj).intValue();
+//                                    prior = (float) i;
+//                                }
+//                                catch (Exception e1)
+//                                {
+//                                    e1.printStackTrace();
+//                                }
+//                            }
+//                            // TODO: replace with better combination of prior
+//                            score *= prior;
+//                        }
+//                    }
                     hq.insert(new ScoreDoc(doc, score));
                 }
             }
@@ -143,7 +141,7 @@ public class IndexSearcherLanguageModel extends ProbabilisticIndexSearcher
         int docLen = 0;
         try
         {
-            docLen = lmIndexReader.getDocLength(doc);
+            return reader.getDocLength(doc);
         }
         catch (Exception e)
         {

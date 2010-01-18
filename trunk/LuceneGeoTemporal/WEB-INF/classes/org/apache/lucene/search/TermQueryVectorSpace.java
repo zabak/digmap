@@ -63,7 +63,7 @@ public class TermQueryVectorSpace extends TermQueryImpl {
       if (termDocs == null)
         return null;
       
-      return new TermScorerVectorSpace(this,term, termDocs, getSimilarity(searcher),
+      return new TermScorerVectorSpace(reader, this,term, termDocs, getSimilarity(searcher),
                             reader.norms(term.field()));
     }
 

@@ -74,7 +74,7 @@
             </fileset>
         </copy>
         <antcall target="configuration"/>
-        <javac destdir="${webapp.path}/WEB-INF/classes" optimize="off" debug="true" debuglevel="lines,vars,source" nowarn="true" deprecation="${compile.deprecation}" failonerror="true" srcdir="${webapp.path}/WEB-INF/classes" encoding="UTF-8" excludes="**/*.smap">
+        <javac destdir="${webapp.path}/WEB-INF/classes" optimize="off" nowarn="true" debug="true" failonerror="true" srcdir="${webapp.path}/WEB-INF/classes" encoding="UTF-8" excludes="**/*.smap">
             <classpath>
                 <fileset dir="${base.dir}/lib">
                     <include name="*.jar" />

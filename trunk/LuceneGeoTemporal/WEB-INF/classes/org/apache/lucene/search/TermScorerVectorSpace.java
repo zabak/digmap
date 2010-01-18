@@ -20,6 +20,7 @@ import java.io.IOException;
 
 import org.apache.lucene.index.TermDocs;
 import org.apache.lucene.index.Term;
+import org.apache.lucene.index.IndexReader;
 
 final class TermScorerVectorSpace extends LgteFieldedTermScorer {
     private Weight weight;
@@ -35,9 +36,9 @@ final class TermScorerVectorSpace extends LgteFieldedTermScorer {
     private static final int SCORE_CACHE_SIZE = 32;
     private float[] scoreCache = new float[SCORE_CACHE_SIZE];
 
-    TermScorerVectorSpace(Weight weight, Term term, TermDocs td, Similarity similarity,
+    TermScorerVectorSpace(IndexReader reader, Weight weight, Term term, TermDocs td, Similarity similarity,
                           byte[] norms) throws IOException {
-        super(similarity);
+        super(reader, similarity);
         this.weight = weight;
         this.termDocs = td;
         this.term = term;

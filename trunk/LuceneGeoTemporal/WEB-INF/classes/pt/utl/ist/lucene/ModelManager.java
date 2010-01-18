@@ -32,6 +32,12 @@ public class ModelManager
         service(ManagerService.setModel,m);
     }
 
+    public void setModel(Model m, Properties modelProperties)
+    {
+        service(ManagerService.setModel,m);
+        service(ManagerService.setModelProperties,modelProperties);
+    }
+
     public void setModel(Model m, QueryConfiguration queryConfiguration)
     {
         service(ManagerService.setModel,m);
@@ -42,6 +48,8 @@ public class ModelManager
     {
         service(ManagerService.setQueryConfiguration,queryConfiguration);
     }
+
+
 
     public void reset()
     {
@@ -55,7 +63,18 @@ public class ModelManager
 
     public QueryConfiguration getQueryConfiguration()
     {
-        return (QueryConfiguration) service(ManagerService.getQueryConfiguration,null);
+        QueryConfiguration queryConfiguration = (QueryConfiguration) service(ManagerService.getQueryConfiguration,null);
+        if(queryConfiguration == null)
+        {
+            queryConfiguration = new QueryConfiguration();
+            service(ManagerService.setQueryConfiguration,queryConfiguration);
+        }
+        return queryConfiguration;
+    }
+
+    public Properties getModelProperties()
+    {
+        return (Properties) service(ManagerService.getModelProperties,null);
     }
 
     //    public synchronized Model service(ManagerService service, Model m)
@@ -72,8 +91,16 @@ public class ModelManager
                     threadModels.put(Thread.currentThread().getId(),new ModelContainer(Model.defaultModel, (QueryConfiguration) o));
                 break;
             }
+            case setModelProperties:{
+                if(threadModels.get(Thread.currentThread().getId())!=null)
+                    threadModels.get(Thread.currentThread().getId()).setModelProperties((Properties) o);
+                else
+                    threadModels.put(Thread.currentThread().getId(),new ModelContainer(Model.defaultModel, (Properties) o));
+                break;
+            }
             case getModel: return threadModels.get(Thread.currentThread().getId()).getModel();
             case getQueryConfiguration: return threadModels.get(Thread.currentThread().getId()).getQueryConfiguration();
+            case getModelProperties: return threadModels.get(Thread.currentThread().getId()).getModelProperties();
             case clear: threadModels.clear();
         }
         checkOldThreads();
@@ -104,6 +131,8 @@ public class ModelManager
     {
         setModel,
         setQueryConfiguration,
+        getModelProperties,
+        setModelProperties,
         clear,
         getModel,
         getQueryConfiguration
@@ -114,10 +143,18 @@ public class ModelManager
         Model m;
         long lastAccess = 0;
         QueryConfiguration queryConfiguration;
+        Properties modelProperties = null;
 
 
         public ModelContainer(Model m)
         {
+            lastAccess = System.currentTimeMillis();
+            this.m = m;
+        }
+
+        public ModelContainer(Model m, Properties modelProperties)
+        {
+            this.modelProperties = modelProperties;
             lastAccess = System.currentTimeMillis();
             this.m = m;
         }
@@ -127,6 +164,14 @@ public class ModelManager
             lastAccess = System.currentTimeMillis();
             this.m = m;
             this.queryConfiguration = queryConfiguration;
+        }
+
+        public ModelContainer(Model m, QueryConfiguration queryConfiguration, Properties modelProperties)
+        {
+            lastAccess = System.currentTimeMillis();
+            this.m = m;
+            this.queryConfiguration = queryConfiguration;
+            this.modelProperties = modelProperties;
         }
 
         public Model getModel()
@@ -140,6 +185,14 @@ public class ModelManager
             return lastAccess;
         }
 
+
+        public Properties getModelProperties() {
+            return modelProperties;
+        }
+
+        public void setModelProperties(Properties modelProperties) {
+            this.modelProperties = modelProperties;
+        }
 
         public QueryConfiguration getQueryConfiguration() {
             return queryConfiguration;

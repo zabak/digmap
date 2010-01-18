@@ -23,7 +23,6 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
-import org.apache.lucene.ilps.DataCacher;
 import pt.utl.ist.lucene.Model;
 
 
@@ -140,24 +139,24 @@ public class IndexSearcher extends Searcher {
 //                        score = Model.VectorSpaceModel.getDocumentFinalScorer().computeFinalScore(score,reader,docLen);
 //                        System.exit(-1);
                     }
-                    if (usePriors) {
-                        float prior = 1.0f;
-                        Object priorObj = DataCacher.Instance().get("priors", doc);
-                        if (priorObj != null) {
-                            try {
-                                prior = ((Float)priorObj).floatValue();
-                            } catch (Exception e) {
-                                try {
-                                    int i = ((Integer)priorObj).intValue();
-                                    prior = (float)i;
-                                } catch (Exception e1) {
-                                    e1.printStackTrace();
-                                }
-                            }
-                        }
-                        // TODO: replace with better combination of prior
-                        score *= prior;
-                    }
+//                    if (usePriors) {
+//                        float prior = 1.0f;
+//                        Object priorObj = DataCacher.Instance().get("priors", doc);
+//                        if (priorObj != null) {
+//                            try {
+//                                prior = ((Float)priorObj).floatValue();
+//                            } catch (Exception e) {
+//                                try {
+//                                    int i = ((Integer)priorObj).intValue();
+//                                    prior = (float)i;
+//                                } catch (Exception e1) {
+//                                    e1.printStackTrace();
+//                                }
+//                            }
+//                        }
+//                        // TODO: replace with better combination of prior
+//                        score *= prior;
+//                    }
                     if (hq.size() < nDocs || score >= minScore) {
                         hq.insert(new ScoreDoc(doc, score));
                         minScore = ((ScoreDoc)hq.top()).score; // maintain minScore

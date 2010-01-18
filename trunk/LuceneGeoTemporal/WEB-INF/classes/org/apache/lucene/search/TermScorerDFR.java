@@ -1,17 +1,16 @@
 package org.apache.lucene.search;
 
 import java.io.IOException;
-import java.util.Map;
-import java.util.HashMap;
+import java.util.Properties;
 
-import org.apache.lucene.ilps.DataCacher;
 import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.LanguageModelIndexReader;
 import org.apache.lucene.index.TermDocs;
+import org.apache.lucene.index.ProbabilisticIndexReader;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.log4j.Logger;
 import pt.utl.ist.lucene.*;
+import pt.utl.ist.lucene.test.hierarchicindexes.TestBm25;
 import pt.utl.ist.lucene.treceval.geotime.index.IndexGeoTime;
 import pt.utl.ist.lucene.treceval.IndexCollections;
 import pt.utl.ist.lucene.config.ConfigProperties;
@@ -37,7 +36,7 @@ final class TermScorerDFR extends LgteFieldedTermScorer {
     private byte[] norms;
     private float weightValue;
 
-    private LanguageModelIndexReader indexReader;
+    private ProbabilisticIndexReader indexReader;
     private boolean useFieldLengths;
 
     private final int[] docs = new int[32]; // buffered doc numbers
@@ -48,6 +47,7 @@ final class TermScorerDFR extends LgteFieldedTermScorer {
     double docFreq;
 
     QueryConfiguration queryConfiguration;
+    Properties modelProperties;
 
     TermScorerDFR(
             Weight weight,
@@ -57,22 +57,23 @@ final class TermScorerDFR extends LgteFieldedTermScorer {
             IndexReader reader,
             Model model)
             throws IOException {
-        super(similarity);
+        super(reader, similarity);
 
         this.model = model;
         this.weight = weight;
         this.termDocs = td;
         this.norms = norms;
         this.weightValue = weight.getValue();
-        this.indexReader = new LanguageModelIndexReader(reader);
+        this.indexReader = (ProbabilisticIndexReader) reader;
         this.term = ((TermQueryProbabilisticModel) weight.getQuery()).getTerm();
 
         queryConfiguration = ModelManager.getInstance().getQueryConfiguration();
+        modelProperties = ModelManager.getInstance().getModelProperties();
         if(queryConfiguration == null) queryConfiguration = new QueryConfiguration();
 
         // Get data for the collection model
 
-        String docLengthType = (String) DataCacher.Instance().get("LM-lengths");
+        String docLengthType = queryConfiguration.getProperty("LM-lengths",modelProperties);
         if (docLengthType.equalsIgnoreCase("field")){
             this.useFieldLengths = true;
         } else if (docLengthType.equalsIgnoreCase("document")) {
@@ -86,6 +87,7 @@ final class TermScorerDFR extends LgteFieldedTermScorer {
     public int doc() {
         return doc;
     }
+
 
     public boolean next() throws IOException {
         pointer++;
@@ -103,29 +105,29 @@ final class TermScorerDFR extends LgteFieldedTermScorer {
         return true;
     }
 
-    static double tokenNumber = -1;
-    static double totalFreqs ;
+    static double colsize;
     static double avgLen;
-    static double collSize;
     static double numDocs;
-    static Map<String,Double> avgLenFields = new HashMap<String,Double>();
 
 
 
 
-    public void initCollectionDetails(LanguageModelIndexReader indexReader) throws IOException
+
+    public void initCollectionDetails(ProbabilisticIndexReader indexReader) throws IOException
     {
-//        System.out.println("Calling initCollection Details");
-        if(!useFieldLengths && tokenNumber < 0)
-        {
-//            System.out.println("Calling initCollection Details");
 
-            tokenNumber = indexReader.getCollectionTokenNumber();
-            totalFreqs = indexReader.getTotalDocFreqs();
-            avgLen = tokenNumber/numDocs;
-            collSize = indexReader.getTotalDocFreqs();
+
+//        System.out.println("Calling initCollection Details");
+        if(!useFieldLengths && colsize < 0)
+        {
+            numDocs = indexReader.numDocs();
+//            System.out.println("Calling initCollection Details");
+            colsize = indexReader.getCollectionSize();
+            avgLen = colsize/numDocs;
         }
-        numDocs = indexReader.maxDoc();
+        else
+            numDocs = indexReader.numDocs(term.field());
+
         this.docFreq = indexReader.docFreq(term);
 //        System.out.println("//Calling initCollection Details");
     }
@@ -141,13 +143,7 @@ final class TermScorerDFR extends LgteFieldedTermScorer {
         {
 //            System.out.println("Using Fields useFieldLengths = true");
             docLen = indexReader.getFieldLength(doc, term.field());
-            avgDocLen = avgLenFields.get(term.field());
-            if(avgDocLen == null)
-            {
-//                System.out.println("Inicializando o AVG Doc Len");
-                avgDocLen = (((double)indexReader.getCollectionTokenNumber(term.field()))+1.0) / numDocs;
-                avgLenFields.put(term.field(),avgDocLen);
-            }
+            avgDocLen = indexReader.getAvgLenTokenNumber(term.field());
         }
         else
         {
@@ -179,11 +175,26 @@ final class TermScorerDFR extends LgteFieldedTermScorer {
                                             ( tfDoc + k1Cache*(1.0 - bCache + bCache*(docLen/avgDocLen)))
                             );
 
-//                System.out.println("doc-Id");
-//                System.out.println("Doc-Len:" + docLen);
-//                System.out.println("Avg-Doc-Len:" + avgDocLen);
-//                System.out.println("docFreq:" + docFreq);
-//                System.out.println("tfDoc:" + tfDoc);
+
+                    if(TestBm25.debugStopTerm.equals(term.field() + ":" + term.text()))
+                    {
+                        System.out.println("TERM:(" + term.field() + ":" + term.text() + ")------");
+                        System.out.println("doc-Id:" + doc);
+                        System.out.println("Doc-Len:" + docLen);
+                        System.out.println("Avg-Doc-Len:" + avgDocLen);
+                        System.out.println("docFreq:" + docFreq);
+                        System.out.println("tfDoc:" + tfDoc);
+                        System.out.println("idf:" + idf);
+                        System.out.println("BM25 Policy:" + (queryConfiguration.getCacheObject(BM25_POLICY_CACHE_INDEX)));
+                        System.out.println("BM25 Epslon:" + (queryConfiguration.getCacheObject(BM25_EPSLON_CACHE_INDEX)));
+                        System.out.println("BM25 K1:" + k1Cache.doubleValue());
+                        System.out.println("BM25 b:" + bCache.doubleValue());
+                        System.out.println("BM25 SIM:" + sim);
+                        System.out.println("weightValue:" + weightValue);
+                        System.out.println("BM25 SIM WEIGHTED:" + (sim*weightValue));
+                        System.out.println("-----------------------------------------------------");
+                    }
+
                     break;
                 }
                 case BM25b:
@@ -249,18 +260,18 @@ final class TermScorerDFR extends LgteFieldedTermScorer {
         {
             double docFreq = indexReader.docFreq(term);
             double tfCollection = indexReader.collFreq(term);
-            double lambda = tfCollection / collSize;
-            double ne = collSize * (1-Math.pow(1-docFreq/collSize, tfCollection));
+            double lambda = tfCollection / colsize;
+            double ne = colsize * (1-Math.pow(1-docFreq/ colsize, tfCollection));
             double tfn = tfDoc * Math.log1p(1+c*(avgLen/docLen));
             double tfne = tfDoc * Math.log(1+c*(avgLen/docLen));
             switch ( model ) {
-                case DLHHypergeometricDFRModel: sim = (1 / (tfDoc + 0.5)) * Math.log1p( ((tfDoc * avgLen) / docLen) * ( collSize / tfCollection) ) + ((docLen-tfDoc) * Math.log1p( 1 - ( tfDoc / docLen ) ) ) + ( 0.5 * Math.log1p( 2*Math.PI*tfDoc*(1 - ( tfDoc / docLen ))) ); break;
-                case InExpC2DFRModel : sim = (tfCollection/(docFreq*(tfne+1))) * (tfne*Math.log1p((collSize+1)/(ne+0.5))); break;
-                case InExpB2DFRModel : sim = (tfCollection/(docFreq*(tfn+1))) * (tfn*Math.log1p((collSize+1)/(ne+0.5))); break;
-                case IFB2DFRModel :	sim = (tfCollection/(docFreq*(tfn+1))) * (tfn*Math.log1p((collSize+1)/(tfCollection+0.5))); break;
-                case InL2DFRModel : sim = (1/(tfn+1)) * (tfn*Math.log1p((collSize+1)/(docFreq+0.5))); break;
+                case DLHHypergeometricDFRModel: sim = (1 / (tfDoc + 0.5)) * Math.log1p( ((tfDoc * avgLen) / docLen) * ( colsize / tfCollection) ) + ((docLen-tfDoc) * Math.log1p( 1 - ( tfDoc / docLen ) ) ) + ( 0.5 * Math.log1p( 2*Math.PI*tfDoc*(1 - ( tfDoc / docLen ))) ); break;
+                case InExpC2DFRModel : sim = (tfCollection/(docFreq*(tfne+1))) * (tfne*Math.log1p((colsize +1)/(ne+0.5))); break;
+                case InExpB2DFRModel : sim = (tfCollection/(docFreq*(tfn+1))) * (tfn*Math.log1p((colsize +1)/(ne+0.5))); break;
+                case IFB2DFRModel :	sim = (tfCollection/(docFreq*(tfn+1))) * (tfn*Math.log1p((colsize +1)/(tfCollection+0.5))); break;
+                case InL2DFRModel : sim = (1/(tfn+1)) * (tfn*Math.log1p((colsize +1)/(docFreq+0.5))); break;
                 case PL2DFRModel : sim = (1/(tfn+1)) * (tfn*Math.log1p(tfn/lambda) + (lambda-tfn) * Math.log1p(Math.E) + 0.5 * Math.log1p(Math.PI*2*tfn) ); break;
-                case BB2DFRModel : sim = ((tfCollection+1)/(docFreq+(tfn+1))) * (-Math.log1p(collSize-1)-Math.log1p(Math.E)+stirlingFormula(tfCollection+collSize-1,tfCollection+collSize-tfn-2)-stirlingFormula(tfCollection,tfCollection+tfn)); break;
+                case BB2DFRModel : sim = ((tfCollection+1)/(docFreq+(tfn+1))) * (-Math.log1p(colsize -1)-Math.log1p(Math.E)+stirlingFormula(tfCollection+ colsize -1,tfCollection+ colsize -tfn-2)-stirlingFormula(tfCollection,tfCollection+tfn)); break;
             }
         }
 
@@ -333,7 +344,9 @@ final class TermScorerDFR extends LgteFieldedTermScorer {
 
     private double idf(double epslonDefault, double docFreq, QueryConfiguration queryConfiguration)
     {
-        Bm25Policy idfPolicy = (Bm25Policy) queryConfiguration.getCacheObject(0);
+        if(TestBm25.debugStopTerm.equals(term.field() + ":" + term.text()))
+            System.out.println("");
+        Bm25Policy idfPolicy = (Bm25Policy) queryConfiguration.getCacheObject(BM25_POLICY_CACHE_INDEX);
         if(idfPolicy == null)
         {
             String policy;
@@ -354,7 +367,7 @@ final class TermScorerDFR extends LgteFieldedTermScorer {
                 idf = 0d;
             else if(idfPolicy == Bm25Policy.FloorEpslon)
             {
-                Double epslon = (Double) queryConfiguration.getCacheObject(1);
+                Double epslon = (Double) queryConfiguration.getCacheObject(BM25_EPSLON_CACHE_INDEX);
                 if(epslon == null)
                 {
                     String idfEpslon = queryConfiguration.getProperty("bm25.idf.epslon");
@@ -500,7 +513,7 @@ final class TermScorerDFR extends LgteFieldedTermScorer {
         time = System.currentTimeMillis() - time;
         System.out.println(time);
 
-        
+
     }
 
 }

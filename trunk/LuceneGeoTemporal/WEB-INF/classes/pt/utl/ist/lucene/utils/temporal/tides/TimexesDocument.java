@@ -181,6 +181,48 @@ public class TimexesDocument
         return validTimeExpressions;
     }
 
+    public List<TimeExpression> getAllPointsTimeExpressions()
+    {
+        List<TimeExpression> timeExpressions = new ArrayList<TimeExpression>();
+        if(timex2TimeExpressionsList != null)
+        {
+            for(TimeExpression t: getAllTimeExpressions())
+            {
+                if(t.getTeClass() == TimeExpression.TEClass.Point)
+                    timeExpressions.add(t);
+            }
+        }
+        return timeExpressions;
+    }
+
+    public List<TimeExpression> getAllKeyPointsTimeExpressions()
+    {
+        List<TimeExpression> timeExpressions = new ArrayList<TimeExpression>();
+        if(timex2TimeExpressionsList != null)
+        {
+            for(TimeExpression t: getAllTimeExpressions())
+            {
+                if(t.getTeClass() == TimeExpression.TEClass.Point && t.getTimex2().getPrenorm() != null && t.getTimex2().getPrenorm().startsWith("|fq|"))
+                    timeExpressions.add(t);
+            }
+        }
+        return timeExpressions;
+    }
+
+    public List<TimeExpression> getAllRelativePointsTimeExpressions()
+    {
+        List<TimeExpression> timeExpressions = new ArrayList<TimeExpression>();
+        if(timex2TimeExpressionsList != null)
+        {
+            for(TimeExpression t: getAllTimeExpressions())
+            {
+                if(t.getTeClass() == TimeExpression.TEClass.Point && t.getTimex2().getPrenorm() != null && !t.getTimex2().getPrenorm().startsWith("|fq|"))
+                    timeExpressions.add(t);
+            }
+        }
+        return timeExpressions;
+    }
+
     public boolean hasIndexableTimeExpressions()
     {
         return getAllIndexableTimeExpressions().size() > 0;    

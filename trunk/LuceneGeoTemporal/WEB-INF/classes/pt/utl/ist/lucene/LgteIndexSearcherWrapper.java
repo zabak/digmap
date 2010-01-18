@@ -9,7 +9,6 @@ import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.SortField;
-import org.apache.lucene.search.*;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.index.IndexReader;
 import pt.utl.ist.lucene.sort.LgteSort;
@@ -33,7 +32,7 @@ public class LgteIndexSearcherWrapper
 
     Model defaultModel = Model.parse(ConfigProperties.getProperty("lucene.model"));
 
-    Model model = Model.parse(ConfigProperties.getProperty("lucene.model"));
+    Model model = defaultModel;
 
     LuceneVersion luceneVersion = LuceneVersionFactory.getLuceneVersion();
 
@@ -42,28 +41,32 @@ public class LgteIndexSearcherWrapper
     public LgteIndexSearcherWrapper(Model model, String s)
             throws IOException
     {
+        this.model = model;
         ModelManager.getInstance().setModel(model);
-        indexSearcher = LgteIndexSearcherManager.openSearcher(model, s);
+        indexSearcher = LgteIndexManager.openSearcher(model, s);
     }
 
-    public LgteIndexSearcherWrapper(Model model, String s, Properties modelProperties)
+    public LgteIndexSearcherWrapper(Model model, String dir, Properties modelProperties)
             throws IOException
     {
-        ModelManager.getInstance().setModel(model);
-        indexSearcher = LgteIndexSearcherManager.openSearcher(model, s,modelProperties);
+        this.model = model;
+        ModelManager.getInstance().setModel(model,modelProperties);
+        indexSearcher = LgteIndexManager.openSearcher(model, dir);
     }
 
     public LgteIndexSearcherWrapper(Model model, Directory directory)
             throws IOException
     {
+        this.model = model;
         ModelManager.getInstance().setModel(model);
-        indexSearcher = LgteIndexSearcherManager.openSearcher(model, directory);
+        indexSearcher = LgteIndexManager.openSearcher(model, directory);
     }
 
     public LgteIndexSearcherWrapper(Model model, IndexReader indexReader) throws IOException
     {
+        this.model = model;
         ModelManager.getInstance().setModel(model);
-        indexSearcher = LgteIndexSearcherManager.openSearcher(model, indexReader);
+        indexSearcher = LgteIndexManager.openSearcher(model, indexReader);
     }
 
     public LgteIndexSearcherWrapper(String s)
@@ -71,7 +74,7 @@ public class LgteIndexSearcherWrapper
     {
         logger.info("using default space model");
         ModelManager.getInstance().setModel(defaultModel);
-        indexSearcher = LgteIndexSearcherManager.openSearcher(defaultModel, s);
+        indexSearcher = LgteIndexManager.openSearcher(defaultModel, s);
     }
 
     public LgteIndexSearcherWrapper(Directory directory)
@@ -79,14 +82,14 @@ public class LgteIndexSearcherWrapper
     {
         logger.info("using default space model");
         ModelManager.getInstance().setModel(defaultModel);
-        indexSearcher = LgteIndexSearcherManager.openSearcher(defaultModel, directory);
+        indexSearcher = LgteIndexManager.openSearcher(defaultModel, directory);
     }
 
     public LgteIndexSearcherWrapper(IndexReader indexReader) throws IOException
     {
         logger.info("using default space model");
         ModelManager.getInstance().setModel(defaultModel);
-        indexSearcher = LgteIndexSearcherManager.openSearcher(defaultModel, indexReader);
+        indexSearcher = LgteIndexManager.openSearcher(defaultModel, indexReader);
     }
 
     public IndexSearcher getIndexSearcher()

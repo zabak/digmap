@@ -135,7 +135,7 @@ public class LgteQueryParser
             queryParams.setQueryConfiguration(queryConfiguration);
         //Set Model in Manager
         if(queryParams.getModel() != null) ModelManager.getInstance().setModel(queryParams.getModel(),queryConfiguration);
-        if(queryParams.getModel() == null && queryParams.getQueryConfiguration() != null) ModelManager.getInstance().setQueryConfiguration(queryConfiguration);
+        if(queryParams.getModel() == null && queryParams.getQueryConfiguration() != null) ModelManager.getInstance().setQueryConfiguration(queryConfiguration);        
 
         Query returnQuery;
 

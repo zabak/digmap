@@ -3,9 +3,9 @@ package pt.utl.ist.lucene.treceval.geotime.index;
 import pt.utl.ist.lucene.Globals;
 import pt.utl.ist.lucene.LgteIndexSearcherWrapper;
 import pt.utl.ist.lucene.Model;
+import pt.utl.ist.lucene.LgteIndexManager;
 import pt.utl.ist.lucene.config.LocalProperties;
 import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.LanguageModelIndexReader;
 import org.apache.lucene.index.LgteIsolatedIndexReader;
 
 import java.util.Map;
@@ -64,6 +64,12 @@ public class Config
     public static final String S_GEO_AND_TEMPORAL_INDEXED = "S_GEO_AND_TEMPORAL_INDEXED";
     public static final String S_GEO_OR_TEMPORAL_INDEXED =  "S_GEO_OR_TEMPORAL_INDEXED";
     public static final String S_HAS_TIMEXES = "S_HAS_TIMEXES";
+
+    public static final String S_HAS_TIME_POINTS_KEY = "S_HAS_TIME_POINTS_KEY";
+    public static final String S_HAS_TIME_POINTS_RELATIVE = "S_HAS_TIME_POINTS_RELATIVE";
+    public static final String S_HAS_ANY_TIME_POINT = "S_HAS_TIME_POINTS_RELATIVE";
+    
+
 
     //Geo Indexes
     public static String G_PLACE_BELONG_TOS = "g_placeBelongToosWoeid"; //todo falta isto
@@ -124,12 +130,12 @@ public class Config
 
 
 
-        IndexReader readerContents = new LanguageModelIndexReader(IndexReader.open(IndexContents.indexPath));
-        IndexReader readerGeoTime = new LanguageModelIndexReader(IndexReader.open(IndexGeoTime.indexPath));
-        IndexReader readerTimeRefs = new LanguageModelIndexReader(IndexReader.open(CreateTimeExprIndex.indexPath));
-        IndexReader readerGeoRefs = new LanguageModelIndexReader(IndexReader.open(CreateWoeidIndex.indexPath));
-        IndexReader readerMetrics = new LanguageModelIndexReader(IndexReader.open(IndexMetrics.indexPath));
-        IndexReader readerDB = new LanguageModelIndexReader(IndexReader.open(CreateDBGeoTimexes.indexPath));
+        IndexReader readerContents = LgteIndexManager.openReader(IndexContents.indexPath, Model.OkapiBM25Model);
+        IndexReader readerGeoTime = LgteIndexManager.openReader(IndexGeoTime.indexPath, Model.OkapiBM25Model);
+        IndexReader readerTimeRefs = LgteIndexManager.openReader(CreateTimeExprIndex.indexPath, Model.OkapiBM25Model);
+        IndexReader readerGeoRefs = LgteIndexManager.openReader(CreateWoeidIndex.indexPath, Model.OkapiBM25Model);
+        IndexReader readerMetrics = LgteIndexManager.openReader(IndexMetrics.indexPath, Model.OkapiBM25Model);
+        IndexReader readerDB = LgteIndexManager.openReader(CreateDBGeoTimexes.indexPath, Model.OkapiBM25Model);
 
         Map<String,IndexReader> readers = new HashMap<String,IndexReader>();
 

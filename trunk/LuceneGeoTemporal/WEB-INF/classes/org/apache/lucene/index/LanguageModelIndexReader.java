@@ -16,14 +16,16 @@ package org.apache.lucene.index;
  * limitations under the License.
  */
 
+import org.apache.lucene.document.Document;
+import pt.utl.ist.lucene.ControlIndexesEnum;
+import pt.utl.ist.lucene.utils.DataCacher;
+import pt.utl.ist.lucene.utils.IDataCacher;
+import pt.utl.ist.lucene.versioning.LuceneVersionFactory;
+
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Iterator;
-
-import org.apache.lucene.document.Document;
-import org.apache.lucene.ilps.DataCacher;
-import pt.utl.ist.lucene.versioning.LuceneVersionFactory;
-import pt.utl.ist.lucene.ControlIndexesEnum;
+import java.util.HashMap;
+import java.util.Map;
 
 /**  A <code>LanguageModelIndexReader</code> contains another IndexReader, which it
  * uses as its basic source of data, possibly transforming the data along the
@@ -33,7 +35,16 @@ import pt.utl.ist.lucene.ControlIndexesEnum;
  * contained index reader. 
  * <p>Added functionality: get documents length (cached)
  */
-public class LanguageModelIndexReader extends IndexReader {
+public class LanguageModelIndexReader extends ProbabilisticIndexReader implements IDataCacher
+{
+    DataCacher cacher = new DataCacher();
+
+    public Object get(Object key)
+    {
+        if(in instanceof IDataCacher)
+            return ((IDataCacher)in).get(key);
+        return cacher.get(key);
+    }
 
     /** Base class for LanguageModeling {@link TermDocs} implementations. */
     public static class LanguageModelTermDocs implements TermDocs {
@@ -122,10 +133,7 @@ public class LanguageModelIndexReader extends IndexReader {
     }
 
     protected IndexReader in;
-    protected int collSizeTotal;
-    protected int totalDocFreqs;
 
-    static final String totalDocFreqsString = "totalDocFreqs";
     static final String collSizeString = "collSizeTotal";
     static final String DOC_LENGTH = "doc_length";
     static final String lengthString = "Length";
@@ -137,11 +145,21 @@ public class LanguageModelIndexReader extends IndexReader {
      * <p>Note that base reader is closed if this LanguageModelIndexReader is closed.</p>
      * @param in specified base reader.
      */
-    public LanguageModelIndexReader(IndexReader in) {
+    public LanguageModelIndexReader(IndexReader in)
+    {
         super(in.directory());
         this.in = in;
-        this.collSizeTotal = -1;
-        this.totalDocFreqs = -1;
+    }
+
+    boolean permissionToLoadDocIdCacheIfConfigured = true;
+    public LanguageModelIndexReader(IndexReader in, boolean permissionToLoadDocIdCacheIfConfigured)
+    {
+        this(in);
+        this.permissionToLoadDocIdCacheIfConfigured = permissionToLoadDocIdCacheIfConfigured;
+    }
+
+    public IndexReader getIn() {
+        return in;
     }
 
     public TermFreqVector[] getTermFreqVectors(int docNumber)
@@ -157,8 +175,19 @@ public class LanguageModelIndexReader extends IndexReader {
     public int numDocs() {
         return in.numDocs();
     }
-    public int maxDoc() {
+
+    public int numDocs(String field) {
+        return numDocs();
+    }
+
+    public int maxDoc() 
+    {
         return in.maxDoc();
+    }
+
+    public int maxDoc(String field)
+    {
+        return maxDoc();
     }
 
     public Document document(int n) throws IOException {
@@ -233,7 +262,7 @@ public class LanguageModelIndexReader extends IndexReader {
         return LuceneVersionFactory.getLuceneVersion().getFieldsNames(in);
     }
 
-    public Collection getFieldNames(boolean indexed) throws IOException
+    public Collection<String> getFieldNames(boolean indexed) throws IOException
     {
         //LGTE
         return LuceneVersionFactory.getLuceneVersion().getFieldsNames(in,indexed);
@@ -249,19 +278,76 @@ public class LanguageModelIndexReader extends IndexReader {
         return LuceneVersionFactory.getLuceneVersion().getIndexedFieldsNames(in,storedTermVector);
     }
 
+
+
+    /**
+     * @param field counts only tokens in the specified field
+     *
+     * @return Average number of Number of tokens in this field in the entire collection
+     */
+
+    Map<String,Double> avgLenFields = new HashMap<String,Double>();
+    public double getAvgLenTokenNumber(String field) throws IOException
+    {
+
+        Double avgDocLen = avgLenFields.get(field);
+        if(avgDocLen == null)
+        {
+//            System.out.println("COL TOKEN NUMBER:" + field + " : " + ((double)getCollectionTokenNumber(field)) + " + 1.0 / " + maxDoc());
+            avgDocLen = (((double)getCollectionTokenNumber(field)+1.0) / maxDoc());
+//            System.out.println("AVG DOC LEN DOES NOT EXIST:" + field + " : " + avgDocLen);
+
+            avgLenFields.put(field,avgDocLen);
+        }
+//        else
+//            System.out.println("AVG DOC LEN Already Exist:" + field + " : " + avgDocLen);
+        return avgDocLen;
+    }
+
+
+
+    /**
+     * @return Number of tokens in collection (tokens = occurances of terms)
+     * always >= number of terms.
+     * @throws java.io.IOException on index error
+     */
+    public int getCollectionSize() throws IOException {
+        int collSizeTotal;
+        Object totalDF = get(collSizeString);
+        if (totalDF != null) {
+            collSizeTotal = (Integer) totalDF;
+        } else {
+            collSizeTotal = 0;
+            TermEnum allTerms = terms();
+            do {
+                Term t = allTerms.term();
+                //ALTERADO LGTE
+                if(t != null && ControlIndexesEnum.parse(t.field()) == null) //only add fields not in ControlIndexes Enum
+                {
+                    collSizeTotal += docFreq(t);
+                }
+                //ALTERADO LGTE
+            } while (allTerms.next());
+            cacher.put(collSizeString,collSizeTotal);
+        }
+
+        return collSizeTotal;
+    }
+
     /**
      * @param field counts only tokens in the specified field
      *
      * @return Number of tokens in this field in the entire collection
      * (tokens = occurances of terms)
      * always >= number of terms.
+     * @throws java.io.IOException on index error
      */
     public int getCollectionTokenNumber(String field) throws IOException {
 
-        Object collSizeTotalObj = DataCacher.Instance().get(collSizeString + "-" + field);
-        if (collSizeTotalObj != null) {
-            return ((Integer) DataCacher.Instance().get(collSizeString + "-" + field))
-                    .intValue();
+        Object collSizeTotalObj = get(collSizeString + "-" + field);
+        if (collSizeTotalObj != null)
+        {
+            return (Integer) collSizeTotalObj;
         }
         else
         {
@@ -271,52 +357,16 @@ public class LanguageModelIndexReader extends IndexReader {
                 if(len > 0)
                     collSize += len;
             }
-            DataCacher.Instance().put(
-                        collSizeString + "-" + field,
-                        new Integer(collSize));
+            cacher.put(collSizeString + "-" + field,collSize);
             return collSize;
         }
-    }
-
-
-
-    /**
-     * @return Number of tokens in collection (tokens = occurances of terms)
-     * always >= number of terms.
-     */
-    public int getCollectionTokenNumber() throws IOException {
-        if (collSizeTotal == -1) {
-            Object collSizeTotalObj = DataCacher.Instance().get(collSizeString);
-            if (collSizeTotalObj != null) {
-                collSizeTotal =
-                        ((Integer) DataCacher.Instance().get(collSizeString))
-                                .intValue();
-            } else {
-                collSizeTotal = 0;
-                Collection indexedFields = in.getFieldNames(true);
-                for (Iterator iterator = indexedFields.iterator();
-                     iterator.hasNext();
-                        ) {
-                    String fieldName = (String) iterator.next();
-                    //ALTERADO LGTE
-                    if(ControlIndexesEnum.parse(fieldName) == null) //only add fields not in ControlIndexes Enum
-                        collSizeTotal += getCollectionTokenNumber(fieldName);
-                    //ALTERADO LGTE
-
-                }
-                DataCacher.Instance().put(
-                        collSizeString,
-                        new Integer(collSizeTotal));
-            }
-        }
-        return collSizeTotal;
     }
 
     /**
      * Returns how often the token appears in collection
      * @param t is a term
      * @return the collection frequency of the term
-     * @throws IOException
+     * @throws IOException on index error
      */
     public int collFreq(Term t) throws IOException {
         TermDocs td = termDocs(t);
@@ -327,34 +377,8 @@ public class LanguageModelIndexReader extends IndexReader {
         return cf;
     }
 
-    /**
-     * @return Number of tokens in collection (tokens = occurances of terms)
-     * always >= number of terms.
-     */
-    public int getTotalDocFreqs() throws IOException {
-        if (totalDocFreqs == -1) {
-            Object totalDF = DataCacher.Instance().get(totalDocFreqsString);
-            if (totalDF != null) {
-                totalDocFreqs = ((Integer) totalDF).intValue();
-            } else {
-                totalDocFreqs = 0;
-                TermEnum allTerms = terms();
-                do {
-                    Term t = allTerms.term();
-                    //ALTERADO LGTE
-                    if(t != null && ControlIndexesEnum.parse(t.field()) == null) //only add fields not in ControlIndexes Enum
-                    {
-                        totalDocFreqs += docFreq(t);
-                    }
-                    //ALTERADO LGTE
-                } while (allTerms.next());
-                DataCacher.Instance().put(
-                        totalDocFreqsString,
-                        new Integer(totalDocFreqs));
-            }
-        }
-        return totalDocFreqs;
-    }
+
+
 
 //    public String getDocIdAppLevel(int doc)
 //    {
@@ -369,17 +393,17 @@ public class LanguageModelIndexReader extends IndexReader {
         // request information to make the DataCacher store it, then dump
 
         try {
-            int totalDocFreqs = getTotalDocFreqs();
+            getCollectionSize();
             Collection<String> fields = getFieldNames(true);
             for(String field: fields)
             {
-                int totalFreqs = getCollectionTokenNumber(field);
+                getCollectionTokenNumber(field);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
         try {
-            DataCacher.Instance().writeToFiles(directory);
+            cacher.writeToFiles(directory);
         } catch (IOException e1) {
             e1.printStackTrace();
         }
@@ -390,8 +414,9 @@ public class LanguageModelIndexReader extends IndexReader {
      * todo not working for Isolated Fields will override every time we open a new index field
      */
 
-    public void readExtendedData(String directory) {
-        DataCacher.Instance().loadFromFiles(directory);
+    public void readExtendedData(String directory)
+    {
+        cacher.loadFromFiles(directory,permissionToLoadDocIdCacheIfConfigured);
     }
 
     /*

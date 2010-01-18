@@ -63,32 +63,32 @@ public class TestBm25 extends TestCase {
         LgteDocumentWrapper stmVirtualDoc1_1 = new LgteDocumentWrapper();
         stmVirtualDoc1_1.indexText(Globals.DOCUMENT_ID_FIELD, "1_1");
         stmVirtualDoc1_1.indexText("doc_id", "1");
-        stmVirtualDoc1_1.indexText("statements",stm1_1);
+        stmVirtualDoc1_1.indexText("sentences",stm1_1);
 
         LgteDocumentWrapper stmVirtualDoc1_2 = new LgteDocumentWrapper();
         stmVirtualDoc1_2.indexText(Globals.DOCUMENT_ID_FIELD, "1_2");
         stmVirtualDoc1_2.indexText("doc_id", "1");
-        stmVirtualDoc1_2.indexText("statements",stm1_2);
+        stmVirtualDoc1_2.indexText("sentences",stm1_2);
 
         LgteDocumentWrapper stmVirtualDoc1_3 = new LgteDocumentWrapper();
         stmVirtualDoc1_3.indexText(Globals.DOCUMENT_ID_FIELD, "1_3");
         stmVirtualDoc1_3.indexText("doc_id", "1");
-        stmVirtualDoc1_3.indexText("statements",stm1_3);
+        stmVirtualDoc1_3.indexText("sentences",stm1_3);
 
         LgteDocumentWrapper stmVirtualDoc2_1 = new LgteDocumentWrapper();
         stmVirtualDoc2_1.indexText(Globals.DOCUMENT_ID_FIELD, "2_1");
         stmVirtualDoc2_1.indexText("doc_id", "2");
-        stmVirtualDoc2_1.indexText("statements",stm2_1);
+        stmVirtualDoc2_1.indexText("sentences",stm2_1);
 
         LgteDocumentWrapper stmVirtualDoc2_2 = new LgteDocumentWrapper();
         stmVirtualDoc2_2.indexText(Globals.DOCUMENT_ID_FIELD, "2_2");
         stmVirtualDoc2_2.indexText("doc_id", "2");
-        stmVirtualDoc2_2.indexText("statements",stm2_2);
+        stmVirtualDoc2_2.indexText("sentences",stm2_2);
 
         LgteDocumentWrapper stmVirtualDoc2_3 = new LgteDocumentWrapper();
         stmVirtualDoc2_3.indexText(Globals.DOCUMENT_ID_FIELD, "2_3");
         stmVirtualDoc2_3.indexText("doc_id", "2");
-        stmVirtualDoc2_3.indexText("statements",stm2_3);
+        stmVirtualDoc2_3.indexText("sentences",stm2_3);
 
         writer.addDocument(stmVirtualDoc1_1);
         writer.addDocument(stmVirtualDoc1_2);
@@ -253,20 +253,20 @@ public class TestBm25 extends TestCase {
             queryConfiguration.setProperty("bm25.k3","8d");
 
 
-            LgteQuery lgteQuery = LgteQueryParser.parseQuery("statements:(word1 word2 word3)",searcher,queryConfiguration);
+            LgteQuery lgteQuery = LgteQueryParser.parseQuery("sentences:(word1 word2 word3)",searcher,queryConfiguration);
 
             LgteHits lgteHits = searcher.search(lgteQuery);
 
             System.out.println("EXPECTED");
-            System.out.println("stm:" + scoreVDocs.get(0).id + ":"  + scoreVDocs.get(0).score);
-            System.out.println("stm:" + scoreVDocs.get(1).id + ":" + scoreVDocs.get(1).score);
-            System.out.println("stm:" + scoreVDocs.get(2).id + ":" + scoreVDocs.get(2).score);
-            System.out.println("stm:" + scoreVDocs.get(3).id + ":" + scoreVDocs.get(3).score);
+            System.out.println("Sentence:" + scoreVDocs.get(0).id + ":"  + scoreVDocs.get(0).score);
+            System.out.println("Sentence:" + scoreVDocs.get(1).id + ":" + scoreVDocs.get(1).score);
+            System.out.println("Sentence:" + scoreVDocs.get(2).id + ":" + scoreVDocs.get(2).score);
+            System.out.println("Sentence:" + scoreVDocs.get(3).id + ":" + scoreVDocs.get(3).score);
             System.out.println("RETURN:");
-            System.out.println("stm:" + lgteHits.doc(0).get(Globals.DOCUMENT_ID_FIELD) + ":"  + lgteHits.score(0));
-            System.out.println("stm:" + lgteHits.doc(1).get(Globals.DOCUMENT_ID_FIELD) + ":" + lgteHits.score(1));
-            System.out.println("stm:" + lgteHits.doc(2).get(Globals.DOCUMENT_ID_FIELD) + ":" + lgteHits.score(2));
-            System.out.println("stm:" + lgteHits.doc(3).get(Globals.DOCUMENT_ID_FIELD) + ":" + lgteHits.score(3));
+            System.out.println("Sentence:" + lgteHits.doc(0).get(Globals.DOCUMENT_ID_FIELD) + ":"  + lgteHits.score(0));
+            System.out.println("Sentence:" + lgteHits.doc(1).get(Globals.DOCUMENT_ID_FIELD) + ":" + lgteHits.score(1));
+            System.out.println("Sentence:" + lgteHits.doc(2).get(Globals.DOCUMENT_ID_FIELD) + ":" + lgteHits.score(2));
+            System.out.println("Sentence:" + lgteHits.doc(3).get(Globals.DOCUMENT_ID_FIELD) + ":" + lgteHits.score(3));
 
             assertEquals(lgteHits.doc(0).get(Globals.DOCUMENT_ID_FIELD), scoreVDocs.get(0).id);
             assertEquals(lgteHits.doc(1).get(Globals.DOCUMENT_ID_FIELD), scoreVDocs.get(1).id);
@@ -303,11 +303,11 @@ public class TestBm25 extends TestCase {
             assertTrue(lgteHits.score(0) - scoreDocs.get(0).score < 0.0001);
             assertTrue(lgteHits.score(1) - scoreDocs.get(1).score < 0.0001);
 
-            System.out.println("SCHEME 0.7*score(stm) + (1-0.7)*score(doc)");
-            System.out.println("Stm 1 (0.7*stm1 + 0.3*doc1):" + (0.7f*scoreVDocs.get(0).score + 0.3f*scoreDocs.get(0).score) + " = " + (0.7f*scoreVDocs.get(0).score) + "+" + (0.3f*scoreDocs.get(0).score));
-            System.out.println("Stm 2 (0.7*stm2 + 0.3*doc1):" + (0.7f*scoreVDocs.get(1).score + 0.3f*scoreDocs.get(0).score) + " = " + (0.7f*scoreVDocs.get(1).score) + "+" + (0.3f*scoreDocs.get(0).score));
-            System.out.println("Stm 3 (0.7*stm3 + 0.3*doc1):" + (0.7f*scoreVDocs.get(2).score + 0.3f*scoreDocs.get(0).score) + " = " + (0.7f*scoreVDocs.get(2).score) + "+" + (0.3f*scoreDocs.get(0).score));
-            System.out.println("Stm 5 (0.7*stm5 + 0.3*doc2):" + (0.7f*scoreVDocs.get(3).score + 0.3f*scoreDocs.get(1).score) + " = " + (0.7f*scoreVDocs.get(3).score) + "+" + (0.3f*scoreDocs.get(1).score));
+            System.out.println("SCHEME 0.7*score(sentence) + (1-0.7)*score(contents)");
+            System.out.println("Sentence 1 (0.7*stm1 + 0.3*doc1):" + (0.7f*scoreVDocs.get(0).score + 0.3f*scoreDocs.get(0).score) + " = " + (0.7f*scoreVDocs.get(0).score) + "+" + (0.3f*scoreDocs.get(0).score));
+            System.out.println("Sentence 2 (0.7*stm2 + 0.3*doc1):" + (0.7f*scoreVDocs.get(1).score + 0.3f*scoreDocs.get(0).score) + " = " + (0.7f*scoreVDocs.get(1).score) + "+" + (0.3f*scoreDocs.get(0).score));
+            System.out.println("Sentence 3 (0.7*stm3 + 0.3*doc1):" + (0.7f*scoreVDocs.get(2).score + 0.3f*scoreDocs.get(0).score) + " = " + (0.7f*scoreVDocs.get(2).score) + "+" + (0.3f*scoreDocs.get(0).score));
+            System.out.println("Sentence 5 (0.7*stm5 + 0.3*doc2):" + (0.7f*scoreVDocs.get(3).score + 0.3f*scoreDocs.get(1).score) + " = " + (0.7f*scoreVDocs.get(3).score) + "+" + (0.3f*scoreDocs.get(1).score));
 
 
 
@@ -323,11 +323,11 @@ public class TestBm25 extends TestCase {
             IndexReader readerMulti2 = LgteIndexManager.openReader(pathSentences,Model.OkapiBM25Model);
             Map<String,IndexReader> readers = new HashMap<String,IndexReader>();
             readers.put("contents",readerMulti1);
-            readers.put("statements",readerMulti2);
+            readers.put("sentences",readerMulti2);
             readers.put("doc_id",readerMulti2);
             readers.put("id",readerMulti2);
             LgteIsolatedIndexReader lgteIsolatedIndexReader = new LgteIsolatedIndexReader(readers);
-            lgteIsolatedIndexReader.addTreeMapping("contents(id)>statements(doc_id)");
+            lgteIsolatedIndexReader.addTreeMapping(readerMulti1,readerMulti2,"doc_id");
 
             searcher = new LgteIndexSearcherWrapper(Model.OkapiBM25Model,lgteIsolatedIndexReader);
             queryConfiguration = new QueryConfiguration();
@@ -338,9 +338,9 @@ public class TestBm25 extends TestCase {
             queryConfiguration.setProperty("bm25.k3","8d");
             queryConfiguration.setProperty("index.tree","true");
 
-            lgteQuery = LgteQueryParser.parseQuery("contents:(word1 word2 word3)^0.3 statements:(word1 word2 word3)^0.7",searcher,queryConfiguration);
+            lgteQuery = LgteQueryParser.parseQuery("contents:(word1 word2 word3)^0.3 sentences:(word1 word2 word3)^0.7",searcher,queryConfiguration);
             lgteHits = searcher.search(lgteQuery);
-            System.out.println("SCHEME 0.7*score(stm) + (1-0.7)*score(doc)");
+            System.out.println("SCHEME 0.7*score(sentences) + (1-0.7)*score(contents)");
             System.out.println("Stm " + lgteHits.doc(0).get("id") + ":" + lgteHits.doc(0).get("doc_id") + " (0.7*stm1 + 0.3*doc1):" + lgteHits.score(0));
             System.out.println("Stm " + lgteHits.doc(1).get("id") + ":" + lgteHits.doc(1).get("doc_id") + " (0.7*stm2 + 0.3*doc1):" + lgteHits.score(1));
             System.out.println("Stm " + lgteHits.doc(2).get("id") + ":" + lgteHits.doc(2).get("doc_id") + " (0.7*stm3 + 0.3*doc1):" + lgteHits.score(2));

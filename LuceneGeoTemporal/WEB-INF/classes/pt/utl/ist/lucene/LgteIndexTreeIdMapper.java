@@ -1,12 +1,14 @@
 package pt.utl.ist.lucene;
 
-import org.apache.lucene.index.*;
 import org.apache.log4j.Logger;
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.LgteIsolatedIndexReader;
+import org.apache.lucene.index.Term;
+import org.apache.lucene.index.TermEnum;
 
-import java.util.Map;
-import java.util.HashMap;
-import java.util.List;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Jorge Machado
@@ -17,8 +19,8 @@ import java.io.IOException;
 public class LgteIndexTreeIdMapper
 {
     private static final Logger logger = Logger.getLogger(LgteIndexTreeIdMapper.class);
-    Map<String,Offsets> offsetsMap = new HashMap<String,Offsets>();
-    Map<String,Offsets> offsetsInvertedMap = new HashMap<String,Offsets>();
+    Map<IndexReader,Offsets> offsetsMap = new HashMap<IndexReader,Offsets>();
+    Map<IndexReader,Offsets> offsetsInvertedMap = new HashMap<IndexReader,Offsets>();
 
     LgteIsolatedIndexReader reader;
 
@@ -27,13 +29,12 @@ public class LgteIndexTreeIdMapper
         this.reader = reader;
     }
 
-//    public List<String> getMapping
-
     /**
-     * @param mapping Mapping is of the type
-     * fieldParentA(idField)>fieldChildB(AIdField)>--->fieldChildZ(XIdField)
-     * example:
-     *    contents(id)>sentences(doc_id)
+     * @param parent parent Index
+     * @param child child Index
+     * @param foreignkeyFieldChild2Parent field in child with the foreignkey to id field in parent
+     *
+     * 
      * This method iterates all documents in childs index and
      * creates an array with the size of the number of document in parent index field filled this the offsets where the child
      * changes his parent
@@ -41,7 +42,7 @@ public class LgteIndexTreeIdMapper
      * Example
      *
      *    contents:  DOC_1 DOC_2 DOC_3
-     *    statements: DOC_1_1 DOC_1_2 DOC_1_3 DOC_2_1 DOC_2_3 DOC_3_1 DOC_3_2
+     *    sentences: DOC_1_1 DOC_1_2 DOC_1_3 DOC_2_1 DOC_2_3 DOC_3_1 DOC_3_2
      *    the result will be a mapping array of offsets:
      *
      *    contents->statments = [0 ; 3 ; 5 ]
@@ -51,15 +52,19 @@ public class LgteIndexTreeIdMapper
      * translate(1) -> [3 , 4]
      * translate(2) -> [5 , 6]
      *
+
      */
-    public void addMapping(String mapping)
+
+    public void addMapping(IndexReader parent,IndexReader child, String foreignkeyFieldChild2Parent)
     {
-        createOffsets(mapping);
+        createOffsets(parent,child,foreignkeyFieldChild2Parent);
     }
+
 
     public boolean hasMapping(String field)
     {
-        return offsetsMap.get(field) != null;
+        IndexReader iReader = reader.getIndexReader(field);
+        return offsetsMap.get(iReader)!=null;
     }
 
 
@@ -75,7 +80,7 @@ public class LgteIndexTreeIdMapper
      * Example
      *
      *    contents:  DOC_1 DOC_2 DOC_3
-     *    statements: DOC_1_1 DOC_1_2 DOC_1_3 DOC_2_1 DOC_2_3 DOC_3_1 DOC_3_2
+     *    sentences: DOC_1_1 DOC_1_2 DOC_1_3 DOC_2_1 DOC_2_3 DOC_3_1 DOC_3_2
      *    the result will be a mapping array of offsets:
      *
      *    contents->statments = [0 ; 3 ; 5 ]
@@ -93,7 +98,8 @@ public class LgteIndexTreeIdMapper
      */
     public int[] translateId(int doc,String field)
     {
-        Offsets offsets = offsetsMap.get(field);
+        IndexReader iReader = reader.getIndexReader(field);
+        Offsets offsets = offsetsMap.get(iReader);
         if(offsets == null)
         {
             return null;
@@ -103,7 +109,8 @@ public class LgteIndexTreeIdMapper
 
     public int translateIdInverted(int doc, String field)
     {
-        Offsets offsets = offsetsInvertedMap.get(field);
+        IndexReader iReader = reader.getIndexReader(field);
+        Offsets offsets = offsetsInvertedMap.get(iReader);
         if(offsets == null)
         {
             return doc;
@@ -121,37 +128,20 @@ public class LgteIndexTreeIdMapper
         return offsets.offsetsInverted[doc];
     }
 
-    public boolean isInvertable(IndexReader reader)
+    public boolean isChild(IndexReader iReader)
     {
-        return reader.numDocs() < offsetsMap.values().iterator().next().maxdocsInTargetField;
+        return offsetsInvertedMap.get(iReader)!=null;
     }
 
-    /**
-     *
-     * @param mapping of type  fieldParentA(idField)>fieldChildB(AIdField)>--->fieldChildZ(XIdField) e.g. contents(id)>sentences(doc_id)
-     * @return
-     */
-    private Offsets createOffsets(String mapping)
+    private Offsets createOffsets(IndexReader parent,IndexReader child, String foreignkeyFieldChild2Parent)
     {
-        String[] fields = mapping.split(">");
-        String[] fieldArgs = fields[0].split("\\(");
-        String parentField = fieldArgs[0];
-        String parentIdField = fieldArgs[1].substring(0,fieldArgs[1].length()-1);
-
-        String[] childArgs = fields[1].split("\\(");
-        String childField = childArgs[0];
-        String childIdParentField = childArgs[1].substring(0,childArgs[1].length()-1);
-
-        IndexReader child = reader.getIndexReader(childField);
-        IndexReader parent = reader.getIndexReader(parentField);
         int parentSize = parent.maxDoc();
         int childSize = child.maxDoc();
         int[] offsets = new int[parentSize];
         int[] offsetsInvert = new int[childSize];
 
         try {
-
-            TermEnum childs = child.terms(new Term(childIdParentField,""));
+            TermEnum childs = child.terms(new Term(foreignkeyFieldChild2Parent,""));
             int p = 0;
             int c = 0;
             do
@@ -163,12 +153,12 @@ public class LgteIndexTreeIdMapper
                 {
                     offsetsInvert[c] = p;
                 }
-                p++; 
+                p++;
             }
-            while(childs.next() && childs.term().field().equals(childIdParentField));
+            while(childs.next() && childs.term().field().equals(foreignkeyFieldChild2Parent));
             Offsets toMap =  new Offsets(offsets,c,offsetsInvert);
-            offsetsMap.put(parentField,toMap);
-            offsetsInvertedMap.put(childField,toMap);
+            offsetsMap.put(parent,toMap);
+            offsetsInvertedMap.put(child,toMap);
         }
         catch (IOException e)
         {
@@ -176,6 +166,7 @@ public class LgteIndexTreeIdMapper
         }
         return null;
     }
+
 
     private int[] doMapping(int doc , Offsets offsets)
     {
@@ -222,5 +213,5 @@ public class LgteIndexTreeIdMapper
 //        System.out.println("BM25:" + tfidf.bm25("a b","b c d e f g h i"));
         System.out.println(73938 % 7);
     }
-    
+
 }

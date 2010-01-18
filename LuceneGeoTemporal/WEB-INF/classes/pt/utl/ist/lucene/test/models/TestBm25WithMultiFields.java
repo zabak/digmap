@@ -145,6 +145,7 @@ public class TestBm25WithMultiFields extends TestCase {
 
         Map<String,String> map = new HashMap<String,String>();
         map.put("contents",path + "/contents_field");
+        map.put("id",path + "/contents_field");
         map.put("title",path + "/title_field");
         LgteIndexSearcherWrapper searcher = new LgteIndexSearcherWrapper(Model.OkapiBM25Model,
                 /********NEW******/

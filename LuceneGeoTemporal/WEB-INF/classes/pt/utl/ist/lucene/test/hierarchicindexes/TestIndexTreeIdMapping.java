@@ -87,26 +87,23 @@ public class TestIndexTreeIdMapping extends TestCase
     {
         try
         {
-            IndexReader readerMulti1 = LgteIndexManager.openReader(pathDocuments, Model.OkapiBM25Model);
-            IndexReader readerMulti2 = LgteIndexManager.openReader(pathSentences,Model.OkapiBM25Model);
+            IndexReader readerContents = LgteIndexManager.openReader(pathDocuments, Model.OkapiBM25Model);
+            IndexReader readerSentences = LgteIndexManager.openReader(pathSentences,Model.OkapiBM25Model);
 
             Map<String,IndexReader> readers = new HashMap<String,IndexReader>();
-            readers.put("contents",readerMulti1);
-            readers.put("statements",readerMulti2);
-            readers.put("doc_id",readerMulti2);
+            readers.put("contents",readerContents);
+            readers.put("sentences",readerSentences);
+            readers.put("doc_id",readerSentences);
+            readers.put("id",readerSentences);
 
             LgteIsolatedIndexReader lgteIsolatedIndexReader = new LgteIsolatedIndexReader(readers);
-            lgteIsolatedIndexReader.addTreeMapping("contents(id)>statements(doc_id)");
+            lgteIsolatedIndexReader.addTreeMapping(readerContents,readerSentences,"doc_id");
 
             assertEquals(lgteIsolatedIndexReader.translateId(0,"contents")[0],0);
             assertEquals(lgteIsolatedIndexReader.translateId(0,"contents")[1],1);
             assertEquals(lgteIsolatedIndexReader.translateId(1,"contents")[0],2);
             assertEquals(lgteIsolatedIndexReader.translateId(1,"contents")[1],3);
 
-            assertEquals(lgteIsolatedIndexReader.translateIdInverse(0,"statements"),0);
-            assertEquals(lgteIsolatedIndexReader.translateIdInverse(1,"statements"),0);
-            assertEquals(lgteIsolatedIndexReader.translateIdInverse(2,"statements"),1);
-            assertEquals(lgteIsolatedIndexReader.translateIdInverse(3,"statements"),1);
 
 
 

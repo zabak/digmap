@@ -34,13 +34,13 @@ public final class Hits {
   private HitDoc first;         // head of LRU cache
   private HitDoc last;          // tail of LRU cache
   private int numDocs = 0;      // number cached
-  private int maxDocs = 200;    // max to cache
+  private int maxDocs = 1000;    // max to cache
 
   Hits(Searcher s, Query q, Filter f) throws IOException {
     query = q;
     searcher = s;
     filter = f;
-    getMoreDocs(50); // retrieve 100 initially
+    getMoreDocs(500); // retrieve 100 initially
   }
 
   Hits(Searcher s, Query q, Filter f, Sort o) throws IOException {
@@ -48,7 +48,7 @@ public final class Hits {
     searcher = s;
     filter = f;
     sort = o;
-    getMoreDocs(50); // retrieve 100 initially
+    getMoreDocs(500); // retrieve 100 initially
   }
 
   /**

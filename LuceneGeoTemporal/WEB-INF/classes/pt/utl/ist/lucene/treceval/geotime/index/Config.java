@@ -126,10 +126,6 @@ public class Config
 
     public static LgteIndexSearcherWrapper openMultiSearcher() throws IOException
     {
-
-
-
-
         IndexReader readerContents = LgteIndexManager.openReader(IndexContents.indexPath, Model.OkapiBM25Model);
         IndexReader readerGeoTime = LgteIndexManager.openReader(IndexGeoTime.indexPath, Model.OkapiBM25Model);
         IndexReader readerTimeRefs = LgteIndexManager.openReader(CreateTimeExprIndex.indexPath, Model.OkapiBM25Model);
@@ -150,6 +146,25 @@ public class Config
         readers.put("*",readerMetrics);
 
         return new LgteIndexSearcherWrapper(Model.OkapiBM25Model,new LgteIsolatedIndexReader(readers));
+    }
+
+    public static LgteIndexSearcherWrapper openMultiSearcherSentences() throws IOException
+    {
+        IndexReader readerSentences = LgteIndexManager.openReader(IndexSentences.indexPath, Model.OkapiBM25Model);
+        IndexReader readerContents = LgteIndexManager.openReader(IndexContents.indexPath, Model.OkapiBM25Model);
+        IndexReader readerGeoTime = LgteIndexManager.openReader(IndexGeoTime.indexPath, Model.OkapiBM25Model);
+
+        Map<String,IndexReader> readers = new HashMap<String,IndexReader>();
+
+        readers.put(Config.CONTENTS,readerContents);
+        readers.put(Config.ID,readerSentences);
+        readers.put(Config.SENTENCES,readerSentences);
+        readers.put(Config.DOC_ID,readerSentences);
+//        readers.put("regexpr(^S_.*)",readerGeoTime);
+        LgteIsolatedIndexReader lgteIsolatedIndexReader = new LgteIsolatedIndexReader(readers);
+        lgteIsolatedIndexReader.addTreeMapping(readerContents,readerSentences,DOC_ID);
+
+        return new LgteIndexSearcherWrapper(Model.OkapiBM25Model,lgteIsolatedIndexReader);
     }
 
     public static void main(String[] args)

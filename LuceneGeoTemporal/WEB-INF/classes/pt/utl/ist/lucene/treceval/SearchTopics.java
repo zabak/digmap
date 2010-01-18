@@ -7,8 +7,10 @@ import pt.utl.ist.lucene.*;
 import pt.utl.ist.lucene.config.ConfigProperties;
 import pt.utl.ist.lucene.utils.XmlUtils;
 import pt.utl.ist.lucene.utils.StringComparator;
+import pt.utl.ist.lucene.utils.DataCacher;
 import pt.utl.ist.lucene.treceval.handlers.topics.output.OutputFormat;
 import pt.utl.ist.lucene.treceval.handlers.topics.output.Topic;
+import pt.utl.ist.lucene.treceval.geotime.runs.BaseLineSentences;
 
 import java.io.*;
 import java.net.MalformedURLException;
@@ -34,7 +36,7 @@ public class SearchTopics implements ISearchCallBack
     public static boolean useAllaysTheSameSearcher = false;
     public boolean externalSearcher = false;
 
-
+    private DataCacher idsCache;
 
     /**
      * constructor
@@ -45,6 +47,18 @@ public class SearchTopics implements ISearchCallBack
      */
 
     public SearchTopics(SearchConfiguration searchConfiguration,LgteIndexSearcherWrapper lgeIndexSearcherWrapper) throws IOException
+    {
+        this(searchConfiguration,lgeIndexSearcherWrapper,null);
+    }
+    /**
+     * constructor
+     *
+     * @param searchConfiguration to search topics in index
+     * @param lgeIndexSearcherWrapper to search
+     * @throws IOException opening indexes
+     */
+
+    public SearchTopics(SearchConfiguration searchConfiguration,LgteIndexSearcherWrapper lgeIndexSearcherWrapper, DataCacher idsCache) throws IOException
     {
         this.maxResultsForOutput = searchConfiguration.getConfiguration().getMaxResultsPerTopic();
         this.searchConfiguration = searchConfiguration;
@@ -59,6 +73,8 @@ public class SearchTopics implements ISearchCallBack
 
         if(lgeIndexSearcherWrapper != null)
             externalSearcher = true;
+
+        this.idsCache = idsCache;
     }
 
     /**
@@ -113,6 +129,36 @@ public class SearchTopics implements ISearchCallBack
         for (SearchConfiguration c : searchConfigurations)
         {
             SearchTopics searchTopics = new SearchTopics(c,searcherWrapper);
+            searchTopics.searchTopics();
+            searchTopics.close();
+        }
+
+
+
+//        createRunPackage(runPackageFileOutputDir,searchConfigurations);
+
+
+        //topicTotalResults.close();
+
+    }
+
+
+    /**
+     * Static service to search in a list of Configurations
+     *
+     * @param searchConfigurations to search
+     * @throws IOException       opening indexes
+     * @throws DocumentException opening topics xml
+     */
+    public static void search(List<SearchConfiguration> searchConfigurations,LgteIndexSearcherWrapper searcherWrapper, DataCacher idsCache) throws IOException, DocumentException
+    {
+
+        //topicTotalResults = new FileWriter("D:/topicTotalResults.csv");
+        //topicTotalResults.write("topic;total;s>=0.99;s>=0.98;s>=0.95;s>=0.9;s>=0.8;s>=0.5;\n");
+
+        for (SearchConfiguration c : searchConfigurations)
+        {
+            SearchTopics searchTopics = new SearchTopics(c,searcherWrapper,idsCache);
             searchTopics.searchTopics();
             searchTopics.close();
         }
@@ -243,10 +289,18 @@ public class SearchTopics implements ISearchCallBack
     {
         long time = System.currentTimeMillis();
         format.writeHeader(hits.length());
-
+        logger.info("Total Time taked in tree index code: " + BaseLineSentences.totalTimeTree);
+        logger.info("Will write output to run file: " + searchConfiguration.getRun() );
         for (int i = 0; i < hits.length() && i < maxResultsForOutput; i++)
         {
-            format.writeRecord(hits.id(i), hits.doc(i).getDocument(), hits.score(i), searchConfiguration.getRun());
+            int id = hits.id(i);
+            System.out.println("writing " + i);
+            if(idsCache != null)
+            {
+                format.writeRecord(((String)this.idsCache.get("docid",id)), i , hits.getHits(), hits.score(i), searchConfiguration.getRun());
+            }
+            else
+                format.writeRecord(null, i , hits.getHits(), hits.score(i), searchConfiguration.getRun());
         }
         format.writeFooter();
         logger.info("writeTime:" + (System.currentTimeMillis() - time) + " ms");

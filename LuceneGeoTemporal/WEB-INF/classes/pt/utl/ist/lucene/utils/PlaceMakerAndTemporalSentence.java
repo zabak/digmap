@@ -7,6 +7,8 @@ import pt.utl.ist.lucene.utils.placemaker.PlaceMakerDocument;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
 
 /**
  * @author Jorge Machado
@@ -108,4 +110,163 @@ public class PlaceMakerAndTemporalSentence extends Sentence {
         txt+="\n]";
         return txt;
     }
+
+    public List<TimeExpression> getAllInvalidTimeExpressions()
+    {
+        List<TimeExpression> invalidTimeExpressions = new ArrayList<TimeExpression>();
+        if(timexes != null)
+        {
+            for(TimeExpression t: getAllTimeExpressions())
+            {
+                if(!t.isValid())
+                    invalidTimeExpressions.add(t);
+            }
+        }
+        return invalidTimeExpressions;
+    }
+
+    public List<TimeExpression> getAllValidTimeExpressions()
+    {
+        List<TimeExpression> validTimeExpressions = new ArrayList<TimeExpression>();
+        if(timexes != null)
+        {
+            for(TimeExpression t: getAllTimeExpressions())
+            {
+                if(t.isValid())
+                    validTimeExpressions.add(t);
+            }
+        }
+        return validTimeExpressions;
+    }
+
+    public List<TimeExpression> getAllIndexableTimeExpressions()
+    {
+        List<TimeExpression> validTimeExpressions = new ArrayList<TimeExpression>();
+        if(timexes != null)
+        {
+            for(TimeExpression t: getAllTimeExpressions())
+            {
+                if(t.isValid() && t.getType() != TimeExpression.Type.UNKNOWN)
+                    validTimeExpressions.add(t);
+            }
+        }
+        return validTimeExpressions;
+    }
+
+    public List<TimeExpression> getAllPointsTimeExpressions()
+    {
+        List<TimeExpression> timeExpressions = new ArrayList<TimeExpression>();
+        if(timexes != null)
+        {
+            for(TimeExpression t: getAllTimeExpressions())
+            {
+                if(t.getTeClass() == TimeExpression.TEClass.Point)
+                    timeExpressions.add(t);
+            }
+        }
+        return timeExpressions;
+    }
+
+    public List<TimeExpression> getAllKeyPointsTimeExpressions()
+    {
+        List<TimeExpression> timeExpressions = new ArrayList<TimeExpression>();
+        if(timexes != null)
+        {
+            for(TimeExpression t: getAllTimeExpressions())
+            {
+                if(t.getTeClass() == TimeExpression.TEClass.Point && t.getTimex2().getPrenorm() != null && t.getTimex2().getPrenorm().startsWith("|fq|"))
+                    timeExpressions.add(t);
+            }
+        }
+        return timeExpressions;
+    }
+
+    public List<TimeExpression> getAllRelativePointsTimeExpressions()
+    {
+        List<TimeExpression> timeExpressions = new ArrayList<TimeExpression>();
+        if(timexes != null)
+        {
+            for(TimeExpression t: getAllTimeExpressions())
+            {
+                if(t.getTeClass() == TimeExpression.TEClass.Point && t.getTimex2().getPrenorm() != null && !t.getTimex2().getPrenorm().startsWith("|fq|"))
+                    timeExpressions.add(t);
+            }
+        }
+        return timeExpressions;
+    }
+
+
+
+
+    public int countTimexes()
+    {
+        return timexes.size();
+    }
+
+    public int countTimeExpressions()
+    {
+        return getAllTimeExpressions().size();
+    }
+
+    public int countIndexableTimeExpressions()
+    {
+        return getAllIndexableTimeExpressions().size();
+
+    }
+
+    public int countInvalidTimeExpressions()
+    {
+        return getAllInvalidTimeExpressions().size();
+    }
+
+    public int countPlaces()
+    {
+        Map<PlaceMakerDocument.PlaceDetails,Boolean> places = new HashMap<PlaceMakerDocument.PlaceDetails,Boolean>();
+        for(PlaceMakerDocument.PlaceRef placeRef: placeRefs)
+        {
+            places.put(placeRef.getPlaceDetails(),true);
+        }
+        return places.size();
+    }
+
+    public int countPlaceRefs()
+    {
+        return placeRefs.size();
+    }
+
+
+
+
+
+    public boolean hasTimexes()
+    {
+        return timexes != null && timexes.size() > 0;
+    }
+
+    public boolean hasIndexableTimeExpressions()
+    {
+        return getAllIndexableTimeExpressions().size() > 0;
+    }
+
+    public boolean hasPointTimeExpressions()
+    {
+        return getAllPointsTimeExpressions().size() > 0;
+    }
+
+    public boolean hasKeyPointTimeExpressions()
+    {
+        return getAllKeyPointsTimeExpressions().size() > 0;
+    }
+
+    public boolean hasRelativePointTimeExpressions()
+    {
+        return getAllRelativePointsTimeExpressions().size() > 0;
+    }
+
+    public boolean hasPlaces()
+    {
+        return getPlaceRefs().size() > 0;
+    }
+
+
 }

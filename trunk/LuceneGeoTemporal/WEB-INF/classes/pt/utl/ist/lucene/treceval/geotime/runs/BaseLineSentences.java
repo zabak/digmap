@@ -1,37 +1,36 @@
 package pt.utl.ist.lucene.treceval.geotime.runs;
 
 import org.apache.log4j.Logger;
-import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.TermsFilter;
-import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.index.Term;
-import org.apache.lucene.queryParser.ParseException;
 import org.dom4j.DocumentException;
-import pt.utl.ist.lucene.treceval.*;
-import pt.utl.ist.lucene.treceval.Globals;
-import pt.utl.ist.lucene.treceval.geotime.index.Config;
-import pt.utl.ist.lucene.treceval.geotime.index.IndexContents;
-import pt.utl.ist.lucene.treceval.handlers.*;
-import pt.utl.ist.lucene.treceval.handlers.topics.output.impl.TrecEvalOutputFormatFactory;
-import pt.utl.ist.lucene.treceval.handlers.topics.ITopicsPreprocessor;
-import pt.utl.ist.lucene.treceval.handlers.topics.TDirectory;
-import pt.utl.ist.lucene.*;
-import pt.utl.ist.lucene.utils.DataCacher;
-import pt.utl.ist.lucene.sort.LgteSort;
 
 import java.io.IOException;
 import java.io.File;
 import java.util.List;
 import java.util.ArrayList;
 
+import pt.utl.ist.lucene.treceval.handlers.*;
+import pt.utl.ist.lucene.treceval.handlers.topics.output.impl.TrecEvalOutputFormatFactory;
+import pt.utl.ist.lucene.treceval.handlers.topics.ITopicsPreprocessor;
+import pt.utl.ist.lucene.treceval.handlers.topics.TDirectory;
+import pt.utl.ist.lucene.treceval.*;
+import pt.utl.ist.lucene.treceval.geotime.index.Config;
+import pt.utl.ist.lucene.treceval.geotime.index.IndexContents;
+import pt.utl.ist.lucene.treceval.geotime.index.IndexSentences;
+import pt.utl.ist.lucene.Model;
+import pt.utl.ist.lucene.QueryConfiguration;
+import pt.utl.ist.lucene.LgteIndexSearcherWrapper;
+import pt.utl.ist.lucene.utils.DataCacher;
+
 /**
  * @author Jorge Machado
  * @date 21/Ago/2008
  * @see pt.utl.ist.lucene.treceval
  */
-public class BaseLine {
+public class BaseLineSentences {
 
-    private static final Logger logger = Logger.getLogger(BaseLine.class);
+    private static final Logger logger = Logger.getLogger(BaseLineSentences.class);
 
     public static void main(String [] args) throws DocumentException, IOException {
 
@@ -67,7 +66,7 @@ public class BaseLine {
 
         List<XmlFieldHandler> xmlTopicFieldHandlers = new ArrayList<XmlFieldHandler>();
 
-        xmlTopicFieldHandlers.add(new SimpleXmlFieldHandler("./QUESTION/text()",new SimpleFieldFilter(),"contents"));
+        xmlTopicFieldHandlers.add(new SimpleXmlFieldHandler("./QUESTION/text()",new SimpleFieldFilter(),Config.SENTENCES));
         ResourceHandler topicResourceHandler = new XmlResourceHandler("//TOPIC","./@ID",xmlTopicFieldHandlers);
         TrecEvalOutputFormatFactory factory =  new TrecEvalOutputFormatFactory(Globals.DOCUMENT_ID_FIELD);
         ITopicsPreprocessor topicsDirectory = new TDirectory(topicResourceHandler,factory);
@@ -93,6 +92,7 @@ public class BaseLine {
         queryConfigurationBase.setProperty("bm25.idf.policy","standard");
         queryConfigurationBase.setProperty("bm25.k1","1.2d");
         queryConfigurationBase.setProperty("bm25.b","0.75d");
+        queryConfigurationBase.setProperty("index.tree","true");
         searchConfigurations.add(new SearchConfiguration(queryConfigurationBase, BM25_STEMMER,0,null,null));
 
         /***
@@ -116,16 +116,17 @@ public class BaseLine {
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, BM25_STEMMER,2,null,filterGeoAndTemp));
 
 
-        LgteIndexSearcherWrapper searcherMulti = Config.openMultiSearcher();
+        LgteIndexSearcherWrapper searcherMulti = Config.openMultiSearcherSentences();
 
-        DataCacher dataCacher = new DataCacher();
-        dataCacher.loadFromFile(IndexContents.indexPath + File.separator + "docid.cache",true);
+//        DataCacher dataCacher = new DataCacher();
+//        dataCacher.loadFromFile(IndexSentences.indexPath + File.separator + "docid.cache",true);
 //        //Search Topics Runs to submission
-        SearchTopics.search(searchConfigurations,searcherMulti,dataCacher);
+        SearchTopics.search(searchConfigurations,searcherMulti,null);
 
         searcherMulti.close();
 
 //        SearchTopics.evaluateMetrics(searchConfigurations,assessements);
 //        SearchTopics.createRunPackage(searchConfigurations.get(0).getConfiguration().getOutputDir(),searchConfigurations);
     }
+    public static long totalTimeTree = 0;
 }

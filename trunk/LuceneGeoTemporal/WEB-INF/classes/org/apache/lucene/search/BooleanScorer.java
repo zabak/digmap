@@ -18,6 +18,7 @@ package org.apache.lucene.search;
 
 import pt.utl.ist.lucene.ModelManager;
 import pt.utl.ist.lucene.QueryConfiguration;
+import pt.utl.ist.lucene.treceval.geotime.runs.BaseLineSentences;
 
 import java.io.IOException;
 
@@ -36,8 +37,15 @@ final class BooleanScorer extends Scorer {
     private int prohibitedMask = 0;
     private int nextMask = 1;
 
-    BooleanScorer(Similarity similarity) {
+    boolean indexTree = false;
+
+
+
+    BooleanScorer(Similarity similarity)
+    {
         super(similarity);
+        QueryConfiguration queryConfiguration = ModelManager.getInstance().getQueryConfiguration();
+        indexTree = queryConfiguration.getBooleanProperty("index.tree");
     }
 
     static final class SubScorer {
@@ -57,6 +65,7 @@ final class BooleanScorer extends Scorer {
             this.prohibited = prohibited;
             this.collector = collector;
             this.next = next;
+
         }
     }
 
@@ -125,19 +134,17 @@ final class BooleanScorer extends Scorer {
                  * and collect that score for all the childrens
                  * Jorge Machado
                  *
-                    while (!sub.done && scorer.doc() < end)
-                    {
-                        sub.collector.collect(scorer.doc(), scorer.score());
-                        sub.done = !scorer.next();
-                    }
+                 while (!sub.done && scorer.doc() < end)
+                 {
+                 sub.collector.collect(scorer.doc(), scorer.score());
+                 sub.done = !scorer.next();
+                 }
                  */
+
                 while (!sub.done && scorer.doc() < end)
                 {
-                    QueryConfiguration queryConfiguration = ModelManager.getInstance().getQueryConfiguration();
-                    boolean indexTree = queryConfiguration.getBooleanProperty("index.tree");
-
                     if(indexTree && sub.scorer instanceof LgteFieldedTermScorer)
-                    {
+                    {   long start = System.currentTimeMillis();
                         LgteFieldedTermScorer  lgteFieldedTermScorer = (LgteFieldedTermScorer) sub.scorer;
                         IndexReader reader = lgteFieldedTermScorer.getIndexReader();
                         if(reader instanceof LgteIsolatedIndexReader)
@@ -155,6 +162,7 @@ final class BooleanScorer extends Scorer {
                         }
                         else
                             throw new NotImplemented("index.tree is implmented only when using LgteIsolatedIndexReader with multiindexes");
+                        BaseLineSentences.totalTimeTree = BaseLineSentences.totalTimeTree + (System.currentTimeMillis() - start);
                     }
                     else
                     {   //keeping for the old classes

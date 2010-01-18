@@ -76,7 +76,7 @@ public class DataCacher implements IDataCacher {
                         if (files[i].indexOf(".cache") != -1)
                         {
                             if(ConfigProperties.getBooleanProperty("cache.use." + files[i]))
-                                loadFromFile(directory + "/" + files[i],permitIdsCacheIfConfigured);
+                                loadFromFile(directory + File.separator + files[i],permitIdsCacheIfConfigured);
                         }
                     }
                 }

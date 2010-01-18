@@ -25,20 +25,20 @@ public class JustAnExample extends TestCase {
      * The objective of the Tree Indexes is to avoid to index certain fields more than once
      *
      * Example:
-     *     A document has a Content which could be separated in a set of statements
+     *     A document has a Content which could be separated in a set of sentences
      *     We want to index each statement as an object but we want to score it with a linear
      *     combination of scores:  0.7*statement + 0.3*contentOfDocument
      *
      * With out Tree Indexes we will need to index each statement with two fields content and statement
-     * This will makes us to index the content as much times as the number of statements in that document
+     * This will makes us to index the content as much times as the number of sentences in that document
      *
      * With Tree Indexes
      *
-     * We build an index for statements and another for contents
+     * We build an index for sentences and another for contents
      * The indexes will be much smaller
      * Then we create an LgteIsolatedReader and we add a mapping telling the system that the index
      * of contents use a diferente space of ID's and that those ids should be mapped into the space
-     * of id's in statements index. The rest of the LGTE API (for example get fields from documents) is unchanged.
+     * of id's in sentences index. The rest of the LGTE API (for example get fields from documents) is unchanged.
      * We just need to mapp the readers to the fields like we use to do before TreeIndexes
      *
      *
@@ -85,32 +85,32 @@ public class JustAnExample extends TestCase {
         LgteDocumentWrapper stmVirtualDoc1_1 = new LgteDocumentWrapper();
         stmVirtualDoc1_1.indexText(Globals.DOCUMENT_ID_FIELD, "1_1");
         stmVirtualDoc1_1.indexText("doc_id", "1");
-        stmVirtualDoc1_1.indexText("statements",stm1_1);
+        stmVirtualDoc1_1.indexText("sentences",stm1_1);
 
         LgteDocumentWrapper stmVirtualDoc1_2 = new LgteDocumentWrapper();
         stmVirtualDoc1_2.indexText(Globals.DOCUMENT_ID_FIELD, "1_2");
         stmVirtualDoc1_2.indexText("doc_id", "1");
-        stmVirtualDoc1_2.indexText("statements",stm1_2);
+        stmVirtualDoc1_2.indexText("sentences",stm1_2);
 
         LgteDocumentWrapper stmVirtualDoc1_3 = new LgteDocumentWrapper();
         stmVirtualDoc1_3.indexText(Globals.DOCUMENT_ID_FIELD, "1_3");
         stmVirtualDoc1_3.indexText("doc_id", "1");
-        stmVirtualDoc1_3.indexText("statements",stm1_3);
+        stmVirtualDoc1_3.indexText("sentences",stm1_3);
 
         LgteDocumentWrapper stmVirtualDoc2_1 = new LgteDocumentWrapper();
         stmVirtualDoc2_1.indexText(Globals.DOCUMENT_ID_FIELD, "2_1");
         stmVirtualDoc2_1.indexText("doc_id", "2");
-        stmVirtualDoc2_1.indexText("statements",stm2_1);
+        stmVirtualDoc2_1.indexText("sentences",stm2_1);
 
         LgteDocumentWrapper stmVirtualDoc2_2 = new LgteDocumentWrapper();
         stmVirtualDoc2_2.indexText(Globals.DOCUMENT_ID_FIELD, "2_2");
         stmVirtualDoc2_2.indexText("doc_id", "2");
-        stmVirtualDoc2_2.indexText("statements",stm2_2);
+        stmVirtualDoc2_2.indexText("sentences",stm2_2);
 
         LgteDocumentWrapper stmVirtualDoc2_3 = new LgteDocumentWrapper();
         stmVirtualDoc2_3.indexText(Globals.DOCUMENT_ID_FIELD, "2_3");
         stmVirtualDoc2_3.indexText("doc_id", "2");
-        stmVirtualDoc2_3.indexText("statements",stm2_3);
+        stmVirtualDoc2_3.indexText("sentences",stm2_3);
 
         writerSentences.addDocument(stmVirtualDoc1_1);
         writerSentences.addDocument(stmVirtualDoc1_2);
@@ -136,11 +136,11 @@ public class JustAnExample extends TestCase {
 
         Map<String,IndexReader> readers = new HashMap<String,IndexReader>();
         readers.put("contents",readerDocs);
-        readers.put("statements",readerSentences);
+        readers.put("sentences",readerSentences);
         readers.put("doc_id",readerSentences);
         readers.put("id",readerSentences);
         LgteIsolatedIndexReader lgteIsolatedIndexReader = new LgteIsolatedIndexReader(readers);
-        lgteIsolatedIndexReader.addTreeMapping("contents(id)>statements(doc_id)");
+        lgteIsolatedIndexReader.addTreeMapping(readerDocs,readerSentences,"doc_id");
 
         LgteIndexSearcherWrapper searcher = new LgteIndexSearcherWrapper(Model.OkapiBM25Model,lgteIsolatedIndexReader);
         QueryConfiguration queryConfiguration = new QueryConfiguration();
@@ -148,14 +148,14 @@ public class JustAnExample extends TestCase {
         queryConfiguration.setProperty("bm25.idf.epslon","0.05");
         queryConfiguration.setProperty("bm25.k1","2.0d");
         queryConfiguration.setProperty("bm25.b","0.75d");
-        queryConfiguration.setProperty("index.tree","true");
+        queryConfiguration.setProperty("index.tree","true");    //just needed for fields used in score functions
 
-        LgteQuery lgteQuery = LgteQueryParser.parseQuery("contents:(word1 word2 word3)^0.3 statements:(word1 word2 word3)^0.7",searcher,queryConfiguration);
+        LgteQuery lgteQuery = LgteQueryParser.parseQuery("contents:(word1 word2 word3)^0.3 sentences:(word1 word2 word3)^0.7",searcher,queryConfiguration);
         LgteHits lgteHits = searcher.search(lgteQuery);
-        System.out.println("SCHEME 0.7*score(stm) + (0.3)*score(doc)");
-        System.out.println("Stm " + lgteHits.doc(0).get("id") + ":" + lgteHits.doc(0).get("doc_id") + " (0.7*stm1 + 0.3*doc1):" + lgteHits.score(0));
-        System.out.println("Stm " + lgteHits.doc(1).get("id") + ":" + lgteHits.doc(1).get("doc_id") + " (0.7*stm2 + 0.3*doc1):" + lgteHits.score(1));
-        System.out.println("Stm " + lgteHits.doc(2).get("id") + ":" + lgteHits.doc(2).get("doc_id") + " (0.7*stm3 + 0.3*doc1):" + lgteHits.score(2));
-        System.out.println("Stm " + lgteHits.doc(3).get("id") + ":" + lgteHits.doc(3).get("doc_id") + " (0.7*stm5 + 0.3*doc2):" + lgteHits.score(3));
+        System.out.println("SCHEME 0.7*score(Sentence) + (0.3)*score(contents)");
+        System.out.println("Sentence " + lgteHits.doc(0).get("id") + ":" + lgteHits.doc(0).get("doc_id") + " (0.7*stm1 + 0.3*doc1):" + lgteHits.score(0));
+        System.out.println("Sentence " + lgteHits.doc(1).get("id") + ":" + lgteHits.doc(1).get("doc_id") + " (0.7*stm2 + 0.3*doc1):" + lgteHits.score(1));
+        System.out.println("Sentence " + lgteHits.doc(2).get("id") + ":" + lgteHits.doc(2).get("doc_id") + " (0.7*stm3 + 0.3*doc1):" + lgteHits.score(2));
+        System.out.println("Sentence " + lgteHits.doc(3).get("id") + ":" + lgteHits.doc(3).get("doc_id") + " (0.7*stm5 + 0.3*doc2):" + lgteHits.score(3));
     }
 }

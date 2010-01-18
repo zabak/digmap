@@ -83,6 +83,11 @@ public class LgteDocumentWrapper
         addField(field, value,true,true,false,true);
     }
 
+    public void indexStringNoStore( String field, String value)
+    {
+        addField(field, value,false,true,false,true);
+    }
+
     /**
      * Add a field independently of the lucene version
      * @param field name

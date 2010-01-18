@@ -1,11 +1,10 @@
-LGTE version 1.1.7
+LGTE version 1.1.8
 
 Release Notes:
 
 VERY IMPORTANT NOTE
-
-1 - One perfomance issue was detected when using MultiIndexes with previously opened IndexReaders using thr lucene interface
-    IndexReaders should be opened with The LgteSearcherManager in order to read the Cache values from files
+1 - One perfomance issue was detected when using MultiIndexes with previously opened IndexReaders using the lucene interface
+    IndexReaders should be opened with The LgteIndexManager in order to read the index Cache values from files
 
     It is strongly recomended to do like this example:
 
@@ -14,7 +13,78 @@ VERY IMPORTANT NOTE
     readers.put("contents",readerContents);
     return new LgteIndexSearcherWrapper(Model.OkapiBM25Model,new LgteIsolatedIndexReader(readers));
 
+2 - New Properties at app.properties
 
+    lgte.indexReader.cache.use.cache.for.docField.len=true  - (just require one extra int (2 bytes) in memory for each doc in index)
+    cache.use.global_vars.cache=true - this property comes from 1.1.3 (does not require any extra memory just a few bytes for collection measures)
+    index.tree=false - For index Trees, this property if configurable at queryConfiguration level see point 4 in this list
+
+3 - New class DataCacher for pairs <LuceneDocId, CollectionDocId>. These pairs are alays created at index folders (file docid.cache)
+    By default these files are not loaded into Lgte caches, you need to create it by hand choosing an index to load them taking into
+    account htat all indexes have this file.
+
+    This should be done to increase the speed of generating RUNS because you will need the Identifier Field that you saved in Document
+    If you access to field("id") with document API ( lgteHits.document(i).get("id")) you will make Lgte to load the entire set of fields
+    stored for that document. For that reason it is recomendended to use the DataCacher:
+    (e.g.)
+    pt.utl.ist.lucene.utils.DataCacher dataCacher = new pt.utl.ist.lucene.utils.DataCacher();
+    dataCacher.loadFromFile("/indexes/contentsIndex/docid.cache",true);
+    Obtaining the id's when iterating lgteHits:
+    dataCacher.get("docid",lgteHits.id(i));
+
+4 - Lgte support Hierarchic Indexes
+
+    /**
+     *  example:
+     *    contents > sentences (doc_id)
+     *
+     *    Fields contents and sentences using two diferente indexes with a diferent set of id's
+     *    Restriction: The Indexes should be created with the same sequence of DOCS.
+     *    contents:  DOC_1                    DOC_2            DOC_3
+     *    sentences: DOC_1_1 DOC_1_2 DOC_1_3  DOC_2_1 DOC_2_3  DOC_3_1 DOC_3_2
+     *
+     *    Using this configuration the query:  sentences:(w1 w2) contents(w1 w2)
+     *    will map the scores from documents to sentences in order to show a resultSet in sentences space
+     *
+     * @param parent parent Index
+     * @param child child Index
+     * @param foreignKeyFieldChild2Parent field in child with the foreignkey to id field in parent
+     *
+     */
+    
+
+       Example: to see the complete example go here
+       http://code.google.com/p/digmap/source/browse/trunk/LuceneGeoTemporal/WEB-INF/classes/pt/utl/ist/lucene/test/hierarchicindexes/JustAnExample.java
+
+        //* Fragment of the code: Indexes were created separated:
+            readerContents have documents with fields (id,contents)
+            readerSentences have documents with fields (id,contents)
+        */
+        Map<String,IndexReader> readers = new HashMap<String,IndexReader>();
+        readers.put("contents",readerDocs);
+        readers.put("sentences",readerSentences);
+        readers.put("doc_id",readerSentences);
+        readers.put("id",readerSentences);
+        LgteIsolatedIndexReader lgteIsolatedIndexReader = new LgteIsolatedIndexReader(readers);
+        lgteIsolatedIndexReader.addTreeMapping(readerDocs,readerSentences,"doc_id");
+
+        LgteIndexSearcherWrapper searcher = new LgteIndexSearcherWrapper(Model.OkapiBM25Model,lgteIsolatedIndexReader);
+        QueryConfiguration queryConfiguration = new QueryConfiguration();
+        queryConfiguration.setProperty("bm25.idf.policy","floor_epslon");
+        queryConfiguration.setProperty("bm25.idf.epslon","0.05");
+        queryConfiguration.setProperty("bm25.k1","2.0d");
+        queryConfiguration.setProperty("bm25.b","0.75d");
+        queryConfiguration.setProperty("index.tree","true");  //just needed for fields used in score functions
+
+        LgteQuery lgteQuery = LgteQueryParser.parseQuery("contents:(word1 word2 word3)^0.3 statements:(word1 word2 word3)^0.7",searcher,queryConfiguration);
+        LgteHits lgteHits = searcher.search(lgteQuery);
+        System.out.println("SCHEME 0.7*score(stm) + (0.3)*score(doc)");
+        System.out.println("Sentence " + lgteHits.doc(0).get("id") + ":" + lgteHits.doc(0).get("doc_id") + " (0.7*stm1 + 0.3*doc1):" + lgteHits.score(0));
+        System.out.println("Sentence " + lgteHits.doc(1).get("id") + ":" + lgteHits.doc(1).get("doc_id") + " (0.7*stm2 + 0.3*doc1):" + lgteHits.score(1));
+        System.out.println("Sentence " + lgteHits.doc(2).get("id") + ":" + lgteHits.doc(2).get("doc_id") + " (0.7*stm3 + 0.3*doc1):" + lgteHits.score(2));
+        System.out.println("Sentence " + lgteHits.doc(3).get("id") + ":" + lgteHits.doc(3).get("doc_id") + " (0.7*stm5 + 0.3*doc2):" + lgteHits.score(3));
+
+5 - Increased the number of Buffered docs in lucene Hits class to 2000 because sentences queries are very slow in order to lucene do only one iteraction in index to retrieve results 
 
 Lgte Implementation Details
 

@@ -1,9 +1,7 @@
 package pt.utl.ist.lucene.treceval.handlers.topics.output;
 
 
-
-
-import org.apache.lucene.document.Document;
+import org.apache.lucene.search.Hits;
 
 import java.io.OutputStream;
 
@@ -18,7 +16,7 @@ public interface OutputFormat
     public void init(String idField1, String idField2);
     public void setOutputStream(OutputStream outputStream);
     public void writeHeader(int totalResults);
-    public void writeRecord(int docId, Document d, float score, String run);
+    public void writeRecord(String docId,int hit, Hits hits, float score, String run);
     public void writeFooter();
     public void setMaxDocsToFlush(int max);
     public void setTopic(Topic topic);

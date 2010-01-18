@@ -176,24 +176,24 @@ final class TermScorerDFR extends LgteFieldedTermScorer {
                             );
 
 
-                    if(TestBm25.debugStopTerm.equals(term.field() + ":" + term.text()))
-                    {
-                        System.out.println("TERM:(" + term.field() + ":" + term.text() + ")------");
-                        System.out.println("doc-Id:" + doc);
-                        System.out.println("Doc-Len:" + docLen);
-                        System.out.println("Avg-Doc-Len:" + avgDocLen);
-                        System.out.println("docFreq:" + docFreq);
-                        System.out.println("tfDoc:" + tfDoc);
-                        System.out.println("idf:" + idf);
-                        System.out.println("BM25 Policy:" + (queryConfiguration.getCacheObject(BM25_POLICY_CACHE_INDEX)));
-                        System.out.println("BM25 Epslon:" + (queryConfiguration.getCacheObject(BM25_EPSLON_CACHE_INDEX)));
-                        System.out.println("BM25 K1:" + k1Cache.doubleValue());
-                        System.out.println("BM25 b:" + bCache.doubleValue());
-                        System.out.println("BM25 SIM:" + sim);
-                        System.out.println("weightValue:" + weightValue);
-                        System.out.println("BM25 SIM WEIGHTED:" + (sim*weightValue));
-                        System.out.println("-----------------------------------------------------");
-                    }
+//                    if(TestBm25.debugStopTerm.equals(term.field() + ":" + term.text()))
+//                    {
+//                        System.out.println("TERM:(" + term.field() + ":" + term.text() + ")------");
+//                        System.out.println("doc-Id:" + doc);
+//                        System.out.println("Doc-Len:" + docLen);
+//                        System.out.println("Avg-Doc-Len:" + avgDocLen);
+//                        System.out.println("docFreq:" + docFreq);
+//                        System.out.println("tfDoc:" + tfDoc);
+//                        System.out.println("idf:" + idf);
+//                        System.out.println("BM25 Policy:" + (queryConfiguration.getCacheObject(BM25_POLICY_CACHE_INDEX)));
+//                        System.out.println("BM25 Epslon:" + (queryConfiguration.getCacheObject(BM25_EPSLON_CACHE_INDEX)));
+//                        System.out.println("BM25 K1:" + k1Cache.doubleValue());
+//                        System.out.println("BM25 b:" + bCache.doubleValue());
+//                        System.out.println("BM25 SIM:" + sim);
+//                        System.out.println("weightValue:" + weightValue);
+//                        System.out.println("BM25 SIM WEIGHTED:" + (sim*weightValue));
+//                        System.out.println("-----------------------------------------------------");
+//                    }
 
                     break;
                 }

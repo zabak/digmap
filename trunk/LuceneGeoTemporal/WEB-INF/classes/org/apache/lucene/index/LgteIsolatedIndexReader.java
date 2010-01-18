@@ -2,6 +2,7 @@ package org.apache.lucene.index;
 
 import pt.utl.ist.lucene.Model;
 import pt.utl.ist.lucene.LgteIndexTreeIdMapper;
+import pt.utl.ist.lucene.Globals;
 import pt.utl.ist.lucene.utils.StringComparator;
 import pt.utl.ist.lucene.utils.IDataCacher;
 
@@ -151,44 +152,37 @@ public class LgteIsolatedIndexReader extends ProbabilisticIndexReader
         return lgteIndexTreeIdMapper.translateId(doc,field);
     }
 
-//    public int translateIdInverse(int doc, String field)
-//    {
-//        if(lgteIndexTreeIdMapper == null)
-//        {
-//            logger.error("translate request but there are Zero mappings configuration: see LgteIsolatedIndexReader.addMapping method");
-//        }
-//        return lgteIndexTreeIdMapper.translateIdInverted(doc,field);
-//    }
-
     public boolean hasMapping(String field)
     {
         return lgteIndexTreeIdMapper != null && lgteIndexTreeIdMapper.hasMapping(field);
     }
 
     /**
-     * @param mapping Mapping is of the type
      *  example:
-     *    contents(id)>sentences(doc_id)
+     *    contents > sentences (doc_id)
      *
-     *    Fields contents and statements using two diferente indexes with diferent id's
-     *    contents:   DOC_1                   DOC_2           DOC_3
-     *    statements: DOC_1_1 DOC_1_2 DOC_1_3 DOC_2_1 DOC_2_3 DOC_3_1 DOC_3_2
+     *    Fields contents and sentences using two diferente indexes with a diferent set of id's
+     *    Restriction: The Indexes should be created with the same sequence of DOCS.
+     *    contents:  DOC_1                    DOC_2            DOC_3
+     *    sentences: DOC_1_1 DOC_1_2 DOC_1_3  DOC_2_1 DOC_2_3  DOC_3_1 DOC_3_2
      *
-     *    With this mapping the search statements:(w1 w2) contents(w1 w2) will
-     *    map the scores into documents ids of statements field
+     *    Using this configuration the query:  sentences:(w1 w2) contents(w1 w2)
+     *    will map the scores from documents to sentences in order to show a resultSet in sentences space
+     *
+     * @param parent parent Index
+     * @param child child Index
+     * @param foreignKeyFieldChild2Parent field in child with the foreignkey to id field in parent
+     *
      */
-    boolean canAdd = true;
-    public void addTreeMapping(String mapping)
+
+    public void addTreeMapping(IndexReader parent, IndexReader child, String foreignKeyFieldChild2Parent)
     {
-        if(canAdd)
-        {
-            if(lgteIndexTreeIdMapper == null)
-                lgteIndexTreeIdMapper = new LgteIndexTreeIdMapper(this);
-            lgteIndexTreeIdMapper.addMapping(mapping);
-        }
-        else
-            throw new NotImplemented("addTreeMapping: Can add only one mapping in this version of LGTE");
-        canAdd = false;
+        if(readers.getReader(foreignKeyFieldChild2Parent)==null)
+            throw new RuntimeException("addTreeMapping: can't add a foreign key that is not define in readers map");
+        if(lgteIndexTreeIdMapper == null)
+            lgteIndexTreeIdMapper = new LgteIndexTreeIdMapper(this);
+        lgteIndexTreeIdMapper.addMapping(parent,child,foreignKeyFieldChild2Parent);
+
     }
 
 
@@ -498,10 +492,11 @@ public class LgteIsolatedIndexReader extends ProbabilisticIndexReader
      */
     public Document document(int n) throws IOException
     {
+        boolean idField = false;
         Document d = new Document();
         for (IndexReader reader : readers.getReaders())
         {
-            if(lgteIndexTreeIdMapper != null && lgteIndexTreeIdMapper.isInvertable(reader))
+            if(lgteIndexTreeIdMapper != null && !lgteIndexTreeIdMapper.isChild(reader))
             {
                 n = lgteIndexTreeIdMapper.translateIdInverted(n); //assuming that there is only one mapping
             }
@@ -511,9 +506,16 @@ public class LgteIsolatedIndexReader extends ProbabilisticIndexReader
             {
                 Field field = (Field) fields.nextElement();
                 if(readers.getReader(field.name()) == reader)//Only add the field if is in the Readers Mapping
+                {
+                    if(field.name().equals(Globals.DOCUMENT_ID_FIELD))
+                        idField = true;
                     d.add(field);
+                }
             }
-
+        }
+        if(!idField)
+        {
+            d.add(readers.getReaders().iterator().next().document(n).getField(Globals.DOCUMENT_ID_FIELD));
         }
         return d;
     }

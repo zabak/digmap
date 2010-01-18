@@ -5,6 +5,7 @@ import pt.utl.ist.lucene.treceval.handlers.topics.output.Topic;
 import pt.utl.ist.lucene.treceval.Globals;
 import org.apache.log4j.Logger;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.search.Hits;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -94,21 +95,26 @@ public class TrecEvalOutputFormat implements OutputFormat
 //        }
     }
 
-    public void writeRecord(int docId , Document d, float score, String run)
+    public void writeRecord(String docId, int hit, Hits hits, float score, String run)
     {
         //351   0  FR940104-0-00001  1   42.38   handle-name
         try
         {
+            String id = docId;
+            if(docId == null)
+            {
+                Document d = hits.doc(hit);
+                id = d.get(Globals.DOCUMENT_ID_FIELD);
 
-            String id = d.get(Globals.DOCUMENT_ID_FIELD);
+                if (id == null)
+                    id = d.get(idField1);
+                if (id == null)
+                    id = d.get(idField2);
+                if (id == null)
+                    logger.error("Record " + d.get("id") + " come with null id");
+            }
 
-            if (id == null)
-                id = d.get(idField1);
-            if (id == null)
-                id = d.get(idField2);
-            if (id == null)
-                logger.error("Record " + d.get("id") + " come with null id");
-            else
+            if(id != null)
             {
                 logger.debug("TRECEVAL OUTPUT: " + topic.getIdentifier().trim() + " Q0 " + id + " " + rank + " " + score + " " + run);
                 writer.write(topic.getIdentifier().trim());
@@ -127,6 +133,7 @@ public class TrecEvalOutputFormat implements OutputFormat
                 writer.write('\n');
             }
             done++;
+            System.out.println("writed");
             if (done > maxFlush)
             {
                 done = 0;

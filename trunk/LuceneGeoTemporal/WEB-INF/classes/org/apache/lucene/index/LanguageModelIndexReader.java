@@ -18,6 +18,7 @@ package org.apache.lucene.index;
 
 import org.apache.lucene.document.Document;
 import pt.utl.ist.lucene.ControlIndexesEnum;
+import pt.utl.ist.lucene.config.ConfigProperties;
 import pt.utl.ist.lucene.utils.DataCacher;
 import pt.utl.ist.lucene.utils.IDataCacher;
 import pt.utl.ist.lucene.versioning.LuceneVersionFactory;
@@ -26,6 +27,8 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Arrays;
+import java.lang.reflect.Array;
 
 /**  A <code>LanguageModelIndexReader</code> contains another IndexReader, which it
  * uses as its basic source of data, possibly transforming the data along the
@@ -180,7 +183,7 @@ public class LanguageModelIndexReader extends ProbabilisticIndexReader implement
         return numDocs();
     }
 
-    public int maxDoc() 
+    public int maxDoc()
     {
         return in.maxDoc();
     }
@@ -422,14 +425,48 @@ public class LanguageModelIndexReader extends ProbabilisticIndexReader implement
     /*
       * @see org.apache.lucene.index.IndexReader#getFieldLength(int)
       */
-    public int getFieldLength(int docNumber, String field) throws IOException {
-        return in.getFieldLength(docNumber, field);
+
+    boolean useFieldlenCache = ConfigProperties.getBooleanProperty("lgte.indexReader.cache.use.cache.for.docField.len");
+    Map<String,IntArray> docLens = null;
+    class IntArray
+    {
+        int[] docLens = null;
+    }
+    public int getFieldLength(int docNumber, String field) throws IOException
+    {
+//        if(!useFieldlenCache || in instanceof IDataCacher)
+            return in.getFieldLength(docNumber, field);
+//
+//        if(docLens == null)
+//            docLens = new HashMap<String,IntArray>();
+//        IntArray fieldLens = docLens.get(field);
+//        if(fieldLens == null)
+//        {
+//            int maxDoc = maxDoc();
+//            fieldLens = new IntArray();
+//            fieldLens.docLens = new int[maxDoc];
+//            Arrays.fill(fieldLens.docLens,-1);
+//            int len = in.getFieldLength(docNumber, field);
+//            fieldLens.docLens[docNumber] = len;
+//            return len;
+//        }
+//        else
+//        {
+//            int len = fieldLens.docLens[docNumber];
+//            if(len < 0)
+//            {
+//                len = in.getFieldLength(docNumber, field);
+//                fieldLens.docLens[docNumber] = len;
+//            }
+//            return len;
+//        }
     }
 
     /*
       * @see org.apache.lucene.index.IndexReader#getDocLength(int)
       */
-    public int getDocLength(int docNumber) throws IOException {
+    public int getDocLength(int docNumber) throws IOException
+    {
         return in.getDocLength(docNumber);
     }
 }

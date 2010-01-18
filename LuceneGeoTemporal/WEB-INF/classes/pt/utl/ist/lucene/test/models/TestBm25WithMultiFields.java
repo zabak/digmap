@@ -197,9 +197,9 @@ public class TestBm25WithMultiFields extends TestCase {
         double idfTitle1 = idf(numDocs,docFreqTitle1);
         double idfTitle5 = idf(numDocs,docFreqTitle5);
         //epslon policy
-        if(idfTitle1 < 0)
+        if(idfTitle1 <= 0)
             idfTitle1 = epslon;
-        if(idfTitle5 < 0)
+        if(idfTitle5 <= 0)
             idfTitle5 = epslon;
         double tfDoc1Title1 = 1;
         double tfDoc2Title1 = 1;

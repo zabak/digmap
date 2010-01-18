@@ -59,7 +59,7 @@
     </target>
 
 
-    <target name="testAll" depends="" description="Unit Tests and Examples">
+    <target name="testAll" description="Unit Tests and Examples">
         <junit printsummary="yes" haltonfailure="no">
             <classpath path="${webapp.path}/WEB-INF/classes">
                 <fileset dir="${base.dir}/lib">
@@ -85,7 +85,9 @@
         </junit>
     </target>
 
-    <target name="testXml" depends="">
+    <target name="testXml" depends="compile">
+        <mkdir dir="${test.data}"/>
+        <mkdir dir="${test.report}"/>
         <junit printsummary="false"
                errorProperty="test.failed"
                failureProperty="test.failed">
@@ -104,8 +106,6 @@
             <batchtest fork="no" todir="${test.data}" unless="testcase">
                 <fileset dir="${webapp.path}/WEB-INF/classes">
                     <include name="pt/utl/ist/lucene/test/**/*Test*.java"/>
-                    <!--<include name="pt/utl/ist/lucene/test/models/**/*Test*.java"/>-->
-                    <!--<include name="pt/utl/ist/lucene/test/multiindexes/**/*Test*.java"/>-->
                 </fileset>
             </batchtest>
         </junit>

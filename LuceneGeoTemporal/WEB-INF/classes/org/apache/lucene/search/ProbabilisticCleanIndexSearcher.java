@@ -69,11 +69,11 @@ public class ProbabilisticCleanIndexSearcher extends ProbabilisticIndexSearcher
                         (bits == null || bits.get(doc)))
                 {
                     totalHits[0]++;
-                    int docLen = getDocLength(doc);
+                    int docLen = 20;//getDocLength(doc);        todo JORGE
 
                     if (docLen > 0)
                     {
-                        score = ModelManager.getInstance().getModel().getDocumentFinalScorer().computeFinalScore(score, lmIndexReader,docLen);
+                        score = ModelManager.getInstance().getModel().getDocumentFinalScorer().computeFinalScore(score, reader,docLen);
                     }
                     else
                     {
@@ -96,7 +96,7 @@ public class ProbabilisticCleanIndexSearcher extends ProbabilisticIndexSearcher
         int docLen = 0;
         try
         {
-            docLen = lmIndexReader.getDocLength(doc);
+            docLen = reader.getDocLength(doc);
         }
         catch (Exception e)
         {
@@ -132,12 +132,6 @@ public class ProbabilisticCleanIndexSearcher extends ProbabilisticIndexSearcher
         scorer.score(collector);
     }
 
-    /**
-     * @param directory path to index directory
-     */
-    public void storeExtendedData(String directory)
-    {
-        lmIndexReader.storeExtendedData(directory);
-    }
+
 
 }

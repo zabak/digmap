@@ -140,11 +140,11 @@ public class PhraseQuery extends Query {
       }
 
       if (slop == 0)				  // optimize exact case
-        return new ExactPhraseScorer(this, tps, getPositions(), getSimilarity(searcher),
+        return new ExactPhraseScorer(reader, this, tps, getPositions(), getSimilarity(searcher),
                                      reader.norms(field));
       else
         return
-          new SloppyPhraseScorer(this, tps, getPositions(), getSimilarity(searcher), slop,
+          new SloppyPhraseScorer(reader, this, tps, getPositions(), getSimilarity(searcher), slop,
                                  reader.norms(field));
       
     }

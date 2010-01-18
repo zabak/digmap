@@ -6,7 +6,6 @@ import java.util.*;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.ilps.DataCacher;
 
 /**
  * @author Jorge Machado
@@ -62,9 +61,23 @@ public class QueryConfiguration
             if (property != null)
                 return property;
         }
-        String property = (String) DataCacher.Instance().get(key);
-        if(property != null)
-            return property;
+        return ConfigProperties.getProperty(key);
+    }
+
+    public String getProperty(String key, Properties alternative)
+    {
+        if(queryProperties != null)
+        {
+            String property = queryProperties.getProperty(key);
+            if (property != null)
+                return property;
+        }
+        if(alternative != null)
+        {
+            String property = (String) alternative.get(key);
+            if(property != null)
+                return property;
+        }
         return ConfigProperties.getProperty(key);
     }
 
@@ -91,9 +104,32 @@ public class QueryConfiguration
                 }
             }
         }
-        String property = (String) DataCacher.Instance().get(key);
-        if(property != null)
-            return Integer.parseInt(property);
+        return ConfigProperties.getIntProperty(key);
+    }
+
+    public int getIntProperty(String key, Properties alternative)
+    {
+        if(queryProperties != null)
+        {
+            String property = queryProperties.getProperty(key);
+            if (property != null)
+            {
+                try
+                {
+                    return Integer.parseInt(property);
+                }
+                catch (NumberFormatException e)
+                {
+                    logger.error(e);
+                }
+            }
+        }
+        if(alternative != null)
+        {
+            String property = (String) alternative.get(key);
+            if(property != null)
+                return Integer.parseInt(property);
+        }
         return ConfigProperties.getIntProperty(key);
     }
 
@@ -120,9 +156,31 @@ public class QueryConfiguration
                 }
             }
         }
-        String property = (String) DataCacher.Instance().get(key);
-        if(property != null)
-            return Float.parseFloat(property);
+        return ConfigProperties.getFloatProperty(key);
+    }
+    public float getFloatProperty(String key, Properties alternative)
+    {
+        if(queryProperties != null)
+        {
+            String property = queryProperties.getProperty(key);
+            if (property != null)
+            {
+                try
+                {
+                    return Float.parseFloat(property);
+                }
+                catch (NumberFormatException e)
+                {
+                    logger.error(e);
+                }
+            }
+        }
+        if(alternative != null)
+        {
+            String property = (String) alternative.get(key);
+            if(property != null)
+                return Float.parseFloat(property);
+        }
         return ConfigProperties.getFloatProperty(key);
     }
 
@@ -149,9 +207,31 @@ public class QueryConfiguration
                 }
             }
         }
-        String property = (String) DataCacher.Instance().get(key);
-        if(property != null)
-            return Double.parseDouble(property);
+        return ConfigProperties.getDoubleProperty(key);
+    }
+    public double getDoubleProperty(String key, Properties alternative)
+    {
+        if(queryProperties != null)
+        {
+            String property = queryProperties.getProperty(key);
+            if (property != null)
+            {
+                try
+                {
+                    return Double.parseDouble(property);
+                }
+                catch (NumberFormatException e)
+                {
+                    logger.error(e);
+                }
+            }
+        }
+        if(alternative != null)
+        {
+            String property = (String) alternative.get(key);
+            if(property != null)
+                return Double.parseDouble(property);
+        }
         return ConfigProperties.getDoubleProperty(key);
     }
 
@@ -178,9 +258,31 @@ public class QueryConfiguration
                 }
             }
         }
-        String property = (String) DataCacher.Instance().get(key);
-        if(property != null)
-            return Boolean.parseBoolean(property);    
+        return ConfigProperties.getBooleanProperty(key);
+    }
+    public boolean getBooleanProperty(String key, Properties alternative)
+    {
+        if(queryProperties != null)
+        {
+            String property = queryProperties.getProperty(key);
+            if (property != null)
+            {
+                try
+                {
+                    return Boolean.parseBoolean(property);
+                }
+                catch (NumberFormatException e)
+                {
+                    logger.error(e);
+                }
+            }
+        }
+        if(alternative != null)
+        {
+            String property = (String) alternative.get(key);
+            if(property != null)
+                return Boolean.parseBoolean(property);
+        }
         return ConfigProperties.getBooleanProperty(key);
     }
 
@@ -239,7 +341,7 @@ public class QueryConfiguration
     {
         if(cache == null)
             return null;
-       return cache[index];
+        return cache[index];
     }
 
     public int getCacheSize()

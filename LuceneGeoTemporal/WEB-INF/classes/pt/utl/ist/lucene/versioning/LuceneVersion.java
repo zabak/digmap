@@ -47,8 +47,8 @@ public interface LuceneVersion
     public Query parseQuery(String query, String field, Analyzer analyzer) throws ParseException;
     public VersionEnum getVersion();
     public Collection getIndexedFieldsNames(IndexReader reader, boolean termvector);
-    public Collection getFieldsNames(IndexSearcher searcher) throws IOException;
-    public Collection getFieldsNames(IndexReader reader) throws IOException;
-    public Collection getFieldsNames(IndexReader reader, boolean indexed) throws IOException;
-    public Collection getFieldsNames(IndexSearcher searcher, boolean indexed) throws IOException;
+    public Collection<String> getFieldsNames(IndexSearcher searcher) throws IOException;
+    public Collection<String> getFieldsNames(IndexReader reader) throws IOException;
+    public Collection<String> getFieldsNames(IndexReader reader, boolean indexed) throws IOException;
+    public Collection<String> getFieldsNames(IndexSearcher searcher, boolean indexed) throws IOException;
 }

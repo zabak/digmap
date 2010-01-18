@@ -21,9 +21,10 @@ public class LanguageModelHiemstraPriors implements DocumentPriors
     private float getColSize(LanguageModelIndexReader reader) throws IOException
     {
         if(collSize < 0)
-            collSize = (float) reader.getTotalDocFreqs();
+            collSize = (float) reader.getCollectionSize();
         return collSize;
     }
+    
     public float computeFinalScore(float sumOfTermsScores, IndexReader reader, int docLen)
     {
         try

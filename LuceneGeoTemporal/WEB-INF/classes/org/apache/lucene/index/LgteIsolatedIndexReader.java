@@ -1,7 +1,9 @@
 package org.apache.lucene.index;
 
 import pt.utl.ist.lucene.Model;
+import pt.utl.ist.lucene.LgteIndexTreeIdMapper;
 import pt.utl.ist.lucene.utils.StringComparator;
+import pt.utl.ist.lucene.utils.IDataCacher;
 
 import java.util.*;
 import java.io.IOException;
@@ -9,6 +11,7 @@ import java.io.File;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.log4j.Logger;
 
 /**
  * @author Jorge Machado
@@ -16,17 +19,22 @@ import org.apache.lucene.document.Field;
  * @time 14:19:07
  * @email machadofisher@gmail.com
  */
-public class LgteIsolatedIndexReader extends IndexReader
+public class LgteIsolatedIndexReader extends ProbabilisticIndexReader
 {
 
 
+    LgteIndexTreeIdMapper lgteIndexTreeIdMapper = null;
+
+
     Readers readers = new Readers();
+
 
 
     private class Readers
     {
         private Map<String, IndexReader> readers = new HashMap<String,IndexReader>();
         IndexReader[] readersArray;
+        List<IndexReader> readerses;
 
         private Readers()
         {
@@ -38,7 +46,7 @@ public class LgteIsolatedIndexReader extends IndexReader
         }
 
         public Collection<IndexReader> getReaders() {
-            return readers.values();
+            return readerses;
         }
 
         public Map<String, IndexReader> getReadersMap() {
@@ -48,13 +56,15 @@ public class LgteIsolatedIndexReader extends IndexReader
         public void setReaders(Map<String, IndexReader> readers)
         {
             this.readers = readers;
-            int cont = 0;
-            readersArray = new IndexReader[readers.size()];
+            readerses = new ArrayList<IndexReader>();
             for(IndexReader reader:readers.values())
             {
-                readersArray[cont] = reader;
-                cont++;
+                if(!readerses.contains(reader))
+                    readerses.add(reader);
             }
+            readersArray = new IndexReader[readerses.size()];
+            for(int i = 0; i < readersArray.length;i++)
+                readersArray[i] = readerses.get(i);
         }
 
         public IndexReader getReader(String field)
@@ -127,8 +137,66 @@ public class LgteIsolatedIndexReader extends IndexReader
     {
         super(null);
         this.readers.setReaders(readers);
-
     }
+
+    private static final Logger logger = Logger.getLogger(LgteIsolatedIndexReader.class);
+
+    public int[] translateId(int doc, String field)
+    {
+        if(lgteIndexTreeIdMapper == null)
+        {
+            logger.error("translate request but there are Zero mappings configuration: see LgteIsolatedIndexReader.addMapping method");
+            return null;
+        }
+        return lgteIndexTreeIdMapper.translateId(doc,field);
+    }
+
+//    public int translateIdInverse(int doc, String field)
+//    {
+//        if(lgteIndexTreeIdMapper == null)
+//        {
+//            logger.error("translate request but there are Zero mappings configuration: see LgteIsolatedIndexReader.addMapping method");
+//        }
+//        return lgteIndexTreeIdMapper.translateIdInverted(doc,field);
+//    }
+
+    public boolean hasMapping(String field)
+    {
+        return lgteIndexTreeIdMapper != null && lgteIndexTreeIdMapper.hasMapping(field);
+    }
+
+    /**
+     * @param mapping Mapping is of the type
+     *  example:
+     *    contents(id)>sentences(doc_id)
+     *
+     *    Fields contents and statements using two diferente indexes with diferent id's
+     *    contents:   DOC_1                   DOC_2           DOC_3
+     *    statements: DOC_1_1 DOC_1_2 DOC_1_3 DOC_2_1 DOC_2_3 DOC_3_1 DOC_3_2
+     *
+     *    With this mapping the search statements:(w1 w2) contents(w1 w2) will
+     *    map the scores into documents ids of statements field
+     */
+    boolean canAdd = true;
+    public void addTreeMapping(String mapping)
+    {
+        if(canAdd)
+        {
+            if(lgteIndexTreeIdMapper == null)
+                lgteIndexTreeIdMapper = new LgteIndexTreeIdMapper(this);
+            lgteIndexTreeIdMapper.addMapping(mapping);
+        }
+        else
+            throw new NotImplemented("addTreeMapping: Can add only one mapping in this version of LGTE");
+        canAdd = false;
+    }
+
+
+    public IndexReader getIndexReader(String field)
+    {
+        return readers.getReader(field);
+    }
+
 
     private void init(String path, List<String> fields, Model model) throws IOException
     {
@@ -176,6 +244,68 @@ public class LgteIsolatedIndexReader extends IndexReader
         }
         this.readers.setReaders(readers);
     }
+
+    /**
+     * Prbobailistic Reader Interface
+     * @param field
+     * @return
+     * @throws IOException
+     */
+    public int getCollectionTokenNumber(String field) throws IOException
+    {
+        IndexReader reader = readers.getReader(field);
+        if(reader != null && reader instanceof ProbabilisticIndexReader)
+        {
+            return ((ProbabilisticIndexReader)reader).getCollectionTokenNumber(field);
+        }
+        throw new NotImplemented("getCollectionSize only implemented for probabilistic models");
+    }
+
+    /**
+     * Prbobailistic Reader Interface
+     * @param field
+     * @return
+     * @throws IOException
+     */
+    public double getAvgLenTokenNumber(String field) throws IOException {
+        IndexReader reader = readers.getReader(field);
+        if(reader != null && reader instanceof ProbabilisticIndexReader)
+        {
+            return ((ProbabilisticIndexReader)reader).getAvgLenTokenNumber(field);
+        }
+        throw new NotImplemented("getAvgLenTokenNumber only implemented for probabilistic models");
+    }
+
+    public int collFreq(Term t) throws IOException {
+        IndexReader reader = readers.getReader(t.field());
+        if(reader != null && reader instanceof ProbabilisticIndexReader)
+        {
+            return ((ProbabilisticIndexReader)reader).collFreq(t);
+        }
+        throw new NotImplemented("getAvgLenTokenNumber only implemented for probabilistic models");
+    }
+
+    /**
+     * Prbobailistic Reader Interface
+     * @return
+     * @throws IOException
+     */
+    public int getCollectionSize() throws IOException
+    {
+        int colectionTokenNumber = 0;
+        for(IndexReader reader: readers.getReaders())
+        {
+            if(reader != null && reader instanceof ProbabilisticIndexReader)
+            {
+                colectionTokenNumber += ((ProbabilisticIndexReader)reader).getCollectionSize();
+            }
+        }
+        return colectionTokenNumber;
+    }
+    /** END PROBABILISTIC INTERFACE **/
+
+
+
 
     /** Return an array of term frequency vectors for the specified document.
      *  The array contains a vector for each vectorized field in the document.
@@ -301,7 +431,21 @@ public class LgteIsolatedIndexReader extends IndexReader
 
     public int getDocLength(int docNumber) throws IOException {
         int len = 0;
-        for (IndexReader subReader : readers.getReaders()) len += subReader.getDocLength(docNumber);
+        for (IndexReader subReader : readers.getReaders())
+        {
+//            if(lgteIndexTreeIdMapper!=null)
+//            {
+//
+//                String field = readers.;
+//                if(((LgteIsolatedIndexReader)reader).hasMapping(field))
+//                {
+//                    int[] docs =  ((LgteIsolatedIndexReader)reader).translateId(scorer.doc(),field);
+//                    for(int i = 0; i< docs.length; i++)
+//                        sub.collector.collect(i, scorer.score());
+//                }
+//            }
+            len += subReader.getDocLength(docNumber);
+        }
         return len;
     }
 
@@ -320,8 +464,29 @@ public class LgteIsolatedIndexReader extends IndexReader
         return numDocs;
     }
 
-    public int maxDoc() {
-        return readers.getReaders().iterator().next().maxDoc();
+    public int numDocs(String field)
+    {
+        return readers.getReader(field).numDocs();
+    }
+
+    public int maxDoc(String field)
+    {
+        return readers.getReader(field).maxDoc();
+    }
+
+    int maxDoc = -1;
+    public int maxDoc()
+    {
+        if (maxDoc == -1) {        // check cache
+            int max = 0;            // cache miss--recompute
+            for (IndexReader reader: readers.getReaders())
+            {
+                int subNum = reader.maxDoc();      // sum from readers
+                max = subNum > max ? subNum : max;
+            }
+            maxDoc = max;
+        }
+        return maxDoc;
     }
 
     /**
@@ -333,31 +498,48 @@ public class LgteIsolatedIndexReader extends IndexReader
      */
     public Document document(int n) throws IOException
     {
-        Document d = null;
+        Document d = new Document();
         for (IndexReader reader : readers.getReaders())
         {
-            Document dS = reader.document(n);
-            if(d == null) d = dS;
-            else
+            if(lgteIndexTreeIdMapper != null && lgteIndexTreeIdMapper.isInvertable(reader))
             {
-                Enumeration fields = dS.fields();
-                while(fields.hasMoreElements())
-                {
-                    d.add((Field) fields.nextElement());
-                }
+                n = lgteIndexTreeIdMapper.translateIdInverted(n); //assuming that there is only one mapping
             }
+            Document dS = reader.document(n);
+            Enumeration fields = dS.fields();
+            while(fields.hasMoreElements())
+            {
+                Field field = (Field) fields.nextElement();
+                if(readers.getReader(field.name()) == reader)//Only add the field if is in the Readers Mapping
+                    d.add(field);
+            }
+
         }
         return d;
+    }
+
+    public Object get(Object key)
+    {
+        for (IndexReader reader : readers.getReaders())
+        {
+            if(reader instanceof IDataCacher)
+            {
+                Object obj = ((IDataCacher)reader).get(key);
+                if(obj!=null)
+                    return obj;
+            }
+        }
+        return null;
     }
 
     public boolean hasDeletions() { return false; }
 
     protected void doDelete(int n) throws IOException {
-        throw new ReadOnlyIndex("MultiIndependentIndexFieldsReader is a ReadOnly Index");
+        throw new ReadOnlyIndex("LgteIsolatedIndexReader is a ReadOnly Index");
     }
 
     protected void doUndeleteAll() throws IOException {
-        throw new ReadOnlyIndex("MultiIndependentIndexFieldsReader is a ReadOnly Index");
+        throw new ReadOnlyIndex("LgteIsolatedIndexReader is a ReadOnly Index");
     }
 
     public boolean isDeleted(int n) {
@@ -458,7 +640,7 @@ public class LgteIsolatedIndexReader extends IndexReader
     }
 
     public void setNorm(int doc, String field, float value) throws IOException {
-        throw new NotImplemented("MultiIndependentIndexFieldsReader does not implements this method yet");
+        throw new NotImplemented("LgteIsolatedIndexReader does not implements this method yet");
     }
 
     class MultiTermDocs implements TermDocs {

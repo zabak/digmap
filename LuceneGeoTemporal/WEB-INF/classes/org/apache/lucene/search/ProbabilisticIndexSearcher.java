@@ -1,13 +1,9 @@
 package org.apache.lucene.search;
 
-import org.apache.lucene.index.LanguageModelIndexReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.store.Directory;
 
 import java.io.IOException;
-import java.util.BitSet;
-
-import pt.utl.ist.lucene.ModelManager;
 
 /**
  * Search using a probabilistic model.
@@ -21,8 +17,6 @@ public abstract class ProbabilisticIndexSearcher extends IndexSearcher
 
 
     float log10 = (float) Math.log(10);
-    LanguageModelIndexReader lmIndexReader = null;
-    boolean extendedDataRead = false;
 
 
     /**
@@ -31,10 +25,6 @@ public abstract class ProbabilisticIndexSearcher extends IndexSearcher
     public ProbabilisticIndexSearcher(String path) throws IOException
     {
         super(path);
-        if (lmIndexReader == null)
-        {
-            lmIndexReader = new LanguageModelIndexReader(reader);
-        }
     }
 
     /**
@@ -43,10 +33,6 @@ public abstract class ProbabilisticIndexSearcher extends IndexSearcher
     public ProbabilisticIndexSearcher(Directory directory) throws IOException
     {
         super(directory);
-        if (lmIndexReader == null)
-        {
-            lmIndexReader = new LanguageModelIndexReader(reader);
-        }
     }
 
     /**
@@ -55,40 +41,5 @@ public abstract class ProbabilisticIndexSearcher extends IndexSearcher
     public ProbabilisticIndexSearcher(IndexReader r)
     {
         super(r);
-        if (lmIndexReader == null)
-        {
-            lmIndexReader = new LanguageModelIndexReader(reader);
-        }
-
-        System.err.println("");
-
     }
-
-    /**
-     * @param directory path to index directory
-     */
-    public void storeExtendedData(String directory)
-    {
-        lmIndexReader.storeExtendedData(directory);
-    }
-
-    /**
-     */
-    public LanguageModelIndexReader getLangModelReader()
-    {
-        return lmIndexReader;
-    }
-
-    /**
-     * @param directory path to index directory
-     */
-    public void readExtendedDate(String directory)
-    {
-        if (!extendedDataRead)
-        {
-            lmIndexReader.readExtendedData(directory);
-            extendedDataRead = true;
-        }
-    }
-
 }

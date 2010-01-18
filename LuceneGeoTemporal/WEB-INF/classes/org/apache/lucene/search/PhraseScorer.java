@@ -38,9 +38,9 @@ abstract class PhraseScorer extends LgteFieldedTermScorer
         return weight;
     }
 
-    PhraseScorer(Weight weight, TermPositions[] tps, int[] positions, Similarity similarity,
+    PhraseScorer(IndexReader reader, Weight weight, TermPositions[] tps, int[] positions, Similarity similarity,
                byte[] norms) {
-    super(similarity);
+    super(reader, similarity);
     this.norms = norms;
     this.weight = weight;
     this.value = weight.getValue();

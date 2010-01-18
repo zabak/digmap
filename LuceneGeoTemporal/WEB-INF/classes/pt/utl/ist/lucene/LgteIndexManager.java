@@ -3,24 +3,18 @@ package pt.utl.ist.lucene;
 import org.apache.lucene.search.*;
 import org.apache.lucene.index.LanguageModelIndexReader;
 import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.ilps.DataCacher;
 import org.apache.lucene.store.Directory;
+import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Properties;
-
-import pt.utl.ist.lucene.config.ConfigProperties;
 
 /**
  * @author Jorge Machado
  * @date 14/Ago/2008
  * @see pt.utl.ist.lucene
  */
-public class LgteIndexSearcherManager
-{
-
-    public static boolean alreadyReadExtentData = false;
+public class LgteIndexManager {
 
 
     /**
@@ -32,7 +26,9 @@ public class LgteIndexSearcherManager
      */
     public static IndexSearcher openSearcher(Model model, IndexReader reader) throws IOException
     {
-        return openSearcher(model,reader,null);
+        IndexSearcher indexSearcher = initSearcher(reader, model);
+        initSimilarity(indexSearcher, model);
+        return indexSearcher;
     }
 
     /**
@@ -44,8 +40,11 @@ public class LgteIndexSearcherManager
      */
     public static IndexSearcher openSearcher(Model model, Directory dir) throws IOException
     {
-        return openSearcher(model,dir,null);
+        IndexSearcher indexSearcher = initSearcher(dir, model);
+        initSimilarity(indexSearcher, model);
+        return indexSearcher;
     }
+
     /**
      * Create a new Searcher for choosed Model
      * @param model choosed
@@ -55,62 +54,8 @@ public class LgteIndexSearcherManager
      */
     public static IndexSearcher openSearcher(Model model, String dir) throws IOException
     {
-        return openSearcher(model,dir,null);
-    }
-    /**
-     * Create a new Searcher for choosed Model
-     * @param model choosed
-     * @param dir indexes
-     * @return IndexSearcher
-     * @throws IOException opening index
-     */
-    public static IndexSearcher openSearcher(Model model, File dir) throws IOException
-    {
-        return openSearcher(dir, model, null);
-    }
-
-    /**
-     * Create a new Searcher for choosed Model
-     * @param model choosed
-     * @param reader for indexes
-     * @param modelProperties init properties of model, can be null
-     * @return IndexSearcher
-     * @throws IOException opening index
-     */
-    public static IndexSearcher openSearcher(Model model, IndexReader reader, Properties modelProperties) throws IOException
-    {
-        IndexSearcher indexSearcher = initSearcher(reader, model);
-        initSimilarity(Globals.TMP_DIR, indexSearcher, model, modelProperties);
-        return indexSearcher;
-    }
-
-    /**
-     * Create a new Searcher for choosed Model
-     * @param model choosed
-     * @param dir indexes
-     * @param modelProperties init properties of model, can be null
-     * @return IndexSearcher
-     * @throws IOException opening index
-     */
-    public static IndexSearcher openSearcher(Model model, Directory dir, Properties modelProperties) throws IOException
-    {
         IndexSearcher indexSearcher = initSearcher(dir, model);
-        initSimilarity(Globals.TMP_DIR,indexSearcher, model, modelProperties);
-        return indexSearcher;
-    }
-
-    /**
-     * Create a new Searcher for choosed Model
-     * @param model choosed
-     * @param dir indexes
-     * @param modelProperties init properties of model, can be null
-     * @return IndexSearcher
-     * @throws IOException opening index
-     */
-    public static IndexSearcher openSearcher(Model model, String dir, Properties modelProperties) throws IOException
-    {
-        IndexSearcher indexSearcher = initSearcher(dir, model);
-        initSimilarity(dir, indexSearcher, model, modelProperties);
+        initSimilarity(indexSearcher, model);
         return indexSearcher;
     }
 
@@ -118,14 +63,13 @@ public class LgteIndexSearcherManager
      * Create a new Searcher for choosed Model
      * @param dir indexes
      * @param model choosed
-     * @param modelProperties init properties of model, can be null
      * @return IndexSearcher
      * @throws IOException opening index
      */
-    public static IndexSearcher openSearcher(File dir, Model model, Properties modelProperties) throws IOException
+    public static IndexSearcher openSearcher(File dir, Model model) throws IOException
     {
         IndexSearcher indexSearcher = initSearcher(dir, model);
-        initSimilarity(dir.getAbsolutePath(), indexSearcher, model, modelProperties);
+        initSimilarity(indexSearcher, model);
         return indexSearcher;
     }
 
@@ -133,7 +77,9 @@ public class LgteIndexSearcherManager
     {
         if(model.isProbabilistcModel())
         {
-            return new LanguageModelIndexReader(IndexReader.open(f));
+            LanguageModelIndexReader reader = new LanguageModelIndexReader(IndexReader.open(f));
+            reader.readExtendedData(f.getAbsolutePath());
+            return reader;
         }
         else if(model == Model.VectorSpaceModel)
         {
@@ -152,7 +98,9 @@ public class LgteIndexSearcherManager
     {
         if(model.isProbabilistcModel())
         {
-            return new LanguageModelIndexReader(IndexReader.open(f));
+            LanguageModelIndexReader reader = new LanguageModelIndexReader(IndexReader.open(f));
+            reader.readExtendedData(f);
+            return reader;
         }
         else if(model == Model.VectorSpaceModel)
         {
@@ -165,10 +113,13 @@ public class LgteIndexSearcherManager
         }
     }
 
+    private static final Logger logger = Logger.getLogger(LgteIndexManager.class);
+
     public static IndexReader openReader(Directory f, Model model) throws IOException
     {
         if(model.isProbabilistcModel())
         {
+            logger.warn("Using Directory constructor caches are inactive");        
             return new LanguageModelIndexReader(IndexReader.open(f));
         }
         else if(model == Model.VectorSpaceModel)
@@ -207,9 +158,9 @@ public class LgteIndexSearcherManager
         if(model.isProbabilistcModel())
         {
             if(model == Model.LanguageModel)
-                return new IndexSearcherLanguageModel(dir);
+                return new IndexSearcherLanguageModel(openReader(dir,model));
             else
-                return new ProbabilisticCleanIndexSearcher(dir);
+                return new ProbabilisticCleanIndexSearcher(openReader(dir,model));
         }
         else if(model == Model.VectorSpaceModel)
         {
@@ -227,9 +178,9 @@ public class LgteIndexSearcherManager
         if(model.isProbabilistcModel())
         {
             if(model == Model.LanguageModel)
-                return new IndexSearcherLanguageModel(dir);
+                return new IndexSearcherLanguageModel(openReader(dir,model));
             else
-                return new ProbabilisticCleanIndexSearcher(dir);
+                return new ProbabilisticCleanIndexSearcher(openReader(dir,model));
         }
         else if(model == Model.VectorSpaceModel)
         {
@@ -264,20 +215,13 @@ public class LgteIndexSearcherManager
 
 
 
-    private static void initSimilarity(String dir, IndexSearcher indexSearcher, Model model, Properties modelProperties)
+    private static void initSimilarity(IndexSearcher indexSearcher, Model model)
     {
         
         if(model.isProbabilistcModel())
         {
             indexSearcher.setSimilarity(new LangModelSimilarity());
             System.setProperty("RetrievalModel", model.getName());
-            if(!alreadyReadExtentData)
-            {
-                ((ProbabilisticIndexSearcher) indexSearcher).readExtendedDate(dir);
-                alreadyReadExtentData = true;
-            }
-            initDataCacher(modelProperties);
-
         }
         else if(model == Model.VectorSpaceModel)
         {
@@ -291,37 +235,37 @@ public class LgteIndexSearcherManager
         }
     }
 
-    private static void initDataCacher(Properties modelProperties)
-    {
-        //todo This is necessary in order to not affect actual results
-        //todo with previous results.
-        //todo It is necessary to understand wha is DataCacher of IPLS and be sure
-        //todo that this clear will not afect performance
-//        DataCacher.Instance().clear();
-        if (DataCacher.Instance().get("LM-beta") == null)
-            if(modelProperties == null || modelProperties.get("LM-beta") == null)
-                DataCacher.Instance().put("LM-beta", ConfigProperties.getProperty("LM-beta"));
-            else
-                DataCacher.Instance().put("LM-beta", modelProperties.get("LM-beta"));
-
-        if (DataCacher.Instance().get("LM-lambda") == null)
-            if(modelProperties == null ||  modelProperties.get("LM-lambda") == null)
-                DataCacher.Instance().put("LM-lambda", ConfigProperties.getProperty("LM-lambda"));
-            else
-                DataCacher.Instance().put("LM-lambda", modelProperties.get("LM-lambda"));
-
-        if (DataCacher.Instance().get("LM-cmodel") == null)
-            if(modelProperties == null ||  modelProperties.get("LM-cmodel") == null)
-                DataCacher.Instance().put("LM-cmodel",  ConfigProperties.getProperty("LM-cmodel"));
-            else
-                DataCacher.Instance().put("LM-cmodel", modelProperties.get("LM-cmodel"));
-
-        if (DataCacher.Instance().get("LM-lengths") == null)
-            if(modelProperties == null ||  modelProperties.get("LM-lengths") == null)
-                DataCacher.Instance().put("LM-lengths", ConfigProperties.getProperty("LM-lengths"));
-            else
-                DataCacher.Instance().put("LM-lengths", modelProperties.get("LM-lengths"));
-    }
+//    private static void initDataCacher(Properties modelProperties)
+//    {
+//        //todo This is necessary in order to not affect actual results
+//        //todo with previous results.
+//        //todo It is necessary to understand wha is DataCacher of IPLS and be sure
+//        //todo that this clear will not afect performance
+////        DataCacher.Instance().clear();
+//        if (DataCacher.Instance().get("LM-beta") == null)
+//            if(modelProperties == null || modelProperties.get("LM-beta") == null)
+//                DataCacher.Instance().put("LM-beta", ConfigProperties.getProperty("LM-beta"));
+//            else
+//                DataCacher.Instance().put("LM-beta", modelProperties.get("LM-beta"));
+//
+//        if (DataCacher.Instance().get("LM-lambda") == null)
+//            if(modelProperties == null ||  modelProperties.get("LM-lambda") == null)
+//                DataCacher.Instance().put("LM-lambda", ConfigProperties.getProperty("LM-lambda"));
+//            else
+//                DataCacher.Instance().put("LM-lambda", modelProperties.get("LM-lambda"));
+//
+//        if (DataCacher.Instance().get("LM-cmodel") == null)
+//            if(modelProperties == null ||  modelProperties.get("LM-cmodel") == null)
+//                DataCacher.Instance().put("LM-cmodel",  ConfigProperties.getProperty("LM-cmodel"));
+//            else
+//                DataCacher.Instance().put("LM-cmodel", modelProperties.get("LM-cmodel"));
+//
+//        if (DataCacher.Instance().get("LM-lengths") == null)
+//            if(modelProperties == null ||  modelProperties.get("LM-lengths") == null)
+//                DataCacher.Instance().put("LM-lengths", ConfigProperties.getProperty("LM-lengths"));
+//            else
+//                DataCacher.Instance().put("LM-lengths", modelProperties.get("LM-lengths"));
+//    }
 
 
 

@@ -159,10 +159,10 @@ public class PhrasePrefixQuery extends Query {
       }
     
       if (slop == 0)
-        return new ExactPhraseScorer(this, tps, getPositions(), getSimilarity(searcher),
+        return new ExactPhraseScorer(reader, this, tps, getPositions(), getSimilarity(searcher),
                                      reader.norms(field));
       else
-        return new SloppyPhraseScorer(this, tps, getPositions(), getSimilarity(searcher),
+        return new SloppyPhraseScorer(reader, this, tps, getPositions(), getSimilarity(searcher),
                                       slop, reader.norms(field));
     }
     

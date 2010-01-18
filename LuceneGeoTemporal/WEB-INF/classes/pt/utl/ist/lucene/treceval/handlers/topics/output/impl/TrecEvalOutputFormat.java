@@ -5,7 +5,6 @@ import pt.utl.ist.lucene.treceval.handlers.topics.output.Topic;
 import pt.utl.ist.lucene.treceval.Globals;
 import org.apache.log4j.Logger;
 import org.apache.lucene.document.Document;
-import org.apache.lucene.ilps.DataCacher;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -101,7 +100,7 @@ public class TrecEvalOutputFormat implements OutputFormat
         try
         {
 
-            String id = (String) DataCacher.Instance().get("docid",docId);
+            String id = d.get(Globals.DOCUMENT_ID_FIELD);
 
             if (id == null)
                 id = d.get(idField1);

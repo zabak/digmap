@@ -35,8 +35,10 @@ public class BooleanQuery extends Query {
     Integer.parseInt(System.getProperty("org.apache.lucene.maxClauseCount",
       "1024"));
 
-  /** Thrown when an attempt is made to add more than {@link
-   * #getMaxClauseCount()} clauses. */
+  /** Thrown when an attempt is made to add more than {
+   * @link
+   * getMaxClauseCount
+   * } clauses. */
   public static class TooManyClauses extends RuntimeException {}
 
   /** Return the maximum number of clauses permitted, 1024 by default.

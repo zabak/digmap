@@ -158,6 +158,24 @@ public class IntegratedDocPlaceMakerAndTimexIterator {
             return td != null && td.getTimex2TimeExpressions() != null && td.getAllIndexableTimeExpressions().size() > 0;
         }
 
+        public boolean hasPointTimeExpressions()
+        {
+            //we are ignoring the article publication date
+            return td != null && td.getTimex2TimeExpressions() != null && td.getAllPointsTimeExpressions().size() > 0;
+        }
+
+        public boolean hasKeyPointTimeExpressions()
+        {
+            //we are ignoring the article publication date
+            return td != null && td.getTimex2TimeExpressions() != null && td.getAllKeyPointsTimeExpressions().size() > 0;
+        }
+
+        public boolean hasRelativePointTimeExpressions()
+        {
+            //we are ignoring the article publication date
+            return td != null && td.getTimex2TimeExpressions() != null && td.getAllRelativePointsTimeExpressions().size() > 0;
+        }
+
         public boolean hasPlaces()
         {
             //we are ignoring the article publication date

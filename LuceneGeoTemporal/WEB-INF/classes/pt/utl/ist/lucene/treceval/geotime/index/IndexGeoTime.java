@@ -58,6 +58,15 @@ public class IndexGeoTime
         if(d.hasPlaces())
             doc.indexString(Config.S_GEO_INDEXED, "true");
 
+        if(d.hasPointTimeExpressions())
+            doc.indexString(Config.S_HAS_ANY_TIME_POINT, "true");
+
+         if(d.hasKeyPointTimeExpressions())
+            doc.indexString(Config.S_HAS_TIME_POINTS_KEY, "true");
+
+         if(d.hasRelativePointTimeExpressions())
+            doc.indexString(Config.S_HAS_TIME_POINTS_RELATIVE, "true");
+
         writer.addDocument(doc);
     }
 }

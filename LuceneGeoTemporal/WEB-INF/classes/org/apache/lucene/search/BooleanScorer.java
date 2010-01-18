@@ -21,6 +21,10 @@ import pt.utl.ist.lucene.QueryConfiguration;
 
 import java.io.IOException;
 
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.LgteIsolatedIndexReader;
+import org.apache.lucene.index.NotImplemented;
+
 final class BooleanScorer extends Scorer {
     private SubScorer scorers = null;
     private BucketTable bucketTable = new BucketTable(this);
@@ -129,18 +133,34 @@ final class BooleanScorer extends Scorer {
                  */
                 while (!sub.done && scorer.doc() < end)
                 {
-//                    QueryConfiguration queryConfiguration = ModelManager.getInstance().getQueryConfiguration();
-//                    boolean indexTree = queryConfiguration.getBooleanProperty("index.tree");
-//
-//                    if(sub.scorer instanceof LgteFieldedTermScorer)
-//                    {
-//
-//                    }
-//                    else
-//                    {   //keeping for the old classes
+                    QueryConfiguration queryConfiguration = ModelManager.getInstance().getQueryConfiguration();
+                    boolean indexTree = queryConfiguration.getBooleanProperty("index.tree");
+
+                    if(indexTree && sub.scorer instanceof LgteFieldedTermScorer)
+                    {
+                        LgteFieldedTermScorer  lgteFieldedTermScorer = (LgteFieldedTermScorer) sub.scorer;
+                        IndexReader reader = lgteFieldedTermScorer.getIndexReader();
+                        if(reader instanceof LgteIsolatedIndexReader)
+                        {
+                            String field = lgteFieldedTermScorer.getField();
+                            if(((LgteIsolatedIndexReader)reader).hasMapping(field))
+                            {
+                                int[] docs =  ((LgteIsolatedIndexReader)reader).translateId(scorer.doc(),field);
+                                float score = scorer.score();
+                                for(int i = 0; i< docs.length; i++)
+                                    sub.collector.collect(docs[i], score);
+                            }
+                            else
+                                sub.collector.collect(scorer.doc(), scorer.score());
+                        }
+                        else
+                            throw new NotImplemented("index.tree is implmented only when using LgteIsolatedIndexReader with multiindexes");
+                    }
+                    else
+                    {   //keeping for the old classes
                         sub.collector.collect(scorer.doc(), scorer.score());
-                        sub.done = !scorer.next();
-//                    }
+                    }
+                    sub.done = !scorer.next();
                 }
                 /**
                  * End here
@@ -157,7 +177,7 @@ final class BooleanScorer extends Scorer {
     public float score() throws IOException {
         if (coordFactors == null)
             computeCoordFactors();
-        return current.score * coordFactors[current.coord];
+        return current.score ;//* coordFactors[current.coord]; todo  todo JORGE
     }
 
     static final class Bucket {

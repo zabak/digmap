@@ -3,6 +3,7 @@ package org.apache.lucene.search;
 import org.apache.lucene.index.TermDocs;
 import org.apache.lucene.index.LanguageModelIndexReader;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.ProbabilisticIndexReader;
 
 import java.io.IOException;
 
@@ -18,7 +19,7 @@ final class TermScorerLanguageModelHiemstra extends LgteFieldedTermScorer {
     //private float collSizeCFS; // sum of collFreq for all terms
     private float collSize = 0.0f;
     private int tfCollection; // collection frequency of the term
-    private LanguageModelIndexReader indexReader;
+    private ProbabilisticIndexReader indexReader;
     private float lambda;
     private boolean useFieldLengths;
 
@@ -40,12 +41,12 @@ final class TermScorerLanguageModelHiemstra extends LgteFieldedTermScorer {
             IndexReader reader)
             throws IOException
     {
-        super(similarity);
+        super(reader, similarity);
         this.weight = weight;
         this.termDocs = td;
         this.norms = norms;
         this.weightValue = weight.getValue();
-        this.indexReader = new LanguageModelIndexReader(reader);
+        this.indexReader = (ProbabilisticIndexReader) reader;
         this.term = ((TermQueryProbabilisticModel) weight.getQuery()).getTerm();
 
         queryConfiguration = ModelManager.getInstance().getQueryConfiguration();
@@ -56,10 +57,10 @@ final class TermScorerLanguageModelHiemstra extends LgteFieldedTermScorer {
         this.lambda = queryConfiguration.getFloatProperty("LM-lambda");
 
         if (collectionModel.equals("cf")){
-            this.collSize = (float) indexReader.getCollectionTokenNumber();
+            this.collSize = (float) indexReader.getCollectionSize();
             this.tfCollection = indexReader.collFreq(term);
         } else if (collectionModel.equals("df")) {
-            this.collSize = (float) indexReader.getTotalDocFreqs();
+            this.collSize = (float) indexReader.numDocs();
             this.tfCollection = indexReader.docFreq(term);
         } else {
             throw new IllegalArgumentException("Unknown collection model: " + collectionModel);

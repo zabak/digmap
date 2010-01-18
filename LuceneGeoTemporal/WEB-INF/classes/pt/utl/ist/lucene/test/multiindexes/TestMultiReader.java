@@ -10,8 +10,6 @@ import pt.utl.ist.lucene.utils.Files;
 import com.pjaol.search.geo.utils.InvalidGeoException;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.LanguageModelIndexReader;
-import org.apache.lucene.index.MultiIndependentIndexFieldsReader;
 import org.apache.lucene.index.LgteIsolatedIndexReader;
 
 /**
@@ -108,8 +106,8 @@ public class TestMultiReader extends TestCase
 
 
         LgteIndexSearcherWrapper searcher = new LgteIndexSearcherWrapper(Model.OkapiBM25Model, pathUnique);
-        IndexReader readerMulti1 = new LanguageModelIndexReader(IndexReader.open(pathMulti1));
-        IndexReader readerMulti2 = new LanguageModelIndexReader(IndexReader.open(pathMulti2));
+        IndexReader readerMulti1 = LgteIndexManager.openReader(pathMulti1,Model.OkapiBM25Model);
+        IndexReader readerMulti2 = LgteIndexManager.openReader(pathMulti2,Model.OkapiBM25Model);
         Map<String,IndexReader> readers = new HashMap<String,IndexReader>();
         readers.put("contents1",readerMulti1);
         readers.put("contents2",readerMulti2);

@@ -1,0 +1,35 @@
+LGTE version 1.1.7
+
+Release Notes:
+
+VERY IMPORTANT NOTE
+
+1 - One perfomance issue was detected when using MultiIndexes with previously opened IndexReaders using thr lucene interface
+    IndexReaders should be opened with The LgteSearcherManager in order to read the Cache values from files
+
+    It is strongly recomended to do like this example:
+
+    Map<String,IndexReader> readers = new HashMap<String,IndexReader>();
+    IndexReader readerContents = LgteIndexManager.openReader("/indexes/test", Model.OkapiBM25Model);
+    readers.put("contents",readerContents);
+    return new LgteIndexSearcherWrapper(Model.OkapiBM25Model,new LgteIsolatedIndexReader(readers));
+
+
+
+Lgte Implementation Details
+
+1 - When running several tests together in the same JVM cache values like collection size were being used in wrong contexts
+    To solve the problem DataCacher form ILPS is not used anymore. Now each Reader has it's own dataCacher active only
+      during the Reader lifeCycle
+
+2 - LgteIndexSearcherManager was renamed to LgteIndexManager
+3 - Probabilistic Reader added to refactor the probabilities caches
+4 - DataCacher from ilps not in use.
+5 - Was created one DataCacher for each IndexReader in LgteIsolatedReader for MultiIndexes
+6 - At TermScorerLanguageModel and TermScorerDFR constructors the call to LanguageModelIndexReader constructor was changed
+    Now the given Reader is a ProbabilisticIndexReader with the methods to access the cache values
+7 - Several LGTE instances could now be loaded in the same JVM once the caches are independent in each index
+
+8 - ToDo  DOCID Mapping should be done only at one Reader - Need to be evaluated
+
+

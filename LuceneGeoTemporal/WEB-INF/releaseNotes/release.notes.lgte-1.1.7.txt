@@ -2,4 +2,20 @@ LGTE version 1.1.7
 
 Release Notes:
 
-1 - Phrase Query tested with multiindexes @see example at pt.utl.ist.lucene.test.models.TestBm25ExactPhrase 
+1 - Phrase Query tested with multiindexes @see example at pt.utl.ist.lucene.test.models.TestBm25ExactPhrase
+
+http://code.google.com/p/digmap/source/browse/trunk/LuceneGeoTemporal/WEB-INF/classes/pt/utl/ist/lucene/test/models/TestBm25ExactPhrase.java
+
+The score is calculated using internal Lucene scheme for exact phrases which is the TF IDF (Phrase Freq Inverted Phrase Freq) of the phrase.
+
+To use Phrase query can be used the query language puting the phrase between quotes
+
+examples:
+
+LgteQuery lgteQuery = LgteQueryParser.parseQuery("\"word1 word3\"",searcher,queryConfiguration);
+LgteHits lgteHits = searcher.search(lgteQuery);
+
+or
+
+LgteQuery lgteQuery = LgteQueryParser.parseQuery("contents:\"word1 word3\"^0.7 contents:(word1 word3)^0.3",searcher,queryConfiguration);
+LgteHits lgteHits = searcher.search(lgteQuery);

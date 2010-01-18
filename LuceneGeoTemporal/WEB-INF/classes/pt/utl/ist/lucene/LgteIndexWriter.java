@@ -2,14 +2,15 @@ package pt.utl.ist.lucene;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.index.*;
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.index.LanguageModelIndexReader;
 import org.apache.lucene.search.DefaultSimilarity;
-import org.apache.lucene.search.IndexSearcherLanguageModel;
 import org.apache.lucene.search.LangModelSimilarity;
 import org.apache.lucene.store.Directory;
 import pt.utl.ist.lucene.analyzer.LgteAnalyzer;
-import pt.utl.ist.lucene.versioning.LuceneVersionFactory;
 import pt.utl.ist.lucene.versioning.LuceneVersion;
+import pt.utl.ist.lucene.versioning.LuceneVersionFactory;
 
 import java.io.*;
 
@@ -30,7 +31,6 @@ public class LgteIndexWriter extends IndexWriter
     private Directory directory = null;
     private File file = null;
     private Model model = Model.defaultModel;
-    private boolean storeProbabilisticCaches = false;
 
     public LgteIndexWriter(String s, Analyzer analyzer, boolean b)
             throws IOException
@@ -112,7 +112,6 @@ public class LgteIndexWriter extends IndexWriter
         else if (model.isProbabilistcModel())
         {
             System.setProperty("RetrievalModel", model.getName());
-            storeProbabilisticCaches = true;
             setSimilarity(new LangModelSimilarity());
         }
         else
@@ -148,19 +147,18 @@ public class LgteIndexWriter extends IndexWriter
         {
             optimizeOpeningNewIndex();
 
-            if (storeProbabilisticCaches)
-            {
-                // store some cached data
-                IndexSearcherLanguageModel searcher = new IndexSearcherLanguageModel(getIndexPath());
-                searcher.storeExtendedData(indexPath);
-            }
+
+            // store cached data
+            LanguageModelIndexReader readerLm = new LanguageModelIndexReader(IndexReader.open(getIndexPath()));
+            readerLm.storeExtendedData(indexPath);
+            readerLm.close();
+
 
             // write docid to internal id mapping
             String docidFile = indexPath + docId_txt;
             logger.info("Writing docid file to " + docidFile);
             FileWriter outFile = new FileWriter(docidFile);
             PrintWriter fileOutput = new PrintWriter(outFile);
-
 
             IndexReader reader;
             if (directory != null)

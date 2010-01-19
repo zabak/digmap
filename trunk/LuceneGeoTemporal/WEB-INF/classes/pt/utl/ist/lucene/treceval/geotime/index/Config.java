@@ -45,6 +45,10 @@ public class Config
     public static String timexesPath;
     public static String placemakerPath;
 
+    static void init()
+    {
+
+    }
     public static final String TITLE = pt.utl.ist.lucene.treceval.Globals.DOCUMENT_TITLE;
 
     public static final String TEXT_DB = "TEXT_DB";
@@ -159,7 +163,7 @@ public class Config
         readers.put(Config.CONTENTS,readerContents);
         readers.put(Config.ID,readerSentences);
         readers.put(Config.SENTENCES,readerSentences);
-        readers.put(Config.DOC_ID,readerSentences);
+//        readers.put(Config.DOC_ID,readerSentences);
 //        readers.put("regexpr(^S_.*)",readerGeoTime);
         LgteIsolatedIndexReader lgteIsolatedIndexReader = new LgteIsolatedIndexReader(readers);
         lgteIsolatedIndexReader.addTreeMapping(readerContents,readerSentences,DOC_ID);

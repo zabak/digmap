@@ -21,6 +21,7 @@ import org.apache.lucene.index.TermEnum;
 public class BelongTosPlaceNamesTagger
 {
     public static String output = Config.ntcirBase + File.separator + "belongtos";
+    public static String woeidBelongTosPlacesNames =  output + File.separator + "woeidBelongTosPlacesNames.txt";
 
     public static void main(String [] args) throws IOException {
         int maxbelongtoos = 0;

@@ -67,21 +67,26 @@ public class Config
     public static final String S_GEO_INDEXED = "S_GEO_INDEXED";
     public static final String S_GEO_AND_TEMPORAL_INDEXED = "S_GEO_AND_TEMPORAL_INDEXED";
     public static final String S_GEO_OR_TEMPORAL_INDEXED =  "S_GEO_OR_TEMPORAL_INDEXED";
-    public static final String S_HAS_TIMEXES = "S_HAS_TIMEXES";
 
+    public static final String S_HAS_TIMEXES = "S_HAS_TIMEXES";
     public static final String S_HAS_TIME_POINTS_KEY = "S_HAS_TIME_POINTS_KEY";
     public static final String S_HAS_TIME_POINTS_RELATIVE = "S_HAS_TIME_POINTS_RELATIVE";
-    public static final String S_HAS_ANY_TIME_POINT = "S_HAS_TIME_POINTS_RELATIVE";
+    public static final String S_HAS_ANY_TIME_POINT = "S_HAS_ANY_TIME_POINTS";
     
 
 
     //Geo Indexes
-    public static String G_PLACE_BELONG_TOS = "g_placeBelongToosWoeid"; //todo falta isto
+
+
     public static String G_PLACE_REF_WOEID = "g_placeRefWoeid";
     public static String G_ADMIN_SCOPE_WOEID = "g_administrativeScopeWoeid";
     public static String G_GEO_SCOPE_WOEID = "g_geographicScopeWoeid";
+    public static String G_PLACE_BELONG_TOS_WOEID = "g_placeBelongTosWoeid";
     public static String G_GEO_ALL_WOEID = "g_allWoeid";
+
+    public static String G_PLACE_BELONG_TOS_TEXT = "g_placeBelongTosText";
     public static String G_PLACE_NAME_TEXT = "g_text";
+    public static String G_ALL_TEXT = "g_all_text";
 
     //Time Indexes
     public static String T_TIME_EXPRESSION_TEXT = "t_text";

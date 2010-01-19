@@ -23,7 +23,7 @@ public class IndexGeoTimeSentences
     public static void main(String[] args) throws IOException {
         IntegratedDocPlaceMakerAndTimexIterator iterator = new IntegratedDocPlaceMakerAndTimexIterator(Config.documentPath,Config.timexesPath,Config.placemakerPath);
         LgteIndexWriter writer = new LgteIndexWriter(indexPath,new LgteNothingAnalyzer(),true, Model.BM25b);
-
+        writer.close();
         IntegratedDocPlaceMakerAndTimexIterator.DocumentWithPlacesAndTimexes d;
         while((d = iterator.next())!=null)
         {
@@ -42,22 +42,22 @@ public class IndexGeoTimeSentences
     static int i = 0;
     static int p = 0;
 
-    private static void indexDocument(LgteIndexWriter writer, IntegratedDocPlaceMakerAndTimexIterator.DocumentWithPlacesAndTimexes d) throws IOException
+    private static void indexDocument(LgteIndexWriter writer, IntegratedDocPlaceMakerAndTimexIterator.DocumentWithPlacesAndTimexes document) throws IOException
     {
-        DocumentPlaceMakerAndTemporalSentences documentPlaceMakerAndTemporalSentences = new DocumentPlaceMakerAndTemporalSentences(d.getD(),d.getTd(),d.getPm());
+        DocumentPlaceMakerAndTemporalSentences documentPlaceMakerAndTemporalSentences = new DocumentPlaceMakerAndTemporalSentences(document.getD(),document.getTd(),document.getPm());
         for(PlaceMakerAndTemporalSentence sentence: documentPlaceMakerAndTemporalSentences.getSentences())
         {
             LgteDocumentWrapper doc = new LgteDocumentWrapper();
-            doc.indexString(Config.ID,d.getD().getDId() + "$$" + sentence.getIndex());
-            doc.indexString(Config.DOC_ID,d.getD().getDId());
+            doc.indexString(Config.ID,document.getD().getDId() + "$$" + sentence.getIndex());
+            doc.indexString(Config.DOC_ID,document.getD().getDId());
             p++;
             if(sentence.hasTimexes())
                 doc.indexStringNoStore(Config.S_HAS_TIMEXES + "_sentences","true");
 
-            if(sentence.hasIndexableTimeExpressions() && d.hasPlaces())
+            if(sentence.hasIndexableTimeExpressions() && sentence.hasPlaces())
                 doc.indexStringNoStore(Config.S_GEO_AND_TEMPORAL_INDEXED + "_sentences","true");
 
-            if(sentence.hasIndexableTimeExpressions() || d.hasPlaces())
+            if(sentence.hasIndexableTimeExpressions() || sentence.hasPlaces())
                 doc.indexStringNoStore(Config.S_GEO_OR_TEMPORAL_INDEXED + "_sentences","true");
 
             if(sentence.hasIndexableTimeExpressions())

@@ -1,25 +1,22 @@
 package pt.utl.ist.lucene.treceval.geotime.index;
 
-import pt.utl.ist.lucene.treceval.geotime.DocumentIterator;
-import pt.utl.ist.lucene.treceval.geotime.NyTimesDocument;
-import pt.utl.ist.lucene.treceval.IndexCollections;
-import pt.utl.ist.lucene.Globals;
-import pt.utl.ist.lucene.LgteIndexWriter;
-import pt.utl.ist.lucene.Model;
-import pt.utl.ist.lucene.LgteDocumentWrapper;
-import pt.utl.ist.lucene.utils.placemaker.PlaceMakerIterator;
-import pt.utl.ist.lucene.utils.placemaker.PlaceMakerDocument;
-import pt.utl.ist.lucene.utils.placemaker.PlaceNameNormalizer;
-import pt.utl.ist.lucene.analyzer.LgteNothingAnalyzer;
-import pt.utl.ist.lucene.analyzer.LgteBrokerStemAnalyzer;
-
-import java.io.IOException;
-import java.io.File;
-import java.util.Map;
-import java.util.HashMap;
-
 import org.apache.lucene.analysis.Analyzer;
 import org.dom4j.DocumentException;
+import pt.utl.ist.lucene.Globals;
+import pt.utl.ist.lucene.LgteDocumentWrapper;
+import pt.utl.ist.lucene.LgteIndexWriter;
+import pt.utl.ist.lucene.Model;
+import pt.utl.ist.lucene.analyzer.LgteBrokerStemAnalyzer;
+import pt.utl.ist.lucene.analyzer.LgteNothingAnalyzer;
+import pt.utl.ist.lucene.treceval.IndexCollections;
+import pt.utl.ist.lucene.treceval.geotime.utiltasks.BelongTosTagger;
+import pt.utl.ist.lucene.utils.placemaker.PlaceMakerDocument;
+import pt.utl.ist.lucene.utils.placemaker.PlaceMakerIterator;
+import pt.utl.ist.lucene.utils.placemaker.PlaceNameNormalizer;
+
+import java.io.*;
+import java.util.*;
+import java.util.zip.ZipInputStream;
 
 /**
  * @author Jorge Machado
@@ -32,8 +29,40 @@ public class CreateWoeidIndex {
 
     public static String indexPath = Config.indexBase + File.separator + "woeid";
 
+    private static Map<String,Long[]> openBelongTosWoeid() throws IOException
+    {
+        Config.init();
+        Map<String,Long[]> belongTosMap = new HashMap<String,Long[]>();
+        ZipInputStream zipInputStream = new ZipInputStream(new FileInputStream(new File(BelongTosTagger.woeidBelongTos + ".zip")));
+        zipInputStream.getNextEntry();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(zipInputStream));
+        String line;
+        while((line = reader.readLine())!=null)
+        {
+            String[] lineFlds = line.split(":");
+//            long woeid = Long.parseLong(lineFlds[0]);
+            String[] belongTosStr = lineFlds[1].split(";");
+
+            List<Long> aux = new ArrayList<Long>();
+            for(int i = 0; i < belongTosStr.length; i++)
+            {
+                if(belongTosStr[i].trim().length() > 0)
+                    aux.add(Long.parseLong(belongTosStr[i]));
+            }
+            Long[] belongTos = new Long[aux.size()];
+            for(int i = 0; i < belongTos.length; i++)
+            {
+                belongTos[i] = aux.get(i);
+            }
+            belongTosMap.put(lineFlds[0],belongTos);
+        }
+        return belongTosMap;
+    }
+
     public static void main(String[] args) throws IOException, DocumentException
     {
+
+        Map<String,Long[]> belongTosMap = openBelongTosWoeid();
 
         new File(indexPath).mkdir();
         

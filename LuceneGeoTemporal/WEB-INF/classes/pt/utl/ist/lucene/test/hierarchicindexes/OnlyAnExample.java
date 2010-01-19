@@ -18,7 +18,7 @@ import junit.framework.TestCase;
  * @time 14:35:43
  * @email machadofisher@gmail.com
  */
-public class JustAnExample extends TestCase {
+public class OnlyAnExample extends TestCase {
 
 
     /**
@@ -44,6 +44,24 @@ public class JustAnExample extends TestCase {
      *
      */
 
+    /**
+     *  example:
+     *    contents > sentences (doc_id)
+     *
+     *    Fields contents and sentences using two diferente indexes with a diferent set of id's
+     *    Restriction: The Indexes should be created with the same sequence of DOCS.
+     *    contents:  DOC_1                    DOC_2            DOC_3
+     *    sentences: DOC_1_1 DOC_1_2 DOC_1_3  DOC_2_1 DOC_2_3  DOC_3_1 DOC_3_2
+     *
+     *    Using this configuration the query:  sentences:(w1 w2) contents(w1 w2)
+     *    will map the scores from documents to sentences in order to show a resultSet in sentences space
+     *
+     * @param parent parent Index
+     * @param child child Index
+     * @param foreignKeyFieldChild2Parent field in child with the foreignkey to id field in parent
+     *
+     */
+
     private String pathSentences = Globals.INDEX_DIR + "/" + getClass().getName();
     private String pathDocuments = Globals.INDEX_DIR + "/" + getClass().getName() + "Docs";
 
@@ -51,16 +69,16 @@ public class JustAnExample extends TestCase {
     public void setUp() throws IOException
     {
 
-        String stm1_1 = "word1 word2 word3 word32 word1 word45 word56 word67 word67 word2 word67 word88 word99 word99 word33";
-        String stm1_2 = "word2 word3 word4 word55 word96 word2 word54 word33 wordss";
-        String stm1_3 = "word1 word100 word400 word555 word966 word544 word333 wordss";
-        String document1 = stm1_1 + " " + stm1_2 + " " + stm1_3;
+        String sentence1_1 = "word1 word2 word3 word32 word1 word45 word56 word67 word67 word2 word67 word88 word99 word99 word33";
+        String sentence1_2 = "word2 word3 word4 word55 word96 word2 word54 word33 wordss";
+        String sentence1_3 = "word1 word100 word400 word555 word966 word544 word333 wordss";
+        String document1 = sentence1_1 + " " + sentence1_2 + " " + sentence1_3;
 
 
-        String stm2_1 = "word5 word67 word67";
-        String stm2_2 = "word6 word3 word44";
-        String stm2_3 = "word555 word966 word1000";
-        String document2 = stm2_1 + " " + stm2_2 + " " + stm2_3;
+        String sentence2_1 = "word5 word67 word67";
+        String sentence2_2 = "word6 word3 word44";
+        String sentence2_3 = "word555 word966 word1000";
+        String document2 = sentence2_1 + " " + sentence2_2 + " " + sentence2_3;
 
         //DOCS INDEX
         LgteIndexWriter writerDocs = new LgteIndexWriter(pathDocuments,true);
@@ -85,32 +103,32 @@ public class JustAnExample extends TestCase {
         LgteDocumentWrapper stmVirtualDoc1_1 = new LgteDocumentWrapper();
         stmVirtualDoc1_1.indexText(Globals.DOCUMENT_ID_FIELD, "1_1");
         stmVirtualDoc1_1.indexText("doc_id", "1");
-        stmVirtualDoc1_1.indexText("sentences",stm1_1);
+        stmVirtualDoc1_1.indexText("sentences",sentence1_1);
 
         LgteDocumentWrapper stmVirtualDoc1_2 = new LgteDocumentWrapper();
         stmVirtualDoc1_2.indexText(Globals.DOCUMENT_ID_FIELD, "1_2");
         stmVirtualDoc1_2.indexText("doc_id", "1");
-        stmVirtualDoc1_2.indexText("sentences",stm1_2);
+        stmVirtualDoc1_2.indexText("sentences",sentence1_2);
 
         LgteDocumentWrapper stmVirtualDoc1_3 = new LgteDocumentWrapper();
         stmVirtualDoc1_3.indexText(Globals.DOCUMENT_ID_FIELD, "1_3");
         stmVirtualDoc1_3.indexText("doc_id", "1");
-        stmVirtualDoc1_3.indexText("sentences",stm1_3);
+        stmVirtualDoc1_3.indexText("sentences",sentence1_3);
 
         LgteDocumentWrapper stmVirtualDoc2_1 = new LgteDocumentWrapper();
         stmVirtualDoc2_1.indexText(Globals.DOCUMENT_ID_FIELD, "2_1");
         stmVirtualDoc2_1.indexText("doc_id", "2");
-        stmVirtualDoc2_1.indexText("sentences",stm2_1);
+        stmVirtualDoc2_1.indexText("sentences",sentence2_1);
 
         LgteDocumentWrapper stmVirtualDoc2_2 = new LgteDocumentWrapper();
         stmVirtualDoc2_2.indexText(Globals.DOCUMENT_ID_FIELD, "2_2");
         stmVirtualDoc2_2.indexText("doc_id", "2");
-        stmVirtualDoc2_2.indexText("sentences",stm2_2);
+        stmVirtualDoc2_2.indexText("sentences",sentence2_2);
 
         LgteDocumentWrapper stmVirtualDoc2_3 = new LgteDocumentWrapper();
         stmVirtualDoc2_3.indexText(Globals.DOCUMENT_ID_FIELD, "2_3");
         stmVirtualDoc2_3.indexText("doc_id", "2");
-        stmVirtualDoc2_3.indexText("sentences",stm2_3);
+        stmVirtualDoc2_3.indexText("sentences",sentence2_3);
 
         writerSentences.addDocument(stmVirtualDoc1_1);
         writerSentences.addDocument(stmVirtualDoc1_2);
@@ -148,7 +166,7 @@ public class JustAnExample extends TestCase {
         queryConfiguration.setProperty("bm25.idf.epslon","0.05");
         queryConfiguration.setProperty("bm25.k1","2.0d");
         queryConfiguration.setProperty("bm25.b","0.75d");
-        queryConfiguration.setProperty("index.tree","true");    //just needed for fields used in score functions
+        queryConfiguration.setProperty("index.tree","true");    //only needed for fields used in score functions
 
         LgteQuery lgteQuery = LgteQueryParser.parseQuery("contents:(word1 word2 word3)^0.3 sentences:(word1 word2 word3)^0.7",searcher,queryConfiguration);
         LgteHits lgteHits = searcher.search(lgteQuery);

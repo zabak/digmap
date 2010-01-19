@@ -32,8 +32,8 @@ VERY IMPORTANT NOTE
     Obtaining the id's when iterating lgteHits:
     dataCacher.get("docid",lgteHits.id(i));
 
-4 - Lgte support Hierarchic Indexes
-
+4 - Lgte support Hierarchic Indexes. See this example
+    /*******************************************************************************************************/
     /**
      *  example:
      *    contents > sentences (doc_id)
@@ -54,12 +54,92 @@ VERY IMPORTANT NOTE
     
 
        Example: to see the complete example go here
-       http://code.google.com/p/digmap/source/browse/trunk/LuceneGeoTemporal/WEB-INF/classes/pt/utl/ist/lucene/test/hierarchicindexes/JustAnExample.java
+       http://code.google.com/p/digmap/source/browse/trunk/LuceneGeoTemporal/WEB-INF/classes/pt/utl/ist/lucene/test/hierarchicindexes/OnlyAnExample.java
 
-        //* Fragment of the code: Indexes were created separated:
-            readerContents have documents with fields (id,contents)
-            readerSentences have documents with fields (id,contents)
-        */
+        /***********************************/
+        /*******CREATING INDEXES CODE*******/
+        /***********************************/
+
+        String sentence1_1 = "word1 word2 word3 word32 word1 word45 word56 word67 word67 word2 word67 word88 word99 word99 word33";
+        String sentence1_2 = "word2 word3 word4 word55 word96 word2 word54 word33 wordss";
+        String sentence1_3 = "word1 word100 word400 word555 word966 word544 word333 wordss";
+        String document1 = sentence1_1 + " " + sentence1_2 + " " + sentence1_3;
+
+
+        String sentence2_1 = "word5 word67 word67";
+        String sentence2_2 = "word6 word3 word44";
+        String sentence2_3 = "word555 word966 word1000";
+        String document2 = sentence2_1 + " " + sentence2_2 + " " + sentence2_3;
+
+        //DOCS INDEX
+        LgteIndexWriter writerDocs = new LgteIndexWriter(pathDocuments,true);
+
+        LgteDocumentWrapper doc1 = new LgteDocumentWrapper();
+        doc1.indexText(Globals.DOCUMENT_ID_FIELD, "1");
+        doc1.indexText("contents",document1);
+
+        LgteDocumentWrapper doc2 = new LgteDocumentWrapper();
+        doc2.indexText(Globals.DOCUMENT_ID_FIELD, "2");
+        doc2.indexText("contents",document2);
+
+        writerDocs.addDocument(doc1);
+        writerDocs.addDocument(doc2);
+        writerDocs.close();
+
+
+
+        //SENTENCES INDEX
+        LgteIndexWriter writerSentences = new LgteIndexWriter(pathSentences,true);
+
+        LgteDocumentWrapper stmVirtualDoc1_1 = new LgteDocumentWrapper();
+        stmVirtualDoc1_1.indexText(Globals.DOCUMENT_ID_FIELD, "1_1");
+        stmVirtualDoc1_1.indexText("doc_id", "1");
+        stmVirtualDoc1_1.indexText("sentences",sentence1_1);
+
+        LgteDocumentWrapper stmVirtualDoc1_2 = new LgteDocumentWrapper();
+        stmVirtualDoc1_2.indexText(Globals.DOCUMENT_ID_FIELD, "1_2");
+        stmVirtualDoc1_2.indexText("doc_id", "1");
+        stmVirtualDoc1_2.indexText("sentences",sentence1_2);
+
+        LgteDocumentWrapper stmVirtualDoc1_3 = new LgteDocumentWrapper();
+        stmVirtualDoc1_3.indexText(Globals.DOCUMENT_ID_FIELD, "1_3");
+        stmVirtualDoc1_3.indexText("doc_id", "1");
+        stmVirtualDoc1_3.indexText("sentences",sentence1_3);
+
+        LgteDocumentWrapper stmVirtualDoc2_1 = new LgteDocumentWrapper();
+        stmVirtualDoc2_1.indexText(Globals.DOCUMENT_ID_FIELD, "2_1");
+        stmVirtualDoc2_1.indexText("doc_id", "2");
+        stmVirtualDoc2_1.indexText("sentences",sentence2_1);
+
+        LgteDocumentWrapper stmVirtualDoc2_2 = new LgteDocumentWrapper();
+        stmVirtualDoc2_2.indexText(Globals.DOCUMENT_ID_FIELD, "2_2");
+        stmVirtualDoc2_2.indexText("doc_id", "2");
+        stmVirtualDoc2_2.indexText("sentences",sentence2_2);
+
+        LgteDocumentWrapper stmVirtualDoc2_3 = new LgteDocumentWrapper();
+        stmVirtualDoc2_3.indexText(Globals.DOCUMENT_ID_FIELD, "2_3");
+        stmVirtualDoc2_3.indexText("doc_id", "2");
+        stmVirtualDoc2_3.indexText("sentences",sentence2_3);
+
+        writerSentences.addDocument(stmVirtualDoc1_1);
+        writerSentences.addDocument(stmVirtualDoc1_2);
+        writerSentences.addDocument(stmVirtualDoc1_3);
+        writerSentences.addDocument(stmVirtualDoc2_1);
+        writerSentences.addDocument(stmVirtualDoc2_2);
+        writerSentences.addDocument(stmVirtualDoc2_3);
+
+        writerSentences.close();
+
+        writerSentences.close();
+
+
+        /*******************************/
+        /******** SEARCH CODE *********/
+        /******************************/
+
+        IndexReader readerDocs = LgteIndexManager.openReader(pathDocuments, Model.OkapiBM25Model);
+        IndexReader readerSentences = LgteIndexManager.openReader(pathSentences,Model.OkapiBM25Model);
+
         Map<String,IndexReader> readers = new HashMap<String,IndexReader>();
         readers.put("contents",readerDocs);
         readers.put("sentences",readerSentences);
@@ -74,15 +154,17 @@ VERY IMPORTANT NOTE
         queryConfiguration.setProperty("bm25.idf.epslon","0.05");
         queryConfiguration.setProperty("bm25.k1","2.0d");
         queryConfiguration.setProperty("bm25.b","0.75d");
-        queryConfiguration.setProperty("index.tree","true");  //just needed for fields used in score functions
+        queryConfiguration.setProperty("index.tree","true");    //only needed for fields used in score functions
 
-        LgteQuery lgteQuery = LgteQueryParser.parseQuery("contents:(word1 word2 word3)^0.3 statements:(word1 word2 word3)^0.7",searcher,queryConfiguration);
+        LgteQuery lgteQuery = LgteQueryParser.parseQuery("contents:(word1 word2 word3)^0.3 sentences:(word1 word2 word3)^0.7",searcher,queryConfiguration);
         LgteHits lgteHits = searcher.search(lgteQuery);
-        System.out.println("SCHEME 0.7*score(stm) + (0.3)*score(doc)");
+        System.out.println("SCHEME 0.7*score(Sentence) + (0.3)*score(contents)");
         System.out.println("Sentence " + lgteHits.doc(0).get("id") + ":" + lgteHits.doc(0).get("doc_id") + " (0.7*stm1 + 0.3*doc1):" + lgteHits.score(0));
         System.out.println("Sentence " + lgteHits.doc(1).get("id") + ":" + lgteHits.doc(1).get("doc_id") + " (0.7*stm2 + 0.3*doc1):" + lgteHits.score(1));
         System.out.println("Sentence " + lgteHits.doc(2).get("id") + ":" + lgteHits.doc(2).get("doc_id") + " (0.7*stm3 + 0.3*doc1):" + lgteHits.score(2));
         System.out.println("Sentence " + lgteHits.doc(3).get("id") + ":" + lgteHits.doc(3).get("doc_id") + " (0.7*stm5 + 0.3*doc2):" + lgteHits.score(3));
+
+        /*******************************************************************************************************/
 
 5 - Increased the number of Buffered docs in lucene Hits class to 2000 because sentences queries are very slow in order to lucene do only one iteraction in index to retrieve results 
 

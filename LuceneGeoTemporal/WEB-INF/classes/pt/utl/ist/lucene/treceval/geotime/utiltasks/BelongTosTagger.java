@@ -23,6 +23,7 @@ import org.apache.lucene.index.Term;
 public class BelongTosTagger
 {
     public static String output = Config.ntcirBase + File.separator + "belongtos";
+    public static String woeidBelongTos =  output + File.separator + "woeidBelongTos.txt";
 
     public static void main(String [] args) throws IOException
     {

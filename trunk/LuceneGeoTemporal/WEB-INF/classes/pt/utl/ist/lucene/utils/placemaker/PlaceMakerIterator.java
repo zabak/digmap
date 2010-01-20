@@ -7,6 +7,8 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipEntry;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.io.*;
 
 import pt.utl.ist.lucene.utils.placemaker.PlaceMakerDocument;
@@ -45,7 +47,20 @@ public class PlaceMakerIterator {
             files.add(d);
         else
         {
-            for(File f: d.listFiles())
+            File[] filesArray = d.listFiles();
+            Arrays.sort(filesArray,new Comparator<File>()
+            {
+                public int compare(File o1, File o2) {
+                    int compare = o1.getName().compareTo(o2.getName());
+                    if(compare > 0)
+                        return 1;
+                    else if(compare < 0)
+                        return -1;
+                    else
+                        return 0;
+                }
+            });
+            for(File f: filesArray)
             {
                 if(f.isFile() && f.getName().endsWith(".zip"))
                     files.add(f);

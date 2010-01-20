@@ -88,6 +88,8 @@ public class Config
     public static String G_PLACE_NAME_TEXT = "g_text";
     public static String G_ALL_TEXT = "g_all_text";
 
+    public static String G_GEO_PLACE_TYPE = "g_place_type";
+
     //Time Indexes
     public static String T_TIME_EXPRESSION_TEXT = "t_text";
 
@@ -137,8 +139,8 @@ public class Config
     {
         IndexReader readerContents = LgteIndexManager.openReader(IndexContents.indexPath, Model.OkapiBM25Model);
         IndexReader readerGeoTime = LgteIndexManager.openReader(IndexGeoTime.indexPath, Model.OkapiBM25Model);
-        IndexReader readerTimeRefs = LgteIndexManager.openReader(CreateTimeExprIndex.indexPath, Model.OkapiBM25Model);
-        IndexReader readerGeoRefs = LgteIndexManager.openReader(CreateWoeidIndex.indexPath, Model.OkapiBM25Model);
+        IndexReader readerTimeRefs = LgteIndexManager.openReader(IndexTimexes.indexPath, Model.OkapiBM25Model);
+        IndexReader readerGeoRefs = LgteIndexManager.openReader(IndexWoeid.indexPath, Model.OkapiBM25Model);
         IndexReader readerMetrics = LgteIndexManager.openReader(IndexMetrics.indexPath, Model.OkapiBM25Model);
         IndexReader readerDB = LgteIndexManager.openReader(CreateDBGeoTimexes.indexPath, Model.OkapiBM25Model);
 
@@ -161,14 +163,14 @@ public class Config
     {
         IndexReader readerSentences = LgteIndexManager.openReader(IndexSentences.indexPath, Model.OkapiBM25Model);
         IndexReader readerContents = LgteIndexManager.openReader(IndexContents.indexPath, Model.OkapiBM25Model);
-        IndexReader readerGeoTime = LgteIndexManager.openReader(IndexGeoTime.indexPath, Model.OkapiBM25Model);
+//        IndexReader readerGeoTime = LgteIndexManager.openReader(IndexGeoTime.indexPath, Model.OkapiBM25Model);
 
         Map<String,IndexReader> readers = new HashMap<String,IndexReader>();
 
         readers.put(Config.CONTENTS,readerContents);
         readers.put(Config.ID,readerSentences);
         readers.put(Config.SENTENCES,readerSentences);
-//        readers.put(Config.DOC_ID,readerSentences);
+        readers.put(Config.DOC_ID,readerSentences);
 //        readers.put("regexpr(^S_.*)",readerGeoTime);
         LgteIsolatedIndexReader lgteIsolatedIndexReader = new LgteIsolatedIndexReader(readers);
         lgteIsolatedIndexReader.addTreeMapping(readerContents,readerSentences,DOC_ID);

@@ -93,27 +93,29 @@ public class BaseLineSentences {
         queryConfigurationBase.setProperty("bm25.k1","1.2d");
         queryConfigurationBase.setProperty("bm25.b","0.75d");
         queryConfigurationBase.setProperty("index.tree","true");
-        searchConfigurations.add(new SearchConfiguration(queryConfigurationBase, BM25_STEMMER,0,null,null));
+        TermsFilter filterGeoAndTemp = new TermsFilter();
+        filterGeoAndTemp.addTerm(new Term(Config.S_GEO_OR_TEMPORAL_INDEXED,"true"));
+        searchConfigurations.add(new SearchConfiguration(queryConfigurationBase, BM25_STEMMER,10,null,filterGeoAndTemp));
 
         /***
          * Search Configurations
          */
-        TermsFilter filterGeoOrTemp = new TermsFilter();
-        filterGeoOrTemp.addTerm(new Term(Config.S_GEO_OR_TEMPORAL_INDEXED,"true"));
-        QueryConfiguration queryConfiguration1 = new QueryConfiguration();
-        queryConfiguration1.setProperty("bm25.idf.policy","standard");
-        queryConfiguration1.setProperty("bm25.k1","1.2d");
-        queryConfiguration1.setProperty("bm25.b","0.75d");
-//        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, BM25_STEMMER,1,null,filterGeoOrTemp));
-
-
-        TermsFilter filterGeoAndTemp = new TermsFilter();
-        filterGeoAndTemp.addTerm(new Term(Config.S_GEO_AND_TEMPORAL_INDEXED,"true"));
-        QueryConfiguration queryConfiguration2 = new QueryConfiguration();
-        queryConfiguration2.setProperty("bm25.idf.policy","standard");
-        queryConfiguration2.setProperty("bm25.k1","1.2d");
-        queryConfiguration2.setProperty("bm25.b","0.75d");
-//        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, BM25_STEMMER,2,null,filterGeoAndTemp));
+//        TermsFilter filterGeoOrTemp = new TermsFilter();
+//        filterGeoOrTemp.addTerm(new Term(Config.S_GEO_OR_TEMPORAL_INDEXED,"true"));
+//        QueryConfiguration queryConfiguration1 = new QueryConfiguration();
+//        queryConfiguration1.setProperty("bm25.idf.policy","standard");
+//        queryConfiguration1.setProperty("bm25.k1","1.2d");
+//        queryConfiguration1.setProperty("bm25.b","0.75d");
+////        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, BM25_STEMMER,1,null,filterGeoOrTemp));
+//
+//
+//        filterGeoAndTemp = new TermsFilter();
+//        filterGeoAndTemp.addTerm(new Term(Config.S_GEO_AND_TEMPORAL_INDEXED,"true"));
+//        QueryConfiguration queryConfiguration2 = new QueryConfiguration();
+//        queryConfiguration2.setProperty("bm25.idf.policy","standard");
+//        queryConfiguration2.setProperty("bm25.k1","1.2d");
+//        queryConfiguration2.setProperty("bm25.b","0.75d");
+////        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, BM25_STEMMER,2,null,filterGeoAndTemp));
 
 
         LgteIndexSearcherWrapper searcherMulti = Config.openMultiSearcherSentences();
@@ -121,7 +123,7 @@ public class BaseLineSentences {
 //        DataCacher dataCacher = new DataCacher();
 //        dataCacher.loadFromFile(IndexSentences.indexPath + File.separator + "docid.cache",true);
 //        //Search Topics Runs to submission
-        SearchTopics.search(searchConfigurations,searcherMulti,null);
+        SearchTopics.search(searchConfigurations,searcherMulti,null,Config.DOC_ID);
 
         searcherMulti.close();
 

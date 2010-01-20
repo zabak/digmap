@@ -36,28 +36,36 @@ public class TDirectory implements ITopicsPreprocessor
     public void handle(String collectionPath, ISearchCallBack callBack, String confId, String run,String collection,String outputDir, QueryConfiguration topicsConfiguration) throws MalformedURLException, DocumentException
     {
 
-        File dir = new File(collectionPath);
-        File[] files = dir.listFiles();
-        int i = 0;
-        for (File f : files)
+        File file = new File(collectionPath);
+        if(file.isDirectory())
         {
-            logger.info("topics directory> handling (" + i + "): " + f.getName());
-            TDocumentHandler documentHandler = TFileTypeFactory.createHandler(f.getName(),fileTypesPlugins);
-            try
+            File[] files = file.listFiles();
+            for (File f : files)
             {
-                InputStream fileInputStream = new FileInputStream(f);
-                documentHandler.handle(outputFormatFactory,fileInputStream,f.getName(),resourceHandler,callBack, fileTypesPlugins,confId,run,collection,outputDir, topicsConfiguration);
-                fileInputStream.close();
+                proccessTopicFile(f,callBack,confId,run,collection,outputDir,topicsConfiguration);
             }
-            catch (FileNotFoundException e)
-            {
-                logger.error(e,e);
-            }
-            catch (IOException e)
-            {
-                logger.error(e,e);
-            }
-            i++;
+        }
+        else
+            proccessTopicFile(file,callBack,confId,run,collection,outputDir,topicsConfiguration);
+    }
+
+    private void proccessTopicFile(File f,ISearchCallBack callBack,String confId,String run,String collection,String outputDir,QueryConfiguration topicsConfiguration)
+    {
+        logger.info("topics directory> handling one topic file: " + f.getName());
+        TDocumentHandler documentHandler = TFileTypeFactory.createHandler(f.getName(),fileTypesPlugins);
+        try
+        {
+            InputStream fileInputStream = new FileInputStream(f);
+            documentHandler.handle(outputFormatFactory,fileInputStream,f.getName(),resourceHandler,callBack, fileTypesPlugins,confId,run,collection,outputDir, topicsConfiguration);
+            fileInputStream.close();
+        }
+        catch (FileNotFoundException e)
+        {
+            logger.error(e,e);
+        }
+        catch (IOException e)
+        {
+            logger.error(e,e);
         }
     }
 }

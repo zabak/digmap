@@ -1,7 +1,7 @@
 package pt.utl.ist.lucene.treceval.geotime.utiltasks;
 
 import pt.utl.ist.lucene.treceval.geotime.index.Config;
-import pt.utl.ist.lucene.treceval.geotime.index.CreateWoeidIndex;
+import pt.utl.ist.lucene.treceval.geotime.index.IndexWoeid;
 import pt.utl.ist.lucene.treceval.geotime.webservices.CallWebServices;
 import pt.utl.ist.lucene.utils.placemaker.BelongTosDocument;
 
@@ -9,10 +9,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.FileWriter;
 
-import com.aliasi.lm.LanguageModel;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.TermEnum;
-import org.apache.lucene.index.Term;
 
 /**
  * @author Jorge Machado
@@ -30,7 +28,7 @@ public class BelongTosTagger
         int maxbelongtoos = 0;
         new File(output).mkdirs();
         FileWriter writer = new FileWriter(output + File.separator + "woeidBelongTos.txt");
-        IndexReader reader = IndexReader.open(CreateWoeidIndex.indexPath);
+        IndexReader reader = IndexReader.open(IndexWoeid.indexPath);
 //        TermEnum termEnum = reader.terms(new Term(Config.G_GEO_ALL_WOEID,"WOEID-0"));
         TermEnum termEnum = reader.terms();
 //        termEnum.next();//skipping 0

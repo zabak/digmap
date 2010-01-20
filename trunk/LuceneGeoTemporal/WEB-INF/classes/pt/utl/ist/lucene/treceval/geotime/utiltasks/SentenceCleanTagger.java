@@ -215,6 +215,10 @@ public class SentenceCleanTagger {
                     {
                         more += " anchor=\"" + timeExpression.getAnchor().getNormalizedExpression() + "\"";
                     }
+                    if (timeExpression.getTeClass() == TimeExpression.TEClass.Point && timeExpression.getTimex2().getPrenorm() != null && timeExpression.getTimex2().getPrenorm().startsWith("|fq|"))
+                        more += " pointSubType=\"date\"";
+                    else
+                        more += " pointSubType=\"relative\"";
                     fw.write("\t\t\t<TIME_EXPRESSION valid=\"" + timeExpression.isValid() + "\" teClass=\"" + timeExpression.getTeClass().toString() + "\" type=\"" + timeExpression.getType().toString() + "\" index=\""+timeExpression.getNormalizedExpression()+"\" timex2id=\"" + timeExpression.getTimex2id() + "\"" + more + ">" + timeExpression.getRefNLTxt() + "</TIME_EXPRESSION>\n");
                 }
                 fw.write("\t\t</TIME_SIGNATURE>\n");

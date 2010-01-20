@@ -38,9 +38,9 @@ public class BaseLine {
 //        Globals.INDEX_DIR = args[0];
 //        Globals.DATA_DIR = args[1];
 
-        String topicsPath =   "D:\\Servidores\\DATA\\ntcir\\topics";
-        String outputDir =    "D:\\Servidores\\DATA\\ntcir\\runs";
-        String assessements = "D:\\Servidores\\DATA\\ntcir\\assessements\\qrels";
+        String topicsPath =   Config.ntcirBase +  File.separator + "topics" + File.separator + "GeoTime-EN-JA-Topics_ntcirEdited_10.xml";
+        String outputDir =    Config.ntcirBase +  File.separator + "runs";
+        String assessements = Config.ntcirBase +  File.separator + "assessements" + File.separator + "qrels";
 
 
         new File(outputDir).mkdirs();
@@ -49,25 +49,20 @@ public class BaseLine {
          //TOPICS
          ********************************************/
         /**
-         * <TOPIC ID="ACLIA1-JA-T119" type="DP">
-         <QUESTION LANG="EN" >
-         <![CDATA[ What is the controversy surrounding the use of the Stealth Fighter in Yugoslavia?]]>
-         </QUESTION>
-         <QUESTION LANG="JA">
-         <![CDATA[ ???????????????????????????????????]]>
-         </QUESTION>
-         <NARRATIVE LANG="EN">
-         <![CDATA[ I would like to know about the dates and times of events and places in which there was a controversy surrounding the use of the Stealth Fighter in Yugoslavia. ]]>
-         </NARRATIVE>
-         <NARRATIVE LANG="JA">
-         <![CDATA[????????????????????????????????????????]]>
-         </NARRATIVE>
-         </TOPIC>
+         *   <TOPIC ID="GeoTime-0001">
+                <DESCRIPTION LANG="EN">
+                <![CDATA[When and where did Astrid Lindgren die?]]>
+                </DESCRIPTION>
+                <NARRATIVE LANG="EN">
+                <![CDATA[The user wants to know when and in what city the children's author Astrid Lindgren died.]]>
+                </NARRATIVE>
+            </TOPIC>
          */
 
         List<XmlFieldHandler> xmlTopicFieldHandlers = new ArrayList<XmlFieldHandler>();
 
-        xmlTopicFieldHandlers.add(new SimpleXmlFieldHandler("./QUESTION/text()",new SimpleFieldFilter(),"contents"));
+        xmlTopicFieldHandlers.add(new SimpleXmlFieldHandler("./DESCRIPTION[@LANG='EN']/text()",new MultipleFieldFilter(2),"contents"));
+        xmlTopicFieldHandlers.add(new SimpleXmlFieldHandler("./NARRATIVE [@LANG='EN']/text()",new SimpleFieldFilter(),"contents"));
         ResourceHandler topicResourceHandler = new XmlResourceHandler("//TOPIC","./@ID",xmlTopicFieldHandlers);
         TrecEvalOutputFormatFactory factory =  new TrecEvalOutputFormatFactory(Globals.DOCUMENT_ID_FIELD);
         ITopicsPreprocessor topicsDirectory = new TDirectory(topicResourceHandler,factory);
@@ -93,27 +88,29 @@ public class BaseLine {
         queryConfigurationBase.setProperty("bm25.idf.policy","standard");
         queryConfigurationBase.setProperty("bm25.k1","1.2d");
         queryConfigurationBase.setProperty("bm25.b","0.75d");
-        searchConfigurations.add(new SearchConfiguration(queryConfigurationBase, BM25_STEMMER,0,null,null));
-
-        /***
-         * Search Configurations
-         */
-        TermsFilter filterGeoOrTemp = new TermsFilter();
-        filterGeoOrTemp.addTerm(new Term(Config.S_GEO_OR_TEMPORAL_INDEXED,"true"));
-        QueryConfiguration queryConfiguration1 = new QueryConfiguration();
-        queryConfiguration1.setProperty("bm25.idf.policy","standard");
-        queryConfiguration1.setProperty("bm25.k1","1.2d");
-        queryConfiguration1.setProperty("bm25.b","0.75d");
-//        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, BM25_STEMMER,1,null,filterGeoOrTemp));
-
-
         TermsFilter filterGeoAndTemp = new TermsFilter();
         filterGeoAndTemp.addTerm(new Term(Config.S_GEO_AND_TEMPORAL_INDEXED,"true"));
-        QueryConfiguration queryConfiguration2 = new QueryConfiguration();
-        queryConfiguration2.setProperty("bm25.idf.policy","standard");
-        queryConfiguration2.setProperty("bm25.k1","1.2d");
-        queryConfiguration2.setProperty("bm25.b","0.75d");
-//        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, BM25_STEMMER,2,null,filterGeoAndTemp));
+        searchConfigurations.add(new SearchConfiguration(queryConfigurationBase, BM25_STEMMER,0,null,filterGeoAndTemp));
+
+//        /***
+//         * Search Configurations
+//         */
+//        TermsFilter filterGeoOrTemp = new TermsFilter();
+//        filterGeoOrTemp.addTerm(new Term(Config.S_GEO_OR_TEMPORAL_INDEXED,"true"));
+//        QueryConfiguration queryConfiguration1 = new QueryConfiguration();
+//        queryConfiguration1.setProperty("bm25.idf.policy","standard");
+//        queryConfiguration1.setProperty("bm25.k1","1.2d");
+//        queryConfiguration1.setProperty("bm25.b","0.75d");
+////        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, BM25_STEMMER,1,null,filterGeoOrTemp));
+//
+//
+//        filterGeoAndTemp = new TermsFilter();
+//        filterGeoAndTemp.addTerm(new Term(Config.S_GEO_AND_TEMPORAL_INDEXED,"true"));
+//        QueryConfiguration queryConfiguration2 = new QueryConfiguration();
+//        queryConfiguration2.setProperty("bm25.idf.policy","standard");
+//        queryConfiguration2.setProperty("bm25.k1","1.2d");
+//        queryConfiguration2.setProperty("bm25.b","0.75d");
+////        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, BM25_STEMMER,2,null,filterGeoAndTemp));
 
 
         LgteIndexSearcherWrapper searcherMulti = Config.openMultiSearcher();

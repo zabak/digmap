@@ -26,7 +26,7 @@ import java.util.zip.ZipInputStream;
  * @time 10:21:53
  * @email machadofisher@gmail.com
  */
-public class CreateWoeidIndex {
+public class IndexWoeid {
 
 
     public static String indexPath = Config.indexBase + File.separator + "woeid";
@@ -141,6 +141,7 @@ public class CreateWoeidIndex {
         StringBuilder G_PLACE_REF_WOEID = new StringBuilder();
         StringBuilder G_PLACE_BELONG_TOS_TEXT = new StringBuilder();
         StringBuilder G_PLACE_BELONG_TOS_WOEID = new StringBuilder();
+        StringBuilder G_GEO_PLACE_TYPE = new StringBuilder();
         if(placeMakerDocument.getAdministrativeWoeid() != null)
         {
             doc.indexString(Config.G_ADMIN_SCOPE_WOEID, PlaceNameNormalizer.normalizeWoeid(placeMakerDocument.getAdministrativeWoeid()));
@@ -167,16 +168,18 @@ public class CreateWoeidIndex {
                     G_GEO_ALL_WOEID.append(PlaceNameNormalizer.normalizeWoeid(placeDetails.getWoeId())).append(" ");
                     G_PLACE_NAME_TEXT.append(placeDetails.getName()).append(" ");
                     G_ALL_TEXT.append(placeDetails.getName()).append(" ");
+                    G_GEO_PLACE_TYPE.append(placeDetails.getType()).append(" ");
                     addBelongTos(placeDetails.getWoeId(),G_PLACE_BELONG_TOS_TEXT,G_PLACE_BELONG_TOS_WOEID,G_ALL_TEXT,G_GEO_ALL_WOEID);
                 }
             }
         }
-        doc.indexTextNoStore(Config.G_GEO_ALL_WOEID,G_GEO_ALL_WOEID.toString());
+        doc.indexTextNoStore(Config.G_GEO_ALL_WOEID,G_GEO_ALL_WOEID.toString());       
         doc.indexTextNoStore(Config.G_PLACE_NAME_TEXT,G_PLACE_NAME_TEXT.toString());
         doc.indexTextNoStore(Config.G_ALL_TEXT,G_ALL_TEXT.toString());
         doc.indexText(Config.G_PLACE_REF_WOEID,G_PLACE_REF_WOEID.toString());
         doc.indexTextNoStore(Config.G_PLACE_BELONG_TOS_TEXT,G_PLACE_BELONG_TOS_TEXT.toString());
         doc.indexTextNoStore(Config.G_PLACE_BELONG_TOS_WOEID,G_PLACE_BELONG_TOS_WOEID.toString());
+        doc.indexTextNoStore(Config.G_GEO_PLACE_TYPE,G_GEO_PLACE_TYPE.toString());
         writer.addDocument(doc);
     }
 

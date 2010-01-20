@@ -23,7 +23,6 @@ public class IndexGeoTimeSentences
     public static void main(String[] args) throws IOException {
         IntegratedDocPlaceMakerAndTimexIterator iterator = new IntegratedDocPlaceMakerAndTimexIterator(Config.documentPath,Config.timexesPath,Config.placemakerPath);
         LgteIndexWriter writer = new LgteIndexWriter(indexPath,new LgteNothingAnalyzer(),true, Model.BM25b);
-        writer.close();
         IntegratedDocPlaceMakerAndTimexIterator.DocumentWithPlacesAndTimexes d;
         while((d = iterator.next())!=null)
         {

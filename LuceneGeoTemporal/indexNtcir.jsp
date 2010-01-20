@@ -580,7 +580,22 @@
 
             Iterator<PlaceMakerDocument.PlaceRef> placesIter;
             if (placeMakerDocument != null)
-                placesIter = placeMakerDocument.getAllRefs().iterator();
+            {
+                List<PlaceMakerDocument.PlaceRef> refs = placeMakerDocument.getAllRefs();
+                Collections.sort(refs, new Comparator<PlaceMakerDocument.PlaceRef>() {
+
+                    public int compare(PlaceMakerDocument.PlaceRef o1, PlaceMakerDocument.PlaceRef o2) {
+                        if (o1.getStartOffset() > o2.getStartOffset())
+                            return 1;
+                        else if (o1.getStartOffset() < o2.getStartOffset())
+                            return -1;
+                        else return 0;
+
+                    }
+                }
+                );
+                placesIter = refs.iterator();
+            }
             else
                 placesIter = new ArrayList<PlaceMakerDocument.PlaceRef>().iterator();
 

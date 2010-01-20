@@ -24,7 +24,7 @@ import java.util.HashMap;
  * @time 10:21:53
  * @email machadofisher@gmail.com
  */
-public class CreateTimeExprIndex {
+public class IndexTimexes {
 
 
 

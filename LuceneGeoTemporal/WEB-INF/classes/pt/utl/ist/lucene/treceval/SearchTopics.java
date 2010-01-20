@@ -37,6 +37,7 @@ public class SearchTopics implements ISearchCallBack
     public boolean externalSearcher = false;
 
     private DataCacher idsCache;
+    private String groupField = null;
 
     /**
      * constructor
@@ -60,6 +61,19 @@ public class SearchTopics implements ISearchCallBack
 
     public SearchTopics(SearchConfiguration searchConfiguration,LgteIndexSearcherWrapper lgeIndexSearcherWrapper, DataCacher idsCache) throws IOException
     {
+        this(searchConfiguration,lgeIndexSearcherWrapper,idsCache,null);
+    }
+
+    /**
+     *
+     * @param searchConfiguration
+     * @param lgeIndexSearcherWrapper
+     * @param idsCache
+     * @param groupField field to "group by" docs
+     * @throws IOException
+     */
+    public SearchTopics(SearchConfiguration searchConfiguration,LgteIndexSearcherWrapper lgeIndexSearcherWrapper, DataCacher idsCache, String groupField) throws IOException
+    {
         this.maxResultsForOutput = searchConfiguration.getConfiguration().getMaxResultsPerTopic();
         this.searchConfiguration = searchConfiguration;
         configuration = searchConfiguration.getConfiguration();
@@ -75,6 +89,7 @@ public class SearchTopics implements ISearchCallBack
             externalSearcher = true;
 
         this.idsCache = idsCache;
+        this.groupField = groupField;
     }
 
     /**
@@ -122,26 +137,8 @@ public class SearchTopics implements ISearchCallBack
      */
     public static void search(List<SearchConfiguration> searchConfigurations,LgteIndexSearcherWrapper searcherWrapper) throws IOException, DocumentException
     {
-
-        //topicTotalResults = new FileWriter("D:/topicTotalResults.csv");
-        //topicTotalResults.write("topic;total;s>=0.99;s>=0.98;s>=0.95;s>=0.9;s>=0.8;s>=0.5;\n");
-
-        for (SearchConfiguration c : searchConfigurations)
-        {
-            SearchTopics searchTopics = new SearchTopics(c,searcherWrapper);
-            searchTopics.searchTopics();
-            searchTopics.close();
-        }
-
-
-
-//        createRunPackage(runPackageFileOutputDir,searchConfigurations);
-
-
-        //topicTotalResults.close();
-
+        search(searchConfigurations,searcherWrapper,null);
     }
-
 
     /**
      * Static service to search in a list of Configurations
@@ -152,24 +149,26 @@ public class SearchTopics implements ISearchCallBack
      */
     public static void search(List<SearchConfiguration> searchConfigurations,LgteIndexSearcherWrapper searcherWrapper, DataCacher idsCache) throws IOException, DocumentException
     {
+        search(searchConfigurations,searcherWrapper,idsCache,null);
+    }
 
-        //topicTotalResults = new FileWriter("D:/topicTotalResults.csv");
-        //topicTotalResults.write("topic;total;s>=0.99;s>=0.98;s>=0.95;s>=0.9;s>=0.8;s>=0.5;\n");
-
+    /**
+     *
+     * @param searchConfigurations
+     * @param searcherWrapper
+     * @param idsCache
+     * @param groupField field to "group by" results
+     * @throws IOException
+     * @throws DocumentException
+     */
+    public static void search(List<SearchConfiguration> searchConfigurations,LgteIndexSearcherWrapper searcherWrapper, DataCacher idsCache, String groupField) throws IOException, DocumentException
+    {
         for (SearchConfiguration c : searchConfigurations)
         {
-            SearchTopics searchTopics = new SearchTopics(c,searcherWrapper,idsCache);
+            SearchTopics searchTopics = new SearchTopics(c,searcherWrapper,idsCache,groupField);
             searchTopics.searchTopics();
             searchTopics.close();
         }
-
-
-
-//        createRunPackage(runPackageFileOutputDir,searchConfigurations);
-
-
-        //topicTotalResults.close();
-
     }
 
 
@@ -291,16 +290,37 @@ public class SearchTopics implements ISearchCallBack
         format.writeHeader(hits.length());
         logger.info("Total Time taked in tree index code: " + BaseLineSentences.totalTimeTree);
         logger.info("Will write output to run file: " + searchConfiguration.getRun() );
-        for (int i = 0; i < hits.length() && i < maxResultsForOutput; i++)
+        int count = 0;
+        Map<String,Boolean> results = new HashMap<String,Boolean>();
+        if(groupField != null)
+            logger.info("Using group field: " + groupField);
+        for (int i = 0; i < hits.length() && count < maxResultsForOutput; i++)
         {
-            int id = hits.id(i);
-            System.out.println("writing " + i);
-            if(idsCache != null)
+            boolean isAlreadyInList = false;
+            if(groupField != null)
             {
-                format.writeRecord(((String)this.idsCache.get("docid",id)), i , hits.getHits(), hits.score(i), searchConfiguration.getRun());
+                String groupId = hits.doc(i).get(groupField);
+                if(results.get(groupId) != null)
+                {
+                    isAlreadyInList = true;
+                    logger.info("Doc: " + groupId + " already in list skipping...");
+                }
+                else
+                    results.put(groupId,true);
             }
-            else
-                format.writeRecord(null, i , hits.getHits(), hits.score(i), searchConfiguration.getRun());
+
+            if(!isAlreadyInList)
+            {
+                int id = hits.id(i);
+                System.out.println("writing " + i);
+                if(idsCache != null)
+                {
+                    format.writeRecord(((String)this.idsCache.get("docid",id)), i , hits.getHits(), hits.score(i), searchConfiguration.getRun());
+                }
+                else
+                    format.writeRecord(null, i , hits.getHits(), hits.score(i), searchConfiguration.getRun());
+                count++;
+            }
         }
         format.writeFooter();
         logger.info("writeTime:" + (System.currentTimeMillis() - time) + " ms");

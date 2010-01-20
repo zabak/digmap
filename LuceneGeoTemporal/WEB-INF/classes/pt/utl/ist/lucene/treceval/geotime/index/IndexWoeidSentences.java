@@ -2,7 +2,6 @@ package pt.utl.ist.lucene.treceval.geotime.index;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.dom4j.DocumentException;
-import pt.utl.ist.lucene.Globals;
 import pt.utl.ist.lucene.LgteDocumentWrapper;
 import pt.utl.ist.lucene.LgteIndexWriter;
 import pt.utl.ist.lucene.Model;
@@ -131,11 +130,11 @@ public class IndexWoeidSentences {
             i++;
             if(i % 1000 == 0)
             {
-                System.out.println("docs:" + i + " stmts: " + p + " :" + placeMakerDocument.getD().getDId());
+                System.out.println("docs:" + i + " sentences: " + p + " :" + placeMakerDocument.getD().getDId());
             }
         }
         writer.close();
-        System.out.println("docs:" + i + " stmts: " + p);
+        System.out.println("docs:" + i + " sentences: " + p);
     }
 
     static int i = 0;
@@ -149,7 +148,6 @@ public class IndexWoeidSentences {
         {
 
             LgteDocumentWrapper doc = new LgteDocumentWrapper();
-            doc.indexString(Globals.DOCUMENT_ID_FIELD,placeMakerDocument.getD().getDId());
             doc.indexString(Config.ID,placeMakerDocument.getD().getDId() + "$$" + sentence.getIndex());
             doc.indexString(Config.DOC_ID,placeMakerDocument.getD().getDId());
 
@@ -173,12 +171,12 @@ public class IndexWoeidSentences {
                     addBelongTos(placeDetails.getWoeId(),G_PLACE_BELONG_TOS_TEXT,G_PLACE_BELONG_TOS_WOEID,G_ALL_TEXT,G_GEO_ALL_WOEID);
                 }
             }
-            doc.indexTextNoStore(Config.G_GEO_ALL_WOEID,G_GEO_ALL_WOEID.toString());
-            doc.indexTextNoStore(Config.G_PLACE_NAME_TEXT,G_PLACE_NAME_TEXT.toString());
-            doc.indexTextNoStore(Config.G_ALL_TEXT,G_ALL_TEXT.toString());
-            doc.indexText(Config.G_PLACE_REF_WOEID,G_PLACE_REF_WOEID.toString());
-            doc.indexTextNoStore(Config.G_PLACE_BELONG_TOS_TEXT,G_PLACE_BELONG_TOS_TEXT.toString());
-            doc.indexTextNoStore(Config.G_PLACE_BELONG_TOS_WOEID,G_PLACE_BELONG_TOS_WOEID.toString());
+            doc.indexTextNoStore(Config.G_GEO_ALL_WOEID + "_" + Config.SENTENCES,G_GEO_ALL_WOEID.toString());
+            doc.indexTextNoStore(Config.G_PLACE_NAME_TEXT + "_" + Config.SENTENCES,G_PLACE_NAME_TEXT.toString());
+            doc.indexTextNoStore(Config.G_ALL_TEXT + "_" + Config.SENTENCES,G_ALL_TEXT.toString());
+            doc.indexText(Config.G_PLACE_REF_WOEID + "_" + Config.SENTENCES,G_PLACE_REF_WOEID.toString());
+            doc.indexTextNoStore(Config.G_PLACE_BELONG_TOS_TEXT + "_" + Config.SENTENCES,G_PLACE_BELONG_TOS_TEXT.toString());
+            doc.indexTextNoStore(Config.G_PLACE_BELONG_TOS_WOEID + "_" + Config.SENTENCES,G_PLACE_BELONG_TOS_WOEID.toString());
             writer.addDocument(doc);
         }
     }

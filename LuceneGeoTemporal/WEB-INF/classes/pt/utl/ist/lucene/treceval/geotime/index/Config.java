@@ -60,6 +60,7 @@ public class Config
     public static final String CONTENTS = Globals.LUCENE_DEFAULT_FIELD;
     public static final String DOC_ID = "doc_id";
     public static final String SENTENCES = "sentences";
+    public static final String SEP = "_";
 
 
     //FOUND Expressions
@@ -163,7 +164,7 @@ public class Config
     {
         IndexReader readerSentences = LgteIndexManager.openReader(IndexSentences.indexPath, Model.OkapiBM25Model);
         IndexReader readerContents = LgteIndexManager.openReader(IndexContents.indexPath, Model.OkapiBM25Model);
-//        IndexReader readerGeoTime = LgteIndexManager.openReader(IndexGeoTime.indexPath, Model.OkapiBM25Model);
+        IndexReader readerGeoTime = LgteIndexManager.openReader(IndexGeoTimeSentences.indexPath, Model.OkapiBM25Model);
 
         Map<String,IndexReader> readers = new HashMap<String,IndexReader>();
 
@@ -171,7 +172,7 @@ public class Config
         readers.put(Config.ID,readerSentences);
         readers.put(Config.SENTENCES,readerSentences);
         readers.put(Config.DOC_ID,readerSentences);
-//        readers.put("regexpr(^S_.*)",readerGeoTime);
+        readers.put(Config.S_GEO_OR_TEMPORAL_INDEXED + "_" + Config.SENTENCES,readerGeoTime);
         LgteIsolatedIndexReader lgteIsolatedIndexReader = new LgteIsolatedIndexReader(readers);
         lgteIsolatedIndexReader.addTreeMapping(readerContents,readerSentences,DOC_ID);
 

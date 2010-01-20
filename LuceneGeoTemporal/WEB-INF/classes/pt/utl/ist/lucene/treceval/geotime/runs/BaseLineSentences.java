@@ -66,7 +66,12 @@ public class BaseLineSentences {
 
         List<XmlFieldHandler> xmlTopicFieldHandlers = new ArrayList<XmlFieldHandler>();
 
-        xmlTopicFieldHandlers.add(new SimpleXmlFieldHandler("./QUESTION/text()",new SimpleFieldFilter(),Config.SENTENCES));
+
+
+        xmlTopicFieldHandlers.add(new SimpleXmlFieldHandler("./DESCRIPTION[@LANG='EN']/text()",new MultipleFieldFilter(2),Config.SENTENCES));
+        xmlTopicFieldHandlers.add(new SimpleXmlFieldHandler("./NARRATIVE [@LANG='EN']/text()",new SimpleFieldFilter(),Config.SENTENCES));
+        xmlTopicFieldHandlers.add(new SimpleXmlFieldHandler("./DESCRIPTION[@LANG='EN']/text()",new MultipleFieldFilter(2),Config.CONTENTS));
+        xmlTopicFieldHandlers.add(new SimpleXmlFieldHandler("./NARRATIVE [@LANG='EN']/text()",new SimpleFieldFilter(),Config.CONTENTS));
         ResourceHandler topicResourceHandler = new XmlResourceHandler("//TOPIC","./@ID",xmlTopicFieldHandlers);
         TrecEvalOutputFormatFactory factory =  new TrecEvalOutputFormatFactory(Globals.DOCUMENT_ID_FIELD);
         ITopicsPreprocessor topicsDirectory = new TDirectory(topicResourceHandler,factory);
@@ -77,7 +82,7 @@ public class BaseLineSentences {
          ********************************************/
         //maxResults in output File per topic;
         int maxResults = 500;
-        Configuration BM25_STEMMER = new Configuration("version1", "geotime","bm25", Model.OkapiBM25Model, IndexCollections.en.getAnalyzerWithStemming(),null,null,topicsPath, topicsDirectory,"contents", IndexCollections.en.getWordList(),outputDir,maxResults);
+        Configuration BM25_STEMMER = new Configuration("base-sentences_linear_comb_contents-geo_or_temp_indexed.txt", Model.OkapiBM25Model, IndexCollections.en.getAnalyzerWithStemming(),null,null,topicsPath, topicsDirectory,"contents", IndexCollections.en.getWordList(),outputDir,maxResults);
 
 //        LgteSort lgteSort = new LgteSort(new SortField[] {new SortField(Config.GEO_AND_TEMPORAL_INDEXED),new SortField(Config.GEO_OR_TEMPORAL_INDEXED)});
 
@@ -93,8 +98,10 @@ public class BaseLineSentences {
         queryConfigurationBase.setProperty("bm25.k1","1.2d");
         queryConfigurationBase.setProperty("bm25.b","0.75d");
         queryConfigurationBase.setProperty("index.tree","true");
+        queryConfigurationBase.setProperty("field.boost.contents","0.3");
+        queryConfigurationBase.setProperty("field.boost.sentences","0.7");
         TermsFilter filterGeoAndTemp = new TermsFilter();
-        filterGeoAndTemp.addTerm(new Term(Config.S_GEO_OR_TEMPORAL_INDEXED,"true"));
+        filterGeoAndTemp.addTerm(new Term(Config.S_GEO_OR_TEMPORAL_INDEXED + "_" + Config.SENTENCES,"true"));
         searchConfigurations.add(new SearchConfiguration(queryConfigurationBase, BM25_STEMMER,10,null,filterGeoAndTemp));
 
         /***

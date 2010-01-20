@@ -50,7 +50,7 @@ public class DocumentTemporalSentences {
         this.timexesDocument = timexesdocument;
 
 
-        if(this.timexesDocument.getTimex2TimeExpressions() != null && this.timexesDocument.getTimex2TimeExpressions().size()>0)
+        if(this.timexesDocument != null && this.timexesDocument.getTimex2TimeExpressions() != null && this.timexesDocument.getTimex2TimeExpressions().size()>0)
         {
             Iterator<Timex2TimeExpression> timexExpressionSetIter = this.timexesDocument.getTimex2TimeExpressions().iterator();
             Timex2TimeExpression timex2TimeExpressionsList = timexExpressionSetIter.next();

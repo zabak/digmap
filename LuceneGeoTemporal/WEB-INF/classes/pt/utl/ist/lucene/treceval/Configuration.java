@@ -43,6 +43,7 @@ public class Configuration
 
    
 
+    public String runAssignedFileName = null;
     public boolean createIndex = true;
     public String version;
     private String dir;
@@ -83,6 +84,23 @@ public class Configuration
         this.maxResultsPerTopic = maxResultsPerTopic;
     }
 
+
+    public Configuration(String runFileName, Model model, Analyzer analyzer, String collectionPath, ICollectionPreprocessor preprocessor, String topicsPath, ITopicsPreprocessor iTopicsProcessor,String defaultSearchField, HashSet stop, String outputDir, int maxResultsPerTopic)
+       {
+
+           this.runAssignedFileName = runFileName;
+           this.model = model;
+           this.analyzer = analyzer;
+           this.collectionPath = collectionPath;
+           this.preprocessor = preprocessor;
+           this.topicsPath = topicsPath;
+           this.iTopicsProcessor = iTopicsProcessor;
+           this.searchIndex = defaultSearchField;
+           this.stop = stop;
+           this.outputDir = outputDir;
+           this.maxResultsPerTopic = maxResultsPerTopic;
+       }
+
     public String getIndexPath()
     {
         return  Globals.INDEX_DIR + "/" + dir + "/" + version + "/" + collectionId;
@@ -109,6 +127,14 @@ public class Configuration
         return model;
     }
 
+
+    public String getRunAssignedFileName() {
+        return runAssignedFileName;
+    }
+
+    public void setRunAssignedFileName(String runAssignedFileName) {
+        this.runAssignedFileName = runAssignedFileName;
+    }
 
     public String getCollectionId()
     {

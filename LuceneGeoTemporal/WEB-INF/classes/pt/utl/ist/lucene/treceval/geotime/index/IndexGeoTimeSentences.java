@@ -51,28 +51,28 @@ public class IndexGeoTimeSentences
             doc.indexString(Config.DOC_ID,document.getD().getDId());
             p++;
             if(sentence.hasTimexes())
-                doc.indexStringNoStore(Config.S_HAS_TIMEXES + "_sentences","true");
+                doc.indexStringNoStore(Config.S_HAS_TIMEXES + "_" + Config.SENTENCES,"true");
 
             if(sentence.hasIndexableTimeExpressions() && sentence.hasPlaces())
-                doc.indexStringNoStore(Config.S_GEO_AND_TEMPORAL_INDEXED + "_sentences","true");
+                doc.indexStringNoStore(Config.S_GEO_AND_TEMPORAL_INDEXED + "_" + Config.SENTENCES,"true");
 
             if(sentence.hasIndexableTimeExpressions() || sentence.hasPlaces())
-                doc.indexStringNoStore(Config.S_GEO_OR_TEMPORAL_INDEXED + "_sentences","true");
+                doc.indexStringNoStore(Config.S_GEO_OR_TEMPORAL_INDEXED + "_" + Config.SENTENCES,"true");
 
             if(sentence.hasIndexableTimeExpressions())
-                doc.indexStringNoStore(Config.S_TEMPORAL_INDEXED + "_sentences","true");
+                doc.indexStringNoStore(Config.S_TEMPORAL_INDEXED +  "_" + Config.SENTENCES,"true");
 
             if(sentence.hasPlaces())
-                doc.indexStringNoStore(Config.S_GEO_INDEXED + "_sentences", "true");
+                doc.indexStringNoStore(Config.S_GEO_INDEXED +  "_" + Config.SENTENCES, "true");
 
             if(sentence.hasPointTimeExpressions())
-                doc.indexStringNoStore(Config.S_HAS_ANY_TIME_POINT + "_sentences", "true");
+                doc.indexStringNoStore(Config.S_HAS_ANY_TIME_POINT +  "_" + Config.SENTENCES, "true");
 
             if(sentence.hasKeyPointTimeExpressions())
-                doc.indexStringNoStore(Config.S_HAS_TIME_POINTS_KEY + "_sentences", "true");
+                doc.indexStringNoStore(Config.S_HAS_TIME_POINTS_KEY +  "_" + Config.SENTENCES, "true");
 
             if(sentence.hasRelativePointTimeExpressions())
-                doc.indexStringNoStore(Config.S_HAS_TIME_POINTS_RELATIVE + "_sentences", "true");
+                doc.indexStringNoStore(Config.S_HAS_TIME_POINTS_RELATIVE +  "_" + Config.SENTENCES, "true");
 
             writer.addDocument(doc);
         }

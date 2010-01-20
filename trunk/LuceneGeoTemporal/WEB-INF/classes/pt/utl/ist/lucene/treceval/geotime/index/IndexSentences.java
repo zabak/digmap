@@ -61,12 +61,12 @@ public class IndexSentences {
 
             if(i % 1000 == 0)
             {
-                System.out.println("docs:" + i + " stmts: " + p + " :" + d.getDId());
+                System.out.println("docs:" + i + " sentences: " + p + " :" + d.getDId());
             }
 
         }
         writer.close();
-        System.out.println("docs:" + i + " stmts: " + p);
+        System.out.println("docs:" + i + " sentences: " + p);
     }
     static int i = 0;
     static int p = 0;

@@ -47,11 +47,13 @@ public class TermsFilter extends Filter
             for (Iterator iter = terms.iterator(); iter.hasNext();)
             {
                 Term term = (Term) iter.next();
-                td.seek(term);
+                td.seek(term);     int i= 0;
                 while (td.next())
                 {
                     result.set(td.doc());
+                    i++;
                 }
+                System.out.println("Filter returns:" + i + " docs");
             }
         }
         finally

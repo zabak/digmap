@@ -49,6 +49,8 @@ public class SearchConfiguration
         this.filter = filter;
     }
 
+    
+
     public QueryConfiguration getQueryConfiguration()
     {
         return queryConfiguration;
@@ -78,6 +80,9 @@ public class SearchConfiguration
 
     public String getFileId()
     {
+        if(configuration.getRunAssignedFileName() != null)
+            return getRun() + "-" + configuration.getRunAssignedFileName();
+        
         String filter = "-filter_" + FilterEnum.defaultFilter.toString();
         String order = "-order_" + OrderEnum.defaultOrder.toString();
         if(getQueryConfiguration() != null)

@@ -69,7 +69,7 @@ public class ProbabilisticCleanIndexSearcher extends ProbabilisticIndexSearcher
                         (bits == null || bits.get(doc)))
                 {
                     totalHits[0]++;
-                    int docLen = 20;//getDocLength(doc);        todo JORGE
+                    int docLen = getDocLength(doc);
 
                     if (docLen > 0)
                     {

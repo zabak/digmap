@@ -107,7 +107,7 @@ final class TermScorerDFR extends LgteFieldedTermScorer {
 
     static double colsize;
     static double avgLen;
-    static double numDocs;
+    double numDocs;
 
 
 
@@ -134,11 +134,14 @@ final class TermScorerDFR extends LgteFieldedTermScorer {
 
     public float score() throws IOException
     {
+        float tfDoc = freqs[pointer];
+        return score(tfDoc,doc);
+    }
 
-
-        Double avgDocLen = avgLen;
+    private float score(float tfDoc,int doc) throws IOException
+    {
+        Double avgDocLen;
         int docLen;
-
         if (useFieldLengths)
         {
 //            System.out.println("Using Fields useFieldLengths = true");
@@ -148,13 +151,9 @@ final class TermScorerDFR extends LgteFieldedTermScorer {
         else
         {
             docLen = indexReader.getDocLength(doc);
+            avgDocLen = avgLen;
         }
-        float tfDoc = freqs[pointer];
         double sim = 0;
-
-
-
-
         if(model == Model.OkapiBM25Model || model == Model.BM25b)
         {
 
@@ -274,28 +273,6 @@ final class TermScorerDFR extends LgteFieldedTermScorer {
                 case BB2DFRModel : sim = ((tfCollection+1)/(docFreq+(tfn+1))) * (-Math.log1p(colsize -1)-Math.log1p(Math.E)+stirlingFormula(tfCollection+ colsize -1,tfCollection+ colsize -tfn-2)-stirlingFormula(tfCollection,tfCollection+tfn)); break;
             }
         }
-
-
-
-        /*
-       *
-       * Token tok = (Token)it.next();
-               Integer dfInteger = (Integer)documentFrequency.get(tok);
-               double df = dfInteger==null ? 0.0 : dfInteger.intValue();
-               double idf = Math.log((numDocs+0.5)/(df+0.5));
-               score += idf * (
-                       (bags.getWeight(tok) * (k1+1))
-                       /
-                       (
-                           bags.getWeight(tok)
-                               +
-                           k1 * (
-                                   (1.0-b)
-                                        +
-                                    b   *   (bags.size()/((totalTokenCount+1.0) / numDocs)))) );
-       *
-       *
-       * */
 
         if(sim < 0 && model != Model.OkapiBM25Model  && model != Model.BM25b )
             System.out.println(">>>>>>>>>>>>>>>>>>>>>>>FATAL  : PLEASE CHECK DFR Formulas similarity come negative for doc:" + doc + " term: " + term.text());
@@ -428,25 +405,83 @@ final class TermScorerDFR extends LgteFieldedTermScorer {
     }
 
     public Explanation explain(int doc) throws IOException {
-        TermQuery query = (TermQuery) weight.getQuery();
-        Explanation tfExplanation = new Explanation();
-        int tf = 0;
+//        TermQuery query = (TermQuery) weight.getQuery();
+        Explanation explanation = new Explanation();
+        int tfDoc = 0;
         while (pointer < pointerMax) {
             if (docs[pointer] == doc)
-                tf = freqs[pointer];
+                tfDoc = freqs[pointer];
             pointer++;
         }
-        if (tf == 0) {
+        if (tfDoc == 0) {
             while (termDocs.next()) {
                 if (termDocs.doc() == doc) {
-                    tf = termDocs.freq();
+                    tfDoc = termDocs.freq();
                 }
             }
         }
         termDocs.close();
-        tfExplanation.setValue(getSimilarity().tf(tf));
-        tfExplanation.setDescription("tf(termFreq(" + query.getTerm() + ")=" + tf + ")");
-        return tfExplanation;
+        float score = score(tfDoc,doc);
+        explanation.setValue(score);
+        float thisWeight = weightValue / weight.getQuery().getBoost();
+        explanation.setDescription(model.getShortName() + "(" + term + ")^(" + thisWeight + "*" + weight.getQuery().getBoost() + ")=" + score + ")");
+        if(model == Model.OkapiBM25Model)
+        {
+            Explanation explanationBm25 = new Explanation();
+
+            Double avgDocLen;
+            int docLen;
+
+            if (useFieldLengths)
+            {
+//            System.out.println("Using Fields useFieldLengths = true");
+                docLen = indexReader.getFieldLength(doc, term.field());
+                avgDocLen = indexReader.getAvgLenTokenNumber(term.field());
+            }
+            else
+            {
+                docLen = indexReader.getDocLength(doc);
+                avgDocLen = avgLen;
+            }
+            double epslon = 0.01d;
+            double k1 = 2.0, b = 0.75;
+
+            double idf = idf(epslon, docFreq,queryConfiguration);
+            Double k1Cache = getDoubleCache("bm25.k1", queryConfiguration,k1,BM25_k1_CACHE_INDEX);
+            Double bCache = getDoubleCache("bm25.b", queryConfiguration,b,BM25_b_CACHE_INDEX);
+            double sim = idf *
+                    (
+                            (tfDoc*(k1Cache + 1))
+                                    /
+                                    ( tfDoc + k1Cache*(1.0 - bCache + bCache*(docLen/avgDocLen)))
+                    );
+
+
+            StringBuilder details = new StringBuilder();
+            details.append("BM25 - doc-Id:" + doc);
+            details.append(" - Doc-Len:" + docLen);
+            details.append(" - Avg-Doc-Len:" + avgDocLen);
+            details.append(" - docFreq:" + docFreq);
+            details.append(" - tfDoc:" + tfDoc );
+            details.append(" - idf:" + idf );
+            details.append(" - Policy:" + (queryConfiguration.getCacheObject(BM25_POLICY_CACHE_INDEX)) );
+            details.append(" - Epslon:" + (queryConfiguration.getCacheObject(BM25_EPSLON_CACHE_INDEX)));
+            details.append(" - K1:" + k1Cache.doubleValue() );
+            details.append(" - b:" + bCache.doubleValue());
+            explanationBm25.setDescription(details.toString());
+            explanationBm25.setValue((float) sim);
+            explanation.addDetail(explanationBm25);
+
+            if(weightValue != 1.0f)
+            {
+                Explanation boostExpl = new Explanation();
+                boostExpl.setDescription("boost (" + term + ")");
+                boostExpl.setValue(weight.getQuery().getBoost());
+                explanationBm25.addDetail(boostExpl);
+            }
+        }
+
+        return explanation;
     }
 
     public String toString() {

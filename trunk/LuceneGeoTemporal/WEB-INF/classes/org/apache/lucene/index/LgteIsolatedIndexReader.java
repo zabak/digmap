@@ -427,17 +427,10 @@ public class LgteIsolatedIndexReader extends ProbabilisticIndexReader
         int len = 0;
         for (IndexReader subReader : readers.getReaders())
         {
-//            if(lgteIndexTreeIdMapper!=null)
-//            {
-//
-//                String field = readers.;
-//                if(((LgteIsolatedIndexReader)reader).hasMapping(field))
-//                {
-//                    int[] docs =  ((LgteIsolatedIndexReader)reader).translateId(scorer.doc(),field);
-//                    for(int i = 0; i< docs.length; i++)
-//                        sub.collector.collect(i, scorer.score());
-//                }
-//            }
+            if(lgteIndexTreeIdMapper!=null && !lgteIndexTreeIdMapper.isChild(subReader))
+            {
+                docNumber = lgteIndexTreeIdMapper.translateIdInverted(docNumber); //assuming that there is only one mapping
+            }
             len += subReader.getDocLength(docNumber);
         }
         return len;

@@ -16,57 +16,120 @@ package org.apache.lucene.search;
  * limitations under the License.
  */
 
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.LgteIsolatedIndexReader;
+import org.apache.lucene.index.NotImplemented;
+
 import java.io.IOException;
+
+import pt.utl.ist.lucene.treceval.geotime.runs.BaseLineSentences;
+import pt.utl.ist.lucene.QueryConfiguration;
+import pt.utl.ist.lucene.ModelManager;
 
 /** Expert: Implements scoring for a class of queries. */
 public abstract class Scorer {
-  private Similarity similarity;
+    private Similarity similarity;
+    protected boolean indexTree;
 
-  /** Constructs a Scorer. */
-  protected Scorer(Similarity similarity) {
-    this.similarity = similarity;
-  }
-
-  /** Returns the Similarity implementation used by this scorer. */
-  public Similarity getSimilarity() {
-    return this.similarity;
-  }
-
-  /** Scores all documents and passes them to a collector. */
-  public void score(HitCollector hc) throws IOException {
-    while (next()) {
-      hc.collect(doc(), score());
+    /** Constructs a Scorer. */
+    protected Scorer(Similarity similarity) {
+        this.similarity = similarity;
+        QueryConfiguration queryConfiguration = ModelManager.getInstance().getQueryConfiguration();
+        indexTree = queryConfiguration.getBooleanProperty("index.tree");
     }
-  }
 
-  /** Advance to the next document matching the query.  Returns true iff there
-   * is another match. */
-  public abstract boolean next() throws IOException;
+    /** Returns the Similarity implementation used by this scorer. */
+    public Similarity getSimilarity() {
+        return this.similarity;
+    }
 
-  /** Returns the current document number.  Initially invalid, until {@link
-   * #next()} is called the first time. */
-  public abstract int doc();
+    /** Scores all documents and passes them to a collector. */
+    public void score(HitCollector hc) throws IOException {
+        while (next())
+        {
+            collect(hc,this);
+//            hc.collect(doc(),score());
+        }
+    }
 
-  /** Returns the score of the current document.  Initially invalid, until
-   * {@link #next()} is called the first time. */
-  public abstract float score() throws IOException;
+    /**
+     * LGTE MODIFICATION TO IMPLEMENT HIERARCHIC INDEXES
+     * THE OLD CODE
+     * In Hierarchic Indexes a document has a list of children documents in other indexes.
+     * During the search these childrens are the returned documents
+     * Parent document id in his own index is diferent from the id's of the childrens
+     * This is a problem of id's mapping.
+     * The objective of this modification is to calculate the score of the parent just one time
+     * and collect that score for all the childrens
+     * Jorge Machado
+     *
+     while (!sub.done && scorer.doc() < end)
+     {
+     sub.collector.collect(scorer.doc(), scorer.score());
+     sub.done = !scorer.next();
+     }
+     */
+    protected void collect(HitCollector collector,Scorer scorer) throws IOException {
+        int doc = scorer.doc();
+        float score = scorer.score();
+        if(indexTree && scorer instanceof LgteFieldedTermScorer)
+        {
+            long start = System.currentTimeMillis();
+            LgteFieldedTermScorer  lgteFieldedTermScorer = (LgteFieldedTermScorer) scorer;
+            IndexReader reader = lgteFieldedTermScorer.getIndexReader();
+            if(reader instanceof LgteIsolatedIndexReader)
+            {
 
-  /** Skips to the first match beyond the current whose document number is
-   * greater than or equal to <i>target</i>. <p>Returns true iff there is such
-   * a match.  <p>Behaves as if written: <pre>
-   *   boolean skipTo(int target) {
-   *     do {
-   *       if (!next())
-   * 	     return false;
-   *     } while (target > doc());
-   *     return true;
-   *   }
-   * </pre>
-   * Most implementations are considerably more efficient than that.
-   */
-  public abstract boolean skipTo(int target) throws IOException;
+                String field = lgteFieldedTermScorer.getField();
+                if(((LgteIsolatedIndexReader)reader).hasMapping(field))
+                {
+                    int[] docs =  ((LgteIsolatedIndexReader)reader).translateId(doc,field);
+                    for(int i = 0; i< docs.length; i++)
+                    {
+                        collector.collect(docs[i], score);
+                    }
+                }
+                else
+                    collector.collect(doc, score);
+            }
+            else
+                throw new NotImplemented("index.tree is implmented only when using LgteIsolatedIndexReader with multiindexes");
+            BaseLineSentences.totalTimeTree = BaseLineSentences.totalTimeTree + (System.currentTimeMillis() - start);
+        }
+        else
+        {   //keeping for the old classes
+            collector.collect(doc,score);
+        }
+    }
 
-  /** Returns an explanation of the score for <code>doc</code>. */
-  public abstract Explanation explain(int doc) throws IOException;
+    /** Advance to the next document matching the query.  Returns true iff there
+     * is another match. */
+    public abstract boolean next() throws IOException;
+
+    /** Returns the current document number.  Initially invalid, until {@link
+     * #next()} is called the first time. */
+    public abstract int doc();
+
+    /** Returns the score of the current document.  Initially invalid, until
+     * {@link #next()} is called the first time. */
+    public abstract float score() throws IOException;
+
+    /** Skips to the first match beyond the current whose document number is
+     * greater than or equal to <i>target</i>. <p>Returns true iff there is such
+     * a match.  <p>Behaves as if written: <pre>
+     *   boolean skipTo(int target) {
+     *     do {
+     *       if (!next())
+     * 	     return false;
+     *     } while (target > doc());
+     *     return true;
+     *   }
+     * </pre>
+     * Most implementations are considerably more efficient than that.
+     */
+    public abstract boolean skipTo(int target) throws IOException;
+
+    /** Returns an explanation of the score for <code>doc</code>. */
+    public abstract Explanation explain(int doc) throws IOException;
 
 }

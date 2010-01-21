@@ -3,12 +3,7 @@ package pt.utl.ist.lucene;
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.queryParser.ParseException;
-import org.apache.lucene.search.Filter;
-import org.apache.lucene.search.HitCollector;
-import org.apache.lucene.search.Hits;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.SortField;
+import org.apache.lucene.search.*;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.index.IndexReader;
 import pt.utl.ist.lucene.sort.LgteSort;
@@ -98,6 +93,16 @@ public class LgteIndexSearcherWrapper
     }
 
 
+    public Explanation explain(String query, int doc, Analyzer a) throws java.io.IOException, ParseException
+    {
+        LgteQuery lgteQuery = LgteQueryParser.parseQuery(query,this,a);
+        return indexSearcher.explain(lgteQuery.getQuery(),doc);
+    }
+
+    public Explanation explain(LgteQuery lgteQuery, int doc, Analyzer a) throws java.io.IOException, ParseException
+    {
+        return indexSearcher.explain(lgteQuery.getQuery(),doc);
+    }
 
     public LgteHits search(String query, Analyzer a) throws java.io.IOException, ParseException
     {
@@ -149,6 +154,11 @@ public class LgteIndexSearcherWrapper
      */
     private LgteHits searchAndFilter(LgteQuery lgteQuery) throws IOException
     {
+        if(!ModelManager.getInstance().hasModel())
+            ModelManager.getInstance().setModel(lgteQuery.getQueryParams().getModel());
+        if(!ModelManager.getInstance().hasQueryConfiguration())
+            ModelManager.getInstance().setQueryConfiguration(lgteQuery.getQueryParams().getQueryConfiguration());
+
         FilterOrchestrator filterOrchestrator = new FilterOrchestrator();
         Filter finalFilter = filterOrchestrator.getFilter(lgteQuery);
         LgteSort sort = checkSort(lgteQuery,filterOrchestrator);

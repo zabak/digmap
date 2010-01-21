@@ -72,6 +72,24 @@ public class ModelManager
         return queryConfiguration;
     }
 
+    public boolean hasQueryConfiguration()
+    {
+        QueryConfiguration queryConfiguration = (QueryConfiguration) service(ManagerService.getQueryConfiguration,null);
+        return queryConfiguration != null;
+    }
+
+     public boolean hasModel()
+    {
+        Model model = (Model) service(ManagerService.getModel,null);
+        return model != null;
+    }
+
+     public boolean hasModelProperties()
+    {
+        Properties modelProperties = (Properties) service(ManagerService.getModelProperties,null);
+        return modelProperties != null;
+    }
+
     public Properties getModelProperties()
     {
         return (Properties) service(ManagerService.getModelProperties,null);

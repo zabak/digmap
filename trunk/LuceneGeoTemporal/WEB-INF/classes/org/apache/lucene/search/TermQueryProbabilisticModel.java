@@ -84,59 +84,61 @@ public class TermQueryProbabilisticModel extends TermQueryImpl {
                 throws IOException {
 
             Explanation result = new Explanation();
-            result.setDescription("weight("+getQuery()+" in "+doc+"), product of:");
+            result.setDescription("subQuery("+getQuery()+"*" + queryWeight +" in "+doc+"), product of:");
 
-//      Explanation idfExpl =
-//        new Explanation(idf, "idf(docFreq=" + searcher.docFreq(term) + ")");
 
-            // explain query weight
-            Explanation queryExpl = new Explanation();
-            queryExpl.setDescription("queryWeight(" + getQuery() + "), product of:");
+//
+//            Explanation queryExpl = new Explanation();
+//            queryExpl.setDescription("subQuery(" + getQuery() + "), product of:");
 
-            Explanation boostExpl = new Explanation(getBoost(), "boost");
+            Explanation boostExpl = new Explanation(this.getQuery().getBoost(), "boost");
             if (getBoost() != 1.0f)
-                queryExpl.addDetail(boostExpl);
+                result.addDetail(boostExpl);
 //      queryExpl.addDetail(idfExpl);
 
 //      Explanation queryNormExpl = new Explanation(queryNorm,"queryNorm");
 //      queryExpl.addDetail(queryNormExpl);
 
-            queryExpl.setValue(boostExpl.getValue() //*
-//                         idfExpl.getValue() *
-//                         queryNormExpl.getValue()
-            );
+//            queryExpl.setValue(boostExpl.getValue() //*
+////                         idfExpl.getValue() *
+////                         queryNormExpl.getValue()
+//            );
 
-            result.addDetail(queryExpl);
+//            result.addDetail(queryExpl);
 
             // explain field weight
             String field = term.field();
-            Explanation fieldExpl = new Explanation();
-            fieldExpl.setDescription("fieldWeight("+term+" in "+doc+
-                    "), product of:");
+//            Explanation fieldExpl = new Explanation();
+//            fieldExpl.setDescription("fieldWeight("+term+" in "+doc+
+//                    "), product of:");
 
             Explanation tfExpl = scorer(reader).explain(doc);
-            fieldExpl.addDetail(tfExpl);
+//            fieldExpl.addDetail(tfExpl);
 //      fieldExpl.addDetail(idfExpl);
 
-            Explanation fieldNormExpl = new Explanation();
-            byte[] fieldNorms = reader.norms(field);
-            float fieldNorm =
-                    fieldNorms!=null ? Similarity.decodeNorm(fieldNorms[doc]) : 0.0f;
-            fieldNormExpl.setValue(fieldNorm);
-            fieldNormExpl.setDescription("fieldNorm(field="+field+", doc="+doc+")");
-            fieldExpl.addDetail(fieldNormExpl);
+//            Explanation fieldNormExpl = new Explanation();
+//            byte[] fieldNorms = reader.norms(field);
+//            float fieldNorm =
+//                    fieldNorms!=null ? Similarity.decodeNorm(fieldNorms[doc]) : 0.0f;
+//            fieldNormExpl.setValue(fieldNorm);
+//            fieldNormExpl.setDescription("fieldNorm(field="+field+", doc="+doc+")");
+//            fieldExpl.addDetail(fieldNormExpl);
 
-            fieldExpl.setValue(tfExpl.getValue() *
+//            fieldExpl.setValue(tfExpl.getValue()
+                    //*
 //                         idfExpl.getValue() *
-                    fieldNormExpl.getValue());
+                    //fieldNormExpl.getValue()
+//                    );
 
-            result.addDetail(fieldExpl);
+            result.addDetail(tfExpl);
 
             // combine them
-            result.setValue(queryExpl.getValue() * fieldExpl.getValue());
+            result.setValue(tfExpl.getValue()
+                    //* fieldExpl.getValue()
+                    );
 
-            if (queryExpl.getValue() == 1.0f)
-                return fieldExpl;
+//            if (queryExpl.getValue() == 1.0f)
+//                return fieldExpl;
 
             return result;
         }

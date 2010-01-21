@@ -37,15 +37,11 @@ final class BooleanScorer extends Scorer {
     private int prohibitedMask = 0;
     private int nextMask = 1;
 
-    boolean indexTree = false;
-
-
 
     BooleanScorer(Similarity similarity)
     {
         super(similarity);
-        QueryConfiguration queryConfiguration = ModelManager.getInstance().getQueryConfiguration();
-        indexTree = queryConfiguration.getBooleanProperty("index.tree");
+        System.out.println("Boolean Scorer");
     }
 
     static final class SubScorer {
@@ -123,51 +119,9 @@ final class BooleanScorer extends Scorer {
             end += BucketTable.SIZE;
             for (SubScorer sub = scorers; sub != null; sub = sub.next) {
                 Scorer scorer = sub.scorer;
-                /**
-                 * LGTE MODIFICATION TO IMPLEMENT HIERARCHIC INDEXES
-                 * THE OLD CODE
-                 * In Hierarchic Indexes a document has a list of children documents in other indexes.
-                 * During the search these childrens are the returned documents
-                 * Parent document id in his own index is diferent from the id's of the childrens
-                 * This is a problem of id's mapping.
-                 * The objective of this modification is to calculate the score of the parent just one time
-                 * and collect that score for all the childrens
-                 * Jorge Machado
-                 *
-                 while (!sub.done && scorer.doc() < end)
-                 {
-                 sub.collector.collect(scorer.doc(), scorer.score());
-                 sub.done = !scorer.next();
-                 }
-                 */
-
                 while (!sub.done && scorer.doc() < end)
                 {
-                    if(indexTree && sub.scorer instanceof LgteFieldedTermScorer)
-                    {   long start = System.currentTimeMillis();
-                        LgteFieldedTermScorer  lgteFieldedTermScorer = (LgteFieldedTermScorer) sub.scorer;
-                        IndexReader reader = lgteFieldedTermScorer.getIndexReader();
-                        if(reader instanceof LgteIsolatedIndexReader)
-                        {
-                            String field = lgteFieldedTermScorer.getField();
-                            if(((LgteIsolatedIndexReader)reader).hasMapping(field))
-                            {
-                                int[] docs =  ((LgteIsolatedIndexReader)reader).translateId(scorer.doc(),field);
-                                float score = scorer.score();
-                                for(int i = 0; i< docs.length; i++)
-                                    sub.collector.collect(docs[i], score);
-                            }
-                            else
-                                sub.collector.collect(scorer.doc(), scorer.score());
-                        }
-                        else
-                            throw new NotImplemented("index.tree is implmented only when using LgteIsolatedIndexReader with multiindexes");
-                        BaseLineSentences.totalTimeTree = BaseLineSentences.totalTimeTree + (System.currentTimeMillis() - start);
-                    }
-                    else
-                    {   //keeping for the old classes
-                        sub.collector.collect(scorer.doc(), scorer.score());
-                    }
+                    collect(sub.collector,sub.scorer);
                     sub.done = !scorer.next();
                 }
                 /**
@@ -185,7 +139,7 @@ final class BooleanScorer extends Scorer {
     public float score() throws IOException {
         if (coordFactors == null)
             computeCoordFactors();
-        return current.score ;//* coordFactors[current.coord]; todo  todo JORGE
+        return current.score * coordFactors[current.coord];
     }
 
     static final class Bucket {
@@ -251,8 +205,25 @@ final class BooleanScorer extends Scorer {
         throw new UnsupportedOperationException();
     }
 
-    public Explanation explain(int doc) throws IOException {
-        throw new UnsupportedOperationException();
+    public Explanation explain(int doc) throws IOException
+    {
+        Explanation explanation = new Explanation();
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("boolean(");
+        for (SubScorer sub = scorers; sub != null; sub = sub.next) {
+            Explanation detail = sub.scorer.explain(doc);
+            buffer.append(detail.getDescription());
+            explanation.addDetail(detail);
+            buffer.append(" ");
+        }
+        buffer.append(")^");
+//        return buffer.toString();
+//        tfExplanation.setDescription(model.getShortName() + "(" + query.getTerm() + ")^" + weightValue + "=" + score + ")");
+//        throw new UnsupportedOperationException();
+
+        explanation.setValue(score());
+        explanation.setDescription(buffer.toString());
+        return explanation;
     }
 
     public String toString() {

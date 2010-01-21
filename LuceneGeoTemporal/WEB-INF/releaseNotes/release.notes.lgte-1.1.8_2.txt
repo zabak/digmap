@@ -1,0 +1,47 @@
+LGTE version 1.1.8_2
+
+Release Notes:
+
+1 - LgteQuery constructor to turn arround the LgteQuery Parser layer
+
+    public LgteQuery(String query, Analyzer analyzer, String defaultField) throws ParseException
+
+2 - BETA Explain feature adapted to Probabilistic Models.
+
+ in class pt.utl.ist.lucene.LgteIndexSearcherWrapper
+ public Explanation explain(String query, int doc, Analyzer a) throws java.io.IOException, ParseException
+ public Explanation explain(LgteQuery query, int doc, Analyzer a) throws java.io.IOException, ParseException
+
+ How to use it:
+    String query = "contents:(smith^0.1 soccer^0.9)^0.3" + "woeid:(WOEID-23424977)^0.7";
+    LgteHits hits = searcher.search(query,new LgteNothingAnalyzer());
+
+    for(int i = 0; i < 10;i++)
+    {
+        System.out.println(hits.doc(i).get("id") + "-" + hits.score(i));
+        System.out.println(searcher.explain(query,hits.id(i),  new LgteNothingAnalyzer()));
+    }
+
+
+    sout:
+      NYT_ENG_20021204.0268-4.231006
+      4.231006 = sum of:
+        3.515966 = sum of:
+          0.1874647 = subQuery(contents:smith^0.1*0.3 in 110895), product of:
+            0.1 = boost
+            0.1874647 = bm25(contents:smith)^(0.3*0.1)=0.1874647)
+              6.248823 = BM25 - doc-Id:110895 - Doc-Len:712 - Avg-Doc-Len:523.8707298592022 - docFreq:16207.0 - tfDoc:3 - idf:4.282529227952697 - Policy:DontSubtractNt - Epslon:null - K1:1.2 - b:0.75
+                0.1 = boost (contents:smith)
+          3.3285012 = subQuery(contents:soccer^0.9*0.3 in 110895), product of:
+            0.9 = boost
+            3.3285012 = bm25(contents:soccer)^(0.3*0.9)=3.3285012)
+              12.327782 = BM25 - doc-Id:110895 - Doc-Len:712 - Avg-Doc-Len:523.8707298592022 - docFreq:4957.0 - tfDoc:22 - idf:5.991506123304513 - Policy:DontSubtractNt - Epslon:null - K1:1.2 - b:0.75
+                0.9 = boost (contents:soccer)
+        0.71504 = subQuery(g_administrativeScopeWoeid:WOEID-23424977^0.7*1.0 in 110895), product of:
+          0.7 = boost
+          0.71504 = bm25(g_administrativeScopeWoeid:WOEID-23424977)^(1.0*0.7)=0.71504)
+            1.0214858 = BM25 - doc-Id:110895 - Doc-Len:1 - Avg-Doc-Len:0.9596692632293123 - docFreq:153497.0 - tfDoc:1 - idf:1.0390475472417031 - Policy:DontSubtractNt - Epslon:null - K1:1.2 - b:0.75
+              0.7 = boost (g_administrativeScopeWoeid:WOEID-23424977)
+
+     ...
+     ...

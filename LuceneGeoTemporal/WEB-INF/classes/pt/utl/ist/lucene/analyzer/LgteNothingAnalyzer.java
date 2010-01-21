@@ -12,6 +12,7 @@ import org.apache.lucene.analysis.de.WordlistLoader;
 import java.io.IOException;
 import java.io.File;
 import java.io.Reader;
+import java.io.StringReader;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -46,6 +47,10 @@ public class LgteNothingAnalyzer extends org.apache.lucene.analysis.Analyzer
     public final TokenStream tokenStream(String fieldName, Reader reader)
     {
         return new LgteNothingTokenizer( reader );
+    }
+
+    public static void main(String[] args) throws IOException {
+        System.out.println(new LgteNothingAnalyzer().tokenStream("teste",new StringReader("Reino Unido")).next().termText());
     }
 
 

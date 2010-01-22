@@ -99,7 +99,7 @@ public class LgteIndexSearcherWrapper
         return indexSearcher.explain(lgteQuery.getQuery(),doc);
     }
 
-    public Explanation explain(LgteQuery lgteQuery, int doc, Analyzer a) throws java.io.IOException, ParseException
+    public Explanation explain(LgteQuery lgteQuery, int doc) throws java.io.IOException, ParseException
     {
         return indexSearcher.explain(lgteQuery.getQuery(),doc);
     }

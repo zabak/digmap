@@ -338,9 +338,45 @@ public class TestBm25 extends TestCase {
             queryConfiguration.setProperty("bm25.k3","8d");
             queryConfiguration.setProperty("index.tree","true");
 
+            lgteQuery = LgteQueryParser.parseQuery("contents:(word1 word2 word3)",searcher,queryConfiguration);
+            lgteHits = searcher.search(lgteQuery);
+            assertTrue(lgteHits.score(0)-scoreDocs.get(0).score<0.001);
+            assertTrue(lgteHits.score(1)-scoreDocs.get(0).score<0.001);
+            assertTrue(lgteHits.score(2)-scoreDocs.get(0).score<0.001);
+            assertTrue(lgteHits.score(3)-scoreDocs.get(1).score<0.001);
+
+            System.out.println("contents:(word1 word2 word3)");
+            System.out.println("DOC " + lgteHits.id(0));
+            System.out.println(searcher.explain(lgteQuery,lgteHits.id(0)));
+            System.out.println("DOC " + lgteHits.id(1));
+            System.out.println(searcher.explain(lgteQuery,lgteHits.id(1)));
+            System.out.println("DOC " + lgteHits.id(2));
+            System.out.println(searcher.explain(lgteQuery,lgteHits.id(2)));
+            System.out.println("DOC " + lgteHits.id(3));
+            System.out.println(searcher.explain(lgteQuery,lgteHits.id(3)));
+            System.out.println("#####################################");
+
+            lgteQuery = LgteQueryParser.parseQuery("sentences:(word1 word2 word3)",searcher,queryConfiguration);
+            lgteHits = searcher.search(lgteQuery);
+            assertTrue(lgteHits.score(0)-scoreVDocs.get(0).score<0.001);
+            assertTrue(lgteHits.score(1)-scoreVDocs.get(1).score<0.001);
+            assertTrue(lgteHits.score(2)-scoreVDocs.get(2).score<0.001);
+            assertTrue(lgteHits.score(3)-scoreVDocs.get(3).score<0.001);
+
+            System.out.println("sentences:(word1 word2 word3)");
+            System.out.println("DOC " + lgteHits.id(0));
+            System.out.println(searcher.explain(lgteQuery,lgteHits.id(0)));
+            System.out.println("DOC " + lgteHits.id(1));
+            System.out.println(searcher.explain(lgteQuery,lgteHits.id(1)));
+            System.out.println("DOC " + lgteHits.id(2));
+            System.out.println(searcher.explain(lgteQuery,lgteHits.id(2)));
+            System.out.println("DOC " + lgteHits.id(3));
+            System.out.println(searcher.explain(lgteQuery,lgteHits.id(3)));
+            System.out.println("#############################");
+
             lgteQuery = LgteQueryParser.parseQuery("contents:(word1 word2 word3)^0.3 sentences:(word1 word2 word3)^0.7",searcher,queryConfiguration);
             lgteHits = searcher.search(lgteQuery);
-            System.out.println("SCHEME 0.7*score(sentences) + (1-0.7)*score(contents)");
+            System.out.println("SCHEME 0.7*score(sentences) + (0.3)*score(contents)");
             System.out.println("Stm " + lgteHits.doc(0).get("id") + ":" + lgteHits.doc(0).get("doc_id") + " (0.7*stm1 + 0.3*doc1):" + lgteHits.score(0));
             System.out.println("Stm " + lgteHits.doc(1).get("id") + ":" + lgteHits.doc(1).get("doc_id") + " (0.7*stm2 + 0.3*doc1):" + lgteHits.score(1));
             System.out.println("Stm " + lgteHits.doc(2).get("id") + ":" + lgteHits.doc(2).get("doc_id") + " (0.7*stm3 + 0.3*doc1):" + lgteHits.score(2));
@@ -356,10 +392,17 @@ public class TestBm25 extends TestCase {
             assertEquals(lgteHits.doc(2).get("doc_id"),scoreDocs.get(0).id);
             assertEquals(lgteHits.doc(3).get("doc_id"),scoreDocs.get(1).id);
 
+            System.out.println(searcher.explain(lgteQuery,lgteHits.id(0)));
+            System.out.println(searcher.explain(lgteQuery,lgteHits.id(1)));
+            System.out.println(searcher.explain(lgteQuery,lgteHits.id(2)));
+            System.out.println(searcher.explain(lgteQuery,lgteHits.id(3)));
+
+
             assertEquals(lgteHits.score(0),(0.7f*scoreVDocs.get(0).score + 0.3f*scoreDocs.get(0).score) );
             assertEquals(lgteHits.score(1),(0.7f*scoreVDocs.get(1).score + 0.3f*scoreDocs.get(0).score) );
             assertEquals(lgteHits.score(2),(0.7f*scoreVDocs.get(2).score + 0.3f*scoreDocs.get(0).score) );
             assertEquals(lgteHits.score(3),(0.7f*scoreVDocs.get(3).score + 0.3f*scoreDocs.get(1).score) );
+
 
         }
         catch (ParseException e)

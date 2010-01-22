@@ -312,7 +312,6 @@ public class SearchTopics implements ISearchCallBack
             if(!isAlreadyInList)
             {
                 int id = hits.id(i);
-                System.out.println("writing " + i);
                 if(idsCache != null)
                 {
                     format.writeRecord(((String)this.idsCache.get("docid",id)), i , hits.getHits(), hits.score(i), searchConfiguration.getRun());

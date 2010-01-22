@@ -157,7 +157,7 @@ final class BooleanScorer extends Scorer {
 
                                 for (int doc1 : docs)
                                 {
-                                    if(doc1 > (end - BucketTable.SIZE))
+                                    if(doc1 >= (end - BucketTable.SIZE))
                                     {
                                         if(doc1 < end)
                                             collectorX.collect(doc1, scoreX);

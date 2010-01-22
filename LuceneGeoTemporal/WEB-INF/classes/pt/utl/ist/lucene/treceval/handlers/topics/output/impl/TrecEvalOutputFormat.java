@@ -133,7 +133,6 @@ public class TrecEvalOutputFormat implements OutputFormat
                 writer.write('\n');
             }
             done++;
-            System.out.println("writed");
             if (done > maxFlush)
             {
                 done = 0;

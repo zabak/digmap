@@ -21,6 +21,9 @@ import pt.utl.ist.lucene.QueryConfiguration;
 import pt.utl.ist.lucene.treceval.geotime.runs.BaseLineSentences;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.LgteIsolatedIndexReader;
@@ -41,7 +44,6 @@ final class BooleanScorer extends Scorer {
     BooleanScorer(Similarity similarity)
     {
         super(similarity);
-        System.out.println("Boolean Scorer");
     }
 
     static final class SubScorer {
@@ -100,6 +102,9 @@ final class BooleanScorer extends Scorer {
 
     public int doc() { return current.doc; }
 
+
+    //    List<>
+    //    class docCollector
     public boolean next() throws IOException {
         boolean more;
         do {
@@ -117,16 +122,72 @@ final class BooleanScorer extends Scorer {
             // refill the queue
             more = false;
             end += BucketTable.SIZE;
+//            System.out.println("increasing bucket to " + end);
+
             for (SubScorer sub = scorers; sub != null; sub = sub.next) {
                 Scorer scorer = sub.scorer;
-                while (!sub.done && scorer.doc() < end)
+
+                int maxSubDoc = scorer.doc();
+                while (!sub.done && maxSubDoc < end)
                 {
-                    collect(sub.collector,sub.scorer);
+//                    collect(sub.collector,sub.scorer);
+//                    sub.collector.collect(scorer.doc(), scorer.score());
+
+
+
+
+                    Scorer scorerX = scorer;
+                    HitCollector collectorX = sub.collector;
+
+                    int docX = scorerX.doc();
+                    float scoreX = scorerX.score();
+                    if(indexTree && scorerX instanceof LgteFieldedTermScorer)
+                    {
+                        long start = System.currentTimeMillis();
+                        LgteFieldedTermScorer  lgteFieldedTermScorer = (LgteFieldedTermScorer) scorerX;
+                        IndexReader reader = lgteFieldedTermScorer.getIndexReader();
+                        if(reader instanceof LgteIsolatedIndexReader)
+                        {
+
+                            String field = lgteFieldedTermScorer.getField();
+                            if(((LgteIsolatedIndexReader)reader).hasMapping(field))
+                            {
+                                int[] docs =  ((LgteIsolatedIndexReader)reader).translateId(docX,field);
+                                boolean stop = false;
+
+                                for (int doc1 : docs)
+                                {
+                                    if(doc1 > (end - BucketTable.SIZE))
+                                    {
+                                        if(doc1 < end)
+                                            collectorX.collect(doc1, scoreX);
+                                        else
+                                        {
+                                            stop = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                                if(stop)
+                                    break;
+                            }
+                            else
+                            {
+                                collectorX.collect(docX, scoreX);
+                            }
+                        }
+                        else
+                            throw new NotImplemented("index.tree is implmented only when using LgteIsolatedIndexReader with multiindexes");
+                        BaseLineSentences.totalTimeTree = BaseLineSentences.totalTimeTree + (System.currentTimeMillis() - start);
+                    }
+                    else
+                    {   //keeping for the old classes
+                        collectorX.collect(docX,scoreX);
+                    }
+
                     sub.done = !scorer.next();
+                    maxSubDoc = scorer.doc();
                 }
-                /**
-                 * End here
-                 */
                 if (!sub.done) {
                     more = true;
                 }
@@ -139,7 +200,7 @@ final class BooleanScorer extends Scorer {
     public float score() throws IOException {
         if (coordFactors == null)
             computeCoordFactors();
-        return current.score * coordFactors[current.coord];
+        return current.score; //* coordFactors[current.coord];
     }
 
     static final class Bucket {
@@ -193,7 +254,8 @@ final class BooleanScorer extends Scorer {
 
                 bucket.next = table.first;		  // push onto valid list
                 table.first = bucket;
-            } else {					  // valid bucket
+            } else {
+                // valid bucket
                 bucket.score += score;			  // increment score
                 bucket.bits |= mask;			  // add bits in mask
                 bucket.coord++;				  // increment coord

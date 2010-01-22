@@ -6,6 +6,7 @@ import java.util.Properties;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.TermDocs;
 import org.apache.lucene.index.ProbabilisticIndexReader;
+import org.apache.lucene.index.LgteIsolatedIndexReader;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.log4j.Logger;
@@ -405,6 +406,12 @@ final class TermScorerDFR extends LgteFieldedTermScorer {
     }
 
     public Explanation explain(int doc) throws IOException {
+
+
+        if(indexReader instanceof LgteIsolatedIndexReader)
+        {
+            doc = ((LgteIsolatedIndexReader)indexReader).getRealDoc(doc,term.field());
+        }
 //        TermQuery query = (TermQuery) weight.getQuery();
         Explanation explanation = new Explanation();
         int tfDoc = 0;

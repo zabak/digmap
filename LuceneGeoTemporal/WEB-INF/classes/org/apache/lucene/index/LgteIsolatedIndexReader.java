@@ -185,6 +185,16 @@ public class LgteIsolatedIndexReader extends ProbabilisticIndexReader
 
     }
 
+    public int getRealDoc(int docNumber, String field)
+    {
+        IndexReader subReader = readers.getReader(field);
+        if(lgteIndexTreeIdMapper!=null && !lgteIndexTreeIdMapper.isChild(subReader))
+        {
+            docNumber = lgteIndexTreeIdMapper.translateIdInverted(docNumber); //assuming that there is only one mapping
+        }
+        return docNumber;
+    }
+
 
     public IndexReader getIndexReader(String field)
     {

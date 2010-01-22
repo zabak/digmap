@@ -38,21 +38,25 @@ public class Experiments
 
         readers.put(Config.SENTENCES,readerSentences);
         readers.put(Config.CONTENTS,readerContents);
-        readers.put(Config.TITLE,readerContents);
-        readers.put(Config.ID,readerContents);
+        readers.put(Config.DOC_ID,readerSentences);
+        readers.put(Config.ID,readerSentences);
 
-        readers.put("regexpr(^g_.*)",readerGeoRefs);
+//        readers.put("regexpr(^g_.*)",readerGeoRefs);
 
-        LgteIndexSearcherWrapper searcher = Config.openMultiSearcherSentences();
-//        LgteIndexSearcherWrapper searcher = new LgteIndexSearcherWrapper(Model.OkapiBM25Model,new LgteIsolatedIndexReader(readers));
+//        LgteIndexSearcherWrapper searcher = Config.openMultiSearcherSentences();
+        LgteIsolatedIndexReader reader = new LgteIsolatedIndexReader(readers);
+        System.out.println("Tree Mapping");
+        reader.addTreeMapping(readerContents,readerSentences,Config.DOC_ID);
+        System.out.println("Saiu do Tree Mapping");
+        LgteIndexSearcherWrapper searcher = new LgteIndexSearcherWrapper(Model.OkapiBM25Model,reader);
 
         Map<String, Analyzer> ngramsAnalizers = new HashMap<String,Analyzer>();
         ngramsAnalizers.put("contents", IndexCollections.en.getAnalyzerWithStemming());
         ngramsAnalizers.put("sentences", IndexCollections.en.getAnalyzerWithStemming());
         LgteBrokerStemAnalyzer lgteBrokerStemAnalyzer = new LgteBrokerStemAnalyzer(ngramsAnalizers,new LgteNothingAnalyzer());
 
-        String queryStr = "contents:(soccer smith)";
-//        String queryStr = "sentences:(smith soccer)";
+//        String queryStr = "contents:(soccer smith)";
+        String queryStr = "contents:(soccer smith) sentences:(smith soccer)";
         LgteQuery query = new LgteQuery(queryStr,lgteBrokerStemAnalyzer,"contents");
         query.getQueryParams().getQueryConfiguration().setProperty("index.tree","true");
         LgteHits hits = searcher.search(query);
@@ -64,7 +68,23 @@ public class Experiments
         }
 
 
+        System.out.println("****************************");
+
+        query = new LgteQuery(queryStr,lgteBrokerStemAnalyzer,"contents");
+        query.getQueryParams().getQueryConfiguration().setProperty("index.tree","true");
+        hits = searcher.search(query);
+
+        for(int i = 0; i < 10;i++)
+        {
+            System.out.println(hits.doc(i).get("id") + "-" + hits.score(i));
+            System.out.println(searcher.explain(query,hits.id(i), lgteBrokerStemAnalyzer));
+        }
+
+
+
 
 
     }
+
+    public static int aqui = 0;
 }

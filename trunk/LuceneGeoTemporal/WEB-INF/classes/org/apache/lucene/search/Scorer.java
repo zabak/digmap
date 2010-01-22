@@ -23,6 +23,7 @@ import org.apache.lucene.index.NotImplemented;
 import java.io.IOException;
 
 import pt.utl.ist.lucene.treceval.geotime.runs.BaseLineSentences;
+import pt.utl.ist.lucene.treceval.geotime.runs.Experiments;
 import pt.utl.ist.lucene.QueryConfiguration;
 import pt.utl.ist.lucene.ModelManager;
 
@@ -42,7 +43,7 @@ public abstract class Scorer {
     public Similarity getSimilarity() {
         return this.similarity;
     }
-
+                               static int i = 0;
     /** Scores all documents and passes them to a collector. */
     public void score(HitCollector hc) throws IOException {
         while (next())
@@ -69,13 +70,13 @@ public abstract class Scorer {
      sub.done = !scorer.next();
      }
      */
-    protected void collect(HitCollector collector,Scorer scorer) throws IOException {
-        int doc = scorer.doc();
-        float score = scorer.score();
-        if(indexTree && scorer instanceof LgteFieldedTermScorer)
+    protected void collect(HitCollector collectorX,Scorer scorerX) throws IOException {
+        int docX = scorerX.doc();
+        float scoreX = scorerX.score();
+        if(indexTree && scorerX instanceof LgteFieldedTermScorer)
         {
             long start = System.currentTimeMillis();
-            LgteFieldedTermScorer  lgteFieldedTermScorer = (LgteFieldedTermScorer) scorer;
+            LgteFieldedTermScorer  lgteFieldedTermScorer = (LgteFieldedTermScorer) scorerX;
             IndexReader reader = lgteFieldedTermScorer.getIndexReader();
             if(reader instanceof LgteIsolatedIndexReader)
             {
@@ -83,14 +84,14 @@ public abstract class Scorer {
                 String field = lgteFieldedTermScorer.getField();
                 if(((LgteIsolatedIndexReader)reader).hasMapping(field))
                 {
-                    int[] docs =  ((LgteIsolatedIndexReader)reader).translateId(doc,field);
-                    for(int i = 0; i< docs.length; i++)
-                    {
-                        collector.collect(docs[i], score);
+                    int[] docs =  ((LgteIsolatedIndexReader)reader).translateId(docX,field);
+                    for (int doc1 : docs) {
+                        collectorX.collect(doc1, scoreX);
                     }
                 }
+
                 else
-                    collector.collect(doc, score);
+                    collectorX.collect(docX, scoreX);
             }
             else
                 throw new NotImplemented("index.tree is implmented only when using LgteIsolatedIndexReader with multiindexes");
@@ -98,7 +99,7 @@ public abstract class Scorer {
         }
         else
         {   //keeping for the old classes
-            collector.collect(doc,score);
+            collectorX.collect(docX,scoreX);
         }
     }
 

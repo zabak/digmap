@@ -1,23 +1,14 @@
 package pt.utl.ist.lucene.test;
 
+import com.pjaol.search.geo.utils.InvalidGeoException;
 import junit.framework.TestCase;
+import org.apache.lucene.queryParser.ParseException;
+import org.apache.lucene.search.SortField;
 import pt.utl.ist.lucene.*;
 import pt.utl.ist.lucene.sort.LgteSort;
 import pt.utl.ist.lucene.utils.Files;
 
 import java.io.IOException;
-import java.util.Map;
-import java.util.HashMap;
-
-import com.pjaol.search.geo.utils.InvalidGeoException;
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.LanguageModelIndexReader;
-import org.apache.lucene.index.LgteIsolatedIndexReader;
-import org.apache.lucene.search.SortField;
-import org.apache.lucene.search.SortComparatorSource;
-import org.apache.lucene.search.ScoreDocComparator;
-import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.queryParser.ParseException;
 
 /**
  * @author Jorge Machado

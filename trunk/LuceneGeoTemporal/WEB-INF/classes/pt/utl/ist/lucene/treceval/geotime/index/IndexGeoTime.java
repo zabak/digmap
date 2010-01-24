@@ -75,6 +75,13 @@ public class IndexGeoTime
         else if(d.hasYYYYMMTimeExpressions()) doc.indexStringNoStore(Config.S_HAS_YYYYMM,"true");
         else if(d.hasYYYYMMDDTimeExpressions()) doc.indexStringNoStore(Config.S_HAS_YYYYMMDD,"true");
 
+        if(d.hasKeyTimeExpressions(TimeExpression.Type.Y)) doc.indexStringNoStore(Config.S_HAS_Y_KEY,"true");
+        else if(d.hasKeyTimeExpressions(TimeExpression.Type.YY)) doc.indexStringNoStore(Config.S_HAS_YY_KEY,"true");
+        else if(d.hasKeyTimeExpressions(TimeExpression.Type.YYY)) doc.indexStringNoStore(Config.S_HAS_YYY_KEY,"true");
+        else if(d.hasKeyTimeExpressions(TimeExpression.Type.YYYY)) doc.indexStringNoStore(Config.S_HAS_YYYY_KEY,"true");
+        else if(d.hasKeyTimeExpressions(TimeExpression.Type.YYYYMM)) doc.indexStringNoStore(Config.S_HAS_YYYYMM_KEY,"true");
+        else if(d.hasKeyTimeExpressions(TimeExpression.Type.YYYYMMDD)) doc.indexStringNoStore(Config.S_HAS_YYYYMMDD_KEY,"true");
+
         writer.addDocument(doc);
     }
 }

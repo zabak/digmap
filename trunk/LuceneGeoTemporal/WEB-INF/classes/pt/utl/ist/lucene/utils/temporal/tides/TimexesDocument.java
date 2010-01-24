@@ -197,6 +197,20 @@ public class TimexesDocument
         return timeExpressions;
     }
 
+    public List<TimeExpression> getAllKeyTimeExpressions(TimeExpression.Type type)
+    {
+        List<TimeExpression> timeExpressions = new ArrayList<TimeExpression>();
+        if(timex2TimeExpressionsList != null)
+        {
+            for(TimeExpression t: getAllKeyPointsTimeExpressions())
+            {
+                if(t.getType() == type)
+                    timeExpressions.add(t);
+            }
+        }
+        return timeExpressions;
+    }
+
     public List<TimeExpression> getAllPointsTimeExpressions()
     {
         List<TimeExpression> timeExpressions = new ArrayList<TimeExpression>();

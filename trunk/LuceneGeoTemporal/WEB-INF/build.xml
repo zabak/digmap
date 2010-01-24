@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<project name="Lucene With Geo-Temporal Extensions" default="jarTest" basedir=".">
+<project name="Lucene With Geo-Temporal Extensions" default="compile" basedir=".">
 
     <description>Lucene With Geo-Temporal Extensions</description>
 

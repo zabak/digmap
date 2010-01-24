@@ -2,6 +2,7 @@ package pt.utl.ist.lucene.utils.temporal.tides;
 
 import org.apache.log4j.Logger;
 import org.dom4j.*;
+import org.dom4j.bean.BeanAttributeList;
 import pt.utl.ist.lucene.utils.Dom4jUtil;
 import pt.utl.ist.lucene.utils.temporal.TimeExpression;
 
@@ -181,6 +182,21 @@ public class TimexesDocument
         return validTimeExpressions;
     }
 
+
+    public List<TimeExpression> getAllTimeExpressions(TimeExpression.Type type) 
+    {
+        List<TimeExpression> timeExpressions = new ArrayList<TimeExpression>();
+        if(timex2TimeExpressionsList != null)
+        {
+            for(TimeExpression t: getAllTimeExpressions())
+            {
+                if(t.getType() == type)
+                    timeExpressions.add(t);
+            }
+        }
+        return timeExpressions;
+    }
+
     public List<TimeExpression> getAllPointsTimeExpressions()
     {
         List<TimeExpression> timeExpressions = new ArrayList<TimeExpression>();
@@ -258,4 +274,6 @@ public class TimexesDocument
     {
         return "ID: " + id + "  \n XML:\n" + xml;
     }
+
+
 }

@@ -153,6 +153,20 @@ public class PlaceMakerAndTemporalSentence extends Sentence {
         return validTimeExpressions;
     }
 
+    public List<TimeExpression> getAllTimeExpressions(TimeExpression.Type type)
+    {
+        List<TimeExpression> timeExpressions = new ArrayList<TimeExpression>();
+        if(timexes != null)
+        {
+            for(TimeExpression t: getAllTimeExpressions())
+            {
+                if(t.getType() == type)
+                    timeExpressions.add(t);
+            }
+        }
+        return timeExpressions;
+    }
+
     public List<TimeExpression> getAllPointsTimeExpressions()
     {
         List<TimeExpression> timeExpressions = new ArrayList<TimeExpression>();
@@ -262,6 +276,13 @@ public class PlaceMakerAndTemporalSentence extends Sentence {
     {
         return getAllRelativePointsTimeExpressions().size() > 0;
     }
+
+    public boolean hasYTimeExpressions() { return getAllTimeExpressions(TimeExpression.Type.Y).size() > 0; }
+    public boolean hasYYTimeExpressions() { return getAllTimeExpressions(TimeExpression.Type.YY).size() > 0; }
+    public boolean hasYYYTimeExpressions() { return getAllTimeExpressions(TimeExpression.Type.YYY).size() > 0; }
+    public boolean hasYYYYTimeExpressions() { return getAllTimeExpressions(TimeExpression.Type.YYYY).size() > 0; }
+    public boolean hasYYYYMMTimeExpressions() { return getAllTimeExpressions(TimeExpression.Type.YYYYMM).size() > 0; }
+    public boolean hasYYYYMMDDTimeExpressions() { return getAllTimeExpressions(TimeExpression.Type.YYYYMMDD).size() > 0; }
 
     public boolean hasPlaces()
     {

@@ -176,6 +176,37 @@ public class IntegratedDocPlaceMakerAndTimexIterator {
             return td != null && td.getTimex2TimeExpressions() != null && td.getAllRelativePointsTimeExpressions().size() > 0;
         }
 
+        public boolean hasYTimeExpressions()
+        {
+            //we are ignoring the article publication date
+            return td != null && td.getTimex2TimeExpressions() != null && td.getAllTimeExpressions(TimeExpression.Type.Y).size() > 0;
+        }
+        public boolean hasYYTimeExpressions()
+        {
+            //we are ignoring the article publication date
+            return td != null && td.getTimex2TimeExpressions() != null && td.getAllTimeExpressions(TimeExpression.Type.YY).size() > 0;
+        }
+        public boolean hasYYYTimeExpressions()
+        {
+            //we are ignoring the article publication date
+            return td != null && td.getTimex2TimeExpressions() != null && td.getAllTimeExpressions(TimeExpression.Type.YYY).size() > 0;
+        }
+        public boolean hasYYYYTimeExpressions()
+        {
+            //we are ignoring the article publication date
+            return td != null && td.getTimex2TimeExpressions() != null && td.getAllTimeExpressions(TimeExpression.Type.YYYY).size() > 0;
+        }
+        public boolean hasYYYYMMTimeExpressions()
+        {
+            //we are ignoring the article publication date
+            return td != null && td.getTimex2TimeExpressions() != null && td.getAllTimeExpressions(TimeExpression.Type.YYYYMM).size() > 0;
+        }
+        public boolean hasYYYYMMDDTimeExpressions()
+        {
+            //we are ignoring the article publication date
+            return td != null && td.getTimex2TimeExpressions() != null && td.getAllTimeExpressions(TimeExpression.Type.YYYYMMDD).size() > 0;
+        }
+
         public boolean hasPlaces()
         {
             //we are ignoring the article publication date

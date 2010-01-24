@@ -74,6 +74,13 @@ public class IndexGeoTimeSentences
             if(sentence.hasRelativePointTimeExpressions())
                 doc.indexStringNoStore(Config.S_HAS_TIME_POINTS_RELATIVE +  "_" + Config.SENTENCES, "true");
 
+            if(sentence.hasYTimeExpressions()) doc.indexStringNoStore(Config.S_HAS_Y +  "_" + Config.SENTENCES,"true");
+            else if(sentence.hasYYTimeExpressions()) doc.indexStringNoStore(Config.S_HAS_YY +  "_" + Config.SENTENCES,"true");
+            else if(sentence.hasYYYTimeExpressions()) doc.indexStringNoStore(Config.S_HAS_YYY +  "_" + Config.SENTENCES,"true");
+            else if(sentence.hasYYYYTimeExpressions()) doc.indexStringNoStore(Config.S_HAS_YYYY +  "_" + Config.SENTENCES,"true");
+            else if(sentence.hasYYYYMMTimeExpressions()) doc.indexStringNoStore(Config.S_HAS_YYYYMM +  "_" + Config.SENTENCES,"true");
+            else if(sentence.hasYYYYMMDDTimeExpressions()) doc.indexStringNoStore(Config.S_HAS_YYYYMMDD +  "_" + Config.SENTENCES,"true");
+
             writer.addDocument(doc);
         }
     }

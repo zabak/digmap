@@ -73,6 +73,13 @@ public class Config
     public static final String S_HAS_TIME_POINTS_KEY = "S_HAS_TIME_POINTS_KEY";
     public static final String S_HAS_TIME_POINTS_RELATIVE = "S_HAS_TIME_POINTS_RELATIVE";
     public static final String S_HAS_ANY_TIME_POINT = "S_HAS_ANY_TIME_POINTS";
+
+    public static final String S_HAS_Y              = "S_HAS_Y";
+    public static final String S_HAS_YY             = "S_HAS_YY";
+    public static final String S_HAS_YYY            = "S_HAS_YYY";
+    public static final String S_HAS_YYYY           = "S_HAS_YYYY";
+    public static final String S_HAS_YYYYMM         = "S_HAS_YYYYMM";
+    public static final String S_HAS_YYYYMMDD       = "S_HAS_YYYYMMDD";
     
 
 
@@ -124,6 +131,8 @@ public class Config
     public static String T_YYYY    = "t_yyyy";
     public static String T_YYYYMM = "t_yyyymm";
     public static String T_YYYYMMDD = "t_yyyymmdd";
+
+
 
     //Metrics
     //All the Lgte internal GeoTemp Indexes to calculate distances are considered metric indexes

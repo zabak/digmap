@@ -297,6 +297,7 @@ public class SearchTopics implements ISearchCallBack
         for (int i = 0; i < hits.length() && count < maxResultsForOutput; i++)
         {
             boolean isAlreadyInList = false;
+            String docId = null;
             if(groupField != null)
             {
                 String groupId = hits.doc(i).get(groupField);
@@ -306,18 +307,21 @@ public class SearchTopics implements ISearchCallBack
                     logger.info("Doc: " + groupId + " already in list skipping...");
                 }
                 else
+                {
                     results.put(groupId,true);
+                    docId = groupId;
+                }
             }
 
             if(!isAlreadyInList)
             {
                 int id = hits.id(i);
-                if(idsCache != null)
+                if(idsCache != null && docId == null)
                 {
                     format.writeRecord(((String)this.idsCache.get("docid",id)), i , hits.getHits(), hits.score(i), searchConfiguration.getRun());
                 }
                 else
-                    format.writeRecord(null, i , hits.getHits(), hits.score(i), searchConfiguration.getRun());
+                    format.writeRecord(docId, i , hits.getHits(), hits.score(i), searchConfiguration.getRun());
                 count++;
             }
         }

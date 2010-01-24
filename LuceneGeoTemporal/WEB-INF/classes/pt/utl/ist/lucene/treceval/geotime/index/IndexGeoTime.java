@@ -3,6 +3,7 @@ package pt.utl.ist.lucene.treceval.geotime.index;
 import pt.utl.ist.lucene.LgteIndexWriter;
 import pt.utl.ist.lucene.LgteDocumentWrapper;
 import pt.utl.ist.lucene.Model;
+import pt.utl.ist.lucene.utils.temporal.TimeExpression;
 import pt.utl.ist.lucene.analyzer.LgteNothingAnalyzer;
 import pt.utl.ist.lucene.treceval.geotime.IntegratedDocPlaceMakerAndTimexIterator;
 
@@ -61,11 +62,18 @@ public class IndexGeoTime
         if(d.hasPointTimeExpressions())
             doc.indexString(Config.S_HAS_ANY_TIME_POINT, "true");
 
-         if(d.hasKeyPointTimeExpressions())
+        if(d.hasKeyPointTimeExpressions())
             doc.indexString(Config.S_HAS_TIME_POINTS_KEY, "true");
 
-         if(d.hasRelativePointTimeExpressions())
+        if(d.hasRelativePointTimeExpressions())
             doc.indexString(Config.S_HAS_TIME_POINTS_RELATIVE, "true");
+
+        if(d.hasYTimeExpressions()) doc.indexStringNoStore(Config.S_HAS_Y,"true");
+        else if(d.hasYYTimeExpressions()) doc.indexStringNoStore(Config.S_HAS_YY,"true");
+        else if(d.hasYYYTimeExpressions()) doc.indexStringNoStore(Config.S_HAS_YYY,"true");
+        else if(d.hasYYYYTimeExpressions()) doc.indexStringNoStore(Config.S_HAS_YYYY,"true");
+        else if(d.hasYYYYMMTimeExpressions()) doc.indexStringNoStore(Config.S_HAS_YYYYMM,"true");
+        else if(d.hasYYYYMMDDTimeExpressions()) doc.indexStringNoStore(Config.S_HAS_YYYYMMDD,"true");
 
         writer.addDocument(doc);
     }

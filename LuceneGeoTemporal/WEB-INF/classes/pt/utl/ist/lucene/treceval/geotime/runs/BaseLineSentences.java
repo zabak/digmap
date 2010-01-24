@@ -37,7 +37,7 @@ public class BaseLineSentences {
 //        Globals.INDEX_DIR = args[0];
 //        Globals.DATA_DIR = args[1];
 
-        String topicsPath =   "D:\\Servidores\\DATA\\ntcir\\topics";
+        String topicsPath =   "D:\\Servidores\\DATA\\ntcir\\topics" + File.separator + "GeoTime-EN-JA-Topics_ntcirEdited_10.xml";
         String outputDir =    "D:\\Servidores\\DATA\\ntcir\\runs";
         String assessements = "D:\\Servidores\\DATA\\ntcir\\assessements\\qrels";
 
@@ -101,7 +101,7 @@ public class BaseLineSentences {
         queryConfigurationBase.setProperty("field.boost.contents","0.3");
         queryConfigurationBase.setProperty("field.boost.sentences","0.7");
         TermsFilter filterGeoAndTemp = new TermsFilter();
-        filterGeoAndTemp.addTerm(new Term(Config.S_GEO_OR_TEMPORAL_INDEXED + "_" + Config.SENTENCES,"true"));
+        filterGeoAndTemp.addTerm(new Term(Config.S_GEO_OR_TEMPORAL_INDEXED + Config.SEP + Config.SENTENCES,"true"));
         searchConfigurations.add(new SearchConfiguration(queryConfigurationBase, BM25_STEMMER,10,null,filterGeoAndTemp));
 
         /***

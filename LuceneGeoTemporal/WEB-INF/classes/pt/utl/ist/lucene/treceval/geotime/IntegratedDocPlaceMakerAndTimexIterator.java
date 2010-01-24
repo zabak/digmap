@@ -176,6 +176,12 @@ public class IntegratedDocPlaceMakerAndTimexIterator {
             return td != null && td.getTimex2TimeExpressions() != null && td.getAllRelativePointsTimeExpressions().size() > 0;
         }
 
+        public boolean hasKeyTimeExpressions(TimeExpression.Type type)
+        {
+            //we are ignoring the article publication date
+            return td != null && td.getTimex2TimeExpressions() != null && td.getAllKeyTimeExpressions(type).size() > 0;
+        }
+
         public boolean hasYTimeExpressions()
         {
             //we are ignoring the article publication date
@@ -206,6 +212,8 @@ public class IntegratedDocPlaceMakerAndTimexIterator {
             //we are ignoring the article publication date
             return td != null && td.getTimex2TimeExpressions() != null && td.getAllTimeExpressions(TimeExpression.Type.YYYYMMDD).size() > 0;
         }
+
+
 
         public boolean hasPlaces()
         {

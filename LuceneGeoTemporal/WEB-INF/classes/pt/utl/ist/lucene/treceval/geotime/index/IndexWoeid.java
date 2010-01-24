@@ -170,6 +170,7 @@ public class IndexWoeid {
                     G_ALL_TEXT.append(placeDetails.getName()).append(" ");
                     G_GEO_PLACE_TYPE.append(placeDetails.getType()).append(" ");
                     addBelongTos(placeDetails.getWoeId(),G_PLACE_BELONG_TOS_TEXT,G_PLACE_BELONG_TOS_WOEID,G_ALL_TEXT,G_GEO_ALL_WOEID);
+                    //todo erro detectado deveria ter indexado woeid-belongTo@type e belongto e type
                 }
             }
         }
@@ -179,6 +180,7 @@ public class IndexWoeid {
         doc.indexText(Config.G_PLACE_REF_WOEID,G_PLACE_REF_WOEID.toString());
         doc.indexTextNoStore(Config.G_PLACE_BELONG_TOS_TEXT,G_PLACE_BELONG_TOS_TEXT.toString());
         doc.indexTextNoStore(Config.G_PLACE_BELONG_TOS_WOEID,G_PLACE_BELONG_TOS_WOEID.toString());
+
         doc.indexTextNoStore(Config.G_GEO_PLACE_TYPE,G_GEO_PLACE_TYPE.toString());
         writer.addDocument(doc);
     }

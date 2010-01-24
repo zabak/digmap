@@ -80,6 +80,13 @@ public class Config
     public static final String S_HAS_YYYY           = "S_HAS_YYYY";
     public static final String S_HAS_YYYYMM         = "S_HAS_YYYYMM";
     public static final String S_HAS_YYYYMMDD       = "S_HAS_YYYYMMDD";
+
+    public static final String S_HAS_Y_KEY              = "S_HAS_Y_KEY";
+    public static final String S_HAS_YY_KEY             = "S_HAS_YY_KEY";
+    public static final String S_HAS_YYY_KEY            = "S_HAS_YYY_KEY";
+    public static final String S_HAS_YYYY_KEY           = "S_HAS_YYYY_KEY";
+    public static final String S_HAS_YYYYMM_KEY         = "S_HAS_YYYYMM_KEY";
+    public static final String S_HAS_YYYYMMDD_KEY       = "S_HAS_YYYYMMDD_KEY";
     
 
 

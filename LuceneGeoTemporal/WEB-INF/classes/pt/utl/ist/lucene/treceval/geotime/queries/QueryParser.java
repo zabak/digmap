@@ -62,12 +62,7 @@ public class QueryParser
         {
             Query.Places.Term term = new Query.Places.Term();
             term.setPlace(termElem.getTextTrim());
-            List<Attribute> woeids = termElem.attributes();
-            if(woeids != null)
-            {
-                for(Attribute woeid: woeids)
-                    term.getWoeid().add(woeid.getValue());
-            }
+            term.getWoeid().add(termElem.attribute("woeid").getValue());
             q.getPlaces().getTerms().add(term);
         }
     }
@@ -100,23 +95,21 @@ public class QueryParser
         List<Element> termElems = filterChainTermXPath.selectNodes(topic);
         for(Element termElem: termElems)
         {
-            Query.FilterChain.BooleanClause.Term term = new Query.FilterChain.BooleanClause.Term();
             XPath fieldX = termElem.createXPath("./field");
             XPath valueX = termElem.createXPath("./value");
+            Query.FilterChain.BooleanClause.Term term = new Query.FilterChain.BooleanClause.Term();
             term.setField(((Element)fieldX.selectSingleNode(termElem)).getTextTrim());
-            Element valueElem = ((Element)valueX.selectSingleNode(termElem));
-            term.setValue(valueElem.getTextTrim());
-            List<Attribute> attrWoeid = valueElem.attributes();
-            if(attrWoeid != null)
+            List<Element> valueElems = valueX.selectNodes(termElem);
+            term.setValue(valueElems.get(0).getTextTrim());
+            for(Element valueElem: valueElems)
             {
-                for(Attribute attr: attrWoeid)
+                Attribute attrWoeid = valueElem.attribute("woeid");
+                if(attrWoeid != null)
                 {
-                    if(attr.getName().equals("woeid"))
-                        term.getWoeid().add(attr.getValue());
+                    term.getWoeid().add(attrWoeid.getValue());
                 }
             }
             q.getFilterChain().getBooleanClause().getTerms().add(term);
-
         }
     }
 }

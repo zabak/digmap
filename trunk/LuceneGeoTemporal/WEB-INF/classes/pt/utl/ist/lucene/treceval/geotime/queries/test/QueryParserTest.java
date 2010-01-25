@@ -49,12 +49,12 @@ public class QueryParserTest extends TestCase
             assertEquals(q.getFilterChain().getBooleanClause().getLogicValue(), Query.FilterChain.BooleanClause.LogicValue.OR);
             assertEquals(q.getId(),"GeoTime-0025");
             assertTrue(q.getFilterChain().getBooleanClause().getTerms().size() == 2);
-            assertEquals(q.getFilterChain().getBooleanClause().getTerms().get(0).getField(),"place");
-            assertEquals(q.getFilterChain().getBooleanClause().getTerms().get(1).getField(),"timeType");
-            assertEquals(q.getFilterChain().getBooleanClause().getTerms().get(0).getWoeid().get(0),"23424778");
-            assertEquals(q.getFilterChain().getBooleanClause().getTerms().get(1).getWoeid().size(),0);
-            assertEquals(q.getFilterChain().getBooleanClause().getTerms().get(0).getValue(),"Sri Lanka");
-            assertEquals(q.getFilterChain().getBooleanClause().getTerms().get(1).getValue(),"any");
+            assertEquals(((Query.FilterChain.BooleanClause.Term)q.getFilterChain().getBooleanClause().getTerms().get(0)).getField(),"place");
+            assertEquals(((Query.FilterChain.BooleanClause.Term)q.getFilterChain().getBooleanClause().getTerms().get(1)).getField(),"timeType");
+            assertEquals(((Query.FilterChain.BooleanClause.Term)q.getFilterChain().getBooleanClause().getTerms().get(0)).getWoeid().get(0),"23424778");
+            assertEquals(((Query.FilterChain.BooleanClause.Term)q.getFilterChain().getBooleanClause().getTerms().get(1)).getWoeid().size(),0);
+            assertEquals(((Query.FilterChain.BooleanClause.Term)q.getFilterChain().getBooleanClause().getTerms().get(0)).getValue(),"Sri Lanka");
+            assertEquals(((Query.FilterChain.BooleanClause.Term)q.getFilterChain().getBooleanClause().getTerms().get(1)).getValue(),"any");
 
             assertEquals(q.getTerms().getDesc(),"Sumatra earthquake tsunami hit Sri Lanka");
             assertEquals(q.getTerms().getNarr(),"largest earthquake recent times occurred coast Sumatra 2005 earthquake caused massive tsunami spread across Indian Ocean took tsunami reach Sri Lanka");

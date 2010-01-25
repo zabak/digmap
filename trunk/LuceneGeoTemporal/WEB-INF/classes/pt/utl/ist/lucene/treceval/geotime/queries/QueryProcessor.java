@@ -87,7 +87,7 @@ public class QueryProcessor
         return null;
     }
 
-     public String getPlacesBeolongTosQuery(QueryTarget queryTarget)
+    public String getPlacesBeolongTosQuery(QueryTarget queryTarget)
     {
         if(placesQuery == null)
             preparePlacesQueryString();
@@ -127,7 +127,7 @@ public class QueryProcessor
         }
         else if(queryTarget == QueryTarget.SENTENCES)
         {
-            return Config.T_TIME_EXPRESSIONS + Config.SEP + Config.SENTENCES + ":(" + placesQuery + ")";
+            return Config.T_TIME_EXPRESSIONS + Config.SEP + Config.SENTENCES + ":(" + timesQuery + ")";
         }
         return null;
     }
@@ -142,7 +142,7 @@ public class QueryProcessor
         }
         else if(queryTarget == QueryTarget.SENTENCES)
         {
-            return Config.T_POINT_RELATIVE + Config.SEP + Config.SENTENCES + ":(" + placesQuery + ")";
+            return Config.T_POINT_RELATIVE + Config.SEP + Config.SENTENCES + ":(" + timesQuery + ")";
         }
         return null;
     }
@@ -157,51 +157,12 @@ public class QueryProcessor
         }
         else if(queryTarget == QueryTarget.SENTENCES)
         {
-            return Config.T_DURATION + Config.SEP + Config.SENTENCES + ":(" + placesQuery + ")";
+            return Config.T_DURATION + Config.SEP + Config.SENTENCES + ":(" + timesQuery + ")";
         }
         return null;
     }
 
-    public Filter getFilters(QueryTarget queryTarget)
-    {
-        if(filter == null)
-            filter = prepareFilters(queryTarget);
-        return filter;
-    }
-
-    /**
-     * todo need test
-     * @param queryTarget
-     * @return
-     */
-    private Filter prepareFilters(QueryTarget queryTarget)
-    {
-        if(q.getFilterChain().getBooleanClause().getTerms().size() > 0)
-        {
-            if(q.getFilterChain().getBooleanClause().getTerms().size() == 1)
-            {
-                return getTermFilter(q.getFilterChain().getBooleanClause().getTerms().get(0),queryTarget);
-            }
-            else
-            {
-                Filter[] filters = new Filter[q.getFilterChain().getBooleanClause().getTerms().size()];
-                int[] actionType = new int[q.getFilterChain().getBooleanClause().getTerms().size()];
-                int action = q.getFilterChain().getBooleanClause().getLogicValue() == Query.FilterChain.BooleanClause.LogicValue.AND ? SerialChainFilter.AND: SerialChainFilter.OR;
-                for(int i = 0; i < actionType.length; i++)
-                    actionType[i] = action;
-
-                for(int i = 0; i < filters.length; i++)
-                {
-                    Query.FilterChain.BooleanClause.Term t= q.getFilterChain().getBooleanClause().getTerms().get(i);
-                    filters[i] = getTermFilter(t,queryTarget);
-                }
-                return new SerialChainFilter(filters,actionType);
-            }
-        }
-        return null;
-    }
-
-    private String prepareQueryString(QueryTarget queryTarget)
+     private String prepareQueryString(QueryTarget queryTarget)
     {
         if(queryTarget == QueryTarget.CONTENTS)
             return Config.CONTENTS + ":(" + q.getTerms().getDesc() + " " + q.getTerms().getDesc() + " " + q.getTerms().getNarr() + ")";
@@ -247,7 +208,52 @@ public class QueryProcessor
 
     }
 
-    private Filter getTermFilter(Query.FilterChain.BooleanClause.Term term, QueryTarget queryTarget)
+    public Filter getFilters(QueryTarget queryTarget)
+    {
+        if(filter == null)
+            filter = prepareFilters(queryTarget);
+        return filter;
+    }
+
+    /**
+     * todo need test
+     * @param queryTarget
+     * @return
+     */
+    private Filter prepareFilters(QueryTarget queryTarget)
+    {
+        if(q.getFilterChain().getBooleanClause().getTerms().size() > 0)
+        {
+           return createFilter(q.getFilterChain().getBooleanClause(),queryTarget);
+        }
+        return null;
+    }
+
+    private Filter createFilter(Query.FilterChain.BooleanTerm booleanTerm, QueryTarget queryTarget)
+    {
+        if(booleanTerm instanceof Query.FilterChain.BooleanClause.Term)
+            return createTermFilter(((Query.FilterChain.BooleanClause.Term)booleanTerm),queryTarget);
+        else
+            return createBooleanFilter(((Query.FilterChain.BooleanClause)booleanTerm),queryTarget);
+    }
+
+    private Filter createBooleanFilter(Query.FilterChain.BooleanClause booleanClause, QueryTarget queryTarget)
+    {
+        Filter[] filters = new Filter[booleanClause.getTerms().size()];
+        int[] actionType = new int[booleanClause.getTerms().size()];
+        int action = booleanClause.getLogicValue() == Query.FilterChain.BooleanClause.LogicValue.AND ? SerialChainFilter.AND: SerialChainFilter.OR;
+        for(int i = 0; i < actionType.length; i++)
+            actionType[i] = action;
+
+        for(int i = 0; i < filters.length; i++)
+        {
+            Query.FilterChain.BooleanTerm booleanTerm = booleanClause.getTerms().get(i);
+            filters[i] = createFilter(booleanTerm, queryTarget);
+        }
+        return new SerialChainFilter(filters,actionType);
+    }
+
+    private Filter createTermFilter(Query.FilterChain.BooleanClause.Term term, QueryTarget queryTarget)
     {
         String suffix = queryTarget == QueryTarget.SENTENCES ? Config.SEP + Config.SENTENCES : "";
 

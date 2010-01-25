@@ -1,6 +1,7 @@
 package pt.utl.ist.lucene.treceval.geotime.queries;
 
 import org.dom4j.*;
+import org.apache.log4j.Logger;
 
 import java.util.List;
 
@@ -14,6 +15,8 @@ import pt.utl.ist.lucene.utils.Dom4jUtil;
  */
 public class QueryParser
 {
+
+    private static final Logger logger= Logger.getLogger(QueryParser.class);
     Element topic;
     Query q;
 
@@ -82,34 +85,63 @@ public class QueryParser
     {
         XPath filterChainBoolXPath = topic.createXPath("./filterChain/boolean");
         List<Element> booleanElems = filterChainBoolXPath.selectNodes(topic);
-        if(booleanElems == null || booleanElems.size() == 0)
+        if(booleanElems != null && booleanElems.size() == 1)
+        {
+            Element boolElem = booleanElems.get(0);
+            loadBooleanClause(boolElem,q.getFilterChain().getBooleanClause());
             return;
-        Element boolElem = booleanElems.get(0);
+        }
+        if(booleanElems != null && booleanElems.size() > 1)
+        {
+            logger.error("Parse error: just one boolean element allowed inside filter chain");
+        }
+    }
+
+    private void loadBooleanClause(Element boolElem, Query.FilterChain.BooleanClause booleanClause)
+    {
         String logicStr = boolElem.attribute("type").getValue();
         if(logicStr.equals("AND"))
-            q.getFilterChain().getBooleanClause().setLogicValue(Query.FilterChain.BooleanClause.LogicValue.AND);
+            booleanClause.setLogicValue(Query.FilterChain.BooleanClause.LogicValue.AND);
         else
-            q.getFilterChain().getBooleanClause().setLogicValue(Query.FilterChain.BooleanClause.LogicValue.OR);
+            booleanClause.setLogicValue(Query.FilterChain.BooleanClause.LogicValue.OR);
 
-        XPath filterChainTermXPath = topic.createXPath("./filterChain/boolean/term");
-        List<Element> termElems = filterChainTermXPath.selectNodes(topic);
-        for(Element termElem: termElems)
+        List<Element> booleanTermElems = boolElem.elements();
+        if(booleanTermElems == null || booleanTermElems.size() == 0)
         {
-            XPath fieldX = termElem.createXPath("./field");
-            XPath valueX = termElem.createXPath("./value");
-            Query.FilterChain.BooleanClause.Term term = new Query.FilterChain.BooleanClause.Term();
-            term.setField(((Element)fieldX.selectSingleNode(termElem)).getTextTrim());
-            List<Element> valueElems = valueX.selectNodes(termElem);
-            term.setValue(valueElems.get(0).getTextTrim());
-            for(Element valueElem: valueElems)
+            logger.error("Parse Error: at least one boolean term needed inside a boolean clause");
+            return;
+        }
+
+        for(Element booleanTermElem: booleanTermElems)
+        {
+            if(booleanTermElem.getName().equals("boolean"))
             {
-                Attribute attrWoeid = valueElem.attribute("woeid");
-                if(attrWoeid != null)
-                {
-                    term.getWoeid().add(attrWoeid.getValue());
-                }
+                Query.FilterChain.BooleanClause innerBooleanClause = booleanClause.createBooleanClause();
+                loadBooleanClause(booleanTermElem, innerBooleanClause);
             }
-            q.getFilterChain().getBooleanClause().getTerms().add(term);
+            else
+            {
+                Query.FilterChain.BooleanClause.Term term = booleanClause.createTerm();
+                loadBooleanTermTerm(booleanTermElem, term);
+            }
+
+        }
+    }
+
+    private void loadBooleanTermTerm(Element booleanTermElem, Query.FilterChain.BooleanClause.Term term)
+    {
+        XPath fieldX = booleanTermElem.createXPath("./field");
+        XPath valueX = booleanTermElem.createXPath("./value");
+        term.setField(((Element)fieldX.selectSingleNode(booleanTermElem)).getTextTrim());
+        List<Element> valueElems = valueX.selectNodes(booleanTermElem);
+        term.setValue(valueElems.get(0).getTextTrim());
+        for(Element valueElem: valueElems)
+        {
+            Attribute attrWoeid = valueElem.attribute("woeid");
+            if(attrWoeid != null)
+            {
+                term.getWoeid().add(attrWoeid.getValue());
+            }
         }
     }
 }

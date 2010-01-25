@@ -49,6 +49,7 @@ public class Query
     {
         BooleanClause booleanClause = new BooleanClause();
 
+
         private FilterChain() {
         }
 
@@ -56,16 +57,34 @@ public class Query
             return booleanClause;
         }
 
-        public static class BooleanClause
+        public static abstract class BooleanTerm
         {
-            
-            List<Term> terms = new ArrayList<Term>();
+
+        }
+        public static class BooleanClause extends BooleanTerm
+        {
+
+            List<BooleanTerm> terms = new ArrayList<BooleanTerm>();
             LogicValue logicValue = LogicValue.AND;
 
             private BooleanClause() {
             }
 
-            public List<Term> getTerms() {
+            public BooleanClause createBooleanClause()
+            {
+                BooleanClause booleanClause = new BooleanClause();
+                terms.add(booleanClause);
+                return booleanClause;
+            }
+
+            public Term createTerm()
+            {
+                Term t = new Term();
+                terms.add(t);
+                return t;
+            }
+
+            public List<BooleanTerm> getTerms() {
                 return terms;
             }
 
@@ -77,14 +96,14 @@ public class Query
                 this.logicValue = logicValue;
             }
 
-            public static class Term
+            public static class Term extends BooleanTerm
             {
                 String field;
                 String value;
                 List<String> woeid = new ArrayList<String>();
 
 
-                public Term() {
+                private Term() {
 
                 }
 
@@ -185,7 +204,7 @@ public class Query
             }
         }
     }
-    
+
     public static class Terms
     {
 

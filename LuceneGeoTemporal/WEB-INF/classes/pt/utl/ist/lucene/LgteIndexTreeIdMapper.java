@@ -60,6 +60,13 @@ public class LgteIndexTreeIdMapper
         createOffsets(parent,child,foreignkeyFieldChild2Parent);
     }
 
+     public void addMappingUseOtherMappingOffsets(IndexReader parent,IndexReader child, IndexReader existentParent, String foreignkeyFieldChild2Parent)
+    {
+        Offsets offsets = offsetsMap.get(existentParent);
+        offsetsMap.put(parent,offsets);
+        offsetsInvertedMap.put(child,offsets);
+    }
+
 
     public boolean hasMapping(String field)
     {

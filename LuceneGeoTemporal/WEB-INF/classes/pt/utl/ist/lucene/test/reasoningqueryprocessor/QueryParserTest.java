@@ -1,4 +1,4 @@
-package pt.utl.ist.lucene.treceval.geotime.queries.test;
+package pt.utl.ist.lucene.test.reasoningqueryprocessor;
 
 import pt.utl.ist.lucene.treceval.geotime.queries.QueryParser;
 import pt.utl.ist.lucene.treceval.geotime.queries.Query;

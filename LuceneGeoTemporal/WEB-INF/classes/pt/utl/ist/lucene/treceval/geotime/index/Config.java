@@ -87,7 +87,7 @@ public class Config
     public static final String S_HAS_YYYY_KEY           = "S_HAS_YYYY_KEY";
     public static final String S_HAS_YYYYMM_KEY         = "S_HAS_YYYYMM_KEY";
     public static final String S_HAS_YYYYMMDD_KEY       = "S_HAS_YYYYMMDD_KEY";
-    
+
 
 
     //Geo Indexes
@@ -156,10 +156,8 @@ public class Config
     {
         IndexReader readerContents = LgteIndexManager.openReader(IndexContents.indexPath, Model.OkapiBM25Model);
         IndexReader readerGeoTime = LgteIndexManager.openReader(IndexGeoTime.indexPath, Model.OkapiBM25Model);
-        IndexReader readerTimeRefs = LgteIndexManager.openReader(IndexTimexes.indexPath, Model.OkapiBM25Model);
-        IndexReader readerGeoRefs = LgteIndexManager.openReader(IndexWoeid.indexPath, Model.OkapiBM25Model);
-        IndexReader readerMetrics = LgteIndexManager.openReader(IndexMetrics.indexPath, Model.OkapiBM25Model);
-        IndexReader readerDB = LgteIndexManager.openReader(CreateDBGeoTimexes.indexPath, Model.OkapiBM25Model);
+        IndexReader readerTimexes = LgteIndexManager.openReader(IndexTimexes.indexPath, Model.OkapiBM25Model);
+        IndexReader readerWoeid = LgteIndexManager.openReader(IndexWoeid.indexPath, Model.OkapiBM25Model);
 
         Map<String,IndexReader> readers = new HashMap<String,IndexReader>();
 
@@ -168,32 +166,69 @@ public class Config
         readers.put(Config.ID,readerContents);
 
         readers.put("regexpr(^S_.*)",readerGeoTime);
-        readers.put("regexpr(^t_.*)",readerTimeRefs);
-        readers.put("regexpr(^g_.*)",readerGeoRefs);
-        readers.put("regexpr(.*_DB$)",readerDB);
-        readers.put("*",readerMetrics);
+        readers.put("regexpr(^t_.*)",readerTimexes);
+        readers.put("regexpr(^g_.*)",readerWoeid);
 
         return new LgteIndexSearcherWrapper(Model.OkapiBM25Model,new LgteIsolatedIndexReader(readers));
     }
 
-    public static LgteIndexSearcherWrapper openMultiSearcherSentences() throws IOException
+
+    public static LgteIndexSearcherWrapper openMultiSearcherForContentsAndSentences() throws IOException
     {
-        IndexReader readerSentences = LgteIndexManager.openReader(IndexSentences.indexPath, Model.OkapiBM25Model);
         IndexReader readerContents = LgteIndexManager.openReader(IndexContents.indexPath, Model.OkapiBM25Model);
-        IndexReader readerGeoTime = LgteIndexManager.openReader(IndexGeoTimeSentences.indexPath, Model.OkapiBM25Model);
+        IndexReader readerGeoTime = LgteIndexManager.openReader(IndexGeoTime.indexPath, Model.OkapiBM25Model);
+        IndexReader readerTimexes = LgteIndexManager.openReader(IndexTimexes.indexPath, Model.OkapiBM25Model);
+        IndexReader readerWoeid = LgteIndexManager.openReader(IndexWoeid.indexPath, Model.OkapiBM25Model);
+        IndexReader readerSentences = LgteIndexManager.openReader(IndexSentences.indexPath, Model.OkapiBM25Model);
+        IndexReader readerGeoTimeSentences = LgteIndexManager.openReader(IndexGeoTimeSentences.indexPath, Model.OkapiBM25Model);
+        IndexReader readerTimexesSentences = LgteIndexManager.openReader(IndexTimexesSentences.indexPath, Model.OkapiBM25Model);
+        IndexReader readerWoeidSentences = LgteIndexManager.openReader(IndexWoeidSentences.indexPath, Model.OkapiBM25Model);
 
         Map<String,IndexReader> readers = new HashMap<String,IndexReader>();
 
-        readers.put(Config.CONTENTS,readerContents);
+
         readers.put(Config.ID,readerSentences);
-        readers.put(Config.SENTENCES,readerSentences);
         readers.put(Config.DOC_ID,readerSentences);
-        readers.put(Config.S_GEO_OR_TEMPORAL_INDEXED + "_" + Config.SENTENCES,readerGeoTime);
+        readers.put(Config.CONTENTS,readerContents);
+        readers.put(Config.SENTENCES,readerSentences);
+
+        readers.put("regexpr(^S_.*)",readerGeoTime);
+        readers.put("regexpr(^t_.*)",readerTimexes);
+        readers.put("regexpr(^g_.*)",readerWoeid);
+        readers.put("regexpr(^S_.*_sentences)",readerGeoTimeSentences);
+        readers.put("regexpr(^t_.*_sentences)",readerTimexesSentences);
+        readers.put("regexpr(^g_.*_sentences)",readerWoeidSentences);
         LgteIsolatedIndexReader lgteIsolatedIndexReader = new LgteIsolatedIndexReader(readers);
         lgteIsolatedIndexReader.addTreeMapping(readerContents,readerSentences,DOC_ID);
+        lgteIsolatedIndexReader.addTreeMapping(readerTimexes,readerTimexesSentences,readerContents,DOC_ID);
+        lgteIsolatedIndexReader.addTreeMapping(readerWoeid,readerWoeidSentences,readerContents,DOC_ID);
+        lgteIsolatedIndexReader.addTreeMapping(readerGeoTime,readerGeoTimeSentences,readerContents,DOC_ID);
 
+        return new LgteIndexSearcherWrapper(Model.OkapiBM25Model,new LgteIsolatedIndexReader(readers));
+    }
+
+     public static LgteIndexSearcherWrapper openMultiSearcherSentences() throws IOException
+    {
+        IndexReader readerSentences = LgteIndexManager.openReader(IndexSentences.indexPath, Model.OkapiBM25Model);
+        IndexReader readerGeoTimeSentences = LgteIndexManager.openReader(IndexGeoTimeSentences.indexPath, Model.OkapiBM25Model);
+        IndexReader readerTimexesSentences = LgteIndexManager.openReader(IndexTimexesSentences.indexPath, Model.OkapiBM25Model);
+        IndexReader readerWoeidSentences = LgteIndexManager.openReader(IndexWoeidSentences.indexPath, Model.OkapiBM25Model);
+
+        Map<String,IndexReader> readers = new HashMap<String,IndexReader>();
+
+
+        readers.put(Config.ID,readerSentences);
+        readers.put(Config.DOC_ID,readerSentences);
+        readers.put(Config.SENTENCES,readerSentences);
+
+        readers.put("regexpr(^S_.*_sentences)",readerGeoTimeSentences);
+        readers.put("regexpr(^t_.*_sentences)",readerTimexesSentences);
+        readers.put("regexpr(^g_.*_sentences)",readerWoeidSentences);
+        LgteIsolatedIndexReader lgteIsolatedIndexReader = new LgteIsolatedIndexReader(readers);
         return new LgteIndexSearcherWrapper(Model.OkapiBM25Model,lgteIsolatedIndexReader);
     }
+
+   
 
     public static void main(String[] args)
     {

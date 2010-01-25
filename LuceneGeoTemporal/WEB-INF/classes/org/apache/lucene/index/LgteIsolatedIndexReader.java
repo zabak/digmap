@@ -13,6 +13,7 @@ import java.io.File;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.log4j.Logger;
+import org.tiling.didyoumean.Indexer;
 
 /**
  * @author Jorge Machado
@@ -197,7 +198,15 @@ public class LgteIsolatedIndexReader extends ProbabilisticIndexReader
         if(lgteIndexTreeIdMapper == null)
             lgteIndexTreeIdMapper = new LgteIndexTreeIdMapper(this);
         lgteIndexTreeIdMapper.addMapping(parent,child,foreignKeyFieldChild2Parent);
+    }
 
+    public void addTreeMapping(IndexReader parent, IndexReader child, IndexReader existentParent, String foreignKeyFieldChild2Parent)
+    {
+        if(readers.getReader(foreignKeyFieldChild2Parent)==null)
+            throw new RuntimeException("addTreeMapping: can't add a foreign key that is not define in readers map");
+        if(lgteIndexTreeIdMapper == null)
+            lgteIndexTreeIdMapper = new LgteIndexTreeIdMapper(this);
+        lgteIndexTreeIdMapper.addMappingUseOtherMappingOffsets(parent,child,existentParent, foreignKeyFieldChild2Parent);
     }
 
     public int getRealDoc(int docNumber, String field)

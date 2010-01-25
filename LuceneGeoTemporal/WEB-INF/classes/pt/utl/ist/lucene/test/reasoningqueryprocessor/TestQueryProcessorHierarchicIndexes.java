@@ -1,4 +1,4 @@
-package pt.utl.ist.lucene.treceval.geotime.queries.test;
+package pt.utl.ist.lucene.test.reasoningqueryprocessor;
 
 import junit.framework.TestCase;
 import pt.utl.ist.lucene.*;
@@ -272,7 +272,7 @@ public class TestQueryProcessorHierarchicIndexes extends TestCase {
 
         TermsFilter termsFilter = new TermsFilter();
         termsFilter.addTerm(new Term(Config.S_HAS_TIMEXES,"true"));
-        lgteHits = searcher.search(lgteQuery,queryFilter);
+        lgteHits = searcher.search(lgteQuery,termsFilter);
         assertEquals(lgteHits.length(),1);
         assertEquals(lgteHits.id(0),1);
 

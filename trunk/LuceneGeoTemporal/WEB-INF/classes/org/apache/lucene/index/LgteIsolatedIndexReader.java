@@ -36,6 +36,7 @@ public class LgteIsolatedIndexReader extends ProbabilisticIndexReader
         private Map<String, IndexReader> readers = new HashMap<String,IndexReader>();
         IndexReader[] readersArray;
         List<IndexReader> readerses;
+        List <Map.Entry<String,IndexReader>> sortedExpressions;
 
         private Readers()
         {
@@ -63,9 +64,23 @@ public class LgteIsolatedIndexReader extends ProbabilisticIndexReader
                 if(!readerses.contains(reader))
                     readerses.add(reader);
             }
+            sortedExpressions = new ArrayList<Map.Entry<String,IndexReader>>(readers.entrySet());
+            Collections.sort(sortedExpressions,new Comparator<Map.Entry<String,IndexReader>>()
+            {
+                public int compare(Map.Entry<String, IndexReader> o1, Map.Entry<String, IndexReader> o2) {
+                    int compare = o2.getKey().length() - o1.getKey().length();
+                    if(compare>0)
+                        return 1;
+                    else if(compare < 0 )
+                        return -1;
+                    else return 0;
+                }
+            });
+
             readersArray = new IndexReader[readerses.size()];
             for(int i = 0; i < readersArray.length;i++)
                 readersArray[i] = readerses.get(i);
+
         }
 
         public IndexReader getReader(String field)
@@ -74,7 +89,7 @@ public class LgteIsolatedIndexReader extends ProbabilisticIndexReader
 
             if(reader == null)
             {
-                for(Map.Entry<String,IndexReader> entry: readers.entrySet())
+                for(Map.Entry<String,IndexReader> entry: sortedExpressions)
                 {
                     if(entry.getKey().matches("regexpr(.*)"))
                     {

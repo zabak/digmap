@@ -96,4 +96,14 @@ public class TermsFilter extends Filter
         return hash;
     }
 
+    public String toString()
+    {
+        StringBuilder string = new StringBuilder();
+        for(Object term: terms)
+        {
+            string.append(term.toString()).append(";");
+        }
+        return string.toString();
+    }
+
 }

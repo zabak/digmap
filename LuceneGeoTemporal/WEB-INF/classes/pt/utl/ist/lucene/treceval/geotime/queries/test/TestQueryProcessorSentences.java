@@ -3,6 +3,7 @@ package pt.utl.ist.lucene.treceval.geotime.queries.test;
 import junit.framework.TestCase;
 import pt.utl.ist.lucene.*;
 import pt.utl.ist.lucene.utils.Files;
+import pt.utl.ist.lucene.utils.placemaker.PlaceNameNormalizer;
 import pt.utl.ist.lucene.treceval.geotime.index.Config;
 import pt.utl.ist.lucene.treceval.geotime.queries.Query;
 import pt.utl.ist.lucene.treceval.geotime.queries.QueryParser;
@@ -502,5 +503,342 @@ public class TestQueryProcessorSentences extends TestCase {
 
         searcher.close();
         Files.delDirsE(path + "testTimeFilterKey");
+    }
+
+
+
+
+
+    public void testPlaceFilter() throws IOException, DocumentException, ParseException
+    {
+        LgteIndexWriter writer = new LgteIndexWriter(path + "testPlaceFilter",true);
+        LgteDocumentWrapper doc1 = new LgteDocumentWrapper();
+        doc1.indexText(Globals.DOCUMENT_ID_FIELD, "1");
+        doc1.indexText("sentences","word1 word2 word3");
+        doc1.indexStringNoStore(Config.S_GEO_INDEXED + "_sentences","true");
+        doc1.indexStringNoStore(Config.G_GEO_ALL_WOEID + "_sentences", PlaceNameNormalizer.normalizeWoeid("798"));
+        doc1.indexStringNoStore(Config.G_GEO_PLACE_TYPE + "_sentences","Country");
+        LgteDocumentWrapper doc2 = new LgteDocumentWrapper();
+
+        doc2.indexText(Globals.DOCUMENT_ID_FIELD, "2");
+        doc2.indexText("sentences","word2 word3 word4 word55 word96 word2 word54 word33 wordss");
+        doc2.indexStringNoStore(Config.G_GEO_ALL_WOEID + "_sentences", PlaceNameNormalizer.normalizeWoeid("123"));
+        doc2.indexStringNoStore(Config.G_GEO_PLACE_TYPE + "_sentences","Suburb");
+        LgteDocumentWrapper doc3 = new LgteDocumentWrapper();
+
+        doc3.indexText(Globals.DOCUMENT_ID_FIELD, "3");
+        doc3.indexText("sentences","word1 word2 word100 word400 word555 word966 word544 word333 wordss");
+        doc3.indexStringNoStore(Config.G_GEO_ALL_WOEID + "_sentences",PlaceNameNormalizer.normalizeWoeid("321"));
+        doc3.indexStringNoStore(Config.G_GEO_ALL_WOEID + "_sentences",PlaceNameNormalizer.normalizeWoeid("456"));
+        doc3.indexStringNoStore(Config.G_GEO_PLACE_TYPE + "_sentences","Town");
+        doc3.indexStringNoStore(Config.S_GEO_INDEXED + "_sentences","true");
+        LgteDocumentWrapper doc4 = new LgteDocumentWrapper();
+
+        doc4.indexText(Globals.DOCUMENT_ID_FIELD, "4");
+        doc4.indexText("sentences","word1 word2 word100 word400 word555 word966 word544 word333 wordss");
+        doc4.indexStringNoStore(Config.G_GEO_ALL_WOEID + "_sentences",PlaceNameNormalizer.normalizeWoeid("321"));
+        doc4.indexStringNoStore(Config.G_GEO_PLACE_TYPE + "_sentences","State");
+        doc4.indexStringNoStore(Config.S_GEO_INDEXED + "_sentences","true");
+        writer.addDocument(doc1);
+        writer.addDocument(doc2);
+        writer.addDocument(doc3);
+        writer.addDocument(doc4);
+        writer.close();
+
+        LgteIndexSearcherWrapper searcher = new LgteIndexSearcherWrapper(Model.OkapiBM25Model, path + "testPlaceFilter");
+        QueryConfiguration queryConfiguration = new QueryConfiguration();
+        queryConfiguration.setProperty("bm25.idf.policy","floor_epslon");
+        queryConfiguration.setProperty("bm25.idf.epslon","0.01");
+        queryConfiguration.setProperty("bm25.k1","2.0");
+        queryConfiguration.setProperty("bm25.b","0.75");
+        LgteQuery lgteQuery;
+        LgteHits lgteHits;
+
+
+        String xml =
+                "<topic id=\"GeoTime-0025\">\n" +
+                        "  <filterChain>\n" +
+                        "       <boolean type=\"AND\">\n" +
+                        "           <term>\n" +
+                        "               <field>place</field>\n" +
+                        "               <value woeid=\"123\">TestPlace</value>\n" +
+                        "           </term>\n" +
+                        "       </boolean>\n" +
+                        "  </filterChain>\n" +
+                        "  <terms>\n" +
+                        "    <desc>word2</desc>\n" +
+                        "    <narr>word3</narr>\n" +
+                        "  </terms>\n" +
+                        "</topic>";
+        Query queryXml = new QueryParser(xml).getQuery();
+        QueryProcessor qpXml = new QueryProcessor(queryXml);
+
+        String query = qpXml.getQuery(QueryProcessor.QueryTarget.SENTENCES);
+        Filter filter = qpXml.getFilters(QueryProcessor.QueryTarget.SENTENCES);
+        assertEquals(query,"sentences:(word2 word2 word3)");
+        lgteQuery = LgteQueryParser.parseQuery(query,searcher,queryConfiguration);
+        lgteHits = searcher.search(lgteQuery,filter);
+        assertEquals(lgteHits.length(),1);
+        assertEquals(lgteHits.id(0),1);
+
+        xml =
+                "<topic id=\"GeoTime-0025\">\n" +
+                        "  <filterChain>\n" +
+                        "       <boolean type=\"AND\">\n" +
+                        "           <term>\n" +
+                        "               <field>place</field>\n" +
+                        "               <value woeid=\"321\">TestPlace</value>\n" +
+                        "           </term>\n" +
+                        "          <term>\n" +
+                        "               <field>placeType</field>\n" +
+                        "               <value>province</value>\n" +
+                        "           </term>\n" +
+                        "       </boolean>\n" +
+                        "  </filterChain>\n" +
+                        "  <terms>\n" +
+                        "    <desc>word2</desc>\n" +
+                        "    <narr>word3</narr>\n" +
+                        "  </terms>\n" +
+                        "</topic>";
+        queryXml = new QueryParser(xml).getQuery();
+        qpXml = new QueryProcessor(queryXml);
+
+        query = qpXml.getQuery(QueryProcessor.QueryTarget.SENTENCES);
+        filter = qpXml.getFilters(QueryProcessor.QueryTarget.SENTENCES);
+        assertEquals(query,"sentences:(word2 word2 word3)");
+        lgteQuery = LgteQueryParser.parseQuery(query,searcher,queryConfiguration);
+        lgteHits = searcher.search(lgteQuery,filter);
+        assertEquals(lgteHits.length(),1);
+        assertEquals(lgteHits.id(0),3);
+
+
+
+        xml =
+                "<topic id=\"GeoTime-0025\">\n" +
+                        "  <filterChain>\n" +
+                        "       <boolean type=\"OR\">\n" +
+                        "           <term>\n" +
+                        "               <field>place</field>\n" +
+                        "               <value woeid=\"123\">TestPlace</value>\n" +
+                        "           </term>\n" +
+                        "          <term>\n" +
+                        "               <field>placeType</field>\n" +
+                        "               <value>province</value>\n" +
+                        "           </term>\n" +
+                        "       </boolean>\n" +
+                        "  </filterChain>\n" +
+                        "  <terms>\n" +
+                        "    <desc>word2</desc>\n" +
+                        "    <narr>word3</narr>\n" +
+                        "  </terms>\n" +
+                        "</topic>";
+        queryXml = new QueryParser(xml).getQuery();
+        qpXml = new QueryProcessor(queryXml);
+
+        query = qpXml.getQuery(QueryProcessor.QueryTarget.SENTENCES);
+        filter = qpXml.getFilters(QueryProcessor.QueryTarget.SENTENCES);
+        assertEquals(query,"sentences:(word2 word2 word3)");
+        lgteQuery = LgteQueryParser.parseQuery(query,searcher,queryConfiguration);
+        lgteHits = searcher.search(lgteQuery,filter);
+        assertEquals(lgteHits.length(),2);
+        assertTrue(lgteHits.id(0) == 1 && lgteHits.id(1) == 3 || lgteHits.id(0) == 3 && lgteHits.id(1) == 1);
+
+
+
+        xml =
+                "<topic id=\"GeoTime-0025\">\n" +
+                        "  <filterChain>\n" +
+                        "       <boolean type=\"OR\">\n" +
+                        "           <term>\n" +
+                        "               <field>place</field>\n" +
+                        "               <value woeid=\"123\">TestPlace</value>\n" +
+                        "               <value woeid=\"321\">TestPlace</value>\n" +
+                        "           </term>\n" +
+                        "       </boolean>\n" +
+                        "  </filterChain>\n" +
+                        "  <terms>\n" +
+                        "    <desc>word2</desc>\n" +
+                        "    <narr>word3</narr>\n" +
+                        "  </terms>\n" +
+                        "</topic>";
+        queryXml = new QueryParser(xml).getQuery();
+        qpXml = new QueryProcessor(queryXml);
+
+        query = qpXml.getQuery(QueryProcessor.QueryTarget.SENTENCES);
+        filter = qpXml.getFilters(QueryProcessor.QueryTarget.SENTENCES);
+        assertEquals(query,"sentences:(word2 word2 word3)");
+        lgteQuery = LgteQueryParser.parseQuery(query,searcher,queryConfiguration);
+        lgteHits = searcher.search(lgteQuery,filter);
+        assertEquals(lgteHits.length(),3);
+        assertTrue((lgteHits.id(0) == 1 || lgteHits.id(0) == 2 || lgteHits.id(0) == 3) &&
+                (lgteHits.id(1) == 1 || lgteHits.id(1) == 2 || lgteHits.id(1) == 3) &&
+                (lgteHits.id(2) == 1 || lgteHits.id(2) == 2 || lgteHits.id(2) == 3));
+
+
+        xml =
+                "<topic id=\"GeoTime-0025\">\n" +
+                        "  <filterChain>\n" +
+                        "       <boolean type=\"AND\">\n" +
+                        "           <term>\n" +
+                        "               <field>place</field>\n" +
+                        "               <value woeid=\"123\">TestPlace</value>\n" +
+                        "               <value woeid=\"321\">TestPlace</value>\n" +
+                        "           </term>\n" +
+                        "           <term>\n" +
+                        "               <field>placeType</field>\n" +
+                        "               <value>city</value>\n" +
+                        "           </term>\n" +
+                        "       </boolean>\n" +
+                        "  </filterChain>\n" +
+                        "  <terms>\n" +
+                        "    <desc>word2</desc>\n" +
+                        "    <narr>word3</narr>\n" +
+                        "  </terms>\n" +
+                        "</topic>";
+        queryXml = new QueryParser(xml).getQuery();
+        qpXml = new QueryProcessor(queryXml);
+
+        query = qpXml.getQuery(QueryProcessor.QueryTarget.SENTENCES);
+        filter = qpXml.getFilters(QueryProcessor.QueryTarget.SENTENCES);
+        assertEquals(query,"sentences:(word2 word2 word3)");
+        lgteQuery = LgteQueryParser.parseQuery(query,searcher,queryConfiguration);
+        lgteHits = searcher.search(lgteQuery,filter);
+        assertEquals(lgteHits.length(),2);
+        assertTrue(lgteHits.id(0) == 1 && lgteHits.id(1) == 2 || lgteHits.id(0) == 2 && lgteHits.id(1) == 1);
+
+
+
+
+        xml =
+                "<topic id=\"GeoTime-0025\">\n" +
+                        "  <filterChain>\n" +
+                        "       <boolean type=\"OR\">\n" +
+                        "           <term>\n" +
+                        "               <field>place</field>\n" +
+                        "               <value woeid=\"893\">TestPlace</value>\n" +
+                        "           </term>\n" +
+                        "           <term>\n" +
+                        "               <field>placeType</field>\n" +
+                        "               <value>country</value>\n" +
+                        "           </term>\n" +
+                        "           <term>\n" +
+                        "               <field>placeType</field>\n" +
+                        "               <value>country</value>\n" +
+                        "           </term>\n" +
+                        "           <term>\n" +
+                        "               <field>placeType</field>\n" +
+                        "               <value>country</value>\n" +
+                        "           </term>\n" +
+                        "           <term>\n" +
+                        "               <field>placeType</field>\n" +
+                        "               <value>country</value>\n" +
+                        "           </term>\n" +
+                        "           <term>\n" +
+                        "               <field>place</field>\n" +
+                        "               <value woeid=\"234234\">Test</value>\n" +
+                        "           </term>\n" +
+                        "           <term>\n" +
+                        "               <field>placeType</field>\n" +
+                        "               <value>country</value>\n" +
+                        "           </term>\n" +
+                        "           <term>\n" +
+                        "               <field>place</field>\n" +
+                        "               <value woeid=\"2343234\">Test</value>\n" +
+                        "           </term>\n" +
+                        "           <term>\n" +
+                        "               <field>placeType</field>\n" +
+                        "               <value>country</value>\n" +
+                        "           </term>\n" +
+                        "           <term>\n" +
+                        "               <field>placeType</field>\n" +
+                        "               <value>country</value>\n" +
+                        "           </term>\n" +
+                        "           <term>\n" +
+                        "               <field>placeType</field>\n" +
+                        "               <value>country</value>\n" +
+                        "           </term>\n" +
+                        "           <term>\n" +
+                        "               <field>placeType</field>\n" +
+                        "               <value>country</value>\n" +
+                        "           </term>\n" +
+                        "           <term>\n" +
+                        "               <field>placeType</field>\n" +
+                        "               <value>country</value>\n" +
+                        "           </term>\n" +
+                        "           <term>\n" +
+                        "               <field>placeType</field>\n" +
+                        "               <value>country</value>\n" +
+                        "           </term>\n" +
+                        "           <term>\n" +
+                        "               <field>placeType</field>\n" +
+                        "               <value>country</value>\n" +
+                        "           </term>\n" +
+                        "       </boolean>\n" +
+                        "  </filterChain>\n" +
+                        "  <terms>\n" +
+                        "    <desc>word2</desc>\n" +
+                        "    <narr>word3</narr>\n" +
+                        "  </terms>\n" +
+                        "</topic>";
+        queryXml = new QueryParser(xml).getQuery();
+        qpXml = new QueryProcessor(queryXml);
+
+        query = qpXml.getQuery(QueryProcessor.QueryTarget.SENTENCES);
+        filter = qpXml.getFilters(QueryProcessor.QueryTarget.SENTENCES);
+        assertEquals(query,"sentences:(word2 word2 word3)");
+        lgteQuery = LgteQueryParser.parseQuery(query,searcher,queryConfiguration);
+        lgteHits = searcher.search(lgteQuery,filter);
+        assertEquals(lgteHits.length(),1);
+        assertTrue(lgteHits.id(0) == 0);
+
+
+        xml =
+                "<topic id=\"GeoTime-0025\">\n" +
+                        "  <filterChain>\n" +
+                        "       <boolean type=\"AND\">\n" +
+                        "           <term>\n" +
+                        "               <field>place</field>\n" +
+                        "               <value woeid=\"123\">TestPlace</value>\n" +
+                        "               <value woeid=\"321\">TestPlace</value>\n" +
+                        "           </term>\n" +
+                        "           <term>\n" +
+                        "               <field>placeType</field>\n" +
+                        "               <value>city</value>\n" +
+                        "           </term>\n" +
+                        "       </boolean>\n" +
+                        "  </filterChain>\n" +
+                        "  <terms>\n" +
+                        "    <desc>word2</desc>\n" +
+                        "    <narr>word3</narr>\n" +
+                        "  </terms>\n" +
+                        "  <places>\n" +
+                        "    <term woeid=\"987654321\">Test</term>\n" +
+                        "    <term woeid=\"12345678\">Test</term>\n" +
+                        "  </places>\n"+
+                        "  <times>\n" +
+                        "    <term>2002</term>\n" +
+                        "    <term>200304</term>\n" +
+                        "    <term>20050401</term>\n" +
+                        "  </times>\n"+
+                        "</topic>";
+        queryXml = new QueryParser(xml).getQuery();
+        qpXml = new QueryProcessor(queryXml);
+
+        query = qpXml.getQuery(QueryProcessor.QueryTarget.SENTENCES);
+        assertEquals(query,"sentences:(word2 word2 word3)");
+
+        assertEquals(qpXml.getPlacesQuery(QueryProcessor.QueryTarget.SENTENCES),Config.G_GEO_ALL_WOEID + "_sentences:(WOEID-987654321 WOEID-12345678)");
+        assertEquals(qpXml.getPlacesRefQuery(QueryProcessor.QueryTarget.SENTENCES),Config.G_PLACE_REF_WOEID + "_sentences:(WOEID-987654321 WOEID-12345678)");
+        assertEquals(qpXml.getPlacesBeolongTosQuery(QueryProcessor.QueryTarget.SENTENCES),Config.G_PLACE_BELONG_TOS_WOEID + "_sentences:(WOEID-987654321 WOEID-12345678)");
+
+        assertEquals(qpXml.getTimesQueryTimeExpressions(QueryProcessor.QueryTarget.SENTENCES),Config.T_TIME_EXPRESSIONS + "_sentences:(2002* 200304* 20050401*)");
+        assertEquals(qpXml.getTimesQueryKeyTimeExpressions(QueryProcessor.QueryTarget.SENTENCES),Config.T_POINT_KEY + "_sentences:(2002* 200304* 20050401*)");
+        assertEquals(qpXml.getTimesQueryRelativeTimeExpressions(QueryProcessor.QueryTarget.SENTENCES),Config.T_POINT_RELATIVE + "_sentences:(2002* 200304* 20050401*)");
+        assertEquals(qpXml.getTimesQueryDurationsTimeExpressions(QueryProcessor.QueryTarget.SENTENCES),Config.T_DURATION + "_sentences:(2002* 200304* 20050401*)");
+
+
+
+        searcher.close();
+        Files.delDirsE(path + "testPlaceFilter");
     }
 }

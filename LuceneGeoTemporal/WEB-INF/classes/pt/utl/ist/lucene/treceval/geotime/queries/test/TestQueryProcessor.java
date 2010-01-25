@@ -24,21 +24,7 @@ import junit.framework.TestCase;
 public class TestQueryProcessor extends TestCase
 {
 
-    String xmlTimeTestYYYY =
-            "<topic id=\"GeoTime-0025\">\n" +
-                    "  <filterChain>\n" +
-                    "       <boolean type=\"OR\">\n" +
-                    "           <term>\n" +
-                    "               <field>timeType</field>\n" +
-                    "               <value>year</value>\n" +
-                    "           </term>\n" +
-                    "       </boolean>\n" +
-                    "  </filterChain>\n" +
-                    "  <terms>\n" +
-                    "    <desc>word2</desc>\n" +
-                    "    <narr>word3</narr>\n" +
-                    "  </terms>\n" +
-                    "</topic>";
+
     String xmlTimeTestYYYYMM =
             "<topic id=\"GeoTime-0025\">\n" +
                     "  <filterChain>\n" +
@@ -244,8 +230,78 @@ public class TestQueryProcessor extends TestCase
         LgteQuery lgteQuery;
         LgteHits lgteHits;
 
-        Query qYYYY = new QueryParser(xmlTimeTestYYYY).getQuery();
+        String xml =
+                "<topic id=\"GeoTime-0025\">\n" +
+                        "  <filterChain>\n" +
+                        "       <boolean type=\"OR\">\n" +
+                        "           <term>\n" +
+                        "               <field>timeType</field>\n" +
+                        "               <value>year</value>\n" +
+                        "           </term>\n" +
+                        "       </boolean>\n" +
+                        "  </filterChain>\n" +
+                        "  <terms>\n" +
+                        "    <desc>word2</desc>\n" +
+                        "    <narr>word3</narr>\n" +
+                        "  </terms>\n" +
+                        "</topic>";
+        Query qYYYY = new QueryParser(xml).getQuery();
         QueryProcessor qpYYYY = new QueryProcessor(qYYYY);
+
+        String query = qpYYYY.getQuery(QueryProcessor.QueryTarget.CONTENTS);
+        Filter filter = qpYYYY.getFilters(QueryProcessor.QueryTarget.CONTENTS);
+        assertEquals(query,"contents:(word2 word2 word3)");
+        lgteQuery = LgteQueryParser.parseQuery(query,searcher,queryConfiguration);
+        lgteHits = searcher.search(lgteQuery,filter);
+        assertEquals(lgteHits.length(),3);
+        assertTrue((lgteHits.id(0) == 1 || lgteHits.id(0) == 2 || lgteHits.id(0) == 3) &&
+                (lgteHits.id(1) == 1 || lgteHits.id(1) == 2 || lgteHits.id(1) == 3) &&
+                (lgteHits.id(2) == 1 || lgteHits.id(2) == 2 || lgteHits.id(2) == 3));
+
+
+
+        xml =
+                "<topic id=\"GeoTime-0025\">\n" +
+                        "  <filterChain>\n" +
+                        "       <boolean type=\"OR\">\n" +
+                        "           <boolean type=\"AND\">\n" +
+                        "               <term>\n" +
+                        "                   <field>timeType</field>\n" +
+                        "                   <value>year</value>\n" +
+                        "               </term>\n" +
+                        "               <term>\n" +
+                        "                   <field>time</field>\n" +
+                        "                   <value>199002</value>\n" +
+                        "               </term>\n" +
+                        "           </boolean>\n" +
+                        "           <boolean type=\"AND\">\n" +
+                        "               <term>\n" +
+                        "                   <field>timeType</field>\n" +
+                        "                   <value>exact-date</value>\n" +
+                        "               </term>\n" +
+                        "               <term>\n" +
+                        "                   <field>time</field>\n" +
+                        "                   <value>2009</value>\n" +
+                        "               </term>\n" +
+                        "           </boolean>\n" +
+                        "       </boolean>\n" +
+                        "  </filterChain>\n" +
+                        "  <terms>\n" +
+                        "    <desc>word2</desc>\n" +
+                        "    <narr>word3</narr>\n" +
+                        "  </terms>\n" +
+                        "</topic>";
+        Query q = new QueryParser(xml).getQuery();
+        QueryProcessor qp = new QueryProcessor(q);
+
+        query = qp.getQuery(QueryProcessor.QueryTarget.CONTENTS);
+        filter = qp.getFilters(QueryProcessor.QueryTarget.CONTENTS);
+        assertEquals(query,"contents:(word2 word2 word3)");
+        lgteQuery = LgteQueryParser.parseQuery(query,searcher,queryConfiguration);
+        lgteHits = searcher.search(lgteQuery,filter);
+        assertEquals(lgteHits.length(),2);
+        assertTrue(lgteHits.id(0) == 2 && lgteHits.id(1) == 3 || lgteHits.id(0) == 3 && lgteHits.id(1) == 2);
+
 
         Query qYYYYMM = new QueryParser(xmlTimeTestYYYYMM).getQuery();
         QueryProcessor qpYYYYMM = new QueryProcessor(qYYYYMM);
@@ -275,15 +331,6 @@ public class TestQueryProcessor extends TestCase
 
 
 
-        String query = qpYYYY.getQuery(QueryProcessor.QueryTarget.CONTENTS);
-        Filter filter = qpYYYY.getFilters(QueryProcessor.QueryTarget.CONTENTS);
-        assertEquals(query,"contents:(word2 word2 word3)");
-        lgteQuery = LgteQueryParser.parseQuery(query,searcher,queryConfiguration);
-        lgteHits = searcher.search(lgteQuery,filter);
-        assertEquals(lgteHits.length(),3);
-        assertTrue((lgteHits.id(0) == 1 || lgteHits.id(0) == 2 || lgteHits.id(0) == 3) &&
-                (lgteHits.id(1) == 1 || lgteHits.id(1) == 2 || lgteHits.id(1) == 3) &&
-                (lgteHits.id(2) == 1 || lgteHits.id(2) == 2 || lgteHits.id(2) == 3));
 
         query = qpYYYYMM.getQuery(QueryProcessor.QueryTarget.CONTENTS);
         filter = qpYYYYMM.getFilters(QueryProcessor.QueryTarget.CONTENTS);
@@ -408,8 +455,37 @@ public class TestQueryProcessor extends TestCase
         LgteQuery lgteQuery;
         LgteHits lgteHits;
 
-        Query qYYYY = new QueryParser(xmlTimeTestYYYY).getQuery();
+        String xml =
+                "<topic id=\"GeoTime-0025\">\n" +
+                        "  <filterChain>\n" +
+                        "       <boolean type=\"OR\">\n" +
+                        "           <term>\n" +
+                        "               <field>timeType</field>\n" +
+                        "               <value>year</value>\n" +
+                        "           </term>\n" +
+                        "       </boolean>\n" +
+                        "  </filterChain>\n" +
+                        "  <terms>\n" +
+                        "    <desc>word2</desc>\n" +
+                        "    <narr>word3</narr>\n" +
+                        "  </terms>\n" +
+                        "</topic>";
+
+        Query qYYYY = new QueryParser(xml).getQuery();
         QueryProcessor qpYYYY = new QueryProcessor(qYYYY,true);
+
+        String query = qpYYYY.getQuery(QueryProcessor.QueryTarget.CONTENTS);
+        Filter filter = qpYYYY.getFilters(QueryProcessor.QueryTarget.CONTENTS);
+        assertEquals(query,"contents:(word2 word2 word3)");
+        lgteQuery = LgteQueryParser.parseQuery(query,searcher,queryConfiguration);
+        lgteHits = searcher.search(lgteQuery,filter);
+        assertEquals(lgteHits.length(),3);
+        assertTrue((lgteHits.id(0) == 1 || lgteHits.id(0) == 2 || lgteHits.id(0) == 3) &&
+                (lgteHits.id(1) == 1 || lgteHits.id(1) == 2 || lgteHits.id(1) == 3) &&
+                (lgteHits.id(2) == 1 || lgteHits.id(2) == 2 || lgteHits.id(2) == 3));
+
+
+
 
         Query qYYYYMM = new QueryParser(xmlTimeTestYYYYMM).getQuery();
         QueryProcessor qpYYYYMM = new QueryProcessor(qYYYYMM,true);
@@ -438,15 +514,7 @@ public class TestQueryProcessor extends TestCase
 
 
 
-        String query = qpYYYY.getQuery(QueryProcessor.QueryTarget.CONTENTS);
-        Filter filter = qpYYYY.getFilters(QueryProcessor.QueryTarget.CONTENTS);
-        assertEquals(query,"contents:(word2 word2 word3)");
-        lgteQuery = LgteQueryParser.parseQuery(query,searcher,queryConfiguration);
-        lgteHits = searcher.search(lgteQuery,filter);
-        assertEquals(lgteHits.length(),3);
-        assertTrue((lgteHits.id(0) == 1 || lgteHits.id(0) == 2 || lgteHits.id(0) == 3) &&
-                (lgteHits.id(1) == 1 || lgteHits.id(1) == 2 || lgteHits.id(1) == 3) &&
-                (lgteHits.id(2) == 1 || lgteHits.id(2) == 2 || lgteHits.id(2) == 3));
+
 
         query = qpYYYYMM.getQuery(QueryProcessor.QueryTarget.CONTENTS);
         filter = qpYYYYMM.getFilters(QueryProcessor.QueryTarget.CONTENTS);
@@ -864,7 +932,7 @@ public class TestQueryProcessor extends TestCase
         assertEquals(qpXml.getTimesQueryKeyTimeExpressions(QueryProcessor.QueryTarget.CONTENTS),Config.T_POINT_KEY + ":(2002* 200304* 20050401*)");
         assertEquals(qpXml.getTimesQueryRelativeTimeExpressions(QueryProcessor.QueryTarget.CONTENTS),Config.T_POINT_RELATIVE + ":(2002* 200304* 20050401*)");
         assertEquals(qpXml.getTimesQueryDurationsTimeExpressions(QueryProcessor.QueryTarget.CONTENTS),Config.T_DURATION + ":(2002* 200304* 20050401*)");
-        
+
 
 
         searcher.close();

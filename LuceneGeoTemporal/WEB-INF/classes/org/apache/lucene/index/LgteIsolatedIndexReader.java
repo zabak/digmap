@@ -648,19 +648,24 @@ public class LgteIsolatedIndexReader extends ProbabilisticIndexReader
         throw new NotImplemented("LgteIsolatedIndexReader does not implements this method yet");
     }
 
-    class MultiTermDocs implements TermDocs {
+    class MultiTermDocs implements TermDocs
+    {
         Readers readers;
         protected Term term;
 
         protected TermDocs current;              // == readerTermDocs[pointer]
 
-        public MultiTermDocs(Readers r) {
-            readers = r;
+//        int currentIndex = -1;
+//        int[] currentDocs = null;
 
+        public MultiTermDocs(Readers r)
+        {
+            readers = r;
         }
 
         public int doc() {
             return current.doc();
+//            return currentDocs[currentIndex];
         }
         public int freq() {
             return current.freq();
@@ -668,20 +673,75 @@ public class LgteIsolatedIndexReader extends ProbabilisticIndexReader
 
         public void seek(Term term) throws IOException
         {
+//            currentDocs = null;
+//            currentIndex = -1;
             current = readers.getReader(term.field()).termDocs();
             current.seek(term);
             this.term = term;
         }
 
-        public void seek(TermEnum termEnum) throws IOException {
+        public void seek(TermEnum termEnum) throws IOException
+        {
             seek(termEnum.term());
         }
 
-        public boolean next() throws IOException {
-            if (current != null && current.next()) {
+        public boolean next() throws IOException
+        {
+            if(current != null && current.next())
                 return true;
-            } else
+            else
                 return false;
+//            if (current != null)
+//            {
+//                if(currentDocs != null && currentIndex < currentDocs.length - 1)
+//                {
+//                    currentIndex++;
+//                    return true;
+//                }
+//                else if(currentDocs == null)
+//                {
+//                    if(current.next())
+//                    {
+//                        if(!hasMapping(term.field()))
+//                        {
+//                            currentDocs = new int[]{current.doc()};
+//                            currentIndex = 0;
+//                            return true;
+//                        }
+//                        else
+//                        {
+//                            currentDocs = translateId(current.doc(),term.field());
+//                            currentIndex = 0;
+//                            return true;
+//                        }
+//                    }
+//                    else
+//                        return false;
+//                }
+//                else
+//                {
+//                    if(current.next())
+//                    {
+//                        currentDocs = null;
+//                        currentIndex = -1;
+//                        if(!hasMapping(term.field()))
+//                        {
+//                            currentDocs = new int[]{current.doc()};
+//                            currentIndex = 0;
+//                            return true;
+//                        }
+//                        else
+//                        {
+//                            currentDocs = translateId(current.doc(),term.field());
+//                            currentIndex = 0;
+//                            return true;
+//                        }
+//                    }
+//                    else
+//                        return false;
+//                }
+//            } else
+//                return false;
         }
 
         /** Optimized implementation. */

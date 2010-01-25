@@ -130,9 +130,8 @@ public class QueryProcessor
         return null;
     }
 
-    private String prepareTimesQueryString(QueryTarget queryTarget)
+    public String prepareTimesQueryString(QueryTarget queryTarget)
     {
-
         if(queryTarget == QueryTarget.CONTENTS)
         {
             if(q.getTimes().getTerms().size()>0)
@@ -141,8 +140,9 @@ public class QueryProcessor
                 for(Query.Times.Term time: q.getTimes().getTerms())
                 {
                     if(!time.getTime().equals("?"))
-                        times.append(time).append(" ");   
+                        times.append(time).append("* ");   
                 }
+                return Config.T_TIME_EXPRESSIONS + ":(" + times.toString() + ")";
             }
         }
         //todo sentences e sentences_contents
@@ -248,9 +248,16 @@ public class QueryProcessor
 
     private Filter getPlaceFilter(Query.FilterChain.BooleanClause.Term term , String suffix)
     {
-        TermsFilter termsFilter = new TermsFilter();
-        termsFilter.addTerm(new Term(Config.G_GEO_ALL_WOEID + suffix,term.getWoeid().get(0))); //todo change to serial
-        return termsFilter;
+        int[] actionType = new int[term.getWoeid().size()];
+        Filter[] filter = new Filter[term.getWoeid().size()];
+        for(int i=0; i < filter.length;i++)
+        {
+            TermsFilter termsFilter = new TermsFilter();
+            termsFilter.addTerm(new Term(Config.G_GEO_ALL_WOEID + suffix,term.getWoeid().get(i)));
+            filter[i] = termsFilter;
+            actionType[i] = SerialChainFilter.OR;
+        }
+        return new SerialChainFilter(filter, actionType);
     }
 
     private Filter getPlaceTypeFilter(Query.FilterChain.BooleanClause.Term term , String suffix)

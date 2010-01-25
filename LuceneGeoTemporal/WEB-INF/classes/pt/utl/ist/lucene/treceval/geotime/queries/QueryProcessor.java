@@ -29,7 +29,6 @@ public class QueryProcessor
     private static final Logger logger = Logger.getLogger(QueryProcessor.class);
 
     Query q;
-    Filter filter = null;
     boolean time_key = false;
     String placesQuery;
     String timesQuery;
@@ -71,6 +70,8 @@ public class QueryProcessor
     {
         if(placesQuery == null)
             preparePlacesQueryString();
+        if(placesQuery.trim().length() == 0)
+            return null;
         if(queryTarget == QueryTarget.CONTENTS)
         {
             return Config.G_GEO_ALL_WOEID + ":(" + placesQuery + ")";
@@ -86,6 +87,8 @@ public class QueryProcessor
     {
         if(placesQuery == null)
             preparePlacesQueryString();
+        if(placesQuery.trim().length() == 0)
+            return null;
         if(queryTarget == QueryTarget.CONTENTS)
         {
             return Config.G_PLACE_REF_WOEID + ":(" + placesQuery + ")";
@@ -101,6 +104,8 @@ public class QueryProcessor
     {
         if(placesQuery == null)
             preparePlacesQueryString();
+        if(placesQuery.trim().length() == 0)
+            return null;
         if(queryTarget == QueryTarget.CONTENTS)
         {
             return Config.G_PLACE_BELONG_TOS_WOEID + ":(" + placesQuery + ")";
@@ -116,6 +121,8 @@ public class QueryProcessor
     {
         if(timesQuery == null)
             prepareTimesQueryString();
+        if(timesQuery.trim().length() == 0)
+            return null;
         if(queryTarget == QueryTarget.CONTENTS)
         {
             return Config.T_POINT_KEY + ":(" + timesQuery + ")";
@@ -123,6 +130,23 @@ public class QueryProcessor
         else if(queryTarget == QueryTarget.SENTENCES)
         {
             return Config.T_POINT_KEY + Config.SEP + Config.SENTENCES + ":(" + timesQuery + ")";
+        }
+        return null;
+    }
+
+    public String getTimesQueryPointTimeExpressions(QueryTarget queryTarget)
+    {
+        if(timesQuery == null)
+            prepareTimesQueryString();
+        if(timesQuery.trim().length() == 0)
+            return null;
+        if(queryTarget == QueryTarget.CONTENTS)
+        {
+            return Config.T_POINT + ":(" + timesQuery + ")";
+        }
+        else if(queryTarget == QueryTarget.SENTENCES)
+        {
+            return Config.T_POINT + Config.SEP + Config.SENTENCES + ":(" + timesQuery + ")";
         }
         return null;
     }
@@ -172,7 +196,7 @@ public class QueryProcessor
         return null;
     }
 
-     private String prepareQueryString(QueryTarget queryTarget)
+    private String prepareQueryString(QueryTarget queryTarget)
     {
         if(queryTarget == QueryTarget.CONTENTS)
             return Config.CONTENTS + ":(" + q.getTerms().getDesc() + " " + q.getTerms().getDesc() + " " + q.getTerms().getNarr() + ")";
@@ -232,7 +256,7 @@ public class QueryProcessor
             preparePlacesQueryString();
         return wantPlaces;
     }
-                            //todo testar
+    //todo testar
     public boolean wantTimes() {
         if(wantTimes == null)
             prepareTimesQueryString();
@@ -241,9 +265,295 @@ public class QueryProcessor
 
     public Filter getFilters(QueryTarget queryTarget)
     {
-        if(filter == null)
-            filter = prepareFilters(queryTarget);
-        return filter;
+        return prepareFilters(queryTarget);
+    }
+
+
+    /*****************************
+     * PLACE QUERIES BUILT WITH FILTERS TERMS
+     *
+     * @param queryTarget
+     * @return
+     */
+
+    public String getPlaceFiltersAsQueries(QueryTarget queryTarget)
+    {
+        if(q.getFilterChain().getBooleanClause().getTerms().size() > 0)
+        {
+            StringBuilder queryBuilder = new StringBuilder();
+            buildPlaceFiltersAsQueries(q.getFilterChain().getBooleanClause(),queryBuilder);
+            if(queryBuilder.toString() == null || queryBuilder.toString().trim().length() == 0)
+                return null;
+            if(queryTarget == QueryTarget.CONTENTS)
+            {
+                return Config.G_GEO_ALL_WOEID + ":(" + queryBuilder.toString() + ")";
+            }
+            else if(queryTarget == QueryTarget.SENTENCES)
+            {
+                return Config.G_GEO_ALL_WOEID + Config.SEP + Config.SENTENCES + ":(" + queryBuilder.toString() + ")";
+            }
+        }
+        return null;
+    }
+
+    public String getPlaceFiltersAsQueriesBelongTos(QueryTarget queryTarget)
+    {
+        if(q.getFilterChain().getBooleanClause().getTerms().size() > 0)
+        {
+            StringBuilder queryBuilder = new StringBuilder();
+            buildPlaceFiltersAsQueries(q.getFilterChain().getBooleanClause(),queryBuilder);
+            if(queryBuilder.toString() == null || queryBuilder.toString().trim().length() == 0)
+                return null;
+            if(queryTarget == QueryTarget.CONTENTS)
+            {
+                return Config.G_PLACE_BELONG_TOS_WOEID + ":(" + queryBuilder.toString() + ")";
+            }
+            else if(queryTarget == QueryTarget.SENTENCES)
+            {
+                return Config.G_PLACE_BELONG_TOS_WOEID + Config.SEP + Config.SENTENCES + ":(" + queryBuilder.toString() + ")";
+            }
+        }
+        return null;
+    }
+
+    private void buildPlaceFiltersAsQueries(Query.FilterChain.BooleanTerm booleanTerm, StringBuilder query)
+    {
+        if(booleanTerm instanceof Query.FilterChain.BooleanClause.Term && ((Query.FilterChain.BooleanClause.Term)booleanTerm).getField().equals("place"))
+        {
+            for(String woeid: ((Query.FilterChain.BooleanClause.Term)booleanTerm).getWoeid())
+            {
+                query.append(" ").append(PlaceNameNormalizer.normalizeWoeid(woeid));
+            }
+        }
+        else if(booleanTerm instanceof Query.FilterChain.BooleanClause)
+        {
+            for(Query.FilterChain.BooleanTerm term: ((Query.FilterChain.BooleanClause)booleanTerm).getTerms())
+            {
+                buildPlaceFiltersAsQueries(term,query);
+            }
+        }
+    }
+
+    /****
+     * PLACE TYPE
+     * @param queryTarget
+     * @return
+     */
+    public String getPlaceTypeFiltersAsQueries(QueryTarget queryTarget)
+    {
+        String queryTerms = getPlaceTypeFiltersAsQueries();
+        if(queryTerms == null || queryTerms.trim().length() == 0)
+            return null;
+        if(queryTarget == QueryTarget.CONTENTS)
+        {
+            return Config.G_GEO_PLACE_TYPE + ":(" + queryTerms + ")";
+        }
+        else if(queryTarget == QueryTarget.SENTENCES)
+        {
+            return Config.G_GEO_PLACE_TYPE + Config.SEP + Config.SENTENCES + ":(" + queryTerms + ")";
+        }
+        return null;
+    }
+
+    private String getPlaceTypeFiltersAsQueries()
+    {
+        if(q.getFilterChain().getBooleanClause().getTerms().size() > 0)
+        {
+            StringBuilder queryBuilder = new StringBuilder();
+            getPlaceTypeFiltersAsQueries(q.getFilterChain().getBooleanClause(),queryBuilder);
+            return queryBuilder.toString();
+        }
+        return null;
+    }
+
+    private void getPlaceTypeFiltersAsQueries(Query.FilterChain.BooleanTerm booleanTerm, StringBuilder query)
+    {
+        if(booleanTerm instanceof Query.FilterChain.BooleanClause.Term && ((Query.FilterChain.BooleanClause.Term)booleanTerm).getField().equals("placeType"))
+        {
+            String [] mapped = mapPlaceType(((Query.FilterChain.BooleanClause.Term)booleanTerm).getValue());
+            for(String s: mapped)
+                query.append(" ").append(s);
+        }
+        else if(booleanTerm instanceof Query.FilterChain.BooleanClause)
+        {
+            for(Query.FilterChain.BooleanTerm term: ((Query.FilterChain.BooleanClause)booleanTerm).getTerms())
+            {
+                getPlaceTypeFiltersAsQueries(term,query);
+            }
+        }
+    }
+
+
+    /********************************************
+     * TIME QUERIES BUILT WITH FILTERS TERMS
+     * @param queryTarget
+     * @return
+     */
+
+
+    public String getTimeFiltersAsQueries(QueryTarget queryTarget)
+    {
+        String queryTerms = getTimeFiltersAsQueries();
+        if(queryTerms == null || queryTerms.trim().length() == 0)
+            return null;
+        if(queryTarget == QueryTarget.CONTENTS)
+        {
+            return Config.T_TIME_EXPRESSIONS + ":(" + queryTerms + ")";
+        }
+        else if(queryTarget == QueryTarget.SENTENCES)
+        {
+            return Config.T_TIME_EXPRESSIONS + Config.SEP + Config.SENTENCES + ":(" + queryTerms + ")";
+        }
+        return null;
+    }
+    public String getTimePointsFiltersAsQueries(QueryTarget queryTarget)
+    {
+        String queryTerms = getTimeFiltersAsQueries();
+        if(queryTerms == null || queryTerms.trim().length() == 0)
+            return null;
+        if(queryTarget == QueryTarget.CONTENTS)
+        {
+            return Config.T_POINT + ":(" + queryTerms + ")";
+        }
+        else if(queryTarget == QueryTarget.SENTENCES)
+        {
+            return Config.T_POINT + Config.SEP + Config.SENTENCES + ":(" + queryTerms + ")";
+        }
+        return null;
+    }
+    public String getTimeKeyPointsFiltersAsQueries(QueryTarget queryTarget)
+    {
+        String queryTerms = getTimeFiltersAsQueries();
+        if(queryTerms == null || queryTerms.trim().length() == 0)
+            return null;
+        if(queryTarget == QueryTarget.CONTENTS)
+        {
+            return Config.T_POINT_KEY + ":(" + queryTerms + ")";
+        }
+        else if(queryTarget == QueryTarget.SENTENCES)
+        {
+            return Config.T_POINT_KEY + Config.SEP + Config.SENTENCES + ":(" + queryTerms + ")";
+        }
+        return null;
+    }
+    public String getTimeRelativePointsFiltersAsQueries(QueryTarget queryTarget)
+    {
+        String queryTerms = getTimeFiltersAsQueries();
+        if(queryTerms == null || queryTerms.trim().length() == 0)
+            return null;
+        if(queryTarget == QueryTarget.CONTENTS)
+        {
+            return Config.T_POINT_RELATIVE + ":(" + queryTerms + ")";
+        }
+        else if(queryTarget == QueryTarget.SENTENCES)
+        {
+            return Config.T_POINT_RELATIVE + Config.SEP + Config.SENTENCES + ":(" + queryTerms + ")";
+        }
+        return null;
+    }
+    public String getTimeDurationPointsFiltersAsQueries(QueryTarget queryTarget)
+    {
+        String queryTerms = getTimeFiltersAsQueries();
+        if(queryTerms == null || queryTerms.trim().length() == 0)
+            return null;
+        if(queryTarget == QueryTarget.CONTENTS)
+        {
+            return Config.T_DURATION + ":(" + queryTerms + ")";
+        }
+        else if(queryTarget == QueryTarget.SENTENCES)
+        {
+            return Config.T_DURATION + Config.SEP + Config.SENTENCES + ":(" + queryTerms + ")";
+        }
+        return null;
+    }
+
+    private String getTimeFiltersAsQueries()
+    {
+        if(q.getFilterChain().getBooleanClause().getTerms().size() > 0)
+        {
+            StringBuilder queryBuilder = new StringBuilder();
+            buildTimeFiltersAsQueries(q.getFilterChain().getBooleanClause(),queryBuilder);
+            return queryBuilder.toString();
+        }
+        return null;
+    }
+
+    private void buildTimeFiltersAsQueries(Query.FilterChain.BooleanTerm booleanTerm, StringBuilder query)
+    {
+        if(booleanTerm instanceof Query.FilterChain.BooleanClause.Term && ((Query.FilterChain.BooleanClause.Term)booleanTerm).getField().equals("time"))
+        {
+            query.append(" ").append(((Query.FilterChain.BooleanClause.Term)booleanTerm).getValue() + "*");
+        }
+        else if(booleanTerm instanceof Query.FilterChain.BooleanClause)
+        {
+            for(Query.FilterChain.BooleanTerm term: ((Query.FilterChain.BooleanClause)booleanTerm).getTerms())
+            {
+                buildTimeFiltersAsQueries(term,query);
+            }
+        }
+    }
+
+
+    /**
+     * TimeTYPE
+     * @param queryTarget
+     * @return
+     */
+
+    public String getTimeTypeFiltersAsQueries(QueryTarget queryTarget)
+    {
+        if(q.getFilterChain().getBooleanClause().getTerms().size() > 0)
+        {
+            StringBuilder queryBuilder = new StringBuilder();
+            buildTimeTypeFiltersAsQueries(q.getFilterChain().getBooleanClause(),queryBuilder,queryTarget,false);
+            if(queryBuilder.toString().trim().length() > 0)
+                return queryBuilder.toString();
+        }
+        return null;
+    }
+
+    public String getTimeKeyTypeFiltersAsQueries(QueryTarget queryTarget)
+    {
+        if(q.getFilterChain().getBooleanClause().getTerms().size() > 0)
+        {
+            StringBuilder queryBuilder = new StringBuilder();
+            buildTimeTypeFiltersAsQueries(q.getFilterChain().getBooleanClause(),queryBuilder,queryTarget,true);
+            if(queryBuilder.toString().trim().length() > 0)
+                return queryBuilder.toString();
+        }
+        return null;
+    }
+
+    private void buildTimeTypeFiltersAsQueries(Query.FilterChain.BooleanTerm booleanTerm, StringBuilder query,QueryTarget queryTarget, boolean key)
+    {
+        if(booleanTerm instanceof Query.FilterChain.BooleanClause.Term && ((Query.FilterChain.BooleanClause.Term)booleanTerm).getField().equals("timeType"))
+        {
+            String value = ((Query.FilterChain.BooleanClause.Term)booleanTerm).getValue();
+            String suffix = queryTarget == QueryTarget.SENTENCES? Config.SEP + Config.SENTENCES : "";
+            if(key)
+            {
+                query.append(" ").append(Config.S_HAS_YYYY_KEY).append(suffix).append(":").append("true").append("");
+                if(!value.equals("year"))
+                    query.append(" ").append(Config.S_HAS_YYYYMM_KEY).append(suffix).append(":").append("true").append("");
+                if(!value.equals("year-month"))
+                    query.append(" ").append(Config.S_HAS_YYYYMMDD_KEY).append(suffix).append(":").append("true").append("");
+            }
+            else
+            {
+                query.append(" ").append(Config.S_HAS_YYYY).append(suffix).append(":").append("true").append("");
+                if(!value.equals("year"))
+                    query.append(" ").append(Config.S_HAS_YYYYMM).append(suffix).append(":").append("true").append("");
+                if(!value.equals("year-month"))
+                    query.append(" ").append(Config.S_HAS_YYYYMMDD).append(suffix).append(":").append("true").append("");
+            }
+        }
+        else if(booleanTerm instanceof Query.FilterChain.BooleanClause)
+        {
+            for(Query.FilterChain.BooleanTerm term: ((Query.FilterChain.BooleanClause)booleanTerm).getTerms())
+            {
+                buildTimeTypeFiltersAsQueries(term,query,queryTarget,key);
+            }
+        }
     }
 
     /**
@@ -255,7 +565,7 @@ public class QueryProcessor
     {
         if(q.getFilterChain().getBooleanClause().getTerms().size() > 0)
         {
-           return createFilter(q.getFilterChain().getBooleanClause(),queryTarget);
+            return createFilter(q.getFilterChain().getBooleanClause(),queryTarget);
         }
         return null;
     }
@@ -328,7 +638,7 @@ public class QueryProcessor
             Filter[] filters = new Filter[]{termsFilterYYYY,termsFilterYYYYMM,termsFilterYYYYMMDD};
             filter = new SerialChainFilter(filters,actionType);
         }
-        if(term.getValue().equals("year-month"))
+        else if(term.getValue().equals("year-month"))
         {
             int[] actionType = new int[2];
             actionType[0] = SerialChainFilter.OR;
@@ -346,7 +656,7 @@ public class QueryProcessor
             Filter[] filters = new Filter[]{termsFilterYYYYMM,termsFilterYYYYMMDD};
             filter = new SerialChainFilter(filters,actionType);
         }
-        if(term.getValue().equals("exact-date"))
+        else if(term.getValue().equals("exact-date"))
         {
             TermsFilter termsFilterYYYYMMDD = new TermsFilter();
             if(time_key)
@@ -395,85 +705,37 @@ public class QueryProcessor
         return new SerialChainFilter(filter, actionType);
     }
 
+
+    private String[] mapPlaceType(String type)
+    {
+        final String[] state = { "State","Estate","HistoricalState","County","HistoricalCounty","Province","Zone","Island"};
+        final String[] city = { "City","Town","Suburb","HistoricalTown","Zone"};
+        final String[] country = { "Country"};
+        if(type.equalsIgnoreCase("province") || type.equalsIgnoreCase("state"))
+            return state;
+        else if(type.equalsIgnoreCase("city"))
+            return city;
+        else if(type.equalsIgnoreCase("country"))
+            return country;
+        else
+            logger.error("ATENTION UNESPECTED PLACE TYPE: " + type);
+        return null;
+    }
+
     private Filter getPlaceTypeFilter(Query.FilterChain.BooleanClause.Term term , String suffix)
     {
-        TermsFilter termsFilter = new TermsFilter();
         String type=term.getValue();
-        if(type.equalsIgnoreCase("country"))
+        String [] map = mapPlaceType(type);
+        int[] actionType = new int[map.length];
+        Filter[] filter = new Filter[map.length];
+        for(int i=0;i< map.length;i++)
         {
-            termsFilter.addTerm(new Term(Config.G_GEO_PLACE_TYPE + suffix,"Country"));
-            return termsFilter;
+            actionType[i]=SerialChainFilter.OR;
+            TermsFilter termFilter = new TermsFilter();
+            termFilter.addTerm(new Term(Config.G_GEO_PLACE_TYPE + suffix,map[i]));
+            filter[i] = termFilter;
         }
-        else if(type.equalsIgnoreCase("city"))
-        {
-            int[] actionType = new int[5];
-            actionType[0] = SerialChainFilter.OR;
-            actionType[1] = SerialChainFilter.OR;
-            actionType[2] = SerialChainFilter.OR;
-            actionType[4] = SerialChainFilter.OR;
-
-            TermsFilter city = new TermsFilter();
-            city.addTerm(new Term(Config.G_GEO_PLACE_TYPE + suffix,"City"));
-
-            TermsFilter town = new TermsFilter();
-            town.addTerm(new Term(Config.G_GEO_PLACE_TYPE + suffix,"Town"));
-
-            TermsFilter suburb = new TermsFilter();
-            suburb.addTerm(new Term(Config.G_GEO_PLACE_TYPE + suffix,"Suburb"));
-
-            TermsFilter historicalTown = new TermsFilter();
-            historicalTown.addTerm(new Term(Config.G_GEO_PLACE_TYPE + suffix,"HistoricalTown"));
-
-            TermsFilter zone = new TermsFilter();
-            zone.addTerm(new Term(Config.G_GEO_PLACE_TYPE + suffix,"Zone"));
-
-            Filter[] filters = new Filter[]{city,town,suburb,historicalTown,zone};
-            return new SerialChainFilter(filters,actionType);
-        }
-        else if(type.equalsIgnoreCase("province"))
-        {
-            int[] actionType = new int[8];
-            actionType[0] = SerialChainFilter.OR;
-            actionType[1] = SerialChainFilter.OR;
-            actionType[2] = SerialChainFilter.OR;
-            actionType[4] = SerialChainFilter.OR;
-            actionType[5] = SerialChainFilter.OR;
-            actionType[6] = SerialChainFilter.OR;
-            actionType[7] = SerialChainFilter.OR;
-
-
-            TermsFilter state = new TermsFilter();
-            state.addTerm(new Term(Config.G_GEO_PLACE_TYPE + suffix,"State"));
-
-            TermsFilter estate = new TermsFilter();
-            estate.addTerm(new Term(Config.G_GEO_PLACE_TYPE + suffix,"Estate"));
-
-            TermsFilter historicalState = new TermsFilter();
-            historicalState.addTerm(new Term(Config.G_GEO_PLACE_TYPE + suffix,"HistoricalState"));
-
-            TermsFilter county = new TermsFilter();
-            county.addTerm(new Term(Config.G_GEO_PLACE_TYPE + suffix,"County"));
-
-            TermsFilter historicalCounty = new TermsFilter();
-            historicalCounty.addTerm(new Term(Config.G_GEO_PLACE_TYPE + suffix,"HistoricalCounty"));
-
-            TermsFilter province = new TermsFilter();
-            province.addTerm(new Term(Config.G_GEO_PLACE_TYPE + suffix,"Province"));
-
-            TermsFilter zone = new TermsFilter();
-            zone.addTerm(new Term(Config.G_GEO_PLACE_TYPE + suffix,"Zone"));
-
-            TermsFilter island = new TermsFilter();
-            island.addTerm(new Term(Config.G_GEO_PLACE_TYPE + suffix,"Island"));
-
-            Filter[] filters = new Filter[]{state,estate, historicalState,county,historicalCounty,province,zone,island};
-            return new SerialChainFilter(filters,actionType);
-        }
-        else
-        {
-            logger.error("Unkown type: " + type);
-        }
-        return null;
+        return new SerialChainFilter(filter,actionType);
     }
 
 }

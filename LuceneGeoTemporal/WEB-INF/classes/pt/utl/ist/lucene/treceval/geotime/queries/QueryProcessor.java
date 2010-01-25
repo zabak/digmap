@@ -33,6 +33,8 @@ public class QueryProcessor
     boolean time_key = false;
     String placesQuery;
     String timesQuery;
+    private Boolean wantPlaces = null;
+    private Boolean wantTimes = null;
 
 
     public enum QueryTarget
@@ -52,7 +54,15 @@ public class QueryProcessor
         this.time_key = timeKey;
     }
 
-    public String getQuery(QueryTarget queryTarget)
+    public boolean isTime_key() {
+        return time_key;
+    }
+
+    public Query getQ() {
+        return q;
+    }
+
+    public String getTermsQuery(QueryTarget queryTarget)
     {
         return prepareQueryString(queryTarget);
     }
@@ -178,16 +188,19 @@ public class QueryProcessor
 
     private void preparePlacesQueryString()
     {
-
-
+        wantPlaces = false;
         if(q.getPlaces().getTerms().size()>0)
         {
             StringBuilder places = new StringBuilder();
             for(Query.Places.Term place: q.getPlaces().getTerms())
             {
                 if(!place.getPlace().equals("?"))
+                {
                     for(String woeid: place.getWoeid())
                         places.append(PlaceNameNormalizer.normalizeWoeid(woeid)).append(" ");
+                }
+                else
+                    wantPlaces = true;
             }
             placesQuery = places.toString().trim();
         }
@@ -195,17 +208,35 @@ public class QueryProcessor
 
     public void prepareTimesQueryString()
     {
+        wantTimes = false;
         if(q.getTimes().getTerms().size()>0)
         {
             StringBuilder times = new StringBuilder();
             for(Query.Times.Term time: q.getTimes().getTerms())
             {
                 if(!time.getTime().equals("?"))
+                {
                     times.append(time.getTime()).append("* ");
+                }
+                else
+                    wantTimes = true;
             }
             timesQuery = times.toString().trim();
         }
 
+    }
+
+    public boolean wantPlaces()
+    {
+        if(wantPlaces == null)
+            preparePlacesQueryString();
+        return wantPlaces;
+    }
+                            //todo testar
+    public boolean wantTimes() {
+        if(wantTimes == null)
+            prepareTimesQueryString();
+        return wantTimes;
     }
 
     public Filter getFilters(QueryTarget queryTarget)

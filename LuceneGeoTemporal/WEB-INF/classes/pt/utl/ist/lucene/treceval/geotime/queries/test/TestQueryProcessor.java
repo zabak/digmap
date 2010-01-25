@@ -248,7 +248,7 @@ public class TestQueryProcessor extends TestCase
         Query qYYYY = new QueryParser(xml).getQuery();
         QueryProcessor qpYYYY = new QueryProcessor(qYYYY);
 
-        String query = qpYYYY.getQuery(QueryProcessor.QueryTarget.CONTENTS);
+        String query = qpYYYY.getTermsQuery(QueryProcessor.QueryTarget.CONTENTS);
         Filter filter = qpYYYY.getFilters(QueryProcessor.QueryTarget.CONTENTS);
         assertEquals(query,"contents:(word2 word2 word3)");
         lgteQuery = LgteQueryParser.parseQuery(query,searcher,queryConfiguration);
@@ -294,7 +294,7 @@ public class TestQueryProcessor extends TestCase
         Query q = new QueryParser(xml).getQuery();
         QueryProcessor qp = new QueryProcessor(q);
 
-        query = qp.getQuery(QueryProcessor.QueryTarget.CONTENTS);
+        query = qp.getTermsQuery(QueryProcessor.QueryTarget.CONTENTS);
         filter = qp.getFilters(QueryProcessor.QueryTarget.CONTENTS);
         assertEquals(query,"contents:(word2 word2 word3)");
         lgteQuery = LgteQueryParser.parseQuery(query,searcher,queryConfiguration);
@@ -332,7 +332,7 @@ public class TestQueryProcessor extends TestCase
 
 
 
-        query = qpYYYYMM.getQuery(QueryProcessor.QueryTarget.CONTENTS);
+        query = qpYYYYMM.getTermsQuery(QueryProcessor.QueryTarget.CONTENTS);
         filter = qpYYYYMM.getFilters(QueryProcessor.QueryTarget.CONTENTS);
         assertEquals(query,"contents:(word2 word2 word3)");
         lgteQuery = LgteQueryParser.parseQuery(query,searcher,queryConfiguration);
@@ -340,7 +340,7 @@ public class TestQueryProcessor extends TestCase
         assertEquals(lgteHits.length(),2);
         assertTrue(lgteHits.id(0) == 2 && lgteHits.id(1) == 3 || lgteHits.id(0) == 3 && lgteHits.id(1) == 2);
 
-        query = qpYYYYMMDD.getQuery(QueryProcessor.QueryTarget.CONTENTS);
+        query = qpYYYYMMDD.getTermsQuery(QueryProcessor.QueryTarget.CONTENTS);
         filter = qpYYYYMMDD.getFilters(QueryProcessor.QueryTarget.CONTENTS);
         assertEquals(query,"contents:(word2 word2 word3)");
         lgteQuery = LgteQueryParser.parseQuery(query,searcher,queryConfiguration);
@@ -350,7 +350,7 @@ public class TestQueryProcessor extends TestCase
 
 
 
-        query = qp_ALL_OR.getQuery(QueryProcessor.QueryTarget.CONTENTS);
+        query = qp_ALL_OR.getTermsQuery(QueryProcessor.QueryTarget.CONTENTS);
         filter = qp_ALL_OR.getFilters(QueryProcessor.QueryTarget.CONTENTS);
         assertEquals(query,"contents:(word2 word2 word3)");
         lgteQuery = LgteQueryParser.parseQuery(query,searcher,queryConfiguration);
@@ -361,7 +361,7 @@ public class TestQueryProcessor extends TestCase
                 (lgteHits.id(2) == 1 || lgteHits.id(2) == 2 || lgteHits.id(2) == 3));
 
 
-        query = qp_ALL_AND.getQuery(QueryProcessor.QueryTarget.CONTENTS);
+        query = qp_ALL_AND.getTermsQuery(QueryProcessor.QueryTarget.CONTENTS);
         filter = qp_ALL_AND.getFilters(QueryProcessor.QueryTarget.CONTENTS);
         assertEquals(query,"contents:(word2 word2 word3)");
         lgteQuery = LgteQueryParser.parseQuery(query,searcher,queryConfiguration);
@@ -370,7 +370,7 @@ public class TestQueryProcessor extends TestCase
         assertTrue(lgteHits.id(0) == 3);
 
 
-        query = qp_1990.getQuery(QueryProcessor.QueryTarget.CONTENTS);
+        query = qp_1990.getTermsQuery(QueryProcessor.QueryTarget.CONTENTS);
         filter = qp_1990.getFilters(QueryProcessor.QueryTarget.CONTENTS);
         assertEquals(query,"contents:(word2 word2 word3)");
         lgteQuery = LgteQueryParser.parseQuery(query,searcher,queryConfiguration);
@@ -378,7 +378,7 @@ public class TestQueryProcessor extends TestCase
         assertEquals(lgteHits.length(),2);
         assertTrue(lgteHits.id(0) == 1 && lgteHits.id(1) == 2 || lgteHits.id(0) == 2 && lgteHits.id(1) == 1);
 
-        query = qp_1990_Month.getQuery(QueryProcessor.QueryTarget.CONTENTS);
+        query = qp_1990_Month.getTermsQuery(QueryProcessor.QueryTarget.CONTENTS);
         filter = qp_1990_Month.getFilters(QueryProcessor.QueryTarget.CONTENTS);
         assertEquals(query,"contents:(word2 word2 word3)");
         lgteQuery = LgteQueryParser.parseQuery(query,searcher,queryConfiguration);
@@ -386,7 +386,7 @@ public class TestQueryProcessor extends TestCase
         assertEquals(lgteHits.length(),1);
         assertEquals(lgteHits.id(0),2);
 
-        query = qp_1990_Month_OR.getQuery(QueryProcessor.QueryTarget.CONTENTS);
+        query = qp_1990_Month_OR.getTermsQuery(QueryProcessor.QueryTarget.CONTENTS);
         filter = qp_1990_Month_OR.getFilters(QueryProcessor.QueryTarget.CONTENTS);
         assertEquals(query,"contents:(word2 word2 word3)");
         lgteQuery = LgteQueryParser.parseQuery(query,searcher,queryConfiguration);
@@ -396,7 +396,7 @@ public class TestQueryProcessor extends TestCase
                 (lgteHits.id(1) == 1 || lgteHits.id(1) == 2 || lgteHits.id(1) == 3) &&
                 (lgteHits.id(2) == 1 || lgteHits.id(2) == 2 || lgteHits.id(2) == 3));
 
-        query = qp_1990_Month_OR_ANY.getQuery(QueryProcessor.QueryTarget.CONTENTS);
+        query = qp_1990_Month_OR_ANY.getTermsQuery(QueryProcessor.QueryTarget.CONTENTS);
         filter = qp_1990_Month_OR_ANY.getFilters(QueryProcessor.QueryTarget.CONTENTS);
         assertEquals(query,"contents:(word2 word2 word3)");
         lgteQuery = LgteQueryParser.parseQuery(query,searcher,queryConfiguration);
@@ -474,7 +474,7 @@ public class TestQueryProcessor extends TestCase
         Query qYYYY = new QueryParser(xml).getQuery();
         QueryProcessor qpYYYY = new QueryProcessor(qYYYY,true);
 
-        String query = qpYYYY.getQuery(QueryProcessor.QueryTarget.CONTENTS);
+        String query = qpYYYY.getTermsQuery(QueryProcessor.QueryTarget.CONTENTS);
         Filter filter = qpYYYY.getFilters(QueryProcessor.QueryTarget.CONTENTS);
         assertEquals(query,"contents:(word2 word2 word3)");
         lgteQuery = LgteQueryParser.parseQuery(query,searcher,queryConfiguration);
@@ -516,7 +516,7 @@ public class TestQueryProcessor extends TestCase
 
 
 
-        query = qpYYYYMM.getQuery(QueryProcessor.QueryTarget.CONTENTS);
+        query = qpYYYYMM.getTermsQuery(QueryProcessor.QueryTarget.CONTENTS);
         filter = qpYYYYMM.getFilters(QueryProcessor.QueryTarget.CONTENTS);
         assertEquals(query,"contents:(word2 word2 word3)");
         lgteQuery = LgteQueryParser.parseQuery(query,searcher,queryConfiguration);
@@ -524,7 +524,7 @@ public class TestQueryProcessor extends TestCase
         assertEquals(lgteHits.length(),2);
         assertTrue(lgteHits.id(0) == 2 && lgteHits.id(1) == 3 || lgteHits.id(0) == 3 && lgteHits.id(1) == 2);
 
-        query = qpYYYYMMDD.getQuery(QueryProcessor.QueryTarget.CONTENTS);
+        query = qpYYYYMMDD.getTermsQuery(QueryProcessor.QueryTarget.CONTENTS);
         filter = qpYYYYMMDD.getFilters(QueryProcessor.QueryTarget.CONTENTS);
         assertEquals(query,"contents:(word2 word2 word3)");
         lgteQuery = LgteQueryParser.parseQuery(query,searcher,queryConfiguration);
@@ -534,7 +534,7 @@ public class TestQueryProcessor extends TestCase
 
 
 
-        query = qp_ALL_OR.getQuery(QueryProcessor.QueryTarget.CONTENTS);
+        query = qp_ALL_OR.getTermsQuery(QueryProcessor.QueryTarget.CONTENTS);
         filter = qp_ALL_OR.getFilters(QueryProcessor.QueryTarget.CONTENTS);
         assertEquals(query,"contents:(word2 word2 word3)");
         lgteQuery = LgteQueryParser.parseQuery(query,searcher,queryConfiguration);
@@ -545,7 +545,7 @@ public class TestQueryProcessor extends TestCase
                 (lgteHits.id(2) == 1 || lgteHits.id(2) == 2 || lgteHits.id(2) == 3));
 
 
-        query = qp_ALL_AND.getQuery(QueryProcessor.QueryTarget.CONTENTS);
+        query = qp_ALL_AND.getTermsQuery(QueryProcessor.QueryTarget.CONTENTS);
         filter = qp_ALL_AND.getFilters(QueryProcessor.QueryTarget.CONTENTS);
         assertEquals(query,"contents:(word2 word2 word3)");
         lgteQuery = LgteQueryParser.parseQuery(query,searcher,queryConfiguration);
@@ -554,7 +554,7 @@ public class TestQueryProcessor extends TestCase
         assertTrue(lgteHits.id(0) == 3);
 
 
-        query = qp_1990.getQuery(QueryProcessor.QueryTarget.CONTENTS);
+        query = qp_1990.getTermsQuery(QueryProcessor.QueryTarget.CONTENTS);
         filter = qp_1990.getFilters(QueryProcessor.QueryTarget.CONTENTS);
         assertEquals(query,"contents:(word2 word2 word3)");
         lgteQuery = LgteQueryParser.parseQuery(query,searcher,queryConfiguration);
@@ -562,7 +562,7 @@ public class TestQueryProcessor extends TestCase
         assertEquals(lgteHits.length(),2);
         assertTrue(lgteHits.id(0) == 1 && lgteHits.id(1) == 2 || lgteHits.id(0) == 2 && lgteHits.id(1) == 1);
 
-        query = qp_1990_Month.getQuery(QueryProcessor.QueryTarget.CONTENTS);
+        query = qp_1990_Month.getTermsQuery(QueryProcessor.QueryTarget.CONTENTS);
         filter = qp_1990_Month.getFilters(QueryProcessor.QueryTarget.CONTENTS);
         assertEquals(query,"contents:(word2 word2 word3)");
         lgteQuery = LgteQueryParser.parseQuery(query,searcher,queryConfiguration);
@@ -570,7 +570,7 @@ public class TestQueryProcessor extends TestCase
         assertEquals(lgteHits.length(),1);
         assertEquals(lgteHits.id(0),2);
 
-        query = qp_1990_Month_OR.getQuery(QueryProcessor.QueryTarget.CONTENTS);
+        query = qp_1990_Month_OR.getTermsQuery(QueryProcessor.QueryTarget.CONTENTS);
         filter = qp_1990_Month_OR.getFilters(QueryProcessor.QueryTarget.CONTENTS);
         assertEquals(query,"contents:(word2 word2 word3)");
         lgteQuery = LgteQueryParser.parseQuery(query,searcher,queryConfiguration);
@@ -581,7 +581,7 @@ public class TestQueryProcessor extends TestCase
                 (lgteHits.id(2) == 1 || lgteHits.id(2) == 2 || lgteHits.id(2) == 3));
 
 
-        query = qp_1990_Month_OR_ANY.getQuery(QueryProcessor.QueryTarget.CONTENTS);
+        query = qp_1990_Month_OR_ANY.getTermsQuery(QueryProcessor.QueryTarget.CONTENTS);
         filter = qp_1990_Month_OR_ANY.getFilters(QueryProcessor.QueryTarget.CONTENTS);
         assertEquals(query,"contents:(word2 word2 word3)");
         lgteQuery = LgteQueryParser.parseQuery(query,searcher,queryConfiguration);
@@ -670,7 +670,7 @@ public class TestQueryProcessor extends TestCase
         Query queryXml = new QueryParser(xml).getQuery();
         QueryProcessor qpXml = new QueryProcessor(queryXml);
 
-        String query = qpXml.getQuery(QueryProcessor.QueryTarget.CONTENTS);
+        String query = qpXml.getTermsQuery(QueryProcessor.QueryTarget.CONTENTS);
         Filter filter = qpXml.getFilters(QueryProcessor.QueryTarget.CONTENTS);
         assertEquals(query,"contents:(word2 word2 word3)");
         lgteQuery = LgteQueryParser.parseQuery(query,searcher,queryConfiguration);
@@ -700,7 +700,7 @@ public class TestQueryProcessor extends TestCase
         queryXml = new QueryParser(xml).getQuery();
         qpXml = new QueryProcessor(queryXml);
 
-        query = qpXml.getQuery(QueryProcessor.QueryTarget.CONTENTS);
+        query = qpXml.getTermsQuery(QueryProcessor.QueryTarget.CONTENTS);
         filter = qpXml.getFilters(QueryProcessor.QueryTarget.CONTENTS);
         assertEquals(query,"contents:(word2 word2 word3)");
         lgteQuery = LgteQueryParser.parseQuery(query,searcher,queryConfiguration);
@@ -732,7 +732,7 @@ public class TestQueryProcessor extends TestCase
         queryXml = new QueryParser(xml).getQuery();
         qpXml = new QueryProcessor(queryXml);
 
-        query = qpXml.getQuery(QueryProcessor.QueryTarget.CONTENTS);
+        query = qpXml.getTermsQuery(QueryProcessor.QueryTarget.CONTENTS);
         filter = qpXml.getFilters(QueryProcessor.QueryTarget.CONTENTS);
         assertEquals(query,"contents:(word2 word2 word3)");
         lgteQuery = LgteQueryParser.parseQuery(query,searcher,queryConfiguration);
@@ -761,7 +761,7 @@ public class TestQueryProcessor extends TestCase
         queryXml = new QueryParser(xml).getQuery();
         qpXml = new QueryProcessor(queryXml);
 
-        query = qpXml.getQuery(QueryProcessor.QueryTarget.CONTENTS);
+        query = qpXml.getTermsQuery(QueryProcessor.QueryTarget.CONTENTS);
         filter = qpXml.getFilters(QueryProcessor.QueryTarget.CONTENTS);
         assertEquals(query,"contents:(word2 word2 word3)");
         lgteQuery = LgteQueryParser.parseQuery(query,searcher,queryConfiguration);
@@ -795,7 +795,7 @@ public class TestQueryProcessor extends TestCase
         queryXml = new QueryParser(xml).getQuery();
         qpXml = new QueryProcessor(queryXml);
 
-        query = qpXml.getQuery(QueryProcessor.QueryTarget.CONTENTS);
+        query = qpXml.getTermsQuery(QueryProcessor.QueryTarget.CONTENTS);
         filter = qpXml.getFilters(QueryProcessor.QueryTarget.CONTENTS);
         assertEquals(query,"contents:(word2 word2 word3)");
         lgteQuery = LgteQueryParser.parseQuery(query,searcher,queryConfiguration);
@@ -880,7 +880,7 @@ public class TestQueryProcessor extends TestCase
         queryXml = new QueryParser(xml).getQuery();
         qpXml = new QueryProcessor(queryXml);
 
-        query = qpXml.getQuery(QueryProcessor.QueryTarget.CONTENTS);
+        query = qpXml.getTermsQuery(QueryProcessor.QueryTarget.CONTENTS);
         filter = qpXml.getFilters(QueryProcessor.QueryTarget.CONTENTS);
         assertEquals(query,"contents:(word2 word2 word3)");
         lgteQuery = LgteQueryParser.parseQuery(query,searcher,queryConfiguration);
@@ -921,7 +921,7 @@ public class TestQueryProcessor extends TestCase
         queryXml = new QueryParser(xml).getQuery();
         qpXml = new QueryProcessor(queryXml);
 
-        query = qpXml.getQuery(QueryProcessor.QueryTarget.CONTENTS);
+        query = qpXml.getTermsQuery(QueryProcessor.QueryTarget.CONTENTS);
         assertEquals(query,"contents:(word2 word2 word3)");
 
         assertEquals(qpXml.getPlacesQuery(QueryProcessor.QueryTarget.CONTENTS),Config.G_GEO_ALL_WOEID + ":(WOEID-987654321 WOEID-12345678)");

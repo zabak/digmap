@@ -9,11 +9,15 @@ import org.apache.log4j.Logger;
 import pt.utl.ist.lucene.treceval.geotime.index.Config;
 import pt.utl.ist.lucene.LgteQuery;
 import pt.utl.ist.lucene.LgteQueryParser;
+import pt.utl.ist.lucene.utils.placemaker.PlaceNameNormalizer;
 import pt.utl.ist.lucene.analyzer.LgteNothingAnalyzer;
 import com.pjaol.lucene.search.SerialChainFilter;
 
 import java.io.IOException;
 
+//todo mudar o parser para poder ler hierarquias de booleans
+//todo verificar sempre que houver ?? nos places e nos times adicionar filtro de Tempo e/ou Espaco: tempo consoante time_key esteja
+//todo activo ou nao usar as time_keys
 /**
  * @author Jorge Machado
  * @date 24/Jan/2010
@@ -27,13 +31,14 @@ public class QueryProcessor
     Query q;
     Filter filter = null;
     boolean time_key = false;
+    String placesQuery;
+    String timesQuery;
 
 
     public enum QueryTarget
     {
         CONTENTS,
-        SENTENCES,
-        SENTENCES_CONTENTS
+        SENTENCES
     }
 
     public QueryProcessor(Query q)
@@ -54,7 +59,107 @@ public class QueryProcessor
 
     public String getPlacesQuery(QueryTarget queryTarget)
     {
-        return preparePlacesQueryString(queryTarget);
+        if(placesQuery == null)
+            preparePlacesQueryString();
+        if(queryTarget == QueryTarget.CONTENTS)
+        {
+            return Config.G_GEO_ALL_WOEID + ":(" + placesQuery + ")";
+        }
+        else if(queryTarget == QueryTarget.SENTENCES)
+        {
+            return Config.G_GEO_ALL_WOEID + Config.SEP + Config.SENTENCES + ":(" + placesQuery + ")";
+        }
+        return null;
+    }
+
+    public String getPlacesRefQuery(QueryTarget queryTarget)
+    {
+        if(placesQuery == null)
+            preparePlacesQueryString();
+        if(queryTarget == QueryTarget.CONTENTS)
+        {
+            return Config.G_PLACE_REF_WOEID + ":(" + placesQuery + ")";
+        }
+        else if(queryTarget == QueryTarget.SENTENCES)
+        {
+            return Config.G_PLACE_REF_WOEID + Config.SEP + Config.SENTENCES + ":(" + placesQuery + ")";
+        }
+        return null;
+    }
+
+     public String getPlacesBeolongTosQuery(QueryTarget queryTarget)
+    {
+        if(placesQuery == null)
+            preparePlacesQueryString();
+        if(queryTarget == QueryTarget.CONTENTS)
+        {
+            return Config.G_PLACE_BELONG_TOS_WOEID + ":(" + placesQuery + ")";
+        }
+        else if(queryTarget == QueryTarget.SENTENCES)
+        {
+            return Config.G_PLACE_BELONG_TOS_WOEID + Config.SEP + Config.SENTENCES + ":(" + placesQuery + ")";
+        }
+        return null;
+    }
+
+    public String getTimesQueryKeyTimeExpressions(QueryTarget queryTarget)
+    {
+        if(timesQuery == null)
+            prepareTimesQueryString();
+        if(queryTarget == QueryTarget.CONTENTS)
+        {
+            return Config.T_POINT_KEY + ":(" + timesQuery + ")";
+        }
+        else if(queryTarget == QueryTarget.SENTENCES)
+        {
+            return Config.T_POINT_KEY + Config.SEP + Config.SENTENCES + ":(" + timesQuery + ")";
+        }
+        return null;
+    }
+
+    public String getTimesQueryTimeExpressions(QueryTarget queryTarget)
+    {
+        if(timesQuery == null)
+            prepareTimesQueryString();
+        if(queryTarget == QueryTarget.CONTENTS)
+        {
+            return Config.T_TIME_EXPRESSIONS + ":(" + timesQuery + ")";
+        }
+        else if(queryTarget == QueryTarget.SENTENCES)
+        {
+            return Config.T_TIME_EXPRESSIONS + Config.SEP + Config.SENTENCES + ":(" + placesQuery + ")";
+        }
+        return null;
+    }
+
+    public String getTimesQueryRelativeTimeExpressions(QueryTarget queryTarget)
+    {
+        if(timesQuery == null)
+            prepareTimesQueryString();
+        if(queryTarget == QueryTarget.CONTENTS)
+        {
+            return Config.T_POINT_RELATIVE + ":(" + timesQuery + ")";
+        }
+        else if(queryTarget == QueryTarget.SENTENCES)
+        {
+            return Config.T_POINT_RELATIVE + Config.SEP + Config.SENTENCES + ":(" + placesQuery + ")";
+        }
+        return null;
+    }
+
+    public String getTimesQueryDurationsTimeExpressions(QueryTarget queryTarget)
+    {
+        if(timesQuery == null)
+            prepareTimesQueryString();
+        if(queryTarget == QueryTarget.CONTENTS)
+        {
+            return Config.T_DURATION + ":(" + timesQuery + ")";
+        }
+        else if(queryTarget == QueryTarget.SENTENCES)
+        {
+            return Config.T_DURATION + Config.SEP + Config.SENTENCES + ":(" + placesQuery + ")";
+        }
+        return null;
     }
 
     public Filter getFilters(QueryTarget queryTarget)
@@ -110,48 +215,41 @@ public class QueryProcessor
         }
     }
 
-    private String preparePlacesQueryString(QueryTarget queryTarget)
+    private void preparePlacesQueryString()
     {
 
-        if(queryTarget == QueryTarget.CONTENTS)
+
+        if(q.getPlaces().getTerms().size()>0)
         {
-            if(q.getPlaces().getTerms().size()>0)
+            StringBuilder places = new StringBuilder();
+            for(Query.Places.Term place: q.getPlaces().getTerms())
             {
-                StringBuilder places = new StringBuilder();
-                for(Query.Places.Term place: q.getPlaces().getTerms())
-                {
-                    if(!place.getPlace().equals("?"))
-                        for(String woeid: place.getWoeid())
-                            places.append(woeid).append(" ");
-                }
+                if(!place.getPlace().equals("?"))
+                    for(String woeid: place.getWoeid())
+                        places.append(PlaceNameNormalizer.normalizeWoeid(woeid)).append(" ");
             }
+            placesQuery = places.toString().trim();
         }
-        //todo sentences e sentences_contents
-        return null;
     }
 
-    public String prepareTimesQueryString(QueryTarget queryTarget)
+    public void prepareTimesQueryString()
     {
-        if(queryTarget == QueryTarget.CONTENTS)
+        if(q.getTimes().getTerms().size()>0)
         {
-            if(q.getTimes().getTerms().size()>0)
+            StringBuilder times = new StringBuilder();
+            for(Query.Times.Term time: q.getTimes().getTerms())
             {
-                StringBuilder times = new StringBuilder();
-                for(Query.Times.Term time: q.getTimes().getTerms())
-                {
-                    if(!time.getTime().equals("?"))
-                        times.append(time).append("* ");   
-                }
-                return Config.T_TIME_EXPRESSIONS + ":(" + times.toString() + ")";
+                if(!time.getTime().equals("?"))
+                    times.append(time.getTime()).append("* ");
             }
+            timesQuery = times.toString().trim();
         }
-        //todo sentences e sentences_contents
-        return null;
+
     }
 
     private Filter getTermFilter(Query.FilterChain.BooleanClause.Term term, QueryTarget queryTarget)
     {
-        String suffix = queryTarget == QueryTarget.SENTENCES_CONTENTS || queryTarget == QueryTarget.SENTENCES ? Config.SEP + Config.SENTENCES : "";
+        String suffix = queryTarget == QueryTarget.SENTENCES ? Config.SEP + Config.SENTENCES : "";
 
         if(term.getField().equals("time"))
             return getTimeFilter(term,suffix);
@@ -253,7 +351,7 @@ public class QueryProcessor
         for(int i=0; i < filter.length;i++)
         {
             TermsFilter termsFilter = new TermsFilter();
-            termsFilter.addTerm(new Term(Config.G_GEO_ALL_WOEID + suffix,term.getWoeid().get(i)));
+            termsFilter.addTerm(new Term(Config.G_GEO_ALL_WOEID + suffix, PlaceNameNormalizer.normalizeWoeid(term.getWoeid().get(i))));
             filter[i] = termsFilter;
             actionType[i] = SerialChainFilter.OR;
         }

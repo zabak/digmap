@@ -64,7 +64,7 @@ public class Experiments
         for(int i = 0; i < 10;i++)
         {
             System.out.println(hits.doc(i).get("id") + "-" + hits.score(i));
-            System.out.println(searcher.explain(query,hits.id(i), lgteBrokerStemAnalyzer));
+            System.out.println(searcher.explain(query,hits.id(i)));
         }
 
 
@@ -77,7 +77,7 @@ public class Experiments
         for(int i = 0; i < 10;i++)
         {
             System.out.println(hits.doc(i).get("id") + "-" + hits.score(i));
-            System.out.println(searcher.explain(query,hits.id(i), lgteBrokerStemAnalyzer));
+            System.out.println(searcher.explain(query,hits.id(i)));
         }
 
 

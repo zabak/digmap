@@ -353,7 +353,7 @@ public class StrategyQueryBuilder
 
     public static void main(String [] args) throws MalformedURLException, DocumentException
     {
-        StrategyQueryBuilder strategyQueryBuilder = new StrategyQueryBuilder("D:\\Jorge\\Documents\\ist\\doutoramento\\conferencias\\NTCIR\\topics.xml",true);
+        StrategyQueryBuilder strategyQueryBuilder = new StrategyQueryBuilder("E:\\TASKS\\GeoTime\\topics\\topics.xml",true);
 
         System.out.println("####################################");
         Iterator iter = strategyQueryBuilder.baseSimpleIterator();

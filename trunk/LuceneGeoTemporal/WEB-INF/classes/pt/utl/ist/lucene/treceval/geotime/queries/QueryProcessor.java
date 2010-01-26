@@ -228,6 +228,8 @@ public class QueryProcessor
             }
             placesQuery = places.toString().trim();
         }
+        else placesQuery = "";
+        	
     }
 
     public void prepareTimesQueryString()
@@ -246,7 +248,7 @@ public class QueryProcessor
                     wantTimes = true;
             }
             timesQuery = times.toString().trim();
-        }
+        }else timesQuery = "";
 
     }
 

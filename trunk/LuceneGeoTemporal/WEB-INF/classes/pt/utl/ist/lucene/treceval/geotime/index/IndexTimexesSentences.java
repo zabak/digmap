@@ -91,6 +91,7 @@ public class IndexTimexesSentences {
                 StringBuilder T_YYY_SENTENCES = new StringBuilder();
                 StringBuilder T_YY_SENTENCES = new StringBuilder();
                 StringBuilder T_Y_SENTENCES = new StringBuilder();
+                StringBuilder T_POINT_SENTENCES = new StringBuilder();
                 StringBuilder T_POINT_KEY_SENTENCES = new StringBuilder();
                 StringBuilder T_POINT_RELATIVE_SENTENCES = new StringBuilder();
                 StringBuilder T_GENPOINT_SENTENCES = new StringBuilder();
@@ -116,6 +117,7 @@ public class IndexTimexesSentences {
                             T_POINT_KEY_SENTENCES.append(timeExpression.getNormalizedExpression()).append(" ");
                         else
                             T_POINT_RELATIVE_SENTENCES.append(timeExpression.getNormalizedExpression()).append(" ");
+                        T_POINT_SENTENCES.append(timeExpression.getNormalizedExpression()).append(" ");
                         T_TIME_EXPRESSIONS_SENTENCES.append(timeExpression.getNormalizedExpression()).append(" ");
                     }
                     else if(timeExpression.getTeClass() == TimeExpression.TEClass.GenPoint)
@@ -137,6 +139,7 @@ public class IndexTimexesSentences {
                 doc.indexTextNoStore(Config.T_YYYYMM +               Config.SEP + Config.SENTENCES, T_YYYYMM_SENTENCES.toString());
                 doc.indexTextNoStore(Config.T_YYYYMMDD +             Config.SEP + Config.SENTENCES, T_YYYYMMDD_SENTENCES.toString());
                 doc.indexTextNoStore(Config.T_TIME_EXPRESSIONS +     Config.SEP + Config.SENTENCES, T_TIME_EXPRESSIONS_SENTENCES.toString());
+                doc.indexTextNoStore(Config.T_POINT +                Config.SEP + Config.SENTENCES, T_POINT_SENTENCES.toString());
                 doc.indexTextNoStore(Config.T_POINT_KEY +            Config.SEP + Config.SENTENCES, T_POINT_KEY_SENTENCES.toString());
                 doc.indexTextNoStore(Config.T_POINT_RELATIVE +       Config.SEP + Config.SENTENCES, T_POINT_RELATIVE_SENTENCES.toString());
                 doc.indexTextNoStore(Config.T_GENPOINT +             Config.SEP + Config.SENTENCES, T_GENPOINT_SENTENCES.toString());

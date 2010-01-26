@@ -228,8 +228,6 @@ public class Config
         return new LgteIndexSearcherWrapper(Model.OkapiBM25Model,lgteIsolatedIndexReader);
     }
 
-   
-
     public static void main(String[] args)
     {
         System.out.println(Config.T_YYYYMMDD.matches("^S_.*"));

@@ -157,6 +157,7 @@ public class IndexWoeidSentences {
             StringBuilder G_PLACE_REF_WOEID = new StringBuilder();
             StringBuilder G_PLACE_BELONG_TOS_TEXT = new StringBuilder();
             StringBuilder G_PLACE_BELONG_TOS_WOEID = new StringBuilder();
+            StringBuilder G_GEO_PLACE_TYPE = new StringBuilder();
 
             if(sentence.getPlaceRefs() != null && sentence.getPlaceRefs().size()>0)
             {
@@ -168,6 +169,7 @@ public class IndexWoeidSentences {
                     G_GEO_ALL_WOEID.append(PlaceNameNormalizer.normalizeWoeid(placeDetails.getWoeId())).append(" ");
                     G_PLACE_NAME_TEXT.append(placeDetails.getName()).append(" ");
                     G_ALL_TEXT.append(placeDetails.getName()).append(" ");
+                    G_GEO_PLACE_TYPE.append(placeDetails.getType()).append(" ");
                     addBelongTos(placeDetails.getWoeId(),G_PLACE_BELONG_TOS_TEXT,G_PLACE_BELONG_TOS_WOEID,G_ALL_TEXT,G_GEO_ALL_WOEID);
                 }
             }
@@ -177,6 +179,7 @@ public class IndexWoeidSentences {
             doc.indexText(Config.G_PLACE_REF_WOEID + "_" + Config.SENTENCES,G_PLACE_REF_WOEID.toString());
             doc.indexTextNoStore(Config.G_PLACE_BELONG_TOS_TEXT + "_" + Config.SENTENCES,G_PLACE_BELONG_TOS_TEXT.toString());
             doc.indexTextNoStore(Config.G_PLACE_BELONG_TOS_WOEID + "_" + Config.SENTENCES,G_PLACE_BELONG_TOS_WOEID.toString());
+            doc.indexTextNoStore(Config.G_GEO_PLACE_TYPE + "_" + Config.SENTENCES,G_GEO_PLACE_TYPE.toString());
             writer.addDocument(doc);
         }
     }

@@ -180,7 +180,6 @@ public class IndexWoeid {
         doc.indexText(Config.G_PLACE_REF_WOEID,G_PLACE_REF_WOEID.toString());
         doc.indexTextNoStore(Config.G_PLACE_BELONG_TOS_TEXT,G_PLACE_BELONG_TOS_TEXT.toString());
         doc.indexTextNoStore(Config.G_PLACE_BELONG_TOS_WOEID,G_PLACE_BELONG_TOS_WOEID.toString());
-
         doc.indexTextNoStore(Config.G_GEO_PLACE_TYPE,G_GEO_PLACE_TYPE.toString());
         writer.addDocument(doc);
     }

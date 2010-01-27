@@ -221,7 +221,7 @@ public class QueryExpansion
         }
         else
         {
-             docsTermVector.add(getDocsTerms(hits, docNum, analyzer, Defs.FLD_TEXT));
+            docsTermVector.add(getDocsTerms(hits, docNum, analyzer, Defs.FLD_TEXT));
         }
 
 
@@ -308,6 +308,7 @@ public class QueryExpansion
             queryTerms = getBoostedOriginalQuery(queryStr, alpha);
         }
         // combine weights according to expansion formula
+        int queryTermsCount = queryTerms.size();
         queryTerms.addAll(docsTerms);
 //        Vector<TermQuery> expandedQueryTerms = combine(queryTerms, docsTerms);
         merge(queryTerms);
@@ -317,7 +318,7 @@ public class QueryExpansion
         Collections.sort(queryTerms, comparator);
 
         // Create Expanded Level1Query
-        expandedQuery = mergeQueries(queryTerms, maxExpandedQueryTerms);
+        expandedQuery = mergeQueries(queryTerms, queryTermsCount + maxExpandedQueryTerms);
         logger.finer(expandedQuery.toString());
 
         return expandedQuery;
@@ -347,9 +348,10 @@ public class QueryExpansion
             TermQuery tq = (TermQuery) q;
 //            if(tq.getTerm().field().equals(Defs.FLD_TEXT)) // using only model 2
 //            {
-                int tf = termsFreqs.get(tq.getTerm().field() + ":" + tq.getTerm().text());
-                setBoost(tq,tf,alpha,0.0f);
-                vector.add(tq);
+
+            int tf = termsFreqs.get(tq.getTerm().field() + ":" + tq.getTerm().text());
+            setBoost(tq,tf,alpha,0.0f);
+            vector.add(tq);
 //            }
         }
     }
@@ -455,37 +457,37 @@ public class QueryExpansion
             terms.add(termQueries.elementAt(i));
         }
         StringBuilder queryBuilder = new StringBuilder();
-        List<String> boostFields = PropertiesUtil.getListPropertiesSuffix(prop.getQueryProperties(),"field.boost.");
-        if(boostFields != null && boostFields.size() > 0)
-        {
-            for(String field: boostFields)
-            {
-                StringBuilder fieldBuilder = new StringBuilder();
-                float boostField = PropertiesUtil.getFloatProperty(prop.getQueryProperties(),"field.boost." + field);
-                boolean any = false;
-                for (TermQuery termQuery : terms)
-                {
+//        List<String> boostFields = PropertiesUtil.getListPropertiesSuffix(prop.getQueryProperties(),"field.boost.");
+//        if(boostFields != null && boostFields.size() > 0)
+//        {
+//            for(String field: boostFields)
+//            {
+//                StringBuilder fieldBuilder = new StringBuilder();
+//                float boostField = PropertiesUtil.getFloatProperty(prop.getQueryProperties(),"field.boost." + field);
+//                boolean any = false;
+//                for (TermQuery termQuery : terms)
+//                {
 //                    Map<String,List<String>> termProjections = getDocumentTermInFields(termQuery.getTerm().text(),boostFields);
 //                    buildTermBoosted(termQuery,fieldBuilder,false);
-                    if(termQuery.getTerm().field().equals(field))
-                    {
-                        any = true;
-                        buildTermBoosted(termQuery,fieldBuilder,false);
-                    }
-                }
-                if(any && fieldBuilder.toString().trim().length()  > 0)
-                    queryBuilder.append(" ").append(field).append(":").append("(").append(fieldBuilder.toString()).append(")");//.append(boostField);
-            }
+//                    if(termQuery.getTerm().field().equals(field))
+//                    {
+//                        any = true;
+//                        buildTermBoosted(termQuery,fieldBuilder,false);
+//                    }
+//                }
+//                if(any && fieldBuilder.toString().trim().length()  > 0)
+//                    queryBuilder.append(" ").append(field).append(":").append("(").append(fieldBuilder.toString()).append(")");//.append(boostField);
+//            }
 
 
-        }
-        else
+//        }
+//        else
+//        {
+        for (TermQuery termQuery : terms)
         {
-            for (TermQuery termQuery : terms)
-            {
-                buildTermBoosted(termQuery,queryBuilder,true);
-            }
+            buildTermBoosted(termQuery,queryBuilder,true);
         }
+//        }
         logger.fine(queryBuilder.toString());
         query = LuceneVersionFactory.getLuceneVersion().parseQuery(queryBuilder.toString(), Defs.FLD_TEXT, analyzer);
         logger.fine(query.toString());
@@ -550,10 +552,15 @@ public class QueryExpansion
     {
         StringBuffer docTxtBuffer = new StringBuffer();
         String[] docTxtFlds = doc.getValues(field);
-        for (String docTxtFld : docTxtFlds)
+        if(docTxtFlds == null)
+            logger.info("Doc " + doc.get("id") + " have zero fields: " + field);
+        else
         {
+            for (String docTxtFld : docTxtFlds)
+            {
 //            docTxtBuffer.append(docTxtFld.replace(":", " ").replace("-", " ")).append(" ");
-            docTxtBuffer.append(docTxtFld.replace(":", " ")).append(" ");
+                docTxtBuffer.append(docTxtFld.replace(":", " ")).append(" ");
+            }
         }
         return new QueryTermVector(docTxtBuffer.toString(), analyzer, field);
 
@@ -645,14 +652,14 @@ public class QueryExpansion
 //        }
 //        else
 //        {
-            String fieldBoostStr = prop.getProperty("field.boost." + termQuery.getTerm().field());
-            float fieldFactor = 1.0f;
-            if(fieldBoostStr != null)
-                fieldFactor = Float.parseFloat(fieldBoostStr);
-            float idf = similarity.idf(termQuery.getTerm(), searcher);
-            float weight = (1.0f * tf) * idf;
-            weight = weight - (weight * decay);
-            termQuery.setBoost(factor * weight * fieldFactor);
+        String fieldBoostStr = prop.getProperty("field.boost." + termQuery.getTerm().field());
+        float fieldFactor = 1.0f;
+        if(fieldBoostStr != null && !fieldBoostStr.equals("field.boost." + termQuery.getTerm().field()))
+            fieldFactor = Float.parseFloat(fieldBoostStr);
+        float idf = similarity.idf(termQuery.getTerm(), searcher);
+        float weight = (1.0f * tf) * idf;
+        weight = weight - (weight * decay);
+        termQuery.setBoost(factor * weight * fieldFactor);
 //        }
         //				if(prop.getProperty("qe.field.boosted.termweight").equals("combineModelAndBoost"))
 //				{

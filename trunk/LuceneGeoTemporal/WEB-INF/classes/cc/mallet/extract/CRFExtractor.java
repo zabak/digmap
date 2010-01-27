@@ -7,20 +7,16 @@
 package cc.mallet.extract;
 
 
-import java.io.*;
-import java.util.ArrayList;
-import java.util.Iterator;
-
-import com.sun.org.apache.xml.internal.utils.UnImplNode;
-
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 import cc.mallet.fst.CRF;
 import cc.mallet.pipe.Noop;
 import cc.mallet.pipe.Pipe;
 import cc.mallet.pipe.SerialPipes;
-import cc.mallet.pipe.iterator.PipeInputIterator;
 import cc.mallet.types.*;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * Created: Oct 12, 2004

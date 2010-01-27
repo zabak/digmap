@@ -9,6 +9,7 @@ import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Similarity;
+import org.apache.lucene.search.Filter;
 import pt.utl.ist.lucene.analyzer.LgteAnalyzer;
 import pt.utl.ist.lucene.config.ConfigProperties;
 import pt.utl.ist.lucene.level1query.Level1Query;
@@ -161,7 +162,16 @@ public class LgteQueryParser
         return new LgteQuery(returnQuery,queryParams,analyzer);
     }
 
+    public static Query lucQE(LgteQuery query, String queryStr, LgteIndexSearcherWrapper indexSearcherWrapper, Filter filter) throws IOException, ParseException
+    {
+        return lucQE(query.getQuery(),queryStr,null,query.getAnalyzer(),indexSearcherWrapper,query.getQueryParams(),null,filter);
+    }
+
     public static Query lucQE(Query query, String queryStr, String field, Analyzer analyzer, LgteIndexSearcherWrapper indexSearcherWrapper, QueryParams queryParams, LgteSort sort) throws IOException, ParseException
+    {
+        return lucQE(query, queryStr,field,analyzer,indexSearcherWrapper,queryParams,sort,null);
+    }
+    public static Query lucQE(Query query, String queryStr, String field, Analyzer analyzer, LgteIndexSearcherWrapper indexSearcherWrapper, QueryParams queryParams, LgteSort sort, Filter filter) throws IOException, ParseException
     {
         QueryConfiguration configuration = queryParams.getQueryConfiguration();
 
@@ -182,10 +192,16 @@ public class LgteQueryParser
             queryParams.setQEEnum(QEEnum.no);
 
             LgteHits lgteHits;
-            if(sort == null)
+            if(sort == null && filter == null)
                 lgteHits = indexSearcherWrapper.search(lgteQuery);
-            else
+            else if(sort != null && filter == null)
                 lgteHits = indexSearcherWrapper.search(lgteQuery,sort);
+            else if(sort == null)
+                lgteHits = indexSearcherWrapper.search(lgteQuery,filter);
+            else
+                lgteHits = indexSearcherWrapper.search(lgteQuery,filter,sort);
+
+
             hits = lgteHits.getHits();
             queryParams.setQEEnum(QEEnum.lgte);
             configuration.setForceQE(oldValueForceQE);
@@ -217,8 +233,8 @@ public class LgteQueryParser
             Defs.setFldText(Globals.LUCENE_DEFAULT_FIELD);
 
         QueryExpansion queryExpansion;
-        queryExpansion = new QueryExpansion(analyzer, indexSearcherWrapper.getIndexSearcher(), similarity, configuration.getQueryProperties());
-        query = queryExpansion.expandQuery(queryStr, hits, configuration.getQueryProperties());
+        queryExpansion = new QueryExpansion(analyzer, indexSearcherWrapper.getIndexSearcher(), similarity, configuration);
+        query = queryExpansion.expandQuery(queryStr, hits);
         logger.info("Expanded Level1Query: " + query.toString());
         long endTime = System.currentTimeMillis() - time;
         logger.info("LucQE take: " + endTime + " ms");

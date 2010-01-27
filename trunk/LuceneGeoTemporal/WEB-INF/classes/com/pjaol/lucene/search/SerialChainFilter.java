@@ -132,7 +132,8 @@ public class SerialChainFilter extends Filter {
 			}
 	
 		}
-		return bits;
+        System.out.println("Filter: " + this.toString() + " returns:" + bits.cardinality() + " docs");
+        return bits;
 	}
 
     /**

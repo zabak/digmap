@@ -15,9 +15,6 @@ import com.pjaol.lucene.search.SerialChainFilter;
 
 import java.io.IOException;
 
-//todo mudar o parser para poder ler hierarquias de booleans
-//todo verificar sempre que houver ?? nos places e nos times adicionar filtro de Tempo e/ou Espaco: tempo consoante time_key esteja
-//todo activo ou nao usar as time_keys
 /**
  * @author Jorge Machado
  * @date 24/Jan/2010
@@ -258,7 +255,6 @@ public class QueryProcessor
             preparePlacesQueryString();
         return wantPlaces;
     }
-    //todo testar
     public boolean wantTimes() {
         if(wantTimes == null)
             prepareTimesQueryString();
@@ -559,7 +555,6 @@ public class QueryProcessor
     }
 
     /**
-     * todo need test
      * @param queryTarget
      * @return
      */

@@ -64,7 +64,7 @@ public class TermsFilter extends Filter
                         result.set(td.doc());
                     i++;
                 }
-                System.out.println("Filter returns:" + i + " docs");
+                System.out.println("Filter: " + this.toString() + " returns:" + i + " docs");
             }
         }
         finally

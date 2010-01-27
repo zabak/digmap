@@ -140,10 +140,10 @@ public class IndexTimexesSentences {
                 doc.indexTextNoStore(Config.T_YYYYMMDD +             Config.SEP + Config.SENTENCES, T_YYYYMMDD_SENTENCES.toString());
                 doc.indexTextNoStore(Config.T_TIME_EXPRESSIONS +     Config.SEP + Config.SENTENCES, T_TIME_EXPRESSIONS_SENTENCES.toString());
                 doc.indexTextNoStore(Config.T_POINT +                Config.SEP + Config.SENTENCES, T_POINT_SENTENCES.toString());
-                doc.indexTextNoStore(Config.T_POINT_KEY +            Config.SEP + Config.SENTENCES, T_POINT_KEY_SENTENCES.toString());
-                doc.indexTextNoStore(Config.T_POINT_RELATIVE +       Config.SEP + Config.SENTENCES, T_POINT_RELATIVE_SENTENCES.toString());
+                doc.indexText(Config.T_POINT_KEY +                   Config.SEP + Config.SENTENCES, T_POINT_KEY_SENTENCES.toString());
+                doc.indexText(Config.T_POINT_RELATIVE +              Config.SEP + Config.SENTENCES, T_POINT_RELATIVE_SENTENCES.toString());
                 doc.indexTextNoStore(Config.T_GENPOINT +             Config.SEP + Config.SENTENCES, T_GENPOINT_SENTENCES.toString());
-                doc.indexTextNoStore(Config.T_DURATION +             Config.SEP + Config.SENTENCES, T_DURATION_SENTENCES.toString());
+                doc.indexText(Config.T_DURATION +                    Config.SEP + Config.SENTENCES, T_DURATION_SENTENCES.toString());
             }
             writer.addDocument(doc);
         }

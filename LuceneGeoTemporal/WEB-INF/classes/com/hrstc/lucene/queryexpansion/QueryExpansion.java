@@ -16,6 +16,7 @@ import com.hrstc.lucene.*;
 
 import pt.utl.ist.lucene.config.PropertiesUtil;
 import pt.utl.ist.lucene.versioning.LuceneVersionFactory;
+import pt.utl.ist.lucene.QueryConfiguration;
 
 /**
  * Implements Rocchio's pseudo feedback QueryExpansion algorithm
@@ -80,7 +81,7 @@ public class QueryExpansion
     public static final String ROCCHIO_ALPHA_FLD = "QE.rocchio.alpha";
     public static final String ROCCHIO_BETA_FLD = "QE.rocchio.beta";
 
-    private Properties prop;
+    private QueryConfiguration prop;
     private Analyzer analyzer;
     private Searcher searcher;
     private Similarity modelSimilarity;
@@ -97,13 +98,13 @@ public class QueryExpansion
      * @param searcher   - used to obtain idf
      */
     public QueryExpansion(Analyzer analyzer, Searcher searcher,
-                          Similarity similarity, Properties prop)
+                          Similarity similarity, QueryConfiguration queryConfiguration)
     {
         this.analyzer = analyzer;
         this.searcher = searcher;
         this.modelSimilarity = similarity;
         this.similarity = Similarity.getDefault();
-        this.prop = prop;
+        this.prop = queryConfiguration;
     }
 
     /**
@@ -112,19 +113,17 @@ public class QueryExpansion
      *
      * @param queryStr - that will be expanded
      * @param hits     - from the original level1query to use for expansion
-     * @param prop     - properties that contain necessary values to perform
-     *                 level1query; see constants for field names and values
      * @return expandedQuery
      * @throws IOException
      * @throws ParseException
      */
-    public Query expandQuery(String queryStr, Hits hits, Properties prop)
+    public Query expandQuery(String queryStr, Hits hits)
             throws IOException, ParseException
     {
         // Get Docs to be used in level1query expansion
-        Vector<Document> vHits = getDocs(queryStr, hits, prop);
+        Vector<Document> vHits = getDocs(queryStr, hits);
 
-        return expandQuery(queryStr, vHits, prop);
+        return expandQuery(queryStr, vHits);
     }
 
     /**
@@ -135,15 +134,13 @@ public class QueryExpansion
      * @param query - for which expansion is being performed
      * @param hits  - to use in case <code> QueryExpansion.DOC_SOURCE_FLD </code>
      *              is not specified
-     * @param prop  - uses <code> QueryExpansion.DOC_SOURCE_FLD </code> to
-     *              determine where to get docs
      * @return number of docs indicated by
      *         <code>QueryExpansion.DOC_NUM_FLD</code> from
      *         <code> QueryExpansion.DOC_SOURCE_FLD </code>
      * @throws IOException
      * @throws GoogleSearchFault
      */
-    private Vector<Document> getDocs(String query, Hits hits, Properties prop)
+    private Vector<Document> getDocs(String query, Hits hits)
             throws IOException
     {
         Vector<Document> vHits = new Vector<Document>();
@@ -165,7 +162,7 @@ public class QueryExpansion
         // obtain docs from www through google
         else if (docSource.equals(QueryExpansion.DOC_SOURCE_GOOGLE))
         {
-            GoogleSearcher googleQE = new GoogleSearcher(prop);
+            GoogleSearcher googleQE = new GoogleSearcher(prop.getQueryProperties());
             try
             {
                 vHits = googleQE.search(query);
@@ -190,13 +187,12 @@ public class QueryExpansion
      *
      * @param queryStr - that will be expanded
      * @param hits     - from the original level1query to use for expansion
-     * @param prop     - properties that contain necessary values to perform
      *                 level1query; see constants for field names and values
      * @return
      * @throws IOException
      * @throws ParseException
      */
-    public Query expandQuery(String queryStr, Vector<Document> hits, Properties prop) throws IOException, ParseException
+    public Query expandQuery(String queryStr, Vector<Document> hits) throws IOException, ParseException
     {
         // Load Necessary Values from Properties
         float alpha = Float.valueOf(
@@ -205,7 +201,7 @@ public class QueryExpansion
         float beta = Float.valueOf(
                 prop.getProperty(QueryExpansion.ROCCHIO_BETA_FLD)).floatValue();
         float decay = Float.valueOf(
-                prop.getProperty(QueryExpansion.DECAY_FLD, "0.0")).floatValue();
+                prop.getProperty(QueryExpansion.DECAY_FLD)).floatValue();
         int docNum = Integer.valueOf(
                 prop.getProperty(QueryExpansion.DOC_NUM_FLD)).intValue();
         int termNum = Integer.valueOf(
@@ -213,7 +209,7 @@ public class QueryExpansion
 
         // Create combine documents term vectors - sum ( rel term vectors )
         List<Vector<QueryTermVector>> docsTermVector = new ArrayList<Vector<QueryTermVector>>();
-        List<String> boostFields = PropertiesUtil.getListPropertiesSuffix(prop,"field.boost.");
+        List<String> boostFields = PropertiesUtil.getListPropertiesSuffix(prop.getQueryProperties(),"field.boost.");
         if(boostFields != null && boostFields.size() > 0)
         {
             for(String field: boostFields)
@@ -245,7 +241,7 @@ public class QueryExpansion
 
         public FieldTermVector(Document doc)
         {
-            List<String> boostFields = PropertiesUtil.getListPropertiesSuffix(prop,"field.boost.");
+            List<String> boostFields = PropertiesUtil.getListPropertiesSuffix(prop.getQueryProperties(),"field.boost.");
             if(boostFields != null && boostFields.size() > 0)
             {
 
@@ -302,7 +298,7 @@ public class QueryExpansion
         // setBoost of level1query terms
         // Get queryTerms from the level1query
         Vector<TermQuery> queryTerms;
-        if (PropertiesUtil.getListProperties(prop, "field.boost").size() == 0)
+        if (PropertiesUtil.getListProperties(prop.getQueryProperties(), "field.boost").size() == 0)
         {
             QueryTermVector queryTermsVector = new QueryTermVector(queryStr, analyzer);
             queryTerms = setBoost(queryTermsVector, alpha);
@@ -459,13 +455,13 @@ public class QueryExpansion
             terms.add(termQueries.elementAt(i));
         }
         StringBuilder queryBuilder = new StringBuilder();
-        List<String> boostFields = PropertiesUtil.getListPropertiesSuffix(prop,"field.boost.");
+        List<String> boostFields = PropertiesUtil.getListPropertiesSuffix(prop.getQueryProperties(),"field.boost.");
         if(boostFields != null && boostFields.size() > 0)
         {
             for(String field: boostFields)
             {
                 StringBuilder fieldBuilder = new StringBuilder();
-                float boostField = PropertiesUtil.getFloatProperty(prop,"field.boost." + field);
+                float boostField = PropertiesUtil.getFloatProperty(prop.getQueryProperties(),"field.boost." + field);
                 boolean any = false;
                 for (TermQuery termQuery : terms)
                 {
@@ -556,7 +552,8 @@ public class QueryExpansion
         String[] docTxtFlds = doc.getValues(field);
         for (String docTxtFld : docTxtFlds)
         {
-            docTxtBuffer.append(docTxtFld.replace(":", " ").replace("-", " ")).append(" ");
+//            docTxtBuffer.append(docTxtFld.replace(":", " ").replace("-", " ")).append(" ");
+            docTxtBuffer.append(docTxtFld.replace(":", " ")).append(" ");
         }
         return new QueryTermVector(docTxtBuffer.toString(), analyzer, field);
 
@@ -619,7 +616,7 @@ public class QueryExpansion
     //set boost in one term query
     private void setBoost(TermQuery termQuery, int tf, float factor, float decay) throws IOException
     {
-        List<String> boostFields = PropertiesUtil.getListPropertiesSuffix(prop, "field.boost.");
+        List<String> boostFields = PropertiesUtil.getListPropertiesSuffix(prop.getQueryProperties(), "field.boost.");
         //Experimental Ranking Model 1
 //        if(boostFields.size() > 0)
 //        {

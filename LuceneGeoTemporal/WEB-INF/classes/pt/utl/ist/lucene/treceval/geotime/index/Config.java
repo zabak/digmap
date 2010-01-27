@@ -162,7 +162,7 @@ public class Config
         Map<String,IndexReader> readers = new HashMap<String,IndexReader>();
 
         readers.put(Config.CONTENTS,readerContents);
-        readers.put(Config.TITLE,readerContents);
+//        readers.put(Config.TITLE,readerContents);
         readers.put(Config.ID,readerContents);
 
         readers.put("regexpr(^S_.*)",readerGeoTime);

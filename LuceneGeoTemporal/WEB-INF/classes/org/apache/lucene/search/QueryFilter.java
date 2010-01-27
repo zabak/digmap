@@ -34,45 +34,47 @@ import org.apache.lucene.index.IndexReader;
  * @version $Id: QueryFilter.java,v 1.1.1.1 2004/06/10 15:11:18 gilad Exp $
  */
 public class QueryFilter extends Filter {
-  private Query query;
-  private transient WeakHashMap cache = null;
+    private Query query;
+    private transient WeakHashMap cache = null;
 
-  /** Constructs a filter which only matches documents matching
-   * <code>query</code>.
-   */
-  public QueryFilter(Query query) {
-    this.query = query;
-  }
-
-  public BitSet bits(IndexReader reader) throws IOException {
-
-    if (cache == null) {
-      cache = new WeakHashMap();
+    /** Constructs a filter which only matches documents matching
+     * <code>query</code>.
+     */
+    public QueryFilter(Query query) {
+        this.query = query;
     }
 
-    synchronized (cache) {  // check cache
-      BitSet cached = (BitSet) cache.get(reader);
-      if (cached != null) {
-        return cached;
-      }
+    public BitSet bits(IndexReader reader) throws IOException {
+
+        if (cache == null) {
+            cache = new WeakHashMap();
+        }
+
+        synchronized (cache) {  // check cache
+            BitSet cached = (BitSet) cache.get(reader);
+            if (cached != null) {
+                return cached;
+            }
+        }
+
+        final BitSet bits = new BitSet(reader.maxDoc());
+
+        new IndexSearcher(reader).search(query, new HitCollector() {
+            public final void collect(int doc, float score) {
+                bits.set(doc);  // set bit for hit
+            }
+        });
+
+        synchronized (cache) {  // update cache
+            cache.put(reader, bits);
+        }
+
+        System.out.println("Filter: " + this.toString() + " returns:" + bits.cardinality() + " docs");
+
+        return bits;
     }
 
-    final BitSet bits = new BitSet(reader.maxDoc());
-
-    new IndexSearcher(reader).search(query, new HitCollector() {
-      public final void collect(int doc, float score) {
-        bits.set(doc);  // set bit for hit
-      }
-    });
-
-    synchronized (cache) {  // update cache
-      cache.put(reader, bits);
+    public String toString() {
+        return "QueryFilter("+query+")";
     }
-
-    return bits;
-  }
-
-  public String toString() {
-    return "QueryFilter("+query+")";
-  }
 }

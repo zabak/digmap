@@ -61,7 +61,7 @@ public class StrategyQueryBuilder
                 return
                         new QueryPackage(
                                 createBaseFilter(queryProcessor, ""),
-                                queryProcessor.getTermsQuery(QueryProcessor.QueryTarget.CONTENTS),queryProcessor);
+                                queryProcessor.getTermsQuery(QueryProcessor.QueryTarget.CONTENTS),queryProcessor,null);
             }
         };
     }
@@ -78,7 +78,7 @@ public class StrategyQueryBuilder
                 return
                         new QueryPackage(
                                 createBaseFilter(queryProcessor,Config.SEP + Config.SENTENCES),
-                                queryProcessor.getTermsQuery(QueryProcessor.QueryTarget.SENTENCES),queryProcessor);
+                                queryProcessor.getTermsQuery(QueryProcessor.QueryTarget.SENTENCES),queryProcessor,null);
             }
         };
     }
@@ -114,7 +114,7 @@ public class StrategyQueryBuilder
                     finalQuery.append(" ").append(queryTimes);
                 return
                         new QueryPackage(
-                                filter,finalQuery.toString(),queryProcessor);
+                                filter,finalQuery.toString(),queryProcessor,queryFilter);
             }
         };
     }
@@ -152,7 +152,7 @@ public class StrategyQueryBuilder
                     finalQuery.append(" ").append(queryTimes);
                 return
                         new QueryPackage(
-                                filter,finalQuery.toString(),queryProcessor);
+                                filter,finalQuery.toString(),queryProcessor,queryFilter);
             }
         };
     }
@@ -189,30 +189,30 @@ public class StrategyQueryBuilder
                 if(queryTimes != null && queryTimes.trim().length() > 0)
                     finalQuery.append(" ").append(queryTimes);
 
-                //FILTER QUERIES CONTENTS
-                String queryPlaceFilters = queryProcessor.getPlaceFiltersAsQueries(QueryProcessor.QueryTarget.CONTENTS);
-                String queryPlaceTypeFilters = queryProcessor.getPlaceTypeFiltersAsQueries(QueryProcessor.QueryTarget.CONTENTS);
-                String queryTimeFilters;
-                String queryTimeTypeFilters;
-                if(queryProcessor.isTime_key())
-                {
-                    queryTimeFilters = queryProcessor.getTimeKeyPointsFiltersAsQueries(QueryProcessor.QueryTarget.CONTENTS);
-                    queryTimeTypeFilters = queryProcessor.getTimeKeyTypeFiltersAsQueries(QueryProcessor.QueryTarget.CONTENTS);
-                }
-                else
-                {
-                    queryTimeFilters = queryProcessor.getTimeFiltersAsQueries(QueryProcessor.QueryTarget.CONTENTS);
-                    queryTimeTypeFilters = queryProcessor.getTimeTypeFiltersAsQueries(QueryProcessor.QueryTarget.CONTENTS);
-                }
-               //append FILTER QUERIES
-                if(queryPlaceFilters != null && queryPlaceFilters.trim().length()>0)
-                    finalQuery.append(" ").append(queryPlaceFilters);
-                if(queryPlaceTypeFilters != null && queryPlaceTypeFilters.trim().length()>0)
-                    finalQuery.append(" ").append(queryPlaceTypeFilters);
-                if(queryTimeFilters != null && queryTimeFilters.trim().length()>0)
-                    finalQuery.append(" ").append(queryTimeFilters);
-                if(queryTimeTypeFilters != null && queryTimeTypeFilters.trim().length()>0)
-                    finalQuery.append(" ").append(queryTimeTypeFilters);
+//                //FILTER QUERIES CONTENTS
+//                String queryPlaceFilters = queryProcessor.getPlaceFiltersAsQueries(QueryProcessor.QueryTarget.CONTENTS);
+//                String queryPlaceTypeFilters = queryProcessor.getPlaceTypeFiltersAsQueries(QueryProcessor.QueryTarget.CONTENTS);
+//                String queryTimeFilters;
+//                String queryTimeTypeFilters;
+//                if(queryProcessor.isTime_key())
+//                {
+//                    queryTimeFilters = queryProcessor.getTimeKeyPointsFiltersAsQueries(QueryProcessor.QueryTarget.CONTENTS);
+//                    queryTimeTypeFilters = queryProcessor.getTimeKeyTypeFiltersAsQueries(QueryProcessor.QueryTarget.CONTENTS);
+//                }
+//                else
+//                {
+//                    queryTimeFilters = queryProcessor.getTimeFiltersAsQueries(QueryProcessor.QueryTarget.CONTENTS);
+//                    queryTimeTypeFilters = queryProcessor.getTimeTypeFiltersAsQueries(QueryProcessor.QueryTarget.CONTENTS);
+//                }
+//               //append FILTER QUERIES
+//                if(queryPlaceFilters != null && queryPlaceFilters.trim().length()>0)
+//                    finalQuery.append(" ").append(queryPlaceFilters);
+//                if(queryPlaceTypeFilters != null && queryPlaceTypeFilters.trim().length()>0)
+//                    finalQuery.append(" ").append(queryPlaceTypeFilters);
+//                if(queryTimeFilters != null && queryTimeFilters.trim().length()>0)
+//                    finalQuery.append(" ").append(queryTimeFilters);
+//                if(queryTimeTypeFilters != null && queryTimeTypeFilters.trim().length()>0)
+//                    finalQuery.append(" ").append(queryTimeTypeFilters);
 
                 finalQuery.append(")^0.3");
 
@@ -268,7 +268,7 @@ public class StrategyQueryBuilder
 
                 return
                         new QueryPackage(
-                                filter,finalQuerySentences.toString() + " " + finalQuery.toString(),queryProcessor);
+                                filter,finalQuerySentences.toString() + " " + finalQuery.toString(),queryProcessor,queryFilter);
             }
         };
     }
@@ -278,6 +278,7 @@ public class StrategyQueryBuilder
     {
         public class QueryPackage
         {
+            public Filter queryFilters;
             public QueryProcessor queryProcessor;
             public Filter filter;
             public String query;
@@ -287,10 +288,11 @@ public class StrategyQueryBuilder
                 return queryProcessor.getQ().getId();
             }
 
-            public QueryPackage(Filter filter, String query,QueryProcessor queryProcessor) {
+            public QueryPackage(Filter filter, String query,QueryProcessor queryProcessor, Filter queryFilter) {
                 this.filter = filter;
                 this.query = query;
                 this.queryProcessor = queryProcessor;
+                this.queryFilters = queryFilter;
             }
         }
         protected java.util.Iterator<QueryProcessor> queryProcessorIter;
@@ -314,7 +316,7 @@ public class StrategyQueryBuilder
             if(q.wantPlaces() && q.wantTimes())
             {   TermsFilter timeFilter = new TermsFilter();
                 if(q.isTime_key())
-                    timeFilter.addTerm(new Term(Config.S_HAS_YYYY_KEY + suffix,"true"));
+                    timeFilter.addTerm(new Term(Config.S_HAS_TIME_POINTS_KEY + suffix,"true"));
                 else
                     timeFilter.addTerm(new Term(Config.S_HAS_ANY_TIME_POINT + suffix,"true"));  //OPTAR POR DURACOES
 
@@ -353,7 +355,7 @@ public class StrategyQueryBuilder
 
     public static void main(String [] args) throws MalformedURLException, DocumentException
     {
-        StrategyQueryBuilder strategyQueryBuilder = new StrategyQueryBuilder("E:\\TASKS\\GeoTime\\topics\\topics.xml",true);
+        StrategyQueryBuilder strategyQueryBuilder = new StrategyQueryBuilder(Config.ntcirBase +  File.separator + "topics" + File.separator + "topics.xml",true);
 
         System.out.println("####################################");
         Iterator iter = strategyQueryBuilder.baseSimpleIterator();

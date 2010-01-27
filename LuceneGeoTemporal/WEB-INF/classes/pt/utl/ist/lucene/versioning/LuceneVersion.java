@@ -1,21 +1,20 @@
 package pt.utl.ist.lucene.versioning;
 
 import org.apache.log4j.Logger;
-import org.apache.lucene.analysis.Token;
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.Token;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.highlight.Formatter;
-import org.apache.lucene.queryParser.ParseException;
+import org.apache.lucene.store.FSDirectory;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * @author Jorge Machado

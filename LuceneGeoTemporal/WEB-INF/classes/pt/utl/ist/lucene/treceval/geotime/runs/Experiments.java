@@ -30,6 +30,9 @@ public class Experiments
 {
     public static void main(String[] args) throws IOException, ParseException {
 
+        
+        LgteIndexSearcherWrapper searcher = Config.openMultiSearcher();
+        LgteHits hits = searcher.search("g_allWoeid:WOEID-23689947",new LgteNothingAnalyzer());
 //        IndexReader readerSentences = LgteIndexManager.openReader(IndexSentences.indexPath, Model.OkapiBM25Model);
 //        IndexReader readerContents = LgteIndexManager.openReader(IndexContents.indexPath, Model.OkapiBM25Model);
 //        IndexReader readerGeoRefs = LgteIndexManager.openReader(IndexWoeid.indexPath, Model.OkapiBM25Model);
@@ -81,9 +84,9 @@ public class Experiments
 //        }
 //
 //
-//
-    	LgteIndexWriter writer = new LgteIndexWriter("C:\\WORKSPACE_JM\\DATA\\INDEXES\\NTCIR\\woeid_sentences",false,Model.OkapiBM25Model);
-    	writer.close();
+////
+//    	LgteIndexWriter writer = new LgteIndexWriter("C:\\WORKSPACE_JM\\DATA\\INDEXES\\NTCIR\\woeid_sentences",false,Model.OkapiBM25Model);
+//    	writer.close();
     }
 
     public static int aqui = 0;

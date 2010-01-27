@@ -286,10 +286,23 @@ public class SearchTopics implements ISearchCallBack
      */
     private void writeSearch(OutputFormat format, LgteHits hits) throws IOException
     {
+        writeSearch(format,hits,groupField,searchConfiguration.getRun(),maxResultsForOutput,idsCache);
+    }
+
+
+     /**
+     * This method will call write for each hit in hits
+     *
+     * @param format output format class
+     * @param hits   to write
+     * @throws IOException on file write
+     */
+    public static void writeSearch(OutputFormat format, LgteHits hits, String groupField, String run, int maxResultsForOutput, DataCacher idsCache) throws IOException
+    {
         long time = System.currentTimeMillis();
         format.writeHeader(hits.length());
         logger.info("Total Time taked in tree index code: " + BaseLineSentences.totalTimeTree);
-        logger.info("Will write output to run file: " + searchConfiguration.getRun() );
+        logger.info("Found " + hits.length() + " will write a max of " + maxResultsForOutput + " to output to run file: " + run );
         int count = 0;
         Map<String,Boolean> results = new HashMap<String,Boolean>();
         if(groupField != null)
@@ -318,10 +331,10 @@ public class SearchTopics implements ISearchCallBack
                 int id = hits.id(i);
                 if(idsCache != null && docId == null)
                 {
-                    format.writeRecord(((String)this.idsCache.get("docid",id)), i , hits.getHits(), hits.score(i), searchConfiguration.getRun());
+                    format.writeRecord(((String)idsCache.get("docid",id)), i , hits.getHits(), hits.score(i), run);
                 }
                 else
-                    format.writeRecord(docId, i , hits.getHits(), hits.score(i), searchConfiguration.getRun());
+                    format.writeRecord(docId, i , hits.getHits(), hits.score(i), run);
                 count++;
             }
         }

@@ -178,7 +178,7 @@ public class IndexWoeidSentences {
             doc.indexTextNoStore(Config.G_ALL_TEXT + "_" + Config.SENTENCES,G_ALL_TEXT.toString());
             doc.indexText(Config.G_PLACE_REF_WOEID + "_" + Config.SENTENCES,G_PLACE_REF_WOEID.toString());
             doc.indexTextNoStore(Config.G_PLACE_BELONG_TOS_TEXT + "_" + Config.SENTENCES,G_PLACE_BELONG_TOS_TEXT.toString());
-            doc.indexTextNoStore(Config.G_PLACE_BELONG_TOS_WOEID + "_" + Config.SENTENCES,G_PLACE_BELONG_TOS_WOEID.toString());
+            doc.indexText(Config.G_PLACE_BELONG_TOS_WOEID + "_" + Config.SENTENCES,G_PLACE_BELONG_TOS_WOEID.toString());
             doc.indexTextNoStore(Config.G_GEO_PLACE_TYPE + "_" + Config.SENTENCES,G_GEO_PLACE_TYPE.toString());
             writer.addDocument(doc);
         }

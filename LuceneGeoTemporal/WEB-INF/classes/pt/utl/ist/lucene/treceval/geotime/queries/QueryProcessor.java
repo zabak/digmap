@@ -88,11 +88,11 @@ public class QueryProcessor
             return null;
         if(queryTarget == QueryTarget.CONTENTS)
         {
-            return Config.G_PLACE_REF_WOEID + ":(" + placesQuery + ")";
+            return Config.G_PLACE_REF_WOEID + ":(" + placesQuery + ")^0.3";
         }
         else if(queryTarget == QueryTarget.SENTENCES)
         {
-            return Config.G_PLACE_REF_WOEID + Config.SEP + Config.SENTENCES + ":(" + placesQuery + ")";
+            return Config.G_PLACE_REF_WOEID + Config.SEP + Config.SENTENCES + ":(" + placesQuery + ")^0.3";
         }
         return null;
     }
@@ -105,11 +105,11 @@ public class QueryProcessor
             return null;
         if(queryTarget == QueryTarget.CONTENTS)
         {
-            return Config.G_PLACE_BELONG_TOS_WOEID + ":(" + placesQuery + ")";
+            return Config.G_PLACE_BELONG_TOS_WOEID + ":(" + placesQuery + ")^0.7";
         }
         else if(queryTarget == QueryTarget.SENTENCES)
         {
-            return Config.G_PLACE_BELONG_TOS_WOEID + Config.SEP + Config.SENTENCES + ":(" + placesQuery + ")";
+            return Config.G_PLACE_BELONG_TOS_WOEID + Config.SEP + Config.SENTENCES + ":(" + placesQuery + ")^0.7";
         }
         return null;
     }
@@ -122,11 +122,11 @@ public class QueryProcessor
             return null;
         if(queryTarget == QueryTarget.CONTENTS)
         {
-            return Config.T_POINT_KEY + ":(" + timesQuery + ")";
+            return Config.T_POINT_KEY + ":(" + timesQuery + ")^0.6";
         }
         else if(queryTarget == QueryTarget.SENTENCES)
         {
-            return Config.T_POINT_KEY + Config.SEP + Config.SENTENCES + ":(" + timesQuery + ")";
+            return Config.T_POINT_KEY + Config.SEP + Config.SENTENCES + ":(" + timesQuery + ")^0.6";
         }
         return null;
     }
@@ -169,11 +169,11 @@ public class QueryProcessor
             prepareTimesQueryString();
         if(queryTarget == QueryTarget.CONTENTS)
         {
-            return Config.T_POINT_RELATIVE + ":(" + timesQuery + ")";
+            return Config.T_POINT_RELATIVE + ":(" + timesQuery + ")^0.25";
         }
         else if(queryTarget == QueryTarget.SENTENCES)
         {
-            return Config.T_POINT_RELATIVE + Config.SEP + Config.SENTENCES + ":(" + timesQuery + ")";
+            return Config.T_POINT_RELATIVE + Config.SEP + Config.SENTENCES + ":(" + timesQuery + ")^0.25";
         }
         return null;
     }
@@ -184,11 +184,11 @@ public class QueryProcessor
             prepareTimesQueryString();
         if(queryTarget == QueryTarget.CONTENTS)
         {
-            return Config.T_DURATION + ":(" + timesQuery + ")";
+            return Config.T_DURATION + ":(" + timesQuery + ")^0.15";
         }
         else if(queryTarget == QueryTarget.SENTENCES)
         {
-            return Config.T_DURATION + Config.SEP + Config.SENTENCES + ":(" + timesQuery + ")";
+            return Config.T_DURATION + Config.SEP + Config.SENTENCES + ":(" + timesQuery + ")^0.15";
         }
         return null;
     }
@@ -294,6 +294,26 @@ public class QueryProcessor
         return null;
     }
 
+    public String getPlaceRefsFiltersAsQueries(QueryTarget queryTarget)
+    {
+        if(q.getFilterChain().getBooleanClause().getTerms().size() > 0)
+        {
+            StringBuilder queryBuilder = new StringBuilder();
+            buildPlaceFiltersAsQueries(q.getFilterChain().getBooleanClause(),queryBuilder);
+            if(queryBuilder.toString() == null || queryBuilder.toString().trim().length() == 0)
+                return null;
+            if(queryTarget == QueryTarget.CONTENTS)
+            {
+                return Config.G_PLACE_REF_WOEID + ":(" + queryBuilder.toString() + ")^0.3";
+            }
+            else if(queryTarget == QueryTarget.SENTENCES)
+            {
+                return Config.G_PLACE_REF_WOEID + Config.SEP + Config.SENTENCES + ":(" + queryBuilder.toString() + ")^0.3";
+            }
+        }
+        return null;
+    }
+
     public String getPlaceFiltersAsQueriesBelongTos(QueryTarget queryTarget)
     {
         if(q.getFilterChain().getBooleanClause().getTerms().size() > 0)
@@ -304,11 +324,11 @@ public class QueryProcessor
                 return null;
             if(queryTarget == QueryTarget.CONTENTS)
             {
-                return Config.G_PLACE_BELONG_TOS_WOEID + ":(" + queryBuilder.toString() + ")";
+                return Config.G_PLACE_BELONG_TOS_WOEID + ":(" + queryBuilder.toString() + ")^0.7";
             }
             else if(queryTarget == QueryTarget.SENTENCES)
             {
-                return Config.G_PLACE_BELONG_TOS_WOEID + Config.SEP + Config.SENTENCES + ":(" + queryBuilder.toString() + ")";
+                return Config.G_PLACE_BELONG_TOS_WOEID + Config.SEP + Config.SENTENCES + ":(" + queryBuilder.toString() + ")^0.7";
             }
         }
         return null;
@@ -426,11 +446,11 @@ public class QueryProcessor
             return null;
         if(queryTarget == QueryTarget.CONTENTS)
         {
-            return Config.T_POINT_KEY + ":(" + queryTerms + ")";
+            return Config.T_POINT_KEY + ":(" + queryTerms + ")^0.6";
         }
         else if(queryTarget == QueryTarget.SENTENCES)
         {
-            return Config.T_POINT_KEY + Config.SEP + Config.SENTENCES + ":(" + queryTerms + ")";
+            return Config.T_POINT_KEY + Config.SEP + Config.SENTENCES + ":(" + queryTerms + ")^0.6";
         }
         return null;
     }
@@ -441,11 +461,11 @@ public class QueryProcessor
             return null;
         if(queryTarget == QueryTarget.CONTENTS)
         {
-            return Config.T_POINT_RELATIVE + ":(" + queryTerms + ")";
+            return Config.T_POINT_RELATIVE + ":(" + queryTerms + ")^0.25";
         }
         else if(queryTarget == QueryTarget.SENTENCES)
         {
-            return Config.T_POINT_RELATIVE + Config.SEP + Config.SENTENCES + ":(" + queryTerms + ")";
+            return Config.T_POINT_RELATIVE + Config.SEP + Config.SENTENCES + ":(" + queryTerms + ")^0.25";
         }
         return null;
     }
@@ -456,11 +476,11 @@ public class QueryProcessor
             return null;
         if(queryTarget == QueryTarget.CONTENTS)
         {
-            return Config.T_DURATION + ":(" + queryTerms + ")";
+            return Config.T_DURATION + ":(" + queryTerms + ")^0.15";
         }
         else if(queryTarget == QueryTarget.SENTENCES)
         {
-            return Config.T_DURATION + Config.SEP + Config.SENTENCES + ":(" + queryTerms + ")";
+            return Config.T_DURATION + Config.SEP + Config.SENTENCES + ":(" + queryTerms + ")^0.15";
         }
         return null;
     }

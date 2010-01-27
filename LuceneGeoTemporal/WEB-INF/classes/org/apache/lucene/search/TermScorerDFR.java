@@ -10,6 +10,7 @@ import org.apache.lucene.index.LgteIsolatedIndexReader;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.log4j.Logger;
+import org.omg.SendingContext.RunTime;
 import pt.utl.ist.lucene.*;
 import pt.utl.ist.lucene.test.hierarchicindexes.TestBm25;
 import pt.utl.ist.lucene.treceval.geotime.index.IndexGeoTime;
@@ -145,9 +146,16 @@ final class TermScorerDFR extends LgteFieldedTermScorer {
         int docLen;
         if (useFieldLengths)
         {
+            try{
 //            System.out.println("Using Fields useFieldLengths = true");
+//                System.out.println("doc - term.field() + \":\" + term.text() = " + doc + " - " + term.field() + ":" + term.text());
             docLen = indexReader.getFieldLength(doc, term.field());
             avgDocLen = indexReader.getAvgLenTokenNumber(term.field());
+            }catch(IOException e)
+            {
+                logger.error(e.toString() + " : doc " + doc + " term " + term);
+                throw e;
+            }
         }
         else
         {

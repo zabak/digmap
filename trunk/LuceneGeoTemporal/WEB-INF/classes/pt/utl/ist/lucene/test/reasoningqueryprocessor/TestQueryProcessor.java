@@ -925,13 +925,13 @@ public class TestQueryProcessor extends TestCase
         assertEquals(query,"contents:(word2 word2 word3)");
 
         assertEquals(qpXml.getPlacesQuery(QueryProcessor.QueryTarget.CONTENTS),Config.G_GEO_ALL_WOEID + ":(WOEID-987654321 WOEID-12345678)");
-        assertEquals(qpXml.getPlacesRefQuery(QueryProcessor.QueryTarget.CONTENTS),Config.G_PLACE_REF_WOEID + ":(WOEID-987654321 WOEID-12345678)");
-        assertEquals(qpXml.getPlacesBeolongTosQuery(QueryProcessor.QueryTarget.CONTENTS),Config.G_PLACE_BELONG_TOS_WOEID + ":(WOEID-987654321 WOEID-12345678)");
+        assertEquals(qpXml.getPlacesRefQuery(QueryProcessor.QueryTarget.CONTENTS),Config.G_PLACE_REF_WOEID + ":(WOEID-987654321 WOEID-12345678)^0.3");
+        assertEquals(qpXml.getPlacesBeolongTosQuery(QueryProcessor.QueryTarget.CONTENTS),Config.G_PLACE_BELONG_TOS_WOEID + ":(WOEID-987654321 WOEID-12345678)^0.7");
 
         assertEquals(qpXml.getTimesQueryTimeExpressions(QueryProcessor.QueryTarget.CONTENTS),Config.T_TIME_EXPRESSIONS + ":(2002* 200304* 20050401*)");
-        assertEquals(qpXml.getTimesQueryKeyTimeExpressions(QueryProcessor.QueryTarget.CONTENTS),Config.T_POINT_KEY + ":(2002* 200304* 20050401*)");
-        assertEquals(qpXml.getTimesQueryRelativeTimeExpressions(QueryProcessor.QueryTarget.CONTENTS),Config.T_POINT_RELATIVE + ":(2002* 200304* 20050401*)");
-        assertEquals(qpXml.getTimesQueryDurationsTimeExpressions(QueryProcessor.QueryTarget.CONTENTS),Config.T_DURATION + ":(2002* 200304* 20050401*)");
+        assertEquals(qpXml.getTimesQueryKeyTimeExpressions(QueryProcessor.QueryTarget.CONTENTS),Config.T_POINT_KEY + ":(2002* 200304* 20050401*)^0.6");
+        assertEquals(qpXml.getTimesQueryRelativeTimeExpressions(QueryProcessor.QueryTarget.CONTENTS),Config.T_POINT_RELATIVE + ":(2002* 200304* 20050401*)^0.25");
+        assertEquals(qpXml.getTimesQueryDurationsTimeExpressions(QueryProcessor.QueryTarget.CONTENTS),Config.T_DURATION + ":(2002* 200304* 20050401*)^0.15");
 
 
 

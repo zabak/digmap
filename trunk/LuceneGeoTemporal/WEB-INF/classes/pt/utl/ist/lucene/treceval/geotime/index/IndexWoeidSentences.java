@@ -146,7 +146,7 @@ public class IndexWoeidSentences {
         DocumentPlaceMakerAndTemporalSentences documentPlaceMakerAndTemporalSentences = new DocumentPlaceMakerAndTemporalSentences(placeMakerDocument.getD(),null,placeMakerDocument.getPm());
         for(PlaceMakerAndTemporalSentence sentence: documentPlaceMakerAndTemporalSentences.getSentences())
         {
-
+            p++;
             LgteDocumentWrapper doc = new LgteDocumentWrapper();
             doc.indexString(Config.ID,placeMakerDocument.getD().getDId() + "$$" + sentence.getIndex());
             doc.indexString(Config.DOC_ID,placeMakerDocument.getD().getDId());

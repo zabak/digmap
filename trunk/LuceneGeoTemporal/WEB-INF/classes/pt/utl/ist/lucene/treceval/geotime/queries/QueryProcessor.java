@@ -152,6 +152,8 @@ public class QueryProcessor
     {
         if(timesQuery == null)
             prepareTimesQueryString();
+        if(timesQuery.trim().length() == 0)
+            return null;
         if(queryTarget == QueryTarget.CONTENTS)
         {
             return Config.T_TIME_EXPRESSIONS + ":(" + timesQuery + ")";
@@ -167,6 +169,8 @@ public class QueryProcessor
     {
         if(timesQuery == null)
             prepareTimesQueryString();
+        if(timesQuery.trim().length() == 0)
+            return null;
         if(queryTarget == QueryTarget.CONTENTS)
         {
             return Config.T_POINT_RELATIVE + ":(" + timesQuery + ")^0.25";
@@ -182,6 +186,8 @@ public class QueryProcessor
     {
         if(timesQuery == null)
             prepareTimesQueryString();
+        if(timesQuery.trim().length() == 0)
+            return null;
         if(queryTarget == QueryTarget.CONTENTS)
         {
             return Config.T_DURATION + ":(" + timesQuery + ")^0.15";

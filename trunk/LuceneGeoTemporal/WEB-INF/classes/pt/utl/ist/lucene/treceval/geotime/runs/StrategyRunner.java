@@ -32,37 +32,59 @@ public class StrategyRunner {
     static String topicsFile =    Config.ntcirBase +  File.separator + "topics" + File.separator + "topics.xml";
 
 
+
     public static void main(String[] args) throws DocumentException, IOException, ParseException
     {
         StrategyQueryBuilder strategyQueryBuilderTimeKeys = new StrategyQueryBuilder(topicsFile,true);
         StrategyQueryBuilder strategyQueryBuilderTimeAll = new StrategyQueryBuilder(topicsFile,false);
-
+        int step = 0;
+        if(args != null && args.length > 0)
+        {
+            step = Integer.parseInt(args[0]);
+        }
         LgteIndexSearcherWrapper searcher;
 
-//        searcher = Config.openMultiSearcher();
-//        runBase(null,outputFile + "base_t_keys.txt",searcher,strategyQueryBuilderTimeKeys.baseSimpleIterator(),true,null,false,true);
-//        runBase(null,outputFile + "base_t_all.txt",searcher,strategyQueryBuilderTimeAll.baseSimpleIterator(),false,null);
-//        searcher.close();
+        if(step < 1)
+        {
+            System.out.println("#######base");
+            searcher = Config.openMultiSearcher();
+            runBase(null,outputFile + "base_t_keys.txt",searcher,strategyQueryBuilderTimeKeys.baseSimpleIterator(),true,null,false);
+            runBase(null,outputFile + "base_t_all.txt",searcher,strategyQueryBuilderTimeAll.baseSimpleIterator(),false,null,false);
+            searcher.close();
+        }
 
-        searcher = Config.openMultiSearcherSentences();
-//        runBase(null,outputFile + "base_sentences_t_keys.txt",searcher,strategyQueryBuilderTimeKeys.baseSimpleIterator_sentences(),true,Config.DOC_ID,false);
-//        runBase(null,outputFile + "base_t_all.base_sentences_t_all",searcher,strategyQueryBuilderTimeAll.baseSimpleIterator_sentences(),false,Config.DOC_ID,false);
-        searcher.close();
+        if(step < 2)
+        {
+            System.out.println("#######base_sentences");
+            searcher = Config.openMultiSearcherSentences();
+            runBase(null,outputFile + "base_sentences_t_keys.txt",searcher,strategyQueryBuilderTimeKeys.baseSimpleIterator_sentences(),true,Config.DOC_ID,false);
+            runBase(null,outputFile + "base_sentences_t_all.txt",searcher,strategyQueryBuilderTimeAll.baseSimpleIterator_sentences(),false,Config.DOC_ID,false);
+            searcher.close();
+        }
 
-        searcher = Config.openMultiSearcher();
-        runBase(RunType.Text,outputFile + "filtered_qe_t_keys.txt",searcher,strategyQueryBuilderTimeKeys.baseFilteredIterator(),true,null,true);
-//        runBase(RunType.Text,outputFile + "filtered_qe_t_all.txt",searcher,strategyQueryBuilderTimeAll.baseFilteredIterator(),false,null,true);
-        searcher.close();
+        if(step < 3)
+        {
+            System.out.println("#######filtered_qe");
+            searcher = Config.openMultiSearcher();
+            runBase(RunType.Text,outputFile + "filtered_qe_t_keys.txt",searcher,strategyQueryBuilderTimeKeys.baseFilteredIterator(),true,null,true);
+            runBase(RunType.Text,outputFile + "filtered_qe_t_all.txt",searcher,strategyQueryBuilderTimeAll.baseFilteredIterator(),false,null,true);
+            searcher.close();
+        }
 
-        searcher = Config.openMultiSearcherSentences();
-        runBase(RunType.Sentences,outputFile + "filtered_qe_sentences_t_keys.txt",searcher,strategyQueryBuilderTimeKeys.baseFilteredIterator_sentences(),true,Config.DOC_ID,true);
-//        runBase(RunType.Sentences,outputFile + "filtered_qe_sentences_t_all.txt",searcher,strategyQueryBuilderTimeAll.baseFilteredIterator_sentences(),false,Config.DOC_ID,true);
-        searcher.close();
+        if(step < 4)
+        {
+            System.out.println("#######filtered_qe_sentences");
+            searcher = Config.openMultiSearcherSentences();
+            runBase(RunType.Sentences,outputFile + "filtered_qe_sentences_t_keys.txt",searcher,strategyQueryBuilderTimeKeys.baseFilteredIterator_sentences(),true,Config.DOC_ID,true);
+            runBase(RunType.Sentences,outputFile + "filtered_qe_sentences_t_all.txt",searcher,strategyQueryBuilderTimeAll.baseFilteredIterator_sentences(),false,Config.DOC_ID,true);
+            searcher.close();
+        }
 
-//        searcher = Config.openMultiSearcherForContentsAndSentences();
+        System.out.println("#######filtered_qe_comb");
+        searcher = Config.openMultiSearcherForContentsAndSentences();
         runBase(RunType.Comb, outputFile + "filtered_qe_comb_t_keys.txt",searcher,strategyQueryBuilderTimeKeys.baseFilteredIterator_comb(),true,Config.DOC_ID,true);
         runBase(RunType.Comb, outputFile + "filtered_qe_comb_qe_t_all.txt",searcher,strategyQueryBuilderTimeAll.baseFilteredIterator_comb(),false,Config.DOC_ID,true);
-//        searcher.close();
+        searcher.close();
     }
 
     enum RunType
@@ -87,7 +109,6 @@ public class StrategyRunner {
         OutputFormat outputFormat = new TrecEvalOutputFormatFactory(Config.ID).createNew(stream);
         outputFormat.init("id","id");
         outputFormat.setMaxDocsToFlush(100);
-        iter.next();iter.next();
         while((queryPackage = iter.next())!=null)
         {
             QueryConfiguration queryConfigurationBase = new QueryConfiguration();
@@ -129,12 +150,12 @@ public class StrategyRunner {
                 }
                 if(runType == RunType.Text || runType == RunType.Comb)
                 {
-//                queryConfigurationBase.setProperty("field.boost." + Config.G_PLACE_BELONG_TOS_WOEID,"0.2"); todo uncomment
+                    queryConfigurationBase.setProperty("field.boost." + Config.G_PLACE_BELONG_TOS_WOEID,"0.2");
                     queryConfigurationBase.setProperty("field.boost." + Config.G_PLACE_REF_WOEID,"0.3");
                 }
                 if(runType == RunType.Sentences || runType == RunType.Comb)
                 {
-//                queryConfigurationBase.setProperty("field.boost." + Config.G_PLACE_BELONG_TOS_WOEID + Config.SEP + Config.SENTENCES,"0.2"); todo uncomment
+                    queryConfigurationBase.setProperty("field.boost." + Config.G_PLACE_BELONG_TOS_WOEID + Config.SEP + Config.SENTENCES,"0.2");
                     queryConfigurationBase.setProperty("field.boost." + Config.G_PLACE_REF_WOEID + Config.SEP + Config.SENTENCES,"0.3");
                 }
                 org.apache.lucene.search.Query q = LgteQueryParser.lucQE(lgteQuery,queryPackage.query,searcher,queryPackage.filter);
@@ -144,7 +165,7 @@ public class StrategyRunner {
             Topic t = new SimpleTopic(queryPackage.getTopicId());
             outputFormat.setTopic(t);
             LgteHits hits = searcher.search(lgteQuery,queryPackage.filter);
-            SearchTopics.writeSearch(outputFormat,hits,groupField,outputFile.substring(outputFile.lastIndexOf(File.separator)+1,outputFile.lastIndexOf(".")),500,null);
+            SearchTopics.writeSearch(outputFormat,hits,groupField,outputFile.substring(outputFile.lastIndexOf(File.separator)+1,outputFile.lastIndexOf(".")),Config.outputDocs,null);
         }
         outputFormat.close();
     }

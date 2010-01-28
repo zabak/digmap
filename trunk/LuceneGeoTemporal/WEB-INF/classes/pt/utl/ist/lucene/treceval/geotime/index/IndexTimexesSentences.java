@@ -78,6 +78,7 @@ public class IndexTimexesSentences {
         DocumentTemporalSentences documentTemporalSentences = new DocumentTemporalSentences(timexesDocument.getD().getSgml(),timexesDocument.getTd());
         for(TemporalSentence sentence: documentTemporalSentences.getSentences())
         {
+            p++;
             LgteDocumentWrapper doc = new LgteDocumentWrapper();
             doc.indexString(Config.ID,timexesDocument.getD().getDId() + "$$" + sentence.getIndex());
             doc.indexString(Config.DOC_ID,timexesDocument.getD().getDId());

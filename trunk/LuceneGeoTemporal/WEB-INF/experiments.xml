@@ -805,4 +805,32 @@
         </copy>
     </target>
 
+
+    <target name="evaluation-metrics-geotime" description="Generate trec_eval results">
+        <for param="runfile">
+            <path>
+                <fileset dir="d:\\Servidores\\DATA\\ntcir\\runs">
+                    <include name="*.txt" />
+                    <exclude name="*-treceval-report.txt" />
+                    <exclude name="*-significance-report.txt" />
+                </fileset>
+            </path>
+            <sequential>
+                <java fork="true" classname="ireval.Main" output="@{runfile}-treceval-report.txt">
+                    <classpath>
+                        <fileset dir="${base.dir}/lib">
+                            <include name="*.jar" />
+                        </fileset>
+                        <fileset dir="${base.dir}/lib">
+                            <include name="*.jar" />
+                        </fileset>
+                    </classpath>
+                    <classpath path="${webapp.path}/WEB-INF/classes" />
+                    <arg value="@{runfile}" />
+                    <arg value="d:\\Servidores\\DATA\\ntcir\\qrels.txt" />
+                </java>
+            </sequential>
+        </for>
+    </target>
+
 </project>

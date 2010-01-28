@@ -41,7 +41,9 @@ public class TermsFilter extends Filter
     * @see org.apache.lucene.search.Filter#getDocIdSet(org.apache.lucene.index.IndexReader)
       */
     public BitSet getDocIdSet(IndexReader reader) throws IOException {
-        BitSet result=new BitSet(reader.maxDoc());
+        int maxDocuments = reader.maxDoc();
+        BitSet result=new BitSet(maxDocuments);
+        System.out.println("Filter MaxDoc:" + maxDocuments);
         TermDocs td = reader.termDocs();
         try
         {
@@ -51,20 +53,30 @@ public class TermsFilter extends Filter
                 boolean mapping = false;
                 if(reader instanceof LgteIsolatedIndexReader && ((LgteIsolatedIndexReader)reader).hasMapping(term.field()))
                     mapping = true;
-                td.seek(term);     int i= 0;
+                td.seek(term);
+                int i= 0;
+                int s = 0;
                 while (td.next())
                 {
                     if(mapping)
                     {
                         int[] docs = ((LgteIsolatedIndexReader)reader).translateId(td.doc(),term.field());
                         for(int doc: docs)
+                        {
                             result.set(doc);
+                            s++;
+                        }
                     }
                     else
+                    {
                         result.set(td.doc());
-                    i++;
+                        i++;
+                    }
                 }
-                System.out.println("Filter: " + this.toString() + " returns:" + i + " docs");
+                if(i > 0)
+                    System.out.println("Filter: " + this.toString() + " returns:" + i + " docs");
+                if(s > 0)
+                    System.out.println("Filter: " + this.toString() + " returns:" + s + " sentences");
             }
         }
         finally

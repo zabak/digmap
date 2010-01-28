@@ -769,7 +769,7 @@
         int docs = Integer.parseInt(request.getParameter("docs"));
 
         out.println("<h3>Number of matching documents = " + hits.length() + " - showing from " + startAt + " to " + (startAt + docs) + "</h3><hr/>");
-        for (int i = startAt; i < startAt + docs; i++) {
+        for (int i = startAt; i < startAt + docs && i < hits.length(); i++) {
             LgteDocumentWrapper doc = hits.doc(i);
             String docno = doc.get(pt.utl.ist.lucene.treceval.Globals.DOCUMENT_ID_FIELD);
 

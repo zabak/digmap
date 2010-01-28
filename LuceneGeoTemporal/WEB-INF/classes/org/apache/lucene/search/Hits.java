@@ -23,6 +23,8 @@ import org.apache.lucene.document.Document;
 
 /** A ranked list of documents, used to hold search results. */
 public final class Hits {
+
+  static int MAX_RETRIEVE = 1000;
   private Query query;
   private Searcher searcher;
   private Filter filter = null;
@@ -34,13 +36,13 @@ public final class Hits {
   private HitDoc first;         // head of LRU cache
   private HitDoc last;          // tail of LRU cache
   private int numDocs = 0;      // number cached
-  private int maxDocs = 1000;    // max to cache
+  private int maxDocs = 1500;    // max to cache
 
   Hits(Searcher s, Query q, Filter f) throws IOException {
     query = q;
     searcher = s;
     filter = f;
-    getMoreDocs(500); // retrieve 100 initially
+    getMoreDocs(MAX_RETRIEVE); // retrieve 100 initially
   }
 
   Hits(Searcher s, Query q, Filter f, Sort o) throws IOException {
@@ -48,7 +50,7 @@ public final class Hits {
     searcher = s;
     filter = f;
     sort = o;
-    getMoreDocs(500); // retrieve 100 initially
+    getMoreDocs(MAX_RETRIEVE); // retrieve 100 initially
   }
 
   /**

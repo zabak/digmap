@@ -265,7 +265,7 @@ public class StrategyQueryBuilder
 //                if(queryTimeTypeFilters != null && queryTimeTypeFilters.trim().length()>0)
 //                    finalQuery.append(" ").append(queryTimeTypeFilters);
 
-                finalQuery.append(")^0.3");
+                finalQuery.append(")^" + Config.combContentsFactor);
 
 
 
@@ -300,7 +300,7 @@ public class StrategyQueryBuilder
                     finalQuerySentences.append(" ").append(queryTimesKeysSentences);
                 if(queryTimesRelativeSentences != null && queryTimesRelativeSentences.trim().length() > 0)
                     finalQuerySentences.append(" ").append(queryTimesRelativeSentences);
-                if(finalQuerySentences != null && queryTimesDurationSentences.trim().length() > 0)
+                if(queryTimesDurationSentences != null && queryTimesDurationSentences.trim().length() > 0)
                     finalQuerySentences.append(" ").append(queryTimesDurationSentences);
 
                 //FILTER QUERIES
@@ -346,7 +346,7 @@ public class StrategyQueryBuilder
                     finalQuerySentences.append(" ").append(queryTimeTypeFiltersSentences);
 
 
-                finalQuerySentences.append(")^0.7");
+                finalQuerySentences.append(")^" + Config.combSentencesFactor);
 
 
 

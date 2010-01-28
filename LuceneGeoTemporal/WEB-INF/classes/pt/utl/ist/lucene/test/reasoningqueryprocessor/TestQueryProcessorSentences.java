@@ -828,13 +828,13 @@ public class TestQueryProcessorSentences extends TestCase {
         assertEquals(query,"sentences:(word2 word2 word3)");
 
         assertEquals(qpXml.getPlacesQuery(QueryProcessor.QueryTarget.SENTENCES),Config.G_GEO_ALL_WOEID + "_sentences:(WOEID-987654321 WOEID-12345678)");
-        assertEquals(qpXml.getPlacesRefQuery(QueryProcessor.QueryTarget.SENTENCES),Config.G_PLACE_REF_WOEID + "_sentences:(WOEID-987654321 WOEID-12345678)");
-        assertEquals(qpXml.getPlacesBeolongTosQuery(QueryProcessor.QueryTarget.SENTENCES),Config.G_PLACE_BELONG_TOS_WOEID + "_sentences:(WOEID-987654321 WOEID-12345678)");
+        assertEquals(qpXml.getPlacesRefQuery(QueryProcessor.QueryTarget.SENTENCES),Config.G_PLACE_REF_WOEID + "_sentences:(WOEID-987654321 WOEID-12345678)^0.3");
+        assertEquals(qpXml.getPlacesBeolongTosQuery(QueryProcessor.QueryTarget.SENTENCES),Config.G_PLACE_BELONG_TOS_WOEID + "_sentences:(WOEID-987654321 WOEID-12345678)^0.7");
 
         assertEquals(qpXml.getTimesQueryTimeExpressions(QueryProcessor.QueryTarget.SENTENCES),Config.T_TIME_EXPRESSIONS + "_sentences:(2002* 200304* 20050401*)");
-        assertEquals(qpXml.getTimesQueryKeyTimeExpressions(QueryProcessor.QueryTarget.SENTENCES),Config.T_POINT_KEY + "_sentences:(2002* 200304* 20050401*)");
-        assertEquals(qpXml.getTimesQueryRelativeTimeExpressions(QueryProcessor.QueryTarget.SENTENCES),Config.T_POINT_RELATIVE + "_sentences:(2002* 200304* 20050401*)");
-        assertEquals(qpXml.getTimesQueryDurationsTimeExpressions(QueryProcessor.QueryTarget.SENTENCES),Config.T_DURATION + "_sentences:(2002* 200304* 20050401*)");
+        assertEquals(qpXml.getTimesQueryKeyTimeExpressions(QueryProcessor.QueryTarget.SENTENCES),Config.T_POINT_KEY + "_sentences:(2002* 200304* 20050401*)^0.6");
+        assertEquals(qpXml.getTimesQueryRelativeTimeExpressions(QueryProcessor.QueryTarget.SENTENCES),Config.T_POINT_RELATIVE + "_sentences:(2002* 200304* 20050401*)^0.25");
+        assertEquals(qpXml.getTimesQueryDurationsTimeExpressions(QueryProcessor.QueryTarget.SENTENCES),Config.T_DURATION + "_sentences:(2002* 200304* 20050401*)^0.15");
 
 
 

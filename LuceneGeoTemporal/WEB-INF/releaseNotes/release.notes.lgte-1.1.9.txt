@@ -1,0 +1,10 @@
+LGTE version 1.1.9
+
+Release Notes:
+
+1 - 2 level Hierarchic indexes working. Bugs removed from Score process in bucket table alghoritm in BooleanScorer and Scorer classes
+2 - Created examples to test and teach how to use it: pt.utl.ist.lucene.test.hierarchicindexes
+3 - Hierarchic indexes already work with Lucene Filters
+4 - GeoTemporal Query Processor unit to parse XML topics and create a GeoTemporal Query with filters see: pt.utl.ist.lucene.treceval.geotime.queries
+    This package will be moved to pt.utl.ist.lucene.reasoningqueries in the next version 1.2
+5 - Rochio Query Expansion was changed to be used outside of the treceval package see example: pt.utl.ist.lucene.treceval.geotime.runs.StrategyRunner

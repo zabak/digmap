@@ -41,6 +41,48 @@
         <copy file="${jar.file}" todir="${webapp}"/>
     </target>
 
+    <target name="jar-no-props" depends="compile">
+
+        <jar destfile="${jar.file}-no-props">
+            <fileset dir="${webapp.path}/WEB-INF/classes/">
+                <exclude name="**/**.properties"/>
+            </fileset>
+            <manifest>
+                <attribute name="Built-By" value="${user.name}" />
+                <!--<attribute name="Main-Class" value="my.path.to.the.main.Application" />-->
+                <section name="lgte">
+                    <attribute name="Specification-Title" value="LGTE - Lucene GeoTemporal Extensions" />
+                    <attribute name="Specification-Version" value="${version.number}" />
+                    <attribute name="Specification-Vendor" value="Jorge Machado" />
+                    <attribute name="Implementation-Version" value="${version.number}" />
+                    <attribute name="Implementation-Vendor" value="Jorge Machado" />
+                </section>
+
+                <!-- finally, use the magically generated libs path -->
+                <!--<attribute name="Class-Path" value="${libs.project}" />-->
+            </manifest>
+        </jar>
+        <jar destfile="${jar.file}-props">
+            <fileset dir="${webapp.path}/WEB-INF/classes/">
+                <include name="**/**.properties"/>
+            </fileset>
+            <manifest>
+                <attribute name="Built-By" value="${user.name}" />
+                <!--<attribute name="Main-Class" value="my.path.to.the.main.Application" />-->
+                <section name="lgte">
+                    <attribute name="Specification-Title" value="LGTE - Lucene GeoTemporal Extensions" />
+                    <attribute name="Specification-Version" value="${version.number}" />
+                    <attribute name="Specification-Vendor" value="Jorge Machado" />
+                    <attribute name="Implementation-Version" value="${version.number}" />
+                    <attribute name="Implementation-Vendor" value="Jorge Machado" />
+                </section>
+
+                <!-- finally, use the magically generated libs path -->
+                <!--<attribute name="Class-Path" value="${libs.project}" />-->
+            </manifest>
+        </jar>
+    </target>
+
     <target name="initDirs">
         <mkdir dir="${webapp.path}/WEB-INF/lib/"/>
         <mkdir dir="${webapp.path}/WEB-INF/classes/"/>

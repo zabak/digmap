@@ -33,6 +33,9 @@ public class Config
             documentPath = props.getProperty("documentPath");
             timexesPath = props.getProperty("timexesPath");
             placemakerPath = props.getProperty("placemakerPath");
+            outputDocs = Integer.parseInt(props.getProperty("outputDocs"));
+            combSentencesFactor = props.getProperty("comb.sentences.factor");
+            combContentsFactor = props.getProperty("comb.contents.factor");
         }
         catch (IOException e)
         {
@@ -44,6 +47,9 @@ public class Config
     public static String documentPath;
     public static String timexesPath;
     public static String placemakerPath;
+    public static int outputDocs;
+    public static String combSentencesFactor;
+    public static String combContentsFactor;
 
     static void init()
     {
@@ -204,7 +210,7 @@ public class Config
         lgteIsolatedIndexReader.addTreeMapping(readerWoeid,readerWoeidSentences,readerContents,DOC_ID);
         lgteIsolatedIndexReader.addTreeMapping(readerGeoTime,readerGeoTimeSentences,readerContents,DOC_ID);
 
-        return new LgteIndexSearcherWrapper(Model.OkapiBM25Model,new LgteIsolatedIndexReader(readers));
+        return new LgteIndexSearcherWrapper(Model.OkapiBM25Model,lgteIsolatedIndexReader);
     }
 
      public static LgteIndexSearcherWrapper openMultiSearcherSentences() throws IOException

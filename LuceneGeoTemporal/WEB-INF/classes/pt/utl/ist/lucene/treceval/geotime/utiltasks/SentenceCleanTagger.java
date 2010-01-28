@@ -26,7 +26,7 @@ import jomm.utils.StreamsUtils;
  */
 public class SentenceCleanTagger {
 
-    public static String output = Config.ntcirBase + File.separator + "sentencesGeoTemporais";
+    public static String output = Config.ntcirBase + File.separator + "sentencesAnnotations";
     static String documentPath = Config.documentPath;
     static String timexesPath = Config.timexesPath;
     static String placemakerPath = Config.placemakerPath;

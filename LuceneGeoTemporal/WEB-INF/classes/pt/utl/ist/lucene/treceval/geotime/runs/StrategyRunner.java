@@ -82,7 +82,7 @@ public class StrategyRunner {
 
         System.out.println("#######filtered_qe_comb");
         searcher = Config.openMultiSearcherForContentsAndSentences();
-        runBase(RunType.Comb, outputFile + "filtered_qe_comb_t_keys.txt",searcher,strategyQueryBuilderTimeKeys.baseFilteredIterator_comb(),true,Config.DOC_ID,true);
+        runBase(RunType.Comb, outputFile + "filtered_qe_comb_qe_t_keys.txt",searcher,strategyQueryBuilderTimeKeys.baseFilteredIterator_comb(),true,Config.DOC_ID,true);
         runBase(RunType.Comb, outputFile + "filtered_qe_comb_qe_t_all.txt",searcher,strategyQueryBuilderTimeAll.baseFilteredIterator_comb(),false,Config.DOC_ID,true);
         searcher.close();
     }

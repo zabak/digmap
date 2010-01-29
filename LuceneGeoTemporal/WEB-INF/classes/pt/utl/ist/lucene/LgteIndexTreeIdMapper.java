@@ -5,10 +5,17 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.LgteIsolatedIndexReader;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.index.TermEnum;
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.queryParser.ParseException;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
+import pt.utl.ist.lucene.treceval.geotime.index.*;
+import pt.utl.ist.lucene.treceval.IndexCollections;
+import pt.utl.ist.lucene.analyzer.LgteBrokerStemAnalyzer;
+import pt.utl.ist.lucene.analyzer.LgteWhiteSpacesAnalyzer;
 
 /**
  * @author Jorge Machado
@@ -149,6 +156,7 @@ public class LgteIndexTreeIdMapper
 
         try {
             TermEnum childs = child.terms(new Term(foreignkeyFieldChild2Parent,""));
+
             int p = 0;
             int c = 0;
             do
@@ -156,7 +164,7 @@ public class LgteIndexTreeIdMapper
                 offsets[p] = c;
                 int docFreq = reader.docFreq(childs.term());
                 int max = c + docFreq;
-                for(; c < max ;c++)
+                for(; c < max && c < offsetsInvert.length ;c++)
                 {
                     offsetsInvert[c] = p;
                 }
@@ -205,8 +213,7 @@ public class LgteIndexTreeIdMapper
         }
     }
 
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) throws IOException, ParseException {
 
 //        TextSimilarityScorer tfidf = new TextSimilarityScorer(new SimpleTokenizer(true,true));
 //        BasicStringWrapper doc1 = new BasicStringWrapper("a b c d e f g h i j k l m");
@@ -218,7 +225,63 @@ public class LgteIndexTreeIdMapper
 //        tfidf.train(myStringWrapperIterator);
 //        System.out.println("BM25:" + tfidf.bm25("a b","a b c d e f g h i j k l m"));
 //        System.out.println("BM25:" + tfidf.bm25("a b","b c d e f g h i"));
-        System.out.println(73938 % 7);
+
+        LgteIndexSearcherWrapper searcher = Config.openMultiSearcherForContentsAndSentences();
+        QueryConfiguration queryConfiguration = new QueryConfiguration();
+        queryConfiguration.setProperty("bm25.k1", "1.2d");
+        queryConfiguration.setProperty("bm25.b", "0.75d");
+        queryConfiguration.setProperty("bm25.k3", "0.75d");
+        queryConfiguration.setProperty("index.tree", "true");
+        LgteQuery query = LgteQueryParser.parseQuery("g_allWoeid:WOEID-23424778", searcher, new LgteWhiteSpacesAnalyzer(), queryConfiguration);
+        LgteHits hits = searcher.search(query);
+
+        System.out.println(hits.doc(0).get("id"));
+        System.out.println(hits.doc(1).get("id"));
+        System.out.println(hits.doc(2).get("id"));
+        System.out.println(hits.doc(3).get("id"));
+        System.out.println(hits.doc(4).get("id"));
+
+        searcher.close();
+
+        System.out.println("#################3");
+
+
+        searcher = Config.openMultiSearcherSentences();
+        queryConfiguration = new QueryConfiguration();
+        queryConfiguration.setProperty("bm25.k1", "1.2d");
+        queryConfiguration.setProperty("bm25.b", "0.75d");
+        queryConfiguration.setProperty("bm25.k3", "0.75d");
+        query = LgteQueryParser.parseQuery("g_allWoeid_sentences:WOEID-23424778", searcher, new LgteWhiteSpacesAnalyzer(), queryConfiguration);
+        hits = searcher.search(query);
+
+        System.out.println(hits.doc(0).get("id"));
+        System.out.println(hits.doc(1).get("id"));
+        System.out.println(hits.doc(2).get("id"));
+        System.out.println(hits.doc(3).get("id"));
+        System.out.println(hits.doc(4).get("id"));
+
+        searcher.close();
+
+        System.out.println("#################3");
+
+
+
+        searcher = Config.openMultiSearcher();
+        queryConfiguration = new QueryConfiguration();
+        queryConfiguration.setProperty("bm25.k1", "1.2d");
+        queryConfiguration.setProperty("bm25.b", "0.75d");
+        queryConfiguration.setProperty("bm25.k3", "0.75d");
+        query = LgteQueryParser.parseQuery("g_allWoeid:WOEID-23424778", searcher, new LgteWhiteSpacesAnalyzer(), queryConfiguration);
+        hits = searcher.search(query);
+
+        System.out.println(hits.doc(0).get("id"));
+        System.out.println(hits.doc(1).get("id"));
+        System.out.println(hits.doc(2).get("id"));
+        System.out.println(hits.doc(3).get("id"));
+        System.out.println(hits.doc(4).get("id"));
+
+        searcher.close();
+
     }
 
 }

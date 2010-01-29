@@ -12,8 +12,8 @@ import pt.utl.ist.lucene.treceval.geotime.index.Config;
 import pt.utl.ist.lucene.treceval.geotime.queries.StrategyQueryBuilder;
 import pt.utl.ist.lucene.treceval.handlers.topics.output.OutputFormat;
 import pt.utl.ist.lucene.treceval.handlers.topics.output.Topic;
+import pt.utl.ist.lucene.treceval.handlers.topics.output.impl.RunIdOutputFormatFactory;
 import pt.utl.ist.lucene.treceval.handlers.topics.output.impl.SimpleTopic;
-import pt.utl.ist.lucene.treceval.handlers.topics.output.impl.TrecEvalOutputFormatFactory;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -32,6 +32,12 @@ public class StrategyRunner {
     static String topicsFile =    Config.ntcirBase +  File.separator + "topics" + File.separator + "topics.xml";
 
 
+    static String run1 = "DOC Granularity BM25 with BaseFilters to exclude documents without time or geographic references";
+    static String run2 = "SENTENCE Granularity BM25 with BaseFilters to exclude sentences without time or geographic references";
+    static String run3 = "DOC Granularity BM25 with BaseFilters and Query Filters for places, times, timeformats and placetypes or Query Expansion if no filters were defined in the topic";
+    static String run4 = "SENTENCE Granularity BM25 with BaseFilters and Query Filters for places, times, timeformats and placetypes or Query Expansion if no filters were defined in the topic";
+    static String run5 = "COMB Granularity BM25(0.7*sentence + 0.3*doc)  with BaseFilters and Query Filters (only at doc granularity level) for places, times, timeformats and placetypes or Query Expansion if no filters were defined in the topic";
+
 
     public static void main(String[] args) throws DocumentException, IOException, ParseException
     {
@@ -48,8 +54,8 @@ public class StrategyRunner {
         {
             System.out.println("#######base");
             searcher = Config.openMultiSearcher();
-            runBase(null,outputFile + "base_t_keys.txt",searcher,strategyQueryBuilderTimeKeys.baseSimpleIterator(),true,null,false);
-            runBase(null,outputFile + "base_t_all.txt",searcher,strategyQueryBuilderTimeAll.baseSimpleIterator(),false,null,false);
+            runBase(run1,null,outputFile + "base_t_keys.xml",searcher,strategyQueryBuilderTimeKeys.baseSimpleIterator(),true,null,false);
+            runBase(run1,null,outputFile + "base_t_all.xml",searcher,strategyQueryBuilderTimeAll.baseSimpleIterator(),false,null,false);
             searcher.close();
         }
 
@@ -57,8 +63,8 @@ public class StrategyRunner {
         {
             System.out.println("#######base_sentences");
             searcher = Config.openMultiSearcherSentences();
-            runBase(null,outputFile + "base_sentences_t_keys.txt",searcher,strategyQueryBuilderTimeKeys.baseSimpleIterator_sentences(),true,Config.DOC_ID,false);
-            runBase(null,outputFile + "base_sentences_t_all.txt",searcher,strategyQueryBuilderTimeAll.baseSimpleIterator_sentences(),false,Config.DOC_ID,false);
+            runBase(run2,null,outputFile + "base_sentences_t_keys.xml",searcher,strategyQueryBuilderTimeKeys.baseSimpleIterator_sentences(),true,Config.DOC_ID,false);
+            runBase(run2,null,outputFile + "base_sentences_t_all.xml",searcher,strategyQueryBuilderTimeAll.baseSimpleIterator_sentences(),false,Config.DOC_ID,false);
             searcher.close();
         }
 
@@ -66,8 +72,8 @@ public class StrategyRunner {
         {
             System.out.println("#######filtered_qe");
             searcher = Config.openMultiSearcher();
-            runBase(RunType.Text,outputFile + "filtered_qe_t_keys.txt",searcher,strategyQueryBuilderTimeKeys.baseFilteredIterator(),true,null,true);
-            runBase(RunType.Text,outputFile + "filtered_qe_t_all.txt",searcher,strategyQueryBuilderTimeAll.baseFilteredIterator(),false,null,true);
+            runBase(run3,RunType.Text,outputFile + "filtered_qe_t_keys.xml",searcher,strategyQueryBuilderTimeKeys.baseFilteredIterator(),true,null,true);
+            runBase(run3,RunType.Text,outputFile + "filtered_qe_t_all.xml",searcher,strategyQueryBuilderTimeAll.baseFilteredIterator(),false,null,true);
             searcher.close();
         }
 
@@ -75,15 +81,15 @@ public class StrategyRunner {
         {
             System.out.println("#######filtered_qe_sentences");
             searcher = Config.openMultiSearcherSentences();
-            runBase(RunType.Sentences,outputFile + "filtered_qe_sentences_t_keys.txt",searcher,strategyQueryBuilderTimeKeys.baseFilteredIterator_sentences(),true,Config.DOC_ID,true);
-            runBase(RunType.Sentences,outputFile + "filtered_qe_sentences_t_all.txt",searcher,strategyQueryBuilderTimeAll.baseFilteredIterator_sentences(),false,Config.DOC_ID,true);
+            runBase(run4,RunType.Sentences,outputFile + "filtered_qe_sentences_t_keys.xml",searcher,strategyQueryBuilderTimeKeys.baseFilteredIterator_sentences(),true,Config.DOC_ID,true);
+            runBase(run4,RunType.Sentences,outputFile + "filtered_qe_sentences_t_all.xml",searcher,strategyQueryBuilderTimeAll.baseFilteredIterator_sentences(),false,Config.DOC_ID,true);
             searcher.close();
         }
 
         System.out.println("#######filtered_qe_comb");
         searcher = Config.openMultiSearcherForContentsAndSentences();
-        runBase(RunType.Comb, outputFile + "filtered_qe_comb_qe_t_keys.txt",searcher,strategyQueryBuilderTimeKeys.baseFilteredIterator_comb(),true,Config.DOC_ID,true);
-        runBase(RunType.Comb, outputFile + "filtered_qe_comb_qe_t_all.txt",searcher,strategyQueryBuilderTimeAll.baseFilteredIterator_comb(),false,Config.DOC_ID,true);
+        runBase(run5,RunType.Comb, outputFile + "filtered_qe_comb_qe_t_keys.xml",searcher,strategyQueryBuilderTimeKeys.baseFilteredIterator_comb(),true,Config.DOC_ID,true);
+        runBase(run5,RunType.Comb, outputFile + "filtered_qe_comb_qe_t_all.xml",searcher,strategyQueryBuilderTimeAll.baseFilteredIterator_comb(),false,Config.DOC_ID,true);
         searcher.close();
     }
 
@@ -95,7 +101,7 @@ public class StrategyRunner {
 
     }
 
-    public static void runBase(RunType runType, String outputFile, LgteIndexSearcherWrapper searcher, StrategyQueryBuilder.Iterator iter,boolean keys, String groupField,boolean expansion) throws IOException, DocumentException, ParseException
+    public static void runBase(String desc, RunType runType, String outputFile, LgteIndexSearcherWrapper searcher, StrategyQueryBuilder.Iterator iter,boolean keys, String groupField,boolean expansion) throws IOException, DocumentException, ParseException
     {
         System.out.println("####################################");
 
@@ -106,7 +112,7 @@ public class StrategyRunner {
         analyzersMap.put(Config.SENTENCES, IndexCollections.en.getAnalyzerWithStemming());
         LgteBrokerStemAnalyzer brokerStemAnalyzer = new LgteBrokerStemAnalyzer(analyzersMap,new LgteWhiteSpacesAnalyzer());
         FileOutputStream stream = new FileOutputStream(new File(outputFile));
-        OutputFormat outputFormat = new TrecEvalOutputFormatFactory(Config.ID).createNew(stream);
+        OutputFormat outputFormat = new RunIdOutputFormatFactory(Config.ID, outputFile.substring(outputFile.lastIndexOf(File.separator)+1,outputFile.lastIndexOf(".")),desc).createNew(stream);
         outputFormat.init("id","id");
         outputFormat.setMaxDocsToFlush(100);
         while((queryPackage = iter.next())!=null)
@@ -115,6 +121,8 @@ public class StrategyRunner {
             queryConfigurationBase.setProperty("bm25.idf.policy","standard");
             queryConfigurationBase.setProperty("bm25.k1","1.2d");
             queryConfigurationBase.setProperty("bm25.b","0.75d");
+            if(runType == RunType.Comb)
+                queryConfigurationBase.setProperty("index.tree","true");
             System.out.println(queryPackage.getTopicId() + "-----------------------------------");
             System.out.println(queryPackage.filter);
             System.out.println(queryPackage.query);

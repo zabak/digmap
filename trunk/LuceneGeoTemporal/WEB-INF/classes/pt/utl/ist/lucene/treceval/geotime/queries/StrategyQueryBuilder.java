@@ -443,7 +443,7 @@ public class StrategyQueryBuilder
 
     public static void main(String [] args) throws IOException, DocumentException, ParseException {
         StrategyQueryBuilder strategyQueryBuilder = new StrategyQueryBuilder(Config.ntcirBase +  File.separator + "topics" + File.separator + "topics.xml",false);
-
+        Iterator.QueryPackage lastQ = null;
         System.out.println("####################################");
         Iterator iter = strategyQueryBuilder.baseSimpleIterator();
         Iterator.QueryPackage queryPackage;
@@ -452,6 +452,7 @@ public class StrategyQueryBuilder
             System.out.println(queryPackage.getTopicId() + "-----------------------------------");
             System.out.println(queryPackage.filter);
             System.out.println(queryPackage.query);
+            lastQ = queryPackage;
         }
 
         System.out.println("####################################");
@@ -461,6 +462,7 @@ public class StrategyQueryBuilder
             System.out.println(queryPackage.getTopicId() + "-----------------------------------");
             System.out.println(queryPackage.filter);
             System.out.println(queryPackage.query);
+            lastQ = queryPackage;
         }
 
         System.out.println("####################################");
@@ -470,6 +472,7 @@ public class StrategyQueryBuilder
             System.out.println(queryPackage.getTopicId() + "-----------------------------------");
             System.out.println(queryPackage.filter);
             System.out.println(queryPackage.query);
+            lastQ = queryPackage;
         }
 
         System.out.println("####################################");
@@ -479,37 +482,53 @@ public class StrategyQueryBuilder
             System.out.println(queryPackage.getTopicId() + "-----------------------------------");
             System.out.println(queryPackage.filter);
             System.out.println(queryPackage.query);
+            lastQ = queryPackage;
         }
 
+        LgteIndexSearcherWrapper searcher = Config.openMultiSearcherSentences();
+        QueryConfiguration queryConfiguration = new QueryConfiguration();
+        queryConfiguration.setProperty("bm25.k1", "1.2d");
+        queryConfiguration.setProperty("bm25.b", "0.75d");
+        queryConfiguration.setProperty("bm25.k3", "0.75d");
+        queryConfiguration.setProperty("index.tree", "true");
+        LgteQuery query = LgteQueryParser.parseQuery("g_allWoeid_sentences:WOEID-23424778", searcher, new LgteWhiteSpacesAnalyzer(), queryConfiguration);
+        LgteHits hits = searcher.search(query,lastQ.filter);
+
+        for(int i = 0; i < hits.length();i++)
+            System.out.println(i + ":" + hits.doc(i).get("id"));
+
+        searcher.close();
+
+
+
+        
         System.out.println("####################################");
         iter = strategyQueryBuilder.baseFilteredIterator_comb();
-        Iterator.QueryPackage q = null;
+
         while((queryPackage = iter.next())!=null)
         {
             System.out.println(queryPackage.getTopicId() + "-----------------------------------");
             System.out.println(queryPackage.filter);
             System.out.println(queryPackage.query);
-            q = queryPackage;
+            lastQ = queryPackage;
         }
 
 
-//        LgteIndexSearcherWrapper searcher = Config.openMultiSearcherForContentsAndSentences();
-//        QueryConfiguration queryConfiguration = new QueryConfiguration();
-//        queryConfiguration.setProperty("bm25.k1", "1.2d");
-//        queryConfiguration.setProperty("bm25.b", "0.75d");
-//        queryConfiguration.setProperty("bm25.k3", "0.75d");
-//        queryConfiguration.setProperty("index.tree", "true");
-//        LgteQuery query = LgteQueryParser.parseQuery("g_allWoeid:WOEID-23424778", searcher, new LgteWhiteSpacesAnalyzer(), queryConfiguration);
-//        LgteHits hits = searcher.search(query,q.filter);
-//
-//        System.out.println(hits.doc(0).get("id"));
-//        System.out.println(hits.doc(0).get(Config.G_PLACE_BELONG_TOS_WOEID));
-//        System.out.println(hits.doc(1).get("id"));
-//        System.out.println(hits.doc(2).get("id"));
-//        System.out.println(hits.doc(3).get("id"));
-//        System.out.println(hits.doc(4).get("id"));
-//
-//        searcher.close();
+          searcher = Config.openMultiSearcherForContentsAndSentences();
+        queryConfiguration = new QueryConfiguration();
+        queryConfiguration.setProperty("bm25.k1", "1.2d");
+        queryConfiguration.setProperty("bm25.b", "0.75d");
+        queryConfiguration.setProperty("bm25.k3", "0.75d");
+        queryConfiguration.setProperty("index.tree", "true");
+        query = LgteQueryParser.parseQuery("g_allWoeid_sentences:(WOEID-23424778 WOEID-12493166) S_HAS_TIMEXES_sentences:true", searcher, new LgteWhiteSpacesAnalyzer(), queryConfiguration);
+        hits = searcher.search(query,lastQ.filter);
+
+        for(int i = 0; i < hits.length();i++)
+            System.out.println(i + ":" + hits.doc(i).get("id"));
+
+        searcher.close();
+
+
 
     }
 }

@@ -36,7 +36,7 @@ public class RunIdOutputFormat implements OutputFormat {
     public RunIdOutputFormat(String runId,String desc)
     {
         this.runId = runId;
-        this.desc = desc; 
+        this.desc = desc;
     }
 
     public void init(OutputStream outputStream,String idField1, String idField2)
@@ -65,10 +65,10 @@ public class RunIdOutputFormat implements OutputFormat {
             writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
             writer.write("<TOPIC_SET>\n");
             writer.write("  <METADATA>\n" +
-                         "    <RUNID>" + runId  + "</RUNID>\n" +
-                         "    <DESCRIPTION>" + desc + "</DESCRIPTION>\n" +
-                         "    <RUN_TYPE>Automatic</RUN_TYPE>\n" + 
-                         "  </METADATA>\n");
+                    "    <RUNID>" + runId  + "</RUNID>\n" +
+                    "    <DESCRIPTION>" + desc + "</DESCRIPTION>\n" +
+                    "    <RUN_TYPE>Automatic</RUN_TYPE>\n" +
+                    "  </METADATA>\n");
         }
         catch (IOException e)
         {
@@ -91,8 +91,9 @@ public class RunIdOutputFormat implements OutputFormat {
         rank = 1;
         try{
             writer.write(
-                "  <TOPIC ID=\"GEOTIME-EN-T" + topic.getIdentifier().trim().substring("GeoTime-".length()) + "\">\n" +
-                "    <GEOTIME_RESULT>\n");
+                    "  <TOPIC ID=\"" + topic.getIdentifier().trim() + "\">\n" +
+//                  "  <TOPIC ID=\"GEOTIME-EN-T" + topic.getIdentifier().trim().substring("GeoTime-".length()) + "\">\n" +
+                            "    <GEOTIME_RESULT>\n");
         }catch(Exception e)
         {
             e.printStackTrace();
@@ -143,10 +144,10 @@ public class RunIdOutputFormat implements OutputFormat {
      */
     public void writeFooter()
     {
-           try{
+        try{
             writer.write(
-                "    </GEOTIME_RESULT>\n" +
-                "  </TOPIC>\n");
+                    "    </GEOTIME_RESULT>\n" +
+                            "  </TOPIC>\n");
         }catch(Exception e)
         {
             e.printStackTrace();

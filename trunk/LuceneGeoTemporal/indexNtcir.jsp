@@ -20,6 +20,8 @@
 <%@ page import="org.apache.lucene.index.IndexReader" %>
 <%@ page import="pt.utl.ist.lucene.treceval.geotime.index.*" %>
 <%@ page import="org.apache.lucene.index.LgteIsolatedIndexReader" %>
+<%@ page import="pt.utl.ist.lucene.analyzer.LgteBrokerStemAnalyzer" %>
+<%@ page import="pt.utl.ist.lucene.analyzer.LgteWhiteSpacesAnalyzer" %>
 <html>
 <head>
 <title>NTCIR/GeoTime - Tool fot Relevance Judgements creation with Lucene GeoTemporal Extensions (LGTE) AT GeoTime NTCIR</title>
@@ -743,24 +745,55 @@
 <hr>
 <%
     try {
-        IndexReader readerContents = LgteIndexSearcherManager.openReader(IndexContents.indexPath, Model.OkapiBM25Model);
-        IndexReader readerDB = LgteIndexSearcherManager.openReader(CreateDBGeoTimexes.indexPath, Model.OkapiBM25Model);
+        IndexReader readerContents = LgteIndexManager.openReader(IndexContents.indexPath, Model.OkapiBM25Model);
+        IndexReader readerGeoTime = LgteIndexManager.openReader(IndexGeoTime.indexPath, Model.OkapiBM25Model);
+        IndexReader readerTimexes = LgteIndexManager.openReader(IndexTimexes.indexPath, Model.OkapiBM25Model);
+        IndexReader readerWoeid = LgteIndexManager.openReader(IndexWoeid.indexPath, Model.OkapiBM25Model);
+        IndexReader readerSentences = LgteIndexManager.openReader(IndexSentences.indexPath, Model.OkapiBM25Model);
+        IndexReader readerGeoTimeSentences = LgteIndexManager.openReader(IndexGeoTimeSentences.indexPath, Model.OkapiBM25Model);
+        IndexReader readerTimexesSentences = LgteIndexManager.openReader(IndexTimexesSentences.indexPath, Model.OkapiBM25Model);
+        IndexReader readerWoeidSentences = LgteIndexManager.openReader(IndexWoeidSentences.indexPath, Model.OkapiBM25Model);
 
         Map<String, IndexReader> readers = new HashMap<String, IndexReader>();
 
-        readers.put(Config.CONTENTS, readerContents);
-        readers.put(Config.ID, readerContents);
-        readers.put("regexpr(.*_DB$)", readerDB);
 
-        LgteIndexSearcherWrapper searcher = new LgteIndexSearcherWrapper(Model.OkapiBM25Model, new LgteIsolatedIndexReader(readers));
-        Analyzer analyzer = IndexCollections.en.getAnalyzerWithStemming();
+        readers.put(Config.ID, readerSentences);
+//        readers.put(Config.ID, readerContents);
+        readers.put(Config.DOC_ID, readerSentences);
+        readers.put(Config.CONTENTS, readerContents);
+        readers.put(Config.SENTENCES, readerSentences);
+        IndexReader readerDB = LgteIndexManager.openReader("G:\\INDEXES\\ntcir\\TEXT_TEMP_GEO_DB", Model.OkapiBM25Model);
+
+        readers.put("regexpr(^S_.*)", readerGeoTime);
+        readers.put("regexpr(^t_.*)", readerTimexes);
+        readers.put("regexpr(^g_.*)", readerWoeid);
+        readers.put("regexpr(^S_.*_sentences)", readerGeoTimeSentences);
+        readers.put("regexpr(^t_.*_sentences)", readerTimexesSentences);
+        readers.put("regexpr(^g_.*_sentences)", readerWoeidSentences);
+        readers.put("regexpr(.*_DB$)", readerDB);
+        LgteIsolatedIndexReader lgteIsolatedIndexReader = new LgteIsolatedIndexReader(readers);
+        lgteIsolatedIndexReader.addTreeMapping(readerContents, readerSentences, Config.DOC_ID);
+        lgteIsolatedIndexReader.addTreeMapping(readerTimexes, readerTimexesSentences, Config.DOC_ID);
+        lgteIsolatedIndexReader.addTreeMapping(readerWoeid, readerWoeidSentences, Config.DOC_ID);
+        lgteIsolatedIndexReader.addTreeMapping(readerGeoTime, readerGeoTimeSentences, Config.DOC_ID);
+        lgteIsolatedIndexReader.addTreeMapping(readerGeoTime, readerGeoTimeSentences, Config.DOC_ID);
+        lgteIsolatedIndexReader.addTreeMapping(readerGeoTime, readerDB, Config.DOC_ID);
+
+
+        LgteIndexSearcherWrapper searcher = new LgteIndexSearcherWrapper(Model.OkapiBM25Model, lgteIsolatedIndexReader);
+        Map<String, Analyzer> analyzersMap = new HashMap<String, Analyzer>();
+        analyzersMap.put(Config.CONTENTS, IndexCollections.en.getAnalyzerWithStemming());
+//        analyzersMap.put(Config.SENTENCES, IndexCollections.en.getAnalyzerWithStemming());
+        LgteBrokerStemAnalyzer brokerStemAnalyzer = new LgteBrokerStemAnalyzer(analyzersMap, new LgteWhiteSpacesAnalyzer());
+
 //                LgteQuery query = LgteQueryParser.parseQuery(request.getParameter("q"), analyzer);
 //        System.out.println("Searching for: " + request.getParameter("q"));
         QueryConfiguration queryConfiguration = new QueryConfiguration();
         queryConfiguration.getQueryProperties().put("bm25.k1", "1.2d");
         queryConfiguration.getQueryProperties().put("bm25.b", "0.75d");
         queryConfiguration.getQueryProperties().put("bm25.k3", "0.75d");
-        LgteQuery query = LgteQueryParser.parseQuery(request.getParameter("q"), searcher, analyzer, queryConfiguration);
+        queryConfiguration.getQueryProperties().put("index.tree", "true");
+        LgteQuery query = LgteQueryParser.parseQuery(request.getParameter("q"), searcher, brokerStemAnalyzer, queryConfiguration);
         LgteHits hits = searcher.search(query);
 
 //                LgteHits hits = searcher.search(request.getParameter("q"),analyzer);

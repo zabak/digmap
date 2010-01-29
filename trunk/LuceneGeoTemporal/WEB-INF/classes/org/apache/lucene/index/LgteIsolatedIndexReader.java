@@ -457,10 +457,11 @@ public class LgteIsolatedIndexReader extends ProbabilisticIndexReader
         return readers.getReader(field).getFieldLength(docNumber,field);
     }
 
-    public int getDocLength(int docNumber) throws IOException {
+    public int getDocLength(int doc) throws IOException {
         int len = 0;
         for (IndexReader subReader : readers.getReaders())
         {
+            int docNumber = doc;
             if(lgteIndexTreeIdMapper!=null && !lgteIndexTreeIdMapper.isChild(subReader))
             {
                 docNumber = lgteIndexTreeIdMapper.translateIdInverted(docNumber); //assuming that there is only one mapping
@@ -513,16 +514,17 @@ public class LgteIsolatedIndexReader extends ProbabilisticIndexReader
     /**
      * todo Need Check
      * todo need modification if the docs IDs are not equal in all indexes
-     * @param n
+     * @param doc
      * @return
      * @throws java.io.IOException
      */
-    public Document document(int n) throws IOException
+    public Document document(int doc) throws IOException
     {
         boolean idField = false;
         Document d = new Document();
         for (IndexReader reader : readers.getReaders())
         {
+            int n = doc;
             if(lgteIndexTreeIdMapper != null && !lgteIndexTreeIdMapper.isChild(reader))
             {
                 n = lgteIndexTreeIdMapper.translateIdInverted(n); //assuming that there is only one mapping
@@ -542,7 +544,7 @@ public class LgteIsolatedIndexReader extends ProbabilisticIndexReader
         }
         if(!idField)
         {
-            d.add(readers.getReaders().iterator().next().document(n).getField(Globals.DOCUMENT_ID_FIELD));
+            d.add(readers.getReaders().iterator().next().document(doc).getField(Globals.DOCUMENT_ID_FIELD));
         }
         return d;
     }

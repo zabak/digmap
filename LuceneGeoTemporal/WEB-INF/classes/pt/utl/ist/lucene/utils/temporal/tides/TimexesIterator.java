@@ -44,7 +44,15 @@ public class TimexesIterator
 
 
         if(d.isFile())
+        {
             files.add(d);
+            File secondary = new File(d.getParent() + File.separator + "more" + File.separator + d.getName());
+            if(secondary.exists())
+            {
+                secondaryIterator = new TimexesIterator(secondary.getAbsolutePath());
+                secondaryDocument = secondaryIterator.next();
+            }
+        }
         else
         {
             File secondary = new File(dataPath + File.separator + "more");

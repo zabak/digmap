@@ -657,7 +657,8 @@ public class QueryExpansion
         if(fieldBoostStr != null && !fieldBoostStr.equals("field.boost." + termQuery.getTerm().field()))
             fieldFactor = Float.parseFloat(fieldBoostStr);
         float idf = similarity.idf(termQuery.getTerm(), searcher);
-        float weight = (1.0f * tf) * idf;
+
+        float weight = similarity.tf(tf) * idf;
         weight = weight - (weight * decay);
         termQuery.setBoost(factor * weight * fieldFactor);
 //        }

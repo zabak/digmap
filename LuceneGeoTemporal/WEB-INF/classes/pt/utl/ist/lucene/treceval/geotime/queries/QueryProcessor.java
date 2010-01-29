@@ -232,7 +232,7 @@ public class QueryProcessor
             placesQuery = places.toString().trim();
         }
         else placesQuery = "";
-        	
+
     }
 
     public void prepareTimesQueryString()
@@ -554,21 +554,29 @@ public class QueryProcessor
         {
             String value = ((Query.FilterChain.BooleanClause.Term)booleanTerm).getValue();
             String suffix = queryTarget == QueryTarget.SENTENCES? Config.SEP + Config.SENTENCES : "";
-            if(key)
+            if(value.equals("any"))
             {
-                query.append(" ").append(Config.S_HAS_YYYY_KEY).append(suffix).append(":").append("true").append("");
-                if(!value.equals("year"))
-                    query.append(" ").append(Config.S_HAS_YYYYMM_KEY).append(suffix).append(":").append("true").append("");
-                if(!value.equals("year-month"))
-                    query.append(" ").append(Config.S_HAS_YYYYMMDD_KEY).append(suffix).append(":").append("true").append("");
+                query.append(" ").append(Config.S_HAS_TIMEXES).append(suffix).append(":").append("true").append("");
             }
             else
             {
-                query.append(" ").append(Config.S_HAS_YYYY).append(suffix).append(":").append("true").append("");
-                if(!value.equals("year"))
-                    query.append(" ").append(Config.S_HAS_YYYYMM).append(suffix).append(":").append("true").append("");
-                if(!value.equals("year-month"))
-                    query.append(" ").append(Config.S_HAS_YYYYMMDD).append(suffix).append(":").append("true").append("");
+                if(key)
+                {
+                    query.append(" ").append(Config.S_HAS_YYYY_KEY).append(suffix).append(":").append("true").append("");
+                    if(!value.equals("year"))
+                        query.append(" ").append(Config.S_HAS_YYYYMM_KEY).append(suffix).append(":").append("true").append("");
+                    if(!value.equals("year-month"))
+                        query.append(" ").append(Config.S_HAS_YYYYMMDD_KEY).append(suffix).append(":").append("true").append("");
+                }
+                else
+                {
+
+                    query.append(" ").append(Config.S_HAS_YYYY).append(suffix).append(":").append("true").append("");
+                    if(!value.equals("year"))
+                        query.append(" ").append(Config.S_HAS_YYYYMM).append(suffix).append(":").append("true").append("");
+                    if(!value.equals("year-month"))
+                        query.append(" ").append(Config.S_HAS_YYYYMMDD).append(suffix).append(":").append("true").append("");
+                }
             }
         }
         else if(booleanTerm instanceof Query.FilterChain.BooleanClause)

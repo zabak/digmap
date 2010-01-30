@@ -11,13 +11,13 @@ package ireval;
 
 import ireval.RetrievalEvaluator.Document;
 import ireval.RetrievalEvaluator.Judgment;
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
+
+import pt.utl.ist.lucene.utils.Dom4jUtil;
 
 /**
  * Java IR evaluation tool
@@ -84,6 +84,7 @@ public class Main {
 
     public static TreeMap< String, ArrayList<Document> > loadRanking( String filename ) throws IOException, FileNotFoundException {
         // open file
+
         BufferedReader in = new BufferedReader(new FileReader( filename ));
         String line = null;
         TreeMap< String, ArrayList<Document> > ranking = new TreeMap< String, ArrayList<Document> >();

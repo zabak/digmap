@@ -36,6 +36,12 @@ public class Config
             outputDocs = Integer.parseInt(props.getProperty("outputDocs"));
             combSentencesFactor = props.getProperty("comb.sentences.factor");
             combContentsFactor = props.getProperty("comb.contents.factor");
+
+            belongTosFactor = props.getProperty("belongTosFactor");
+            placeRefFactor = props.getProperty("placeRefFactor");
+            keyTimeFactor = props.getProperty("keyTimeFactor");
+            relativeTimeFactor = props.getProperty("relativeTimeFactor");
+            durationTimeFactor = props.getProperty("durationTimeFactor");
         }
         catch (IOException e)
         {
@@ -50,6 +56,13 @@ public class Config
     public static int outputDocs;
     public static String combSentencesFactor;
     public static String combContentsFactor;
+
+    public static String belongTosFactor;
+    public static String placeRefFactor;
+
+    public static String keyTimeFactor;
+    public static String relativeTimeFactor;
+    public static String durationTimeFactor;
 
     static void init()
     {

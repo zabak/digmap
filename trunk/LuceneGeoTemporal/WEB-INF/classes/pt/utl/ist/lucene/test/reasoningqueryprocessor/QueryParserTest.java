@@ -17,6 +17,15 @@ public class QueryParserTest extends TestCase
     {
 
         String xml = "<topic id=\"GeoTime-0025\">\n" +
+                "<original>\n" +
+                "\t\t\t<desc>When and what country has banned cell phones?</desc>\n" +
+                "\t\t\t<narr>Only one country in the world forbids mobile phones.  Which one is it and when did the ban take place?</narr>\n" +
+                "\t\t</original>\n" +
+                "\t\t<originalClean>\n" +
+                "\t\t\t<desc>country has banned cell phones</desc>\n" +
+                "\t\t\t<narr>country world forbids mobile phones one ban take place</narr>\n" +
+                "\t\t</originalClean>" +
+
                 "     <filterChain>\n" +
                 "\t     <boolean type=\"OR\">\n" +
                 "\t\t<term>\n" +
@@ -48,6 +57,12 @@ public class QueryParserTest extends TestCase
             Query q = new QueryParser(xml).getQuery();
             assertEquals(q.getFilterChain().getBooleanClause().getLogicValue(), Query.FilterChain.BooleanClause.LogicValue.OR);
             assertEquals(q.getId(),"GeoTime-0025");
+
+            assertEquals(q.getOriginalDesc(),"When and what country has banned cell phones?");
+            assertEquals(q.getOriginalNarr(),"Only one country in the world forbids mobile phones. Which one is it and when did the ban take place?");
+            assertEquals(q.getOriginalDescClean(),"country has banned cell phones");
+            assertEquals(q.getOriginalNarrClean(),"country world forbids mobile phones one ban take place");
+
             assertTrue(q.getFilterChain().getBooleanClause().getTerms().size() == 2);
             assertEquals(((Query.FilterChain.BooleanClause.Term)q.getFilterChain().getBooleanClause().getTerms().get(0)).getField(),"place");
             assertEquals(((Query.FilterChain.BooleanClause.Term)q.getFilterChain().getBooleanClause().getTerms().get(1)).getField(),"timeType");

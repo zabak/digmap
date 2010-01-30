@@ -332,14 +332,14 @@ public class QueryExpansion
      * @param alpha
      * @throws IOException
      */
-    private void getTermVectorsBoosts(Map<String,Integer> termsFreqs, Vector<TermQuery> vector, Query q, float alpha) throws IOException
+    private void getTermVectorsBoosts(Map<String,Integer> termsFreqs, Vector<TermQuery> vector, Query q, float alpha,int totalTermFreqs) throws IOException
     {
         if (q instanceof BooleanQuery)
         {
             BooleanQuery bq = (BooleanQuery) q;
             for (BooleanClause bc : bq.getClauses())
             {
-                getTermVectorsBoosts(termsFreqs, vector, bc.query, alpha);
+                getTermVectorsBoosts(termsFreqs, vector, bc.query, alpha,totalTermFreqs);
             }
         }
         else if (q instanceof TermQuery)
@@ -350,7 +350,7 @@ public class QueryExpansion
 //            {
 
             int tf = termsFreqs.get(tq.getTerm().field() + ":" + tq.getTerm().text());
-            setBoost(tq,tf,alpha,0.0f);
+            setBoost(tq,tf,alpha,0.0f,totalTermFreqs);
             vector.add(tq);
 //            }
         }
@@ -405,7 +405,10 @@ public class QueryExpansion
             Query q = QueryParser.parse(query, "", analyzer);
             Map<String,Integer> termFreqs = new HashMap<String,Integer>();
             getTermFrequencies(termFreqs,queryTerms,q);
-            getTermVectorsBoosts(termFreqs,queryTerms, q, alpha);
+            int totalTermFreqs = 0;
+            for(Integer i : termFreqs.values())
+                totalTermFreqs+=i;
+            getTermVectorsBoosts(termFreqs,queryTerms, q, alpha,totalTermFreqs);
         }
         catch (ParseException e)
         {
@@ -602,6 +605,9 @@ public class QueryExpansion
 
             // Increase decay
             float decay = decayFactor * g;
+            int totalTermFrequencies = 0;
+            for(int i: termFrequencies)
+                totalTermFrequencies+=i;
 
             // Populate terms: with TermQuries and set boost
             for (int i = 0; i < docTerms.size(); i++)
@@ -610,7 +616,7 @@ public class QueryExpansion
                 String termTxt = termsTxt[i];
                 Term term = new Term(field, termTxt);
                 TermQuery termQuery = new TermQuery(term);
-                setBoost(termQuery,termFrequencies[i],factor,decay);
+                setBoost(termQuery,termFrequencies[i],factor,decay,totalTermFrequencies);
                 terms.add(termQuery);
             }
         }
@@ -621,7 +627,7 @@ public class QueryExpansion
     }
 
     //set boost in one term query
-    private void setBoost(TermQuery termQuery, int tf, float factor, float decay) throws IOException
+    private void setBoost(TermQuery termQuery, int tf, float factor, float decay,int totalTermFreqs) throws IOException
     {
         List<String> boostFields = PropertiesUtil.getListPropertiesSuffix(prop.getQueryProperties(), "field.boost.");
         //Experimental Ranking Model 1
@@ -658,7 +664,8 @@ public class QueryExpansion
             fieldFactor = Float.parseFloat(fieldBoostStr);
         float idf = similarity.idf(termQuery.getTerm(), searcher);
 
-        float weight = similarity.tf(tf) * idf;
+        float tfFloat = ((float)tf / (float)totalTermFreqs);
+        float weight = tfFloat * idf;
         weight = weight - (weight * decay);
         termQuery.setBoost(factor * weight * fieldFactor);
 //        }

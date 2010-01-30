@@ -80,7 +80,7 @@ public class QueryProcessor
         return null;
     }
 
-    public String getPlacesRefQuery(QueryTarget queryTarget)
+    public String getPlacesRefQuery(QueryTarget queryTarget, String boost)
     {
         if(placesQuery == null)
             preparePlacesQueryString();
@@ -88,16 +88,16 @@ public class QueryProcessor
             return null;
         if(queryTarget == QueryTarget.CONTENTS)
         {
-            return Config.G_PLACE_REF_WOEID + ":(" + placesQuery + ")^0.3";
+            return Config.G_PLACE_REF_WOEID + ":(" + placesQuery + ")^" +boost;
         }
         else if(queryTarget == QueryTarget.SENTENCES)
         {
-            return Config.G_PLACE_REF_WOEID + Config.SEP + Config.SENTENCES + ":(" + placesQuery + ")^0.3";
+            return Config.G_PLACE_REF_WOEID + Config.SEP + Config.SENTENCES + ":(" + placesQuery + ")^" + boost;
         }
         return null;
     }
 
-    public String getPlacesBeolongTosQuery(QueryTarget queryTarget)
+    public String getPlacesBeolongTosQuery(QueryTarget queryTarget, String boost)
     {
         if(placesQuery == null)
             preparePlacesQueryString();
@@ -105,16 +105,16 @@ public class QueryProcessor
             return null;
         if(queryTarget == QueryTarget.CONTENTS)
         {
-            return Config.G_PLACE_BELONG_TOS_WOEID + ":(" + placesQuery + ")^0.7";
+            return Config.G_PLACE_BELONG_TOS_WOEID + ":(" + placesQuery + ")^" + boost;
         }
         else if(queryTarget == QueryTarget.SENTENCES)
         {
-            return Config.G_PLACE_BELONG_TOS_WOEID + Config.SEP + Config.SENTENCES + ":(" + placesQuery + ")^0.7";
+            return Config.G_PLACE_BELONG_TOS_WOEID + Config.SEP + Config.SENTENCES + ":(" + placesQuery + ")^" + boost;
         }
         return null;
     }
 
-    public String getTimesQueryKeyTimeExpressions(QueryTarget queryTarget)
+    public String getTimesQueryKeyTimeExpressions(QueryTarget queryTarget, String boost)
     {
         if(timesQuery == null)
             prepareTimesQueryString();
@@ -122,11 +122,11 @@ public class QueryProcessor
             return null;
         if(queryTarget == QueryTarget.CONTENTS)
         {
-            return Config.T_POINT_KEY + ":(" + timesQuery + ")^0.6";
+            return Config.T_POINT_KEY + ":(" + timesQuery + ")^" + boost;
         }
         else if(queryTarget == QueryTarget.SENTENCES)
         {
-            return Config.T_POINT_KEY + Config.SEP + Config.SENTENCES + ":(" + timesQuery + ")^0.6";
+            return Config.T_POINT_KEY + Config.SEP + Config.SENTENCES + ":(" + timesQuery + ")^" + boost;
         }
         return null;
     }
@@ -165,7 +165,7 @@ public class QueryProcessor
         return null;
     }
 
-    public String getTimesQueryRelativeTimeExpressions(QueryTarget queryTarget)
+    public String getTimesQueryRelativeTimeExpressions(QueryTarget queryTarget, String boost)
     {
         if(timesQuery == null)
             prepareTimesQueryString();
@@ -173,16 +173,16 @@ public class QueryProcessor
             return null;
         if(queryTarget == QueryTarget.CONTENTS)
         {
-            return Config.T_POINT_RELATIVE + ":(" + timesQuery + ")^0.25";
+            return Config.T_POINT_RELATIVE + ":(" + timesQuery + ")^" + boost;
         }
         else if(queryTarget == QueryTarget.SENTENCES)
         {
-            return Config.T_POINT_RELATIVE + Config.SEP + Config.SENTENCES + ":(" + timesQuery + ")^0.25";
+            return Config.T_POINT_RELATIVE + Config.SEP + Config.SENTENCES + ":(" + timesQuery + ")^" + boost;
         }
         return null;
     }
 
-    public String getTimesQueryDurationsTimeExpressions(QueryTarget queryTarget)
+    public String getTimesQueryDurationsTimeExpressions(QueryTarget queryTarget, String boost)
     {
         if(timesQuery == null)
             prepareTimesQueryString();
@@ -190,11 +190,11 @@ public class QueryProcessor
             return null;
         if(queryTarget == QueryTarget.CONTENTS)
         {
-            return Config.T_DURATION + ":(" + timesQuery + ")^0.15";
+            return Config.T_DURATION + ":(" + timesQuery + ")^" + boost;
         }
         else if(queryTarget == QueryTarget.SENTENCES)
         {
-            return Config.T_DURATION + Config.SEP + Config.SENTENCES + ":(" + timesQuery + ")^0.15";
+            return Config.T_DURATION + Config.SEP + Config.SENTENCES + ":(" + timesQuery + ")^" + boost;
         }
         return null;
     }
@@ -202,14 +202,14 @@ public class QueryProcessor
     private String prepareQueryString(QueryTarget queryTarget)
     {
         if(queryTarget == QueryTarget.CONTENTS)
-            return Config.CONTENTS + ":(" + q.getTerms().getDesc() + " " + q.getTerms().getDesc() + " " + q.getTerms().getNarr() + ")";
+            return Config.CONTENTS + ":(" + q.getOriginalDescClean() + " " + q.getOriginalDescClean() + " " + q.getOriginalNarrClean() + ")";
         else if(queryTarget == QueryTarget.SENTENCES)
-            return Config.SENTENCES + ":(" + q.getTerms().getDesc() + " " + q.getTerms().getDesc() + " " + q.getTerms().getNarr() + ")";
+            return Config.SENTENCES + ":(" + q.getOriginalDescClean() + " " + q.getOriginalDescClean() + " " + q.getOriginalNarrClean() + ")";
         else
         {
             return
-                    Config.SENTENCES + ":(" + q.getTerms().getDesc() + " " + q.getTerms().getDesc() + " " + q.getTerms().getNarr() + ")^0.7 " +
-                            Config.CONTENTS + ":(" + q.getTerms().getDesc() + " " + q.getTerms().getDesc() + " " + q.getTerms().getNarr() + ")^0.3";
+                    Config.SENTENCES + ":(" + q.getOriginalDescClean() + " " + q.getOriginalDescClean() + " " + q.getOriginalNarrClean() + ")^" + Config.combSentencesFactor + " " +
+                            Config.CONTENTS + ":(" + q.getOriginalDescClean() + " " + q.getOriginalDescClean() + " " + q.getOriginalNarrClean() + ")^" + Config.combContentsFactor;
         }
     }
 
@@ -300,7 +300,7 @@ public class QueryProcessor
         return null;
     }
 
-    public String getPlaceRefsFiltersAsQueries(QueryTarget queryTarget)
+    public String getPlaceRefsFiltersAsQueries(QueryTarget queryTarget, String boost)
     {
         if(q.getFilterChain().getBooleanClause().getTerms().size() > 0)
         {
@@ -310,17 +310,17 @@ public class QueryProcessor
                 return null;
             if(queryTarget == QueryTarget.CONTENTS)
             {
-                return Config.G_PLACE_REF_WOEID + ":(" + queryBuilder.toString() + ")^0.3";
+                return Config.G_PLACE_REF_WOEID + ":(" + queryBuilder.toString() + ")^" + boost;
             }
             else if(queryTarget == QueryTarget.SENTENCES)
             {
-                return Config.G_PLACE_REF_WOEID + Config.SEP + Config.SENTENCES + ":(" + queryBuilder.toString() + ")^0.3";
+                return Config.G_PLACE_REF_WOEID + Config.SEP + Config.SENTENCES + ":(" + queryBuilder.toString() + ")^" + boost;
             }
         }
         return null;
     }
 
-    public String getPlaceFiltersAsQueriesBelongTos(QueryTarget queryTarget)
+    public String getPlaceFiltersAsQueriesBelongTos(QueryTarget queryTarget, String boost)
     {
         if(q.getFilterChain().getBooleanClause().getTerms().size() > 0)
         {
@@ -330,11 +330,11 @@ public class QueryProcessor
                 return null;
             if(queryTarget == QueryTarget.CONTENTS)
             {
-                return Config.G_PLACE_BELONG_TOS_WOEID + ":(" + queryBuilder.toString() + ")^0.7";
+                return Config.G_PLACE_BELONG_TOS_WOEID + ":(" + queryBuilder.toString() + ")^" + boost;
             }
             else if(queryTarget == QueryTarget.SENTENCES)
             {
-                return Config.G_PLACE_BELONG_TOS_WOEID + Config.SEP + Config.SENTENCES + ":(" + queryBuilder.toString() + ")^0.7";
+                return Config.G_PLACE_BELONG_TOS_WOEID + Config.SEP + Config.SENTENCES + ":(" + queryBuilder.toString() + ")^" + boost;
             }
         }
         return null;
@@ -445,48 +445,48 @@ public class QueryProcessor
         }
         return null;
     }
-    public String getTimeKeyPointsFiltersAsQueries(QueryTarget queryTarget)
+    public String getTimeKeyPointsFiltersAsQueries(QueryTarget queryTarget, String boost)
     {
         String queryTerms = getTimeFiltersAsQueries();
         if(queryTerms == null || queryTerms.trim().length() == 0)
             return null;
         if(queryTarget == QueryTarget.CONTENTS)
         {
-            return Config.T_POINT_KEY + ":(" + queryTerms + ")^0.6";
+            return Config.T_POINT_KEY + ":(" + queryTerms + ")^" + boost;
         }
         else if(queryTarget == QueryTarget.SENTENCES)
         {
-            return Config.T_POINT_KEY + Config.SEP + Config.SENTENCES + ":(" + queryTerms + ")^0.6";
+            return Config.T_POINT_KEY + Config.SEP + Config.SENTENCES + ":(" + queryTerms + ")^" + boost;
         }
         return null;
     }
-    public String getTimeRelativePointsFiltersAsQueries(QueryTarget queryTarget)
+    public String getTimeRelativePointsFiltersAsQueries(QueryTarget queryTarget, String boost)
     {
         String queryTerms = getTimeFiltersAsQueries();
         if(queryTerms == null || queryTerms.trim().length() == 0)
             return null;
         if(queryTarget == QueryTarget.CONTENTS)
         {
-            return Config.T_POINT_RELATIVE + ":(" + queryTerms + ")^0.25";
+            return Config.T_POINT_RELATIVE + ":(" + queryTerms + ")^" + boost;
         }
         else if(queryTarget == QueryTarget.SENTENCES)
         {
-            return Config.T_POINT_RELATIVE + Config.SEP + Config.SENTENCES + ":(" + queryTerms + ")^0.25";
+            return Config.T_POINT_RELATIVE + Config.SEP + Config.SENTENCES + ":(" + queryTerms + ")" + boost;
         }
         return null;
     }
-    public String getTimeDurationPointsFiltersAsQueries(QueryTarget queryTarget)
+    public String getTimeDurationPointsFiltersAsQueries(QueryTarget queryTarget, String boost)
     {
         String queryTerms = getTimeFiltersAsQueries();
         if(queryTerms == null || queryTerms.trim().length() == 0)
             return null;
         if(queryTarget == QueryTarget.CONTENTS)
         {
-            return Config.T_DURATION + ":(" + queryTerms + ")^0.15";
+            return Config.T_DURATION + ":(" + queryTerms + ")^" + boost;
         }
         else if(queryTarget == QueryTarget.SENTENCES)
         {
-            return Config.T_DURATION + Config.SEP + Config.SENTENCES + ":(" + queryTerms + ")^0.15";
+            return Config.T_DURATION + Config.SEP + Config.SENTENCES + ":(" + queryTerms + ")^" + boost;
         }
         return null;
     }

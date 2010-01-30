@@ -810,7 +810,35 @@
         <for param="runfile">
             <path>
                 <fileset dir="d:\\Servidores\\DATA\\ntcir\\runs">
+                    <include name="*.xml" />
+                </fileset>
+            </path>
+            <sequential>
+                <java fork="true" classname="jomm.utils.XsltMain" output="@{runfile}.txt">
+                    <classpath>
+                        <fileset dir="${base.dir}/lib">
+                            <include name="*.jar" />
+                        </fileset>
+                    </classpath>
+                    <classpath path="${webapp.path}/WEB-INF/classes" />
+
+                    <arg line="-op transform -oType other -xml @{runfile} -xsl classpath://pt/utl/ist/lucene/treceval/handlers/topics/output/impl/RunId2Treceval.xsl"/>
+                    <!--<arg value="-op" />-->
+                    <!--<arg value="transform"/>-->
+                    <!--<arg value="-oType"/>-->
+                    <!--<arg value="other"/>-->
+                    <!--<arg value="-xml"/>-->
+                    <!--<arg value="@{runfile}"/>-->
+                    <!--<arg value="-xsl"/>-->
+                    <!--<arg value="classpath://pt/utl/ist/lucene/treceval/handlers/topics/output/impl/RunId2Treceval.xsl"/>-->
+                </java>
+            </sequential>
+        </for>
+        <for param="runfile">
+            <path>
+                <fileset dir="d:\\Servidores\\DATA\\ntcir\\runs">
                     <include name="*.txt" />
+                    <exclude name="*.xml" />
                     <exclude name="*-treceval-report.txt" />
                     <exclude name="*-significance-report.txt" />
                 </fileset>
@@ -818,9 +846,6 @@
             <sequential>
                 <java fork="true" classname="ireval.Main" output="@{runfile}-treceval-report.txt">
                     <classpath>
-                        <fileset dir="${base.dir}/lib">
-                            <include name="*.jar" />
-                        </fileset>
                         <fileset dir="${base.dir}/lib">
                             <include name="*.jar" />
                         </fileset>

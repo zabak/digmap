@@ -10,8 +10,6 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.queryParser.ParseException;
 import pt.utl.ist.lucene.utils.Dom4jUtil;
 import pt.utl.ist.lucene.treceval.geotime.index.Config;
-import pt.utl.ist.lucene.*;
-import pt.utl.ist.lucene.analyzer.LgteWhiteSpacesAnalyzer;
 
 import java.io.File;
 import java.io.IOException;
@@ -102,36 +100,13 @@ public class StrategyQueryBuilder
                 QueryProcessor queryProcessor = queryProcessorIter.next();
                 Filter queryFilter = queryProcessor.getFilters(QueryProcessor.QueryTarget.CONTENTS);
                 Filter filter = super.addBaseFilter(queryFilter,queryProcessor, "");
-                String queryTerms = queryProcessor.getTermsQuery(QueryProcessor.QueryTarget.CONTENTS);
-                String queryPlacesRef = queryProcessor.getPlacesRefQuery(QueryProcessor.QueryTarget.CONTENTS);
-                String queryPlacesBelongTos = queryProcessor.getPlacesBeolongTosQuery(QueryProcessor.QueryTarget.CONTENTS);
-                String queryTimes = null;
-                String queryTimesKeys = null;
-                String queryTimesRelative = null;
-                String queryTimesDuration = null;
-                if(queryProcessor.isTime_key())
-                    queryTimes = queryProcessor.getTimesQueryKeyTimeExpressions(QueryProcessor.QueryTarget.CONTENTS);
-                else
-                {
-                    queryTimesKeys = queryProcessor.getTimesQueryKeyTimeExpressions(QueryProcessor.QueryTarget.CONTENTS);
-                    queryTimesRelative = queryProcessor.getTimesQueryRelativeTimeExpressions(QueryProcessor.QueryTarget.CONTENTS);
-                    queryTimesDuration = queryProcessor.getTimesQueryDurationsTimeExpressions(QueryProcessor.QueryTarget.CONTENTS);
-                }
 
+
+                //CONTENTS QUERIES
                 StringBuilder finalQuery = new StringBuilder();
-                finalQuery.append(queryTerms);
-                if(queryPlacesRef != null && queryPlacesRef.trim().length() > 0)
-                    finalQuery.append(" ").append(queryPlacesRef);
-                if(queryPlacesBelongTos != null && queryPlacesBelongTos.trim().length() > 0)
-                    finalQuery.append(" ").append(queryPlacesBelongTos);
-                if(queryTimes != null && queryTimes.trim().length() > 0)
-                    finalQuery.append(" ").append(queryTimes);
-                if(queryTimesKeys != null && queryTimesKeys.trim().length() > 0)
-                    finalQuery.append(" ").append(queryTimesKeys);
-                if(queryTimesRelative != null && queryTimesRelative.trim().length() > 0)
-                    finalQuery.append(" ").append(queryTimesRelative);
-                if(queryTimesDuration != null && queryTimesDuration.trim().length() > 0)
-                    finalQuery.append(" ").append(queryTimesDuration);
+                addTermQueries(queryProcessor,QueryProcessor.QueryTarget.CONTENTS,finalQuery);
+                addFilterQueries(queryProcessor, QueryProcessor.QueryTarget.CONTENTS,finalQuery);
+
 
                 return
                         new QueryPackage(
@@ -157,36 +132,11 @@ public class StrategyQueryBuilder
                 QueryProcessor queryProcessor = queryProcessorIter.next();
                 Filter queryFilter = queryProcessor.getFilters(QueryProcessor.QueryTarget.SENTENCES);
                 Filter filter = super.addBaseFilter(queryFilter,queryProcessor, Config.SEP + Config.SENTENCES);
-                String queryTerms = queryProcessor.getTermsQuery(QueryProcessor.QueryTarget.SENTENCES);
-                String queryPlacesRef = queryProcessor.getPlacesRefQuery(QueryProcessor.QueryTarget.SENTENCES);
-                String queryPlacesBelongTos = queryProcessor.getPlacesBeolongTosQuery(QueryProcessor.QueryTarget.SENTENCES);
-                String queryTimes = null;
-                String queryTimesKeys = null;
-                String queryTimesRelative = null;
-                String queryTimesDuration = null;
-                if(queryProcessor.isTime_key())
-                    queryTimes = queryProcessor.getTimesQueryKeyTimeExpressions(QueryProcessor.QueryTarget.SENTENCES);
-                else
-                {
-                    queryTimesKeys = queryProcessor.getTimesQueryKeyTimeExpressions(QueryProcessor.QueryTarget.SENTENCES);
-                    queryTimesRelative = queryProcessor.getTimesQueryRelativeTimeExpressions(QueryProcessor.QueryTarget.SENTENCES);
-                    queryTimesDuration = queryProcessor.getTimesQueryDurationsTimeExpressions(QueryProcessor.QueryTarget.SENTENCES);
-                }
 
                 StringBuilder finalQuery = new StringBuilder();
-                finalQuery.append(queryTerms);
-                if(queryPlacesRef != null && queryPlacesRef.trim().length() > 0)
-                    finalQuery.append(" ").append(queryPlacesRef);
-                if(queryPlacesBelongTos != null && queryPlacesBelongTos.trim().length() > 0)
-                    finalQuery.append(" ").append(queryPlacesBelongTos);
-                if(queryTimes != null && queryTimes.trim().length() > 0)
-                    finalQuery.append(" ").append(queryTimes);
-                if(queryTimesKeys != null && queryTimesKeys.trim().length() > 0)
-                    finalQuery.append(" ").append(queryTimesKeys);
-                if(queryTimesRelative != null && queryTimesRelative.trim().length() > 0)
-                    finalQuery.append(" ").append(queryTimesRelative);
-                if(queryTimesDuration != null && queryTimesDuration.trim().length() > 0)
-                    finalQuery.append(" ").append(queryTimesDuration);
+                addTermQueries(queryProcessor,QueryProcessor.QueryTarget.SENTENCES,finalQuery);
+                addFilterQueries(queryProcessor, QueryProcessor.QueryTarget.SENTENCES,finalQuery);
+
                 return
                         new QueryPackage(
                                 filter,finalQuery.toString(),queryProcessor,queryFilter);
@@ -210,155 +160,96 @@ public class StrategyQueryBuilder
                 Filter queryFilter = queryProcessor.getFilters(QueryProcessor.QueryTarget.CONTENTS);
                 Filter filter = super.addBaseFilter(queryFilter,queryProcessor, "");
 
-                String queryTerms = queryProcessor.getTermsQuery(QueryProcessor.QueryTarget.CONTENTS);
-                String queryPlacesRef = queryProcessor.getPlacesRefQuery(QueryProcessor.QueryTarget.CONTENTS);
-                String queryPlacesBelongTos = queryProcessor.getPlacesBeolongTosQuery(QueryProcessor.QueryTarget.CONTENTS);
-
-                String queryTimes = null;
-                String queryTimesKeys = null;
-                String queryTimesRelative = null;
-                String queryTimesDuration = null;
-                if(queryProcessor.isTime_key())
-                    queryTimes = queryProcessor.getTimesQueryKeyTimeExpressions(QueryProcessor.QueryTarget.CONTENTS);
-                else
-                {
-                    queryTimesKeys = queryProcessor.getTimesQueryKeyTimeExpressions(QueryProcessor.QueryTarget.CONTENTS);
-                    queryTimesRelative = queryProcessor.getTimesQueryRelativeTimeExpressions(QueryProcessor.QueryTarget.CONTENTS);
-                    queryTimesDuration = queryProcessor.getTimesQueryDurationsTimeExpressions(QueryProcessor.QueryTarget.CONTENTS);
-                }
-
-
+                //CONTENTS QUERIES
                 StringBuilder finalQuery = new StringBuilder();
                 finalQuery.append("(");
-                finalQuery.append(queryTerms);
-                if(queryPlacesRef != null && queryPlacesRef.trim().length() > 0)
-                    finalQuery.append(" ").append(queryPlacesRef);
-                if(queryPlacesBelongTos != null && queryPlacesBelongTos.trim().length() > 0)
-                    finalQuery.append(" ").append(queryPlacesBelongTos);
-                if(queryTimes != null && queryTimes.trim().length() > 0)
-                    finalQuery.append(" ").append(queryTimes);
-                if(queryTimesKeys != null && queryTimesKeys.trim().length() > 0)
-                    finalQuery.append(" ").append(queryTimesKeys);
-                if(queryTimesRelative != null && queryTimesRelative.trim().length() > 0)
-                    finalQuery.append(" ").append(queryTimesRelative);
-                if(queryTimesDuration != null && queryTimesDuration.trim().length() > 0)
-                    finalQuery.append(" ").append(queryTimesDuration);
-
-//                //FILTER QUERIES CONTENTS
-//                String queryPlaceFilters = queryProcessor.getPlaceFiltersAsQueries(QueryProcessor.QueryTarget.CONTENTS);
-//                String queryPlaceTypeFilters = queryProcessor.getPlaceTypeFiltersAsQueries(QueryProcessor.QueryTarget.CONTENTS);
-//                String queryTimeFilters;
-//                String queryTimeTypeFilters;
-//                if(queryProcessor.isTime_key())
-//                {
-//                    queryTimeFilters = queryProcessor.getTimeKeyPointsFiltersAsQueries(QueryProcessor.QueryTarget.CONTENTS);
-//                    queryTimeTypeFilters = queryProcessor.getTimeKeyTypeFiltersAsQueries(QueryProcessor.QueryTarget.CONTENTS);
-//                }
-//                else
-//                {
-//                    queryTimeFilters = queryProcessor.getTimeFiltersAsQueries(QueryProcessor.QueryTarget.CONTENTS);
-//                    queryTimeTypeFilters = queryProcessor.getTimeTypeFiltersAsQueries(QueryProcessor.QueryTarget.CONTENTS);
-//                }
-//               //append FILTER QUERIES
-//                if(queryPlaceFilters != null && queryPlaceFilters.trim().length()>0)
-//                    finalQuery.append(" ").append(queryPlaceFilters);
-//                if(queryPlaceTypeFilters != null && queryPlaceTypeFilters.trim().length()>0)
-//                    finalQuery.append(" ").append(queryPlaceTypeFilters);
-//                if(queryTimeFilters != null && queryTimeFilters.trim().length()>0)
-//                    finalQuery.append(" ").append(queryTimeFilters);
-//                if(queryTimeTypeFilters != null && queryTimeTypeFilters.trim().length()>0)
-//                    finalQuery.append(" ").append(queryTimeTypeFilters);
-
-                finalQuery.append(")^" + Config.combContentsFactor);
-
-
+                addTermQueries(queryProcessor,QueryProcessor.QueryTarget.CONTENTS,finalQuery);
+                addFilterQueries(queryProcessor, QueryProcessor.QueryTarget.CONTENTS,finalQuery);
+                finalQuery.append(")^").append(Config.combContentsFactor);
 
 
                 //SENTENCES QUERIES
-                String queryTermsSentences = queryProcessor.getTermsQuery(QueryProcessor.QueryTarget.SENTENCES);
-                String queryPlacesRefSentences = queryProcessor.getPlacesRefQuery(QueryProcessor.QueryTarget.SENTENCES);
-                String queryPlacesBelongTosSentences = queryProcessor.getPlacesBeolongTosQuery(QueryProcessor.QueryTarget.SENTENCES);
-                String queryTimesSentences = null;
-                String queryTimesKeysSentences = null;
-                String queryTimesRelativeSentences = null;
-                String queryTimesDurationSentences = null;
-                if(queryProcessor.isTime_key())
-                    queryTimesSentences = queryProcessor.getTimesQueryKeyTimeExpressions(QueryProcessor.QueryTarget.SENTENCES);
-                else
-                {
-                    queryTimesKeysSentences = queryProcessor.getTimesQueryKeyTimeExpressions(QueryProcessor.QueryTarget.SENTENCES);
-                    queryTimesRelativeSentences = queryProcessor.getTimesQueryRelativeTimeExpressions(QueryProcessor.QueryTarget.SENTENCES);
-                    queryTimesDurationSentences = queryProcessor.getTimesQueryDurationsTimeExpressions(QueryProcessor.QueryTarget.SENTENCES);
-                }
-
                 StringBuilder finalQuerySentences = new StringBuilder();
                 finalQuerySentences.append("(");
-                finalQuerySentences.append(queryTermsSentences);
-                if(queryPlacesRefSentences != null && queryPlacesRefSentences.trim().length() > 0)
-                    finalQuerySentences.append(" ").append(queryPlacesRefSentences);
-                if(queryPlacesBelongTosSentences != null && queryPlacesBelongTosSentences.trim().length() > 0)
-                    finalQuerySentences.append(" ").append(queryPlacesBelongTosSentences);
-                if(queryTimesSentences != null && queryTimesSentences.trim().length() > 0)
-                    finalQuerySentences.append(" ").append(queryTimesSentences);
-                if(queryTimesKeysSentences != null && queryTimesKeysSentences.trim().length() > 0)
-                    finalQuerySentences.append(" ").append(queryTimesKeysSentences);
-                if(queryTimesRelativeSentences != null && queryTimesRelativeSentences.trim().length() > 0)
-                    finalQuerySentences.append(" ").append(queryTimesRelativeSentences);
-                if(queryTimesDurationSentences != null && queryTimesDurationSentences.trim().length() > 0)
-                    finalQuerySentences.append(" ").append(queryTimesDurationSentences);
-
-                //FILTER QUERIES
-                String queryPlaceRefsFiltersSentences = queryProcessor.getPlaceRefsFiltersAsQueries(QueryProcessor.QueryTarget.SENTENCES);
-                String queryPlaceBelongTosFiltersSentences = queryProcessor.getPlaceFiltersAsQueriesBelongTos(QueryProcessor.QueryTarget.SENTENCES);
-                String queryPlaceTypeFiltersSentences = queryProcessor.getPlaceTypeFiltersAsQueries(QueryProcessor.QueryTarget.SENTENCES);
-                String queryTimeFiltersSentences = null;
-                String queryTimeFiltersSentencesKeys = null;
-                String queryTimeFiltersSentencesRelative = null;
-                String queryTimeFiltersSentencesDuration = null;
-                String queryTimeTypeFiltersSentences;
-                if(queryProcessor.isTime_key())
-                {
-                    queryTimeFiltersSentences = queryProcessor.getTimeKeyPointsFiltersAsQueries(QueryProcessor.QueryTarget.SENTENCES);
-                    queryTimeTypeFiltersSentences = queryProcessor.getTimeKeyTypeFiltersAsQueries(QueryProcessor.QueryTarget.SENTENCES);
-                }
-                else
-                {
-                    queryTimeFiltersSentencesKeys = queryProcessor.getTimeKeyPointsFiltersAsQueries(QueryProcessor.QueryTarget.SENTENCES);
-                    queryTimeFiltersSentencesRelative = queryProcessor.getTimeRelativePointsFiltersAsQueries(QueryProcessor.QueryTarget.SENTENCES);
-                    queryTimeFiltersSentencesDuration = queryProcessor.getTimeDurationPointsFiltersAsQueries(QueryProcessor.QueryTarget.SENTENCES);
-
-                    queryTimeTypeFiltersSentences = queryProcessor.getTimeTypeFiltersAsQueries(QueryProcessor.QueryTarget.SENTENCES);
-                }
-                //append FILTER QUERIES
-                if(queryPlaceRefsFiltersSentences != null && queryPlaceRefsFiltersSentences.trim().length()>0)
-                    finalQuerySentences.append(" ").append(queryPlaceRefsFiltersSentences);
-                if(queryPlaceBelongTosFiltersSentences != null && queryPlaceBelongTosFiltersSentences.trim().length()>0)
-                    finalQuerySentences.append(" ").append(queryPlaceBelongTosFiltersSentences);
-                if(queryPlaceTypeFiltersSentences != null && queryPlaceTypeFiltersSentences.trim().length()>0)
-                    finalQuerySentences.append(" ").append(queryPlaceTypeFiltersSentences);
-                if(queryTimeFiltersSentences != null && queryTimeFiltersSentences.trim().length()>0)
-                    finalQuerySentences.append(" ").append(queryTimeFiltersSentences);
-
-                if(queryTimeFiltersSentencesKeys != null && queryTimeFiltersSentencesKeys.trim().length()>0)
-                    finalQuerySentences.append(" ").append(queryTimeFiltersSentencesKeys);
-                if(queryTimeFiltersSentencesRelative != null && queryTimeFiltersSentencesRelative.trim().length()>0)
-                    finalQuerySentences.append(" ").append(queryTimeFiltersSentencesRelative);
-                if(queryTimeFiltersSentencesDuration != null && queryTimeFiltersSentencesDuration.trim().length()>0)
-                    finalQuerySentences.append(" ").append(queryTimeFiltersSentencesDuration);
-
-                if(queryTimeTypeFiltersSentences != null && queryTimeTypeFiltersSentences.trim().length()>0)
-                    finalQuerySentences.append(" ").append(queryTimeTypeFiltersSentences);
-
-
-                finalQuerySentences.append(")^" + Config.combSentencesFactor);
-
-
+                addTermQueries(queryProcessor,QueryProcessor.QueryTarget.SENTENCES,finalQuerySentences);
+                addFilterQueries(queryProcessor, QueryProcessor.QueryTarget.SENTENCES,finalQuerySentences);
+                finalQuerySentences.append(")^").append(Config.combSentencesFactor);
 
                 return
                         new QueryPackage(
                                 filter,finalQuerySentences.toString() + " " + finalQuery.toString(),queryProcessor,queryFilter);
             }
         };
+    }
+
+    private void addTermQueries(QueryProcessor queryProcessor, QueryProcessor.QueryTarget queryTarget, StringBuilder  finalQuery)
+    {
+        String queryTermsSentences = queryProcessor.getTermsQuery(queryTarget);
+        String queryPlacesRef = queryProcessor.getPlacesRefQuery(queryTarget, Config.placeRefFactor);
+        String queryPlacesBelongTos = queryProcessor.getPlacesBeolongTosQuery(queryTarget, Config.belongTosFactor);
+        String queryTimesKeys;
+        String queryTimesRelative = null;
+        String queryTimesDuration = null;
+        if(queryProcessor.isTime_key())
+            queryTimesKeys = queryProcessor.getTimesQueryKeyTimeExpressions(queryTarget, "1");
+        else
+        {
+            queryTimesKeys = queryProcessor.getTimesQueryKeyTimeExpressions(queryTarget, Config.keyTimeFactor);
+            queryTimesRelative = queryProcessor.getTimesQueryRelativeTimeExpressions(queryTarget, Config.relativeTimeFactor);
+            queryTimesDuration = queryProcessor.getTimesQueryDurationsTimeExpressions(queryTarget, Config.durationTimeFactor);
+        }
+
+        finalQuery.append(queryTermsSentences);
+        if(queryPlacesRef != null && queryPlacesRef.trim().length() > 0)
+            finalQuery.append(" ").append(queryPlacesRef);
+        if(queryPlacesBelongTos != null && queryPlacesBelongTos.trim().length() > 0)
+            finalQuery.append(" ").append(queryPlacesBelongTos);
+        if(queryTimesKeys != null && queryTimesKeys.trim().length() > 0)
+            finalQuery.append(" ").append(queryTimesKeys);
+        if(queryTimesRelative != null && queryTimesRelative.trim().length() > 0)
+            finalQuery.append(" ").append(queryTimesRelative);
+        if(queryTimesDuration != null && queryTimesDuration.trim().length() > 0)
+            finalQuery.append(" ").append(queryTimesDuration);
+    }
+
+    private void addFilterQueries(QueryProcessor queryProcessor, QueryProcessor.QueryTarget queryTarget, StringBuilder  finalQuery)
+    {
+        String queryPlaceRefsFilters = queryProcessor.getPlaceRefsFiltersAsQueries(queryTarget, Config.placeRefFactor);
+        String queryPlaceBelongTosFilters = queryProcessor.getPlaceFiltersAsQueriesBelongTos(queryTarget, Config.belongTosFactor);
+        String queryPlaceTypeFilters = queryProcessor.getPlaceTypeFiltersAsQueries(queryTarget);
+
+        String queryTimeFiltersKeys = null;
+        String queryTimeFiltersRelative = null;
+        String queryTimeFiltersDuration = null;
+        String queryTimeTypeFilters;
+        if(queryProcessor.isTime_key())
+        {
+            queryTimeFiltersKeys = queryProcessor.getTimeKeyPointsFiltersAsQueries(queryTarget, "1");
+            queryTimeTypeFilters = queryProcessor.getTimeKeyTypeFiltersAsQueries(queryTarget);
+        }
+        else
+        {
+            queryTimeFiltersKeys = queryProcessor.getTimeKeyPointsFiltersAsQueries(queryTarget, Config.keyTimeFactor);
+            queryTimeFiltersRelative = queryProcessor.getTimeRelativePointsFiltersAsQueries(queryTarget, Config.relativeTimeFactor);
+            queryTimeFiltersDuration = queryProcessor.getTimeDurationPointsFiltersAsQueries(queryTarget, Config.durationTimeFactor);
+
+            queryTimeTypeFilters = queryProcessor.getTimeTypeFiltersAsQueries(queryTarget);
+        }
+        //append FILTER QUERIES
+        if(queryPlaceRefsFilters != null && queryPlaceRefsFilters.trim().length()>0)
+            finalQuery.append(" ").append(queryPlaceRefsFilters);
+        if(queryPlaceBelongTosFilters != null && queryPlaceBelongTosFilters.trim().length()>0)
+            finalQuery.append(" ").append(queryPlaceBelongTosFilters);
+        if(queryPlaceTypeFilters != null && queryPlaceTypeFilters.trim().length()>0)
+            finalQuery.append(" ").append(queryPlaceTypeFilters);
+        if(queryTimeFiltersKeys != null && queryTimeFiltersKeys.trim().length()>0)
+            finalQuery.append(" ").append(queryTimeFiltersKeys);
+        if(queryTimeFiltersRelative != null && queryTimeFiltersRelative.trim().length()>0)
+            finalQuery.append(" ").append(queryTimeFiltersRelative);
+        if(queryTimeFiltersDuration != null && queryTimeFiltersDuration.trim().length()>0)
+            finalQuery.append(" ").append(queryTimeFiltersDuration);
+        if(queryTimeTypeFilters != null && queryTimeTypeFilters.trim().length()>0)
+            finalQuery.append(" ").append(queryTimeTypeFilters);
     }
 
 
@@ -485,23 +376,23 @@ public class StrategyQueryBuilder
             lastQ = queryPackage;
         }
 
-        LgteIndexSearcherWrapper searcher = Config.openMultiSearcherSentences();
-        QueryConfiguration queryConfiguration = new QueryConfiguration();
-        queryConfiguration.setProperty("bm25.k1", "1.2d");
-        queryConfiguration.setProperty("bm25.b", "0.75d");
-        queryConfiguration.setProperty("bm25.k3", "0.75d");
-        queryConfiguration.setProperty("index.tree", "true");
-        LgteQuery query = LgteQueryParser.parseQuery("g_allWoeid_sentences:WOEID-23424778", searcher, new LgteWhiteSpacesAnalyzer(), queryConfiguration);
-        LgteHits hits = searcher.search(query,lastQ.filter);
+//        LgteIndexSearcherWrapper searcher = Config.openMultiSearcherSentences();
+//        QueryConfiguration queryConfiguration = new QueryConfiguration();
+//        queryConfiguration.setProperty("bm25.k1", "1.2d");
+//        queryConfiguration.setProperty("bm25.b", "0.75d");
+//        queryConfiguration.setProperty("bm25.k3", "0.75d");
+//        queryConfiguration.setProperty("index.tree", "true");
+//        LgteQuery query = LgteQueryParser.parseQuery("g_allWoeid_sentences:WOEID-23424778", searcher, new LgteWhiteSpacesAnalyzer(), queryConfiguration);
+//        LgteHits hits = searcher.search(query,lastQ.filter);
+//
+//        for(int i = 0; i < hits.length();i++)
+//            System.out.println(i + ":" + hits.doc(i).get("id"));
+//
+//        searcher.close();
 
-        for(int i = 0; i < hits.length();i++)
-            System.out.println(i + ":" + hits.doc(i).get("id"));
-
-        searcher.close();
 
 
 
-        
         System.out.println("####################################");
         iter = strategyQueryBuilder.baseFilteredIterator_comb();
 
@@ -514,19 +405,19 @@ public class StrategyQueryBuilder
         }
 
 
-          searcher = Config.openMultiSearcherForContentsAndSentences();
-        queryConfiguration = new QueryConfiguration();
-        queryConfiguration.setProperty("bm25.k1", "1.2d");
-        queryConfiguration.setProperty("bm25.b", "0.75d");
-        queryConfiguration.setProperty("bm25.k3", "0.75d");
-        queryConfiguration.setProperty("index.tree", "true");
-        query = LgteQueryParser.parseQuery("g_allWoeid_sentences:(WOEID-23424778 WOEID-12493166) S_HAS_TIMEXES_sentences:true", searcher, new LgteWhiteSpacesAnalyzer(), queryConfiguration);
-        hits = searcher.search(query,lastQ.filter);
-
-        for(int i = 0; i < hits.length();i++)
-            System.out.println(i + ":" + hits.doc(i).get("id"));
-
-        searcher.close();
+//        searcher = Config.openMultiSearcherForContentsAndSentences();
+//        queryConfiguration = new QueryConfiguration();
+//        queryConfiguration.setProperty("bm25.k1", "1.2d");
+//        queryConfiguration.setProperty("bm25.b", "0.75d");
+//        queryConfiguration.setProperty("bm25.k3", "0.75d");
+//        queryConfiguration.setProperty("index.tree", "true");
+//        query = LgteQueryParser.parseQuery("g_allWoeid_sentences:(WOEID-23424778 WOEID-12493166) S_HAS_TIMEXES_sentences:true", searcher, new LgteWhiteSpacesAnalyzer(), queryConfiguration);
+//        hits = searcher.search(query,lastQ.filter);
+//
+//        for(int i = 0; i < hits.length();i++)
+//            System.out.println(i + ":" + hits.doc(i).get("id"));
+//
+//        searcher.close();
 
 
 

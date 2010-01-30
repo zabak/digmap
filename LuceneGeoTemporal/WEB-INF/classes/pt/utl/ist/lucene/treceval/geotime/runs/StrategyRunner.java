@@ -31,7 +31,7 @@ import java.util.Map;
 public class StrategyRunner {
 
     private static final Logger logger = Logger.getLogger(StrategyRunner.class);
-    static String outputFile =    Config.ntcirBase +  File.separator + "runs" + File.separator;
+    static String outputFile =    Config.ntcirBase +  File.separator + "runs2" + File.separator;
     static String topicsFile =    Config.ntcirBase +  File.separator + "topics" + File.separator + "topics.xml";
 
 
@@ -91,8 +91,8 @@ public class StrategyRunner {
 
         logger.info("#######filtered_qe_comb");
         searcher = Config.openMultiSearcherForContentsAndSentences();
-        runBase(run5,RunType.Comb, outputFile + "filtered_qe_comb_qe_t_keys.xml",searcher,strategyQueryBuilderTimeKeys.baseFilteredIterator_comb(),true,Config.DOC_ID,true);
-        runBase(run5,RunType.Comb, outputFile + "filtered_qe_comb_qe_t_all.xml",searcher,strategyQueryBuilderTimeAll.baseFilteredIterator_comb(),false,Config.DOC_ID,true);
+        runBase(run5,RunType.Comb, outputFile + "filtered_qe_comb_t_keys.xml",searcher,strategyQueryBuilderTimeKeys.baseFilteredIterator_comb(),true,Config.DOC_ID,true);
+        runBase(run5,RunType.Comb, outputFile + "filtered_qe_comb_t_all.xml",searcher,strategyQueryBuilderTimeAll.baseFilteredIterator_comb(),false,Config.DOC_ID,true);
         searcher.close();
     }
 
@@ -118,6 +118,7 @@ public class StrategyRunner {
         OutputFormat outputFormat = new RunIdOutputFormatFactory(Config.ID, outputFile.substring(outputFile.lastIndexOf(File.separator)+1,outputFile.lastIndexOf(".")),desc).createNew(stream);
         outputFormat.init("id","id");
         outputFormat.setMaxDocsToFlush(100);
+
         while((queryPackage = iter.next())!=null)
         {
             QueryConfiguration queryConfigurationBase = new QueryConfiguration();
@@ -140,34 +141,34 @@ public class StrategyRunner {
                 if(keys)
                 {
                     if(runType == RunType.Text || runType == RunType.Comb)
-                        queryConfigurationBase.setProperty("field.boost." + Config.T_POINT_KEY,"0.5");
+                        queryConfigurationBase.setProperty("field.boost." + Config.T_POINT_KEY,Config.keyTimeFactor);
                     if(runType == RunType.Sentences || runType == RunType.Comb)
-                        queryConfigurationBase.setProperty("field.boost." + Config.T_POINT_KEY + Config.SEP + Config.SENTENCES,"0.5");
+                        queryConfigurationBase.setProperty("field.boost." + Config.T_POINT_KEY + Config.SEP + Config.SENTENCES,Config.keyTimeFactor);
                 }
                 else
                 {
                     if(runType == RunType.Text || runType == RunType.Comb)
                     {
-                        queryConfigurationBase.setProperty("field.boost." + Config.T_POINT_KEY,"0.3");
-                        queryConfigurationBase.setProperty("field.boost." + Config.T_POINT_RELATIVE,"0.15");
-                        queryConfigurationBase.setProperty("field.boost." + Config.T_DURATION,"0.1");
+                        queryConfigurationBase.setProperty("field.boost." + Config.T_POINT_KEY,     Config.keyTimeFactor);
+                        queryConfigurationBase.setProperty("field.boost." + Config.T_POINT_RELATIVE,Config.relativeTimeFactor);
+                        queryConfigurationBase.setProperty("field.boost." + Config.T_DURATION,      Config.durationTimeFactor);
                     }
                     if(runType == RunType.Sentences || runType == RunType.Comb)
                     {
-                        queryConfigurationBase.setProperty("field.boost." + Config.T_POINT_KEY + Config.SEP + Config.SENTENCES,"0.3");
-                        queryConfigurationBase.setProperty("field.boost." + Config.T_POINT_RELATIVE + Config.SEP + Config.SENTENCES,"0.15");
-                        queryConfigurationBase.setProperty("field.boost." + Config.T_DURATION + Config.SEP + Config.SENTENCES,"0.1");
+                        queryConfigurationBase.setProperty("field.boost." + Config.T_POINT_KEY + Config.SEP + Config.SENTENCES,     Config.keyTimeFactor);
+                        queryConfigurationBase.setProperty("field.boost." + Config.T_POINT_RELATIVE + Config.SEP + Config.SENTENCES,Config.relativeTimeFactor);
+                        queryConfigurationBase.setProperty("field.boost." + Config.T_DURATION + Config.SEP + Config.SENTENCES,      Config.durationTimeFactor);
                     }
                 }
                 if(runType == RunType.Text || runType == RunType.Comb)
                 {
-                    queryConfigurationBase.setProperty("field.boost." + Config.G_PLACE_BELONG_TOS_WOEID,"0.2");
-                    queryConfigurationBase.setProperty("field.boost." + Config.G_PLACE_REF_WOEID,"0.3");
+//                    queryConfigurationBase.setProperty("field.boost." + Config.G_PLACE_BELONG_TOS_WOEID,"0.2");     dont use here for expasion
+                    queryConfigurationBase.setProperty("field.boost." + Config.G_PLACE_REF_WOEID,"1");
                 }
                 if(runType == RunType.Sentences || runType == RunType.Comb)
                 {
-                    queryConfigurationBase.setProperty("field.boost." + Config.G_PLACE_BELONG_TOS_WOEID + Config.SEP + Config.SENTENCES,"0.2");
-                    queryConfigurationBase.setProperty("field.boost." + Config.G_PLACE_REF_WOEID + Config.SEP + Config.SENTENCES,"0.3");
+//                    queryConfigurationBase.setProperty("field.boost." + Config.G_PLACE_BELONG_TOS_WOEID + Config.SEP + Config.SENTENCES,"0.2");   dont use here for expasion
+                    queryConfigurationBase.setProperty("field.boost." + Config.G_PLACE_REF_WOEID + Config.SEP + Config.SENTENCES,"1");
                 }
                 org.apache.lucene.search.Query q = LgteQueryParser.lucQE(lgteQuery,queryPackage.query,searcher,queryPackage.filter);
                 lgteQuery = new LgteQuery(q,lgteQuery.getQueryParams(),brokerStemAnalyzer);

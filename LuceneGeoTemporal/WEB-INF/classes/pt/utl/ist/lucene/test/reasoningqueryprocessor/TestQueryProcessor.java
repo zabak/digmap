@@ -27,6 +27,14 @@ public class TestQueryProcessor extends TestCase
 
     String xmlTimeTestYYYYMM =
             "<topic id=\"GeoTime-0025\">\n" +
+                    "  <original>\n" +
+                    "    <desc>word2</desc>\n" +
+                    "    <narr>word3</narr>\n" +
+                    "  </original>\n" +
+                    "  <originalClean>\n" +
+                    "    <desc>word2</desc>\n" +
+                    "    <narr>word3</narr>\n" +
+                    "  </originalClean>\n" +
                     "  <filterChain>\n" +
                     "       <boolean type=\"OR\">\n" +
                     "           <term>\n" +
@@ -42,6 +50,14 @@ public class TestQueryProcessor extends TestCase
                     "</topic>";
     String xmlTimeTestYYYYMMDD =
             "<topic id=\"GeoTime-0025\">\n" +
+                    "  <original>\n" +
+                    "    <desc>word2</desc>\n" +
+                    "    <narr>word3</narr>\n" +
+                    "  </original>\n" +
+                    "  <originalClean>\n" +
+                    "    <desc>word2</desc>\n" +
+                    "    <narr>word3</narr>\n" +
+                    "  </originalClean>\n" +
                     "  <filterChain>\n" +
                     "       <boolean type=\"OR\">\n" +
                     "           <term>\n" +
@@ -58,6 +74,14 @@ public class TestQueryProcessor extends TestCase
 
     String xmlTimeTestYYYYMMDD_ALL_OR =
             "<topic id=\"GeoTime-0025\">\n" +
+                    "  <original>\n" +
+                    "    <desc>word2</desc>\n" +
+                    "    <narr>word3</narr>\n" +
+                    "  </original>\n" +
+                    "  <originalClean>\n" +
+                    "    <desc>word2</desc>\n" +
+                    "    <narr>word3</narr>\n" +
+                    "  </originalClean>\n" +
                     "  <filterChain>\n" +
                     "       <boolean type=\"OR\">\n" +
                     "           <term>\n" +
@@ -82,6 +106,14 @@ public class TestQueryProcessor extends TestCase
 
     String xmlTimeTestYYYYMMDD_ALL_AND =
             "<topic id=\"GeoTime-0025\">\n" +
+                    "  <original>\n" +
+                    "    <desc>word2</desc>\n" +
+                    "    <narr>word3</narr>\n" +
+                    "  </original>\n" +
+                    "  <originalClean>\n" +
+                    "    <desc>word2</desc>\n" +
+                    "    <narr>word3</narr>\n" +
+                    "  </originalClean>\n" +
                     "  <filterChain>\n" +
                     "       <boolean type=\"AND\">\n" +
                     "           <term>\n" +
@@ -109,6 +141,14 @@ public class TestQueryProcessor extends TestCase
 
     String xmlTimeTest1990 =
             "<topic id=\"GeoTime-0025\">\n" +
+                    "  <original>\n" +
+                    "    <desc>word2</desc>\n" +
+                    "    <narr>word3</narr>\n" +
+                    "  </original>\n" +
+                    "  <originalClean>\n" +
+                    "    <desc>word2</desc>\n" +
+                    "    <narr>word3</narr>\n" +
+                    "  </originalClean>\n" +
                     "  <filterChain>\n" +
                     "       <boolean type=\"OR\">\n" +
                     "           <term>\n" +
@@ -126,6 +166,14 @@ public class TestQueryProcessor extends TestCase
 
     String xmlTimeTest1990_AND_MONTH =
             "<topic id=\"GeoTime-0025\">\n" +
+                    "  <original>\n" +
+                    "    <desc>word2</desc>\n" +
+                    "    <narr>word3</narr>\n" +
+                    "  </original>\n" +
+                    "  <originalClean>\n" +
+                    "    <desc>word2</desc>\n" +
+                    "    <narr>word3</narr>\n" +
+                    "  </originalClean>\n" +
                     "  <filterChain>\n" +
                     "       <boolean type=\"AND\">\n" +
                     "           <term>\n" +
@@ -146,6 +194,14 @@ public class TestQueryProcessor extends TestCase
 
     String xmlTimeTest1990_OR_MONTH =
             "<topic id=\"GeoTime-0025\">\n" +
+                    "  <original>\n" +
+                    "    <desc>word2</desc>\n" +
+                    "    <narr>word3</narr>\n" +
+                    "  </original>\n" +
+                    "  <originalClean>\n" +
+                    "    <desc>word2</desc>\n" +
+                    "    <narr>word3</narr>\n" +
+                    "  </originalClean>\n" +
                     "  <filterChain>\n" +
                     "       <boolean type=\"OR\">\n" +
                     "           <term>\n" +
@@ -166,6 +222,14 @@ public class TestQueryProcessor extends TestCase
 
     String xmlTimeTest1990_OR_MONTH_ANY =
             "<topic id=\"GeoTime-0025\">\n" +
+                    "  <original>\n" +
+                    "    <desc>word2</desc>\n" +
+                    "    <narr>word3</narr>\n" +
+                    "  </original>\n" +
+                    "  <originalClean>\n" +
+                    "    <desc>word2</desc>\n" +
+                    "    <narr>word3</narr>\n" +
+                    "  </originalClean>\n" +
                     "  <filterChain>\n" +
                     "       <boolean type=\"OR\">\n" +
                     "           <term>\n" +
@@ -232,6 +296,14 @@ public class TestQueryProcessor extends TestCase
 
         String xml =
                 "<topic id=\"GeoTime-0025\">\n" +
+                        "  <original>\n" +
+                        "    <desc>word2</desc>\n" +
+                        "    <narr>word3</narr>\n" +
+                        "  </original>\n" +
+                        "  <originalClean>\n" +
+                        "    <desc>word2</desc>\n" +
+                        "    <narr>word3</narr>\n" +
+                        "  </originalClean>\n" +
                         "  <filterChain>\n" +
                         "       <boolean type=\"OR\">\n" +
                         "           <term>\n" +
@@ -262,6 +334,14 @@ public class TestQueryProcessor extends TestCase
 
         xml =
                 "<topic id=\"GeoTime-0025\">\n" +
+                        "  <original>\n" +
+                        "    <desc>word2</desc>\n" +
+                        "    <narr>word3</narr>\n" +
+                        "  </original>\n" +
+                        "  <originalClean>\n" +
+                        "    <desc>word2</desc>\n" +
+                        "    <narr>word3</narr>\n" +
+                        "  </originalClean>\n" +
                         "  <filterChain>\n" +
                         "       <boolean type=\"OR\">\n" +
                         "           <boolean type=\"AND\">\n" +
@@ -457,6 +537,14 @@ public class TestQueryProcessor extends TestCase
 
         String xml =
                 "<topic id=\"GeoTime-0025\">\n" +
+                        "  <original>\n" +
+                        "    <desc>word2</desc>\n" +
+                        "    <narr>word3</narr>\n" +
+                        "  </original>\n" +
+                        "  <originalClean>\n" +
+                        "    <desc>word2</desc>\n" +
+                        "    <narr>word3</narr>\n" +
+                        "  </originalClean>\n" +
                         "  <filterChain>\n" +
                         "       <boolean type=\"OR\">\n" +
                         "           <term>\n" +
@@ -654,6 +742,14 @@ public class TestQueryProcessor extends TestCase
 
         String xml =
                 "<topic id=\"GeoTime-0025\">\n" +
+                        "  <original>\n" +
+                        "    <desc>word2</desc>\n" +
+                        "    <narr>word3</narr>\n" +
+                        "  </original>\n" +
+                        "  <originalClean>\n" +
+                        "    <desc>word2</desc>\n" +
+                        "    <narr>word3</narr>\n" +
+                        "  </originalClean>\n" +
                         "  <filterChain>\n" +
                         "       <boolean type=\"AND\">\n" +
                         "           <term>\n" +
@@ -680,6 +776,14 @@ public class TestQueryProcessor extends TestCase
 
         xml =
                 "<topic id=\"GeoTime-0025\">\n" +
+                        "  <original>\n" +
+                        "    <desc>word2</desc>\n" +
+                        "    <narr>word3</narr>\n" +
+                        "  </original>\n" +
+                        "  <originalClean>\n" +
+                        "    <desc>word2</desc>\n" +
+                        "    <narr>word3</narr>\n" +
+                        "  </originalClean>\n" +
                         "  <filterChain>\n" +
                         "       <boolean type=\"AND\">\n" +
                         "           <term>\n" +
@@ -712,6 +816,14 @@ public class TestQueryProcessor extends TestCase
 
         xml =
                 "<topic id=\"GeoTime-0025\">\n" +
+                        "  <original>\n" +
+                        "    <desc>word2</desc>\n" +
+                        "    <narr>word3</narr>\n" +
+                        "  </original>\n" +
+                        "  <originalClean>\n" +
+                        "    <desc>word2</desc>\n" +
+                        "    <narr>word3</narr>\n" +
+                        "  </originalClean>\n" +
                         "  <filterChain>\n" +
                         "       <boolean type=\"OR\">\n" +
                         "           <term>\n" +
@@ -744,6 +856,14 @@ public class TestQueryProcessor extends TestCase
 
         xml =
                 "<topic id=\"GeoTime-0025\">\n" +
+                        "  <original>\n" +
+                        "    <desc>word2</desc>\n" +
+                        "    <narr>word3</narr>\n" +
+                        "  </original>\n" +
+                        "  <originalClean>\n" +
+                        "    <desc>word2</desc>\n" +
+                        "    <narr>word3</narr>\n" +
+                        "  </originalClean>\n" +
                         "  <filterChain>\n" +
                         "       <boolean type=\"OR\">\n" +
                         "           <term>\n" +
@@ -774,6 +894,14 @@ public class TestQueryProcessor extends TestCase
 
         xml =
                 "<topic id=\"GeoTime-0025\">\n" +
+                        "  <original>\n" +
+                        "    <desc>word2</desc>\n" +
+                        "    <narr>word3</narr>\n" +
+                        "  </original>\n" +
+                        "  <originalClean>\n" +
+                        "    <desc>word2</desc>\n" +
+                        "    <narr>word3</narr>\n" +
+                        "  </originalClean>\n" +
                         "  <filterChain>\n" +
                         "       <boolean type=\"AND\">\n" +
                         "           <term>\n" +
@@ -808,6 +936,14 @@ public class TestQueryProcessor extends TestCase
 
         xml =
                 "<topic id=\"GeoTime-0025\">\n" +
+                        "  <original>\n" +
+                        "    <desc>word2</desc>\n" +
+                        "    <narr>word3</narr>\n" +
+                        "  </original>\n" +
+                        "  <originalClean>\n" +
+                        "    <desc>word2</desc>\n" +
+                        "    <narr>word3</narr>\n" +
+                        "  </originalClean>\n" +
                         "  <filterChain>\n" +
                         "       <boolean type=\"OR\">\n" +
                         "           <term>\n" +
@@ -891,6 +1027,14 @@ public class TestQueryProcessor extends TestCase
 
         xml =
                 "<topic id=\"GeoTime-0025\">\n" +
+                        "  <original>\n" +
+                        "    <desc>word2</desc>\n" +
+                        "    <narr>word3</narr>\n" +
+                        "  </original>\n" +
+                        "  <originalClean>\n" +
+                        "    <desc>word2</desc>\n" +
+                        "    <narr>word3</narr>\n" +
+                        "  </originalClean>\n" +
                         "  <filterChain>\n" +
                         "       <boolean type=\"AND\">\n" +
                         "           <term>\n" +
@@ -925,13 +1069,13 @@ public class TestQueryProcessor extends TestCase
         assertEquals(query,"contents:(word2 word2 word3)");
 
         assertEquals(qpXml.getPlacesQuery(QueryProcessor.QueryTarget.CONTENTS),Config.G_GEO_ALL_WOEID + ":(WOEID-987654321 WOEID-12345678)");
-        assertEquals(qpXml.getPlacesRefQuery(QueryProcessor.QueryTarget.CONTENTS),Config.G_PLACE_REF_WOEID + ":(WOEID-987654321 WOEID-12345678)^0.3");
-        assertEquals(qpXml.getPlacesBeolongTosQuery(QueryProcessor.QueryTarget.CONTENTS),Config.G_PLACE_BELONG_TOS_WOEID + ":(WOEID-987654321 WOEID-12345678)^0.7");
+        assertEquals(qpXml.getPlacesRefQuery(QueryProcessor.QueryTarget.CONTENTS, "0.2"),Config.G_PLACE_REF_WOEID + ":(WOEID-987654321 WOEID-12345678)^0.2");
+        assertEquals(qpXml.getPlacesBeolongTosQuery(QueryProcessor.QueryTarget.CONTENTS, "0.8"),Config.G_PLACE_BELONG_TOS_WOEID + ":(WOEID-987654321 WOEID-12345678)^0.8");
 
         assertEquals(qpXml.getTimesQueryTimeExpressions(QueryProcessor.QueryTarget.CONTENTS),Config.T_TIME_EXPRESSIONS + ":(2002* 200304* 20050401*)");
-        assertEquals(qpXml.getTimesQueryKeyTimeExpressions(QueryProcessor.QueryTarget.CONTENTS),Config.T_POINT_KEY + ":(2002* 200304* 20050401*)^0.6");
-        assertEquals(qpXml.getTimesQueryRelativeTimeExpressions(QueryProcessor.QueryTarget.CONTENTS),Config.T_POINT_RELATIVE + ":(2002* 200304* 20050401*)^0.25");
-        assertEquals(qpXml.getTimesQueryDurationsTimeExpressions(QueryProcessor.QueryTarget.CONTENTS),Config.T_DURATION + ":(2002* 200304* 20050401*)^0.15");
+        assertEquals(qpXml.getTimesQueryKeyTimeExpressions(QueryProcessor.QueryTarget.CONTENTS, "0.5"),Config.T_POINT_KEY + ":(2002* 200304* 20050401*)^0.5");
+        assertEquals(qpXml.getTimesQueryRelativeTimeExpressions(QueryProcessor.QueryTarget.CONTENTS, "0.3"),Config.T_POINT_RELATIVE + ":(2002* 200304* 20050401*)^0.3");
+        assertEquals(qpXml.getTimesQueryDurationsTimeExpressions(QueryProcessor.QueryTarget.CONTENTS, "0.2"),Config.T_DURATION + ":(2002* 200304* 20050401*)^0.2");
 
 
 

@@ -13,12 +13,49 @@ public class Query
 {
     String id;
     FilterChain filterChain = new FilterChain();
+    String originalDesc;
+    String originalNarr;
+    String originalDescClean;
+    String originalNarrClean;
+
     Times times = new Times();
     Places places = new Places();
     Terms terms = new Terms();
 
 
     public Query() {
+    }
+
+    public String getOriginalDesc() {
+        return originalDesc;
+    }
+
+    public void setOriginalDesc(String originalDesc) {
+        this.originalDesc = originalDesc;
+    }
+
+    public String getOriginalNarr() {
+        return originalNarr;
+    }
+
+    public void setOriginalNarr(String originalNarr) {
+        this.originalNarr = originalNarr;
+    }
+
+    public String getOriginalNarrClean() {
+        return originalNarrClean;
+    }
+
+    public void setOriginalNarrClean(String originalNarrClean) {
+        this.originalNarrClean = originalNarrClean;
+    }
+
+    public String getOriginalDescClean() {
+        return originalDescClean;
+    }
+
+    public void setOriginalDescClean(String originalDescClean) {
+        this.originalDescClean = originalDescClean;
     }
 
     public String getId() {

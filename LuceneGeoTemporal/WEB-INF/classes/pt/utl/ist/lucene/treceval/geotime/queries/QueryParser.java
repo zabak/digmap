@@ -43,10 +43,24 @@ public class QueryParser
     {
         q = new Query();
         q.setId(topic.attribute("id").getValue());
+        readOrignal();
         readTerms();
         readPlaces();
         readTimes();
         readFilters();
+    }
+
+    private void readOrignal()
+    {
+        XPath xPathTermsDesc = topic.createXPath("./original/desc");
+        XPath xPathTermsNarr = topic.createXPath("./original/narr");
+        q.setOriginalDesc(((Element)xPathTermsDesc.selectSingleNode(topic)).getTextTrim());
+        q.setOriginalNarr(((Element)xPathTermsNarr.selectSingleNode(topic)).getTextTrim());
+
+        XPath xPathTermsDescClean = topic.createXPath("./originalClean/desc");
+        XPath xPathTermsNarrClean = topic.createXPath("./originalClean/narr");
+        q.setOriginalDescClean(((Element)xPathTermsDescClean.selectSingleNode(topic)).getTextTrim());
+        q.setOriginalNarrClean(((Element)xPathTermsNarrClean.selectSingleNode(topic)).getTextTrim());
     }
 
     private void readTerms()

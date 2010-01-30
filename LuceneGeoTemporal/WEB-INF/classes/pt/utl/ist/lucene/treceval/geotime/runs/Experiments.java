@@ -16,9 +16,12 @@ import java.util.HashMap;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.LgteIsolatedIndexReader;
+import org.apache.lucene.index.Term;
+import org.apache.lucene.index.TermDocs;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.ngram.EdgeNGramTokenFilter;
 import org.apache.lucene.search.Query;
+import org.apache.lucene.search.DefaultSimilarity;
 
 /**
  * @author Jorge Machado
@@ -32,7 +35,13 @@ public class Experiments
 
         
         LgteIndexSearcherWrapper searcher = Config.openMultiSearcher();
+        TermDocs td = searcher.getIndexReader().termPositions(new Term(Config.G_PLACE_BELONG_TOS_WOEID,"WOEID-1"));
+        td.next();
+        
+        new DefaultSimilarity().idf(new Term(Config.G_PLACE_BELONG_TOS_WOEID,"WOEID-1"),searcher.getIndexSearcher());
         LgteHits hits = searcher.search("g_allWoeid:WOEID-23689947",new LgteNothingAnalyzer());
+
+
 //        IndexReader readerSentences = LgteIndexManager.openReader(IndexSentences.indexPath, Model.OkapiBM25Model);
 //        IndexReader readerContents = LgteIndexManager.openReader(IndexContents.indexPath, Model.OkapiBM25Model);
 //        IndexReader readerGeoRefs = LgteIndexManager.openReader(IndexWoeid.indexPath, Model.OkapiBM25Model);

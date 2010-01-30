@@ -32,6 +32,14 @@ public class TestQueryProcessorHierarchicIndexes extends TestCase {
 
     String xmlTimeTestYYYY =
             "<topic id=\"GeoTime-0025\">\n" +
+                     "  <original>\n" +
+                    "    <desc>word2</desc>\n" +
+                    "    <narr>word3</narr>\n" +
+                    "  </original>\n" +
+                    "  <originalClean>\n" +
+                    "    <desc>word2</desc>\n" +
+                    "    <narr>word3</narr>\n" +
+                    "  </originalClean>\n" +
                     "  <filterChain>\n" +
                     "       <boolean type=\"OR\">\n" +
                     "           <term>\n" +
@@ -47,6 +55,14 @@ public class TestQueryProcessorHierarchicIndexes extends TestCase {
                     "</topic>";
     String xmlTimeTestYYYYMM =
             "<topic id=\"GeoTime-0025\">\n" +
+                     "  <original>\n" +
+                    "    <desc>word2</desc>\n" +
+                    "    <narr>word3</narr>\n" +
+                    "  </original>\n" +
+                    "  <originalClean>\n" +
+                    "    <desc>word2</desc>\n" +
+                    "    <narr>word3</narr>\n" +
+                    "  </originalClean>\n" +
                     "  <filterChain>\n" +
                     "       <boolean type=\"OR\">\n" +
                     "           <term>\n" +
@@ -62,6 +78,14 @@ public class TestQueryProcessorHierarchicIndexes extends TestCase {
                     "</topic>";
     String xmlTimeTestYYYYMMDD =
             "<topic id=\"GeoTime-0025\">\n" +
+                     "  <original>\n" +
+                    "    <desc>word2</desc>\n" +
+                    "    <narr>word3</narr>\n" +
+                    "  </original>\n" +
+                    "  <originalClean>\n" +
+                    "    <desc>word2</desc>\n" +
+                    "    <narr>word3</narr>\n" +
+                    "  </originalClean>\n" +
                     "  <filterChain>\n" +
                     "       <boolean type=\"OR\">\n" +
                     "           <term>\n" +
@@ -78,6 +102,14 @@ public class TestQueryProcessorHierarchicIndexes extends TestCase {
 
     String xmlTimeTestYYYYMMDD_ALL_OR =
             "<topic id=\"GeoTime-0025\">\n" +
+                     "  <original>\n" +
+                    "    <desc>word2</desc>\n" +
+                    "    <narr>word3</narr>\n" +
+                    "  </original>\n" +
+                    "  <originalClean>\n" +
+                    "    <desc>word2</desc>\n" +
+                    "    <narr>word3</narr>\n" +
+                    "  </originalClean>\n" +
                     "  <filterChain>\n" +
                     "       <boolean type=\"OR\">\n" +
                     "           <term>\n" +
@@ -102,6 +134,14 @@ public class TestQueryProcessorHierarchicIndexes extends TestCase {
 
     String xmlTimeTestYYYYMMDD_ALL_AND =
             "<topic id=\"GeoTime-0025\">\n" +
+                     "  <original>\n" +
+                    "    <desc>word2</desc>\n" +
+                    "    <narr>word3</narr>\n" +
+                    "  </original>\n" +
+                    "  <originalClean>\n" +
+                    "    <desc>word2</desc>\n" +
+                    "    <narr>word3</narr>\n" +
+                    "  </originalClean>\n" +
                     "  <filterChain>\n" +
                     "       <boolean type=\"AND\">\n" +
                     "           <term>\n" +
@@ -129,6 +169,14 @@ public class TestQueryProcessorHierarchicIndexes extends TestCase {
 
     String xmlTimeTest1990 =
             "<topic id=\"GeoTime-0025\">\n" +
+                     "  <original>\n" +
+                    "    <desc>word2</desc>\n" +
+                    "    <narr>word3</narr>\n" +
+                    "  </original>\n" +
+                    "  <originalClean>\n" +
+                    "    <desc>word2</desc>\n" +
+                    "    <narr>word3</narr>\n" +
+                    "  </originalClean>\n" +
                     "  <filterChain>\n" +
                     "       <boolean type=\"OR\">\n" +
                     "           <term>\n" +
@@ -146,6 +194,14 @@ public class TestQueryProcessorHierarchicIndexes extends TestCase {
 
     String xmlTimeTest1990_AND_MONTH =
             "<topic id=\"GeoTime-0025\">\n" +
+                     "  <original>\n" +
+                    "    <desc>word2</desc>\n" +
+                    "    <narr>word3</narr>\n" +
+                    "  </original>\n" +
+                    "  <originalClean>\n" +
+                    "    <desc>word2</desc>\n" +
+                    "    <narr>word3</narr>\n" +
+                    "  </originalClean>\n" +
                     "  <filterChain>\n" +
                     "       <boolean type=\"AND\">\n" +
                     "           <term>\n" +
@@ -166,6 +222,14 @@ public class TestQueryProcessorHierarchicIndexes extends TestCase {
 
     String xmlTimeTest1990_OR_MONTH =
             "<topic id=\"GeoTime-0025\">\n" +
+                     "  <original>\n" +
+                    "    <desc>word2</desc>\n" +
+                    "    <narr>word3</narr>\n" +
+                    "  </original>\n" +
+                    "  <originalClean>\n" +
+                    "    <desc>word2</desc>\n" +
+                    "    <narr>word3</narr>\n" +
+                    "  </originalClean>\n" +
                     "  <filterChain>\n" +
                     "       <boolean type=\"OR\">\n" +
                     "           <term>\n" +
@@ -186,6 +250,14 @@ public class TestQueryProcessorHierarchicIndexes extends TestCase {
 
     String xmlTimeTest1990_OR_MONTH_ANY =
             "<topic id=\"GeoTime-0025\">\n" +
+                     "  <original>\n" +
+                    "    <desc>word2</desc>\n" +
+                    "    <narr>word3</narr>\n" +
+                    "  </original>\n" +
+                    "  <originalClean>\n" +
+                    "    <desc>word2</desc>\n" +
+                    "    <narr>word3</narr>\n" +
+                    "  </originalClean>\n" +
                     "  <filterChain>\n" +
                     "       <boolean type=\"OR\">\n" +
                     "           <term>\n" +

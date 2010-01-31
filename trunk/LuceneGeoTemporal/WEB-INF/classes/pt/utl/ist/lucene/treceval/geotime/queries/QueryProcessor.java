@@ -471,7 +471,7 @@ public class QueryProcessor
         }
         else if(queryTarget == QueryTarget.SENTENCES)
         {
-            return Config.T_POINT_RELATIVE + Config.SEP + Config.SENTENCES + ":(" + queryTerms + ")" + boost;
+            return Config.T_POINT_RELATIVE + Config.SEP + Config.SENTENCES + ":(" + queryTerms + ")^" + boost;
         }
         return null;
     }

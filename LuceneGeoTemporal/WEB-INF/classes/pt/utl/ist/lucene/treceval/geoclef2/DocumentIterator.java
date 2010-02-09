@@ -3,6 +3,7 @@ package pt.utl.ist.lucene.treceval.geoclef2;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -13,6 +14,16 @@ import java.util.List;
 import java.util.zip.GZIPInputStream;
 
 import org.apache.log4j.Logger;
+import org.apache.solr.handler.XmlUpdateRequestHandler;
+import org.python.core.parser;
+import org.w3c.dom.Document;
+
+import com.sun.org.apache.xml.internal.serialize.OutputFormat;
+import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
+
+import pt.utl.ist.lucene.treceval.geotime.webservices.CallWebServices;
+import pt.utl.ist.lucene.utils.Dom4jUtil;
+import pt.utl.ist.lucene.utils.XmlUtils;
 
 public class DocumentIterator {
     private static final Logger logger = Logger.getLogger(DocumentIterator.class);
@@ -117,19 +128,61 @@ public class DocumentIterator {
     
     public static void main(String[] args) throws IOException
     {
-    	DocumentIterator iter = new DocumentIterator("C:\\WORKSPACE_JM\\DATA\\COLLECTIONS\\GeoCLEF\\en\\gh-95");
+    	String out = args[0];
+    	String data = args[1];    	
+    	
+    	//String out = "C:\\WORKSPACE_JM\\DATA\\PARSE";
+    	//String data = "C:\\WORKSPACE_JM\\DATA\\COLLECTIONS\\GeoCLEF\\en\\";
+    	
+    	parse(out, data + File.separator + "gh-95");
+    	parse(out, data + File.separator + "lat-en");
+    }
+    
+    private static void parse(String outputPath, String dataPath) throws IOException
+    {
+    	DocumentIterator iter = new DocumentIterator(dataPath);
+    	FileOutputStream fos = null;
     	GeoClefDocument doc;
+    	String oldFilename = "";
     	while ((doc = iter.next()) != null)
     	{
-    		System.out.println(doc.getSgml());
-			System.out.println(doc.getSgmlWithoutTags());
+    		try 
+    		{
+	            
+	    		if(!doc.getFileName().equals(oldFilename))
+	    		{
+	    			if(fos!= null)
+	    			{	
+	    				fos.write("\n</docs>\n".getBytes());
+	    				fos.close();
+	    			}
+	    			oldFilename = doc.getFileName();
+	    			fos = new FileOutputStream(outputPath + File.separator + doc.getFileName() + ".xml");
+	    			fos.write("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n".getBytes());
+	    			fos.write("<docs>\n".getBytes());
+	    		}
+    		
+				Document dom = CallWebServices.callServices(doc.getSgmlWithoutTags(),doc.headline,0,0,0,null,doc.getDocNO());
+				fos.write(("<doc docno=\"" + doc.getDocNO() + "\">\n").getBytes());
+				OutputFormat of = new OutputFormat("XML","UTF-8",true);
+                of.setIndent(1);
+                of.setOmitXMLDeclaration(true);
+                of.setIndenting(true);
+                XMLSerializer serializer = new XMLSerializer(fos,of);
+                serializer.asDOMSerializer();
+                serializer.serialize( dom.getDocumentElement() );
+                fos.write("</doc>\n".getBytes());
+                
+                
+                fos.flush();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    		//System.out.println(doc.getSgml());
+			//System.out.println(doc.getSgmlWithoutTags());
 		}
-    	
-    	iter = new DocumentIterator("C:\\WORKSPACE_JM\\DATA\\COLLECTIONS\\GeoCLEF\\en\\lat-en");
-    	
-    	while ((doc = iter.next()) != null)
-    	{
-			//System.out.println(doc.getSgml());
-		}
+    	fos.write("\n</docs>\n".getBytes());
+		fos.close();
     }
 }

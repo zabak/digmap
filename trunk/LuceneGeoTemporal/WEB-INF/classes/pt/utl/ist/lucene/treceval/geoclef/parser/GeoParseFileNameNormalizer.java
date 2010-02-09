@@ -39,12 +39,12 @@ public class GeoParseFileNameNormalizer
     }
 
     public static void main(String[] args)
-    {   File f = new File("D:\\Projectos\\coleccoesIR\\geoparse\\gh95");
+    {   File f = new File("C:\\WORKSPACE_JM\\DATA\\COLLECTIONS\\GeoCLEF\\en\\gh-95");
         for(File f2: f.listFiles())
         {
             System.out.println(f2.getName());
         }
-        new GeoParseFileNameNormalizer().normalize("D:\\Projectos\\coleccoesIR\\geoparse\\gh95");
+        new GeoParseFileNameNormalizer().normalize("C:\\WORKSPACE_JM\\DATA\\COLLECTIONS\\GeoCLEF\\en\\gh-95");
 
         for(File f2: f.listFiles())
         {

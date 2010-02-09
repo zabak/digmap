@@ -61,7 +61,7 @@ public class CallWebServices {
             System.getProperties().setProperty("http.proxyPort","" + proxyPort);
             InetSocketAddress addr = new InetSocketAddress(proxyHost,proxyPort);
             httpProxy = new Proxy(Proxy.Type.HTTP, addr);
-            System.out.println("Using Proxy:" + proxyHost + ":" + proxyPort);
+           // System.out.println("Using Proxy:" + proxyHost + ":" + proxyPort);
         }
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setValidating(false);
@@ -103,7 +103,7 @@ public class CallWebServices {
             System.getProperties().setProperty("http.proxyPort","" + proxyPort);
             InetSocketAddress addr = new InetSocketAddress(proxyHost,proxyPort);
             httpProxy = new Proxy(Proxy.Type.HTTP, addr);
-            System.out.println("Using Proxy:" + proxyHost + ":" + proxyPort);
+            //System.out.println("Using Proxy:" + proxyHost + ":" + proxyPort);
         }
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setValidating(false);
@@ -339,7 +339,7 @@ public class CallWebServices {
             System.getProperties().setProperty("http.proxyPort","" + proxyPort);
             InetSocketAddress addr = new InetSocketAddress(proxyHost,proxyPort);
             httpProxy = new Proxy(Proxy.Type.HTTP, addr);
-            System.out.println("Using Proxy:" + proxyHost + ":" + proxyPort);
+           // System.out.println("Using Proxy:" + proxyHost + ":" + proxyPort);
         }
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setValidating(false);

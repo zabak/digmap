@@ -40,7 +40,7 @@ public abstract class GeoClefDocument {
     protected String year = "1995";
     protected String month;
     protected String day;
-    
+    String fileName;
     String docNO;
     
     public GeoClefDocument() 
@@ -50,8 +50,49 @@ public abstract class GeoClefDocument {
     protected abstract void setDate(String filename);
     
 
-    public GeoClefDocument(BufferedReader reader, String fileName) throws IOException, EOFException
+    public String getYear() {
+		return year;
+	}
+
+	public void setYear(String year) {
+		this.year = year;
+	}
+
+	public String getMonth() {
+		return month;
+	}
+
+	public void setMonth(String month) {
+		this.month = month;
+	}
+
+	public String getDay() {
+		return day;
+	}
+
+	public void setDay(String day) {
+		this.day = day;
+	}
+
+	public String getHeadline() {
+		return headline;
+	}
+
+	public void setHeadline(String headline) {
+		this.headline = headline;
+	}
+
+	public String getDocNO() {
+		return docNO;
+	}
+
+	public void setDocNO(String docNO) {
+		this.docNO = docNO;
+	}
+
+	public GeoClefDocument(BufferedReader reader, String fileName) throws IOException, EOFException
     {	
+		this.fileName = fileName;
     	String line;
     	while((line = reader.readLine()) != null && !line.toUpperCase().equals("<DOC>"));
     	if(line == null)
@@ -74,7 +115,14 @@ public abstract class GeoClefDocument {
 				xPathHeadLine = dom.createXPath("//HEADLINE/*/text()");
 			else
 				xPathHeadLine = dom.createXPath("//HEADLINE/text()");
-			XPath xPathText = dom.createXPath("//TEXT/*/text()");
+			
+			XPath xPathText;
+			if(fileName.endsWith(".gz"))
+				xPathText = dom.createXPath("//HEADLINE/*/text()");
+			else
+				xPathText = dom.createXPath("//TEXT/text()");
+			
+			
 			docNO = ((Element)xPathDocNo.selectSingleNode(dom)).getTextTrim();
 			Node headLineElem = xPathHeadLine.selectSingleNode(dom);
 			List<Node> textElems= (List<Node>) xPathText.selectNodes(dom);
@@ -104,7 +152,15 @@ public abstract class GeoClefDocument {
 		}
     }
 
-    public String getSgmlWithoutTags()
+    public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+
+	public String getSgmlWithoutTags()
     {
         return sgmlClean.toString().replaceAll("<[^>]+>","");
     }

@@ -128,7 +128,7 @@ public class DocumentIterator {
 			startFileGh = args[2];
 		if(args.length >= 4)
 			startFileLat = args[3];
-    	
+    	new File(out).mkdir();    
     	//String out = "C:\\WORKSPACE_JM\\DATA\\PARSE";
     	//String data = "C:\\WORKSPACE_JM\\DATA\\COLLECTIONS\\GeoCLEF\\en\\";
     	

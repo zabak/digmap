@@ -15,25 +15,25 @@ import java.io.IOException;
  * @time 17:29:40
  * @email machadofisher@gmail.com
  */
-public class IndexGeoTime {
+public class IndexGeoScope {
     public static String indexPath =  pt.utl.ist.lucene.treceval.geotime.index.Config.indexBase + File.separator + "GEO_TEMP_INDEXED";
 
     public static void main(String[] args) throws IOException {
         IntegratedDocPlaceMakerIterator iterator = new IntegratedDocPlaceMakerIterator(Config.documentPath,Config.placemakerPath);
-//        LgteIndexWriter writer = new LgteIndexWriter(indexPath,new LgteNothingAnalyzer(),true, Model.BM25b);
+        LgteIndexWriter writer = new LgteIndexWriter(indexPath,new LgteNothingAnalyzer(),true, Model.BM25b);
 
         int count = 1;
         IntegratedDocPlaceMakerIterator.DocumentWithPlaces d;
         while((d = iterator.next())!=null)
         {
-//            indexDocument(writer,d);
-//            count++;
-//            if(count % 1000 == 0)
-//            {
-//                System.out.println(count + ":" + d.getD().getDocNO());
-//            }
+            indexDocument(writer,d);
+            count++;
+            if(count % 1000 == 0)
+            {
+                System.out.println(count + ":" + d.getD().getDocNO());
+            }
         }
-//        writer.close();
+        writer.close();
     }
 
     private static void indexDocument(LgteIndexWriter writer, IntegratedDocPlaceMakerIterator.DocumentWithPlaces d) throws IOException

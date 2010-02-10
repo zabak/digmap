@@ -17,7 +17,7 @@ import java.io.IOException;
  * @time 17:29:40
  * @email machadofisher@gmail.com
  */
-public class IndexGeoTimeParagraphs {
+public class IndexGeoScopeParagraphs {
     public static String indexPath =  pt.utl.ist.lucene.treceval.geotime.index.IndexGeoTime.indexPath + "_sentences";
 
     public static void main(String[] args) throws IOException {

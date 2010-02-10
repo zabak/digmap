@@ -1,4 +1,4 @@
-package pt.utl.ist.lucene.treceval.geotime.queries;
+package pt.utl.ist.lucene.utils.queries;
 
 import org.dom4j.*;
 import org.apache.log4j.Logger;
@@ -6,6 +6,7 @@ import org.apache.log4j.Logger;
 import java.util.List;
 
 import pt.utl.ist.lucene.utils.Dom4jUtil;
+import pt.utl.ist.lucene.utils.queries.Query;
 
 /**
  * @author Jorge Machado

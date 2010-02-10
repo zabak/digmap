@@ -1,7 +1,7 @@
 package pt.utl.ist.lucene.test.reasoningqueryprocessor;
 
-import pt.utl.ist.lucene.treceval.geotime.queries.QueryParser;
-import pt.utl.ist.lucene.treceval.geotime.queries.Query;
+import pt.utl.ist.lucene.utils.queries.QueryParser;
+import pt.utl.ist.lucene.utils.queries.Query;
 import org.dom4j.DocumentException;
 import junit.framework.TestCase;
 

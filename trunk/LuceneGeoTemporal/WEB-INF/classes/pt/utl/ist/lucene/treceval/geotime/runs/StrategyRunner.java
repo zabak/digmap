@@ -10,7 +10,7 @@ import pt.utl.ist.lucene.analyzer.LgteWhiteSpacesAnalyzer;
 import pt.utl.ist.lucene.treceval.IndexCollections;
 import pt.utl.ist.lucene.treceval.SearchTopics;
 import pt.utl.ist.lucene.treceval.geotime.index.Config;
-import pt.utl.ist.lucene.treceval.geotime.queries.StrategyQueryBuilder;
+import pt.utl.ist.lucene.utils.queries.StrategyQueryBuilder;
 import pt.utl.ist.lucene.treceval.handlers.topics.output.OutputFormat;
 import pt.utl.ist.lucene.treceval.handlers.topics.output.Topic;
 import pt.utl.ist.lucene.treceval.handlers.topics.output.impl.RunIdOutputFormatFactory;
@@ -101,7 +101,6 @@ public class StrategyRunner {
         Text,
         Sentences,
         Comb
-
     }
 
     public static void runBase(String desc, RunType runType, String outputFile, LgteIndexSearcherWrapper searcher, StrategyQueryBuilder.Iterator iter,boolean keys, String groupField,boolean expansion) throws IOException, DocumentException, ParseException

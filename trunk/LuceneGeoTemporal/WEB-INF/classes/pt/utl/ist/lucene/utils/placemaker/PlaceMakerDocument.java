@@ -5,6 +5,9 @@ import org.apache.log4j.Logger;
 import pt.utl.ist.lucene.utils.Dom4jUtil;
 import pt.utl.ist.lucene.forms.GeoPoint;
 
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
+import java.io.StringWriter;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
@@ -55,14 +58,32 @@ public class PlaceMakerDocument
     }
     public PlaceMakerDocument(String xml,String docIdXpath) throws DocumentException
     {
-        if(docIdXpath != null)
-            this.docIdXpathStr = docIdXpath;
-        init(xml);
-    }
-    private void init(String xml) throws DocumentException
-    {
         this.xml = xml;
         dom = Dom4jUtil.parse(xml);
+        init(docIdXpath);
+    }
+
+    public PlaceMakerDocument(org.w3c.dom.Document dom,String docIdXpath) throws DocumentException 
+    {
+        this(Dom4jUtil.convert(dom),docIdXpath);
+    }
+
+    public PlaceMakerDocument(Document dom,String docIdXpath) throws DocumentException
+    {
+        StringWriter writer = new StringWriter();
+        try {
+            Dom4jUtil.write(dom.getRootElement(),writer);
+            this.xml = writer.toString();
+        } catch (IOException e) {
+            logger.error(e,e);
+        }
+        this.dom = dom;
+        init(docIdXpath);
+    }
+    private void init(String docIdXpath) throws DocumentException
+    {
+        if(docIdXpath != null)
+            this.docIdXpathStr = docIdXpath;
 
         XPath administrativeWoeidXPath = dom.createXPath("/doc/d:contentlocation/d:document/d:administrativeScope/d:woeId");
         administrativeWoeidXPath.setNamespaceURIs(namespaces);

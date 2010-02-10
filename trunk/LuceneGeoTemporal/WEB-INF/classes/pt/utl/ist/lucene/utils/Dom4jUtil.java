@@ -13,6 +13,9 @@ import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
 import org.xml.sax.*;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -143,4 +146,17 @@ public class Dom4jUtil
         XMLWriter writer = new XMLWriter(stream);
         writer.write( document );
     }
+
+    public static org.dom4j.Document convert( org.w3c.dom.Document dom) 
+    {
+//        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+//        DocumentBuilder builder = factory.newDocumentBuilder();
+//        org.w3c.dom.Document doc1 = builder.newDocument();
+//        doc1.appendChild(dom.getFirstChild());
+//        // Convert w3c document to dom4j document
+        org.dom4j.io.DOMReader reader = new org.dom4j.io.DOMReader();
+        return reader.read(dom);
+    }
+
+
 }

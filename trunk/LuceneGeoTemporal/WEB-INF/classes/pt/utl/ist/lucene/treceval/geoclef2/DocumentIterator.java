@@ -33,9 +33,10 @@ public class DocumentIterator {
     BufferedReader reader;
     List<File> files;
     int index = 0;
-
-    public DocumentIterator(String dataPath) throws IOException
+	String startFile;
+    public DocumentIterator(String dataPath, String startFile) throws IOException
     {
+		this.startFile = startFile;
         this.dataPath = dataPath;
         init();
     }
@@ -78,8 +79,11 @@ public class DocumentIterator {
             });
             for(File f: filesArray)
             {
-                if(f.isFile() && (f.getName().endsWith("gz") || f.getName().endsWith(".sgml")))
-                    files.add(f);
+				if(f.getName().compareTo(startFile) >= 0)
+				{
+					if(f.isFile() && (f.getName().endsWith("gz") || f.getName().endsWith(".sgml")))
+						files.add(f);
+				}
             }
         }
         prepareRead();
@@ -129,18 +133,24 @@ public class DocumentIterator {
     public static void main(String[] args) throws IOException
     {
     	String out = args[0];
-    	String data = args[1];    	
+    	String data = args[1]; 
+		String startFileGh = "";
+		String startFileLat = "";
+		if(args.lenght() >= 3)
+			startFileGh = args[2];
+		if(args.lenght() >= 4)
+			startFileLat = args[3];
     	
     	//String out = "C:\\WORKSPACE_JM\\DATA\\PARSE";
     	//String data = "C:\\WORKSPACE_JM\\DATA\\COLLECTIONS\\GeoCLEF\\en\\";
     	
-    	parse(out, data + File.separator + "gh-95");
-    	parse(out, data + File.separator + "lat-en");
+    	parse(out, data + File.separator + "gh-95", startFileGh);
+    	parse(out, data + File.separator + "lat-en", startFileLat);
     }
     
-    private static void parse(String outputPath, String dataPath) throws IOException
+    private static void parse(String outputPath, String dataPath, String startFile) throws IOException
     {
-    	DocumentIterator iter = new DocumentIterator(dataPath);
+    	DocumentIterator iter = new DocumentIterator(dataPath,startFile);
     	FileOutputStream fos = null;
     	GeoClefDocument doc;
     	String oldFilename = "";

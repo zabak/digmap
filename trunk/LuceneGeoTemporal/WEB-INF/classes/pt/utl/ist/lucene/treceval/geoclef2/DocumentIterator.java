@@ -1,29 +1,17 @@
 package pt.utl.ist.lucene.treceval.geoclef2;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import com.sun.org.apache.xml.internal.serialize.OutputFormat;
+import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
+import org.apache.log4j.Logger;
+import org.w3c.dom.Document;
+import pt.utl.ist.lucene.treceval.geotime.webservices.CallWebServices;
+
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
-
-import org.apache.log4j.Logger;
-import org.apache.solr.handler.XmlUpdateRequestHandler;
-import org.python.core.parser;
-import org.w3c.dom.Document;
-
-import com.sun.org.apache.xml.internal.serialize.OutputFormat;
-import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
-
-import pt.utl.ist.lucene.treceval.geotime.webservices.CallWebServices;
-import pt.utl.ist.lucene.utils.Dom4jUtil;
-import pt.utl.ist.lucene.utils.XmlUtils;
 
 public class DocumentIterator {
     private static final Logger logger = Logger.getLogger(DocumentIterator.class);
@@ -136,9 +124,9 @@ public class DocumentIterator {
     	String data = args[1]; 
 		String startFileGh = "";
 		String startFileLat = "";
-		if(args.lenght() >= 3)
+		if(args.length >= 3)
 			startFileGh = args[2];
-		if(args.lenght() >= 4)
+		if(args.length >= 4)
 			startFileLat = args[3];
     	
     	//String out = "C:\\WORKSPACE_JM\\DATA\\PARSE";

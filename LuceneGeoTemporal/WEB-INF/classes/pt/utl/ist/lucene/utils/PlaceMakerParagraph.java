@@ -1,6 +1,5 @@
 package pt.utl.ist.lucene.utils;
 
-import pt.utl.ist.lucene.utils.nlp.Sentence;
 import pt.utl.ist.lucene.utils.nlp.Paragraph;
 import pt.utl.ist.lucene.utils.placemaker.PlaceMakerDocument;
 

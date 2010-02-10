@@ -1,4 +1,4 @@
-package pt.utl.ist.lucene.treceval.geotime.queries;
+package pt.utl.ist.lucene.utils.queries;
 
 import java.util.List;
 import java.util.ArrayList;

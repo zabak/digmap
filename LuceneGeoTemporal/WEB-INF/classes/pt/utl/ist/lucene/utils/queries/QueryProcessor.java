@@ -1,4 +1,4 @@
-package pt.utl.ist.lucene.treceval.geotime.queries;
+package pt.utl.ist.lucene.utils.queries;
 
 import org.apache.lucene.search.Filter;
 import org.apache.lucene.search.TermsFilter;
@@ -7,11 +7,10 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.log4j.Logger;
 import pt.utl.ist.lucene.treceval.geotime.index.Config;
-import pt.utl.ist.lucene.LgteQuery;
-import pt.utl.ist.lucene.LgteQueryParser;
 import pt.utl.ist.lucene.utils.placemaker.PlaceNameNormalizer;
 import pt.utl.ist.lucene.analyzer.LgteNothingAnalyzer;
 import com.pjaol.lucene.search.SerialChainFilter;
+import pt.utl.ist.lucene.utils.queries.Query;
 
 import java.io.IOException;
 

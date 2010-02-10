@@ -1,4 +1,4 @@
-package pt.utl.ist.lucene.treceval.geotime.queries;
+package pt.utl.ist.lucene.utils.queries;
 
 import org.dom4j.Element;
 import org.dom4j.Document;
@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.ArrayList;
 
 import com.pjaol.lucene.search.SerialChainFilter;
+import pt.utl.ist.lucene.utils.queries.QueryParser;
+import pt.utl.ist.lucene.utils.queries.QueryProcessor;
 
 /**
  * @author Jorge Machado

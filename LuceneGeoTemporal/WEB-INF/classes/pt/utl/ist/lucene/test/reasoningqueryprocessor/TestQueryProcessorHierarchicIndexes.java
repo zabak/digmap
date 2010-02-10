@@ -5,9 +5,6 @@ import pt.utl.ist.lucene.*;
 import pt.utl.ist.lucene.analyzer.LgteNothingAnalyzer;
 import pt.utl.ist.lucene.utils.Files;
 import pt.utl.ist.lucene.treceval.geotime.index.Config;
-import pt.utl.ist.lucene.treceval.geotime.queries.Query;
-import pt.utl.ist.lucene.treceval.geotime.queries.QueryParser;
-import pt.utl.ist.lucene.treceval.geotime.queries.QueryProcessor;
 
 import java.io.IOException;
 import java.util.Map;
@@ -15,7 +12,6 @@ import java.util.HashMap;
 
 import org.dom4j.DocumentException;
 import org.apache.lucene.queryParser.ParseException;
-import org.apache.lucene.search.Filter;
 import org.apache.lucene.search.QueryFilter;
 import org.apache.lucene.search.TermsFilter;
 import org.apache.lucene.index.IndexReader;

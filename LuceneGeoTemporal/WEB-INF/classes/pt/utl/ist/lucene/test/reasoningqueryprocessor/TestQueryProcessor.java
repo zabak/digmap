@@ -4,9 +4,9 @@ import pt.utl.ist.lucene.*;
 import pt.utl.ist.lucene.utils.Files;
 import pt.utl.ist.lucene.utils.placemaker.PlaceNameNormalizer;
 import pt.utl.ist.lucene.treceval.geotime.index.Config;
-import pt.utl.ist.lucene.treceval.geotime.queries.Query;
-import pt.utl.ist.lucene.treceval.geotime.queries.QueryParser;
-import pt.utl.ist.lucene.treceval.geotime.queries.QueryProcessor;
+import pt.utl.ist.lucene.utils.queries.Query;
+import pt.utl.ist.lucene.utils.queries.QueryParser;
+import pt.utl.ist.lucene.utils.queries.QueryProcessor;
 
 import java.io.IOException;
 

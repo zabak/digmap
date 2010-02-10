@@ -28,9 +28,10 @@ public class PlaceMakerDocument
         namespaces.put("gml","http://www.opengis.net/gml");
 
     }
+    String docIdXpathStr;
     Document dom;
     String xml;
-    String docId;
+    String docId = "//doc/@id";
 
     String administrativeWoeid;
     String administrativeType;
@@ -50,7 +51,16 @@ public class PlaceMakerDocument
 
     public PlaceMakerDocument(String xml) throws DocumentException
     {
-
+        this(xml,null);
+    }
+    public PlaceMakerDocument(String xml,String docIdXpath) throws DocumentException
+    {
+        if(docIdXpath != null)
+            this.docIdXpathStr = docIdXpath;
+        init(xml);
+    }
+    private void init(String xml) throws DocumentException
+    {
         this.xml = xml;
         dom = Dom4jUtil.parse(xml);
 
@@ -87,7 +97,7 @@ public class PlaceMakerDocument
         XPath boundingBoxPointY1XPath = dom.createXPath("/doc/d:contentlocation/d:document/gml:Box/gml:coord[2]/gml:Y");
         boundingBoxPointY1XPath.setNamespaceURIs(namespaces);
 
-        XPath docIdXPath = dom.createXPath("//doc/@id");
+        XPath docIdXPath = dom.createXPath(docIdXpathStr);
         docIdXPath.setNamespaceURIs(namespaces);
         docId = ((Attribute)docIdXPath.selectSingleNode(dom)).getValue().trim();
 

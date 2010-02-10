@@ -37,7 +37,7 @@ public abstract class GeoClefDocument {
     Document dom;
     String headline;
     String text = "";
-    protected String year = "1995";
+    protected String year;
     protected String month;
     protected String day;
     String fileName;
@@ -118,7 +118,7 @@ public abstract class GeoClefDocument {
 			
 			XPath xPathText;
 			if(fileName.endsWith(".gz"))
-				xPathText = dom.createXPath("//HEADLINE/*/text()");
+				xPathText = dom.createXPath("//TEXT/*/text()");
 			else
 				xPathText = dom.createXPath("//TEXT/text()");
 			

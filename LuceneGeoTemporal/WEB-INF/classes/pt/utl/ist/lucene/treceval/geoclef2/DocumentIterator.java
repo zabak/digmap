@@ -74,7 +74,8 @@ public class DocumentIterator {
 				}
             }
         }
-        prepareRead();
+        if(files.size() > 0)
+            prepareRead();
     }
 
     private void prepareRead() throws IOException
@@ -97,6 +98,8 @@ public class DocumentIterator {
 
     public GeoClefDocument next() throws IOException
     {
+        if(files.size() == 0)
+            return null;
         String fileName = files.get(index).getName();
         try
         {
@@ -180,7 +183,10 @@ public class DocumentIterator {
     		//System.out.println(doc.getSgml());
 			//System.out.println(doc.getSgmlWithoutTags());
 		}
-    	fos.write("\n</docs>\n".getBytes());
-		fos.close();
+        if(fos != null)
+        {
+            fos.write("\n</docs>\n".getBytes());
+		    fos.close();
+        }
     }
 }

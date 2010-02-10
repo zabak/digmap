@@ -78,6 +78,19 @@ public class Strings
         return txt.replaceAll("[ \t\r\n]+"," ").trim();
     }
 
+    public static String cleanEndSpaces(String txt)
+    {
+        if(txt == null)
+            return txt;
+        int spaces = 0;
+        for(int i = txt.length() - 1; i >= 0 && txt.charAt(i) == ' '; i--)
+        {
+            if(txt.charAt(i) == ' ')
+                spaces++;
+        }
+        return txt.substring(0,txt.length() - spaces);
+    }
+
     /**
      * To represent years, if point is filled only point matters
      */

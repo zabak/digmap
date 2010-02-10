@@ -11,8 +11,6 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.io.*;
 
-import pt.utl.ist.lucene.utils.placemaker.PlaceMakerDocument;
-
 /**
  * @author Jorge Machado
  * @date 2/Dez/2009
@@ -27,6 +25,14 @@ public class PlaceMakerIterator {
     BufferedReader reader;
     List<File> files;
     int index = 0;
+    String docIdXPath = null;
+
+    public PlaceMakerIterator(String dataPath, String docIdXPath) throws IOException
+    {
+        this.docIdXPath = docIdXPath;
+        this.dataPath = dataPath;
+        init();
+    }
 
     public PlaceMakerIterator(String dataPath) throws IOException {
         this.dataPath = dataPath;
@@ -105,7 +111,7 @@ public class PlaceMakerIterator {
             else
             {
                 builder.append(line.substring(0,line.indexOf("</doc>")+6));
-                return new PlaceMakerDocument(builder.toString());
+                return new PlaceMakerDocument(builder.toString(),docIdXPath);
             }
         }
 

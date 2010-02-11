@@ -318,7 +318,7 @@ public class StrategyQueryBuilder
 
 
     public static void main(String [] args) throws IOException, DocumentException, ParseException {
-        StrategyQueryBuilder strategyQueryBuilder = new StrategyQueryBuilder(Config.geoclefBase +  File.separator + "topics" + File.separator + "topics08.xml",false);
+        StrategyQueryBuilder strategyQueryBuilder = new StrategyQueryBuilder(Config.geoclefBase +  File.separator + "topics" + File.separator + "topics08Formatted.xml",false);
         Iterator.QueryPackage lastQ = null;
         System.out.println("####################################");
         Iterator iter = strategyQueryBuilder.baseSimpleIterator();

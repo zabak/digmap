@@ -62,13 +62,13 @@ public class IndexWoeidParagraphs {
 
     static Map<String, Long[]> belongTosMap;
 
-    static {
-        try {
-            belongTosMap = openBelongTosWoeid();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+//    static {
+//        try {
+//            belongTosMap = openBelongTosWoeid();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     public static void main(String[] args) throws IOException, DocumentException {
 
@@ -89,7 +89,7 @@ public class IndexWoeidParagraphs {
         while((placeMakerDocument = placeMakerIterator.next())!=null)
         {
 
-            if(previousID.length() > 0 && !previousID.substring(0,14).equals(placeMakerDocument.getD().getFileName()))
+            if(previousID.length() > 0 && !previousID.equals(placeMakerDocument.getD().getFileName()))
                 System.out.println(i + ":" + placeMakerDocument.getD().getFileName());
             previousID = placeMakerDocument.getD().getFileName();
             indexDocument(writer,placeMakerDocument);
@@ -130,7 +130,7 @@ public class IndexWoeidParagraphs {
                     G_PLACE_REF_WOEID.append(PlaceNameNormalizer.normalizeWoeid(placeDetails.getWoeId())).append(" ");
                     G_GEO_ALL_WOEID.append(PlaceNameNormalizer.normalizeWoeid(placeDetails.getWoeId())).append(" ");
                     G_GEO_PLACE_TYPE.append(placeDetails.getType()).append(" ");
-                    addBelongTos(placeDetails.getWoeId(),G_PLACE_BELONG_TOS_WOEID,G_GEO_ALL_WOEID);
+//                    addBelongTos(placeDetails.getWoeId(),G_PLACE_BELONG_TOS_WOEID,G_GEO_ALL_WOEID);
                 }
             }
             doc.indexTextNoStore(Config.G_GEO_ALL_WOEID + "_" + Config.SENTENCES,G_GEO_ALL_WOEID.toString());

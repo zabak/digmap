@@ -1,35 +1,39 @@
 package pt.utl.ist.lucene.treceval.geotime.webservices;
 
-import org.w3c.dom.*;
-import org.w3c.dom.Document;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.log4j.Logger;
-import org.deegree.model.spatialschema.JTSAdapter;
-import org.deegree.model.spatialschema.GMLGeometryAdapter;
-
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.namespace.NamespaceContext;
-import javax.xml.xpath.XPathConstants;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.io.*;
-import java.net.*;
-import java.nio.charset.CharsetDecoder;
-import java.nio.charset.Charset;
-import java.nio.charset.CharacterCodingException;
-import java.nio.ByteBuffer;
-
 import com.sun.org.apache.xml.internal.serialize.OutputFormat;
 import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 import com.sun.tools.javac.util.Pair;
 import com.vividsolutions.jts.geom.Geometry;
-import pt.utl.ist.lucene.config.ConfigProperties;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.log4j.Logger;
+import org.deegree.model.spatialschema.GMLGeometryAdapter;
+import org.deegree.model.spatialschema.JTSAdapter;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import pt.utl.ist.lucene.analyzer.LgteDiacriticFilter;
-import pt.utl.ist.lucene.utils.placemaker.BelongTosDocument;
+import pt.utl.ist.lucene.config.ConfigProperties;
 import pt.utl.ist.lucene.utils.Dom4jUtil;
+import pt.utl.ist.lucene.utils.placemaker.BelongTosDocument;
+
+import javax.xml.namespace.NamespaceContext;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.xpath.XPathConstants;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.net.URL;
+import java.nio.ByteBuffer;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class CallWebServices {
 
@@ -204,6 +208,8 @@ public class CallWebServices {
             }
             post.releaseConnection();
             String geo = getGeometryString(document);
+            if(geo.indexOf("<gml:X>-180</gml:X>")>=0)
+                logger.warn("Document "  + id + " have zero Places: scope: " + geo);
             String xml = geo.toString();
 
             logger.info(xml);

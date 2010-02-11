@@ -21,10 +21,10 @@ public class DocumentIterator {
     BufferedReader reader;
     List<File> files;
     int index = 0;
-	String startFile;
+    String startFile;
     public DocumentIterator(String dataPath, String startFile) throws IOException
     {
-		this.startFile = startFile;
+        this.startFile = startFile;
         this.dataPath = dataPath;
         init();
     }
@@ -67,11 +67,11 @@ public class DocumentIterator {
             });
             for(File f: filesArray)
             {
-				if(f.getName().compareTo(startFile) >= 0)
-				{
-					if(f.isFile() && (f.getName().endsWith("gz") || f.getName().endsWith(".sgml")))
-						files.add(f);
-				}
+                if(f.getName().compareTo(startFile) >= 0)
+                {
+                    if(f.isFile() && (f.getName().endsWith("gz") || f.getName().endsWith(".sgml")))
+                        files.add(f);
+                }
             }
         }
         if(files.size() > 0)
@@ -90,9 +90,9 @@ public class DocumentIterator {
             System.gc();
         }
         if(files.get(index).getName().endsWith(".gz"))
-        	inputStream = new GZIPInputStream(new FileInputStream(files.get(index)));
+            inputStream = new GZIPInputStream(new FileInputStream(files.get(index)));
         else
-        	inputStream = new FileInputStream(files.get(index));
+            inputStream = new FileInputStream(files.get(index));
         reader = new BufferedReader(new InputStreamReader(inputStream));
     }
 
@@ -103,10 +103,10 @@ public class DocumentIterator {
         String fileName = files.get(index).getName();
         try
         {
-        	if(fileName.endsWith(".gz"))
-        		return new LaDocument(reader,fileName);
-        	else
-        		return new GaDocument(reader,fileName);
+            if(fileName.endsWith(".gz"))
+                return new LaDocument(reader,fileName);
+            else
+                return new GaDocument(reader,fileName);
         }
         catch (EOFException e)
         {
@@ -120,52 +120,58 @@ public class DocumentIterator {
                 return null;
         }
     }
-    
+
     public static void main(String[] args) throws IOException
     {
-    	String out = args[0];
-    	String data = args[1]; 
-		String startFileGh = "";
-		String startFileLat = "";
-		if(args.length >= 3)
-			startFileGh = args[2];
-		if(args.length >= 4)
-			startFileLat = args[3];
-    	new File(out).mkdir();    
-    	//String out = "C:\\WORKSPACE_JM\\DATA\\PARSE";
-    	//String data = "C:\\WORKSPACE_JM\\DATA\\COLLECTIONS\\GeoCLEF\\en\\";
-    	
-    	parse(out, data + File.separator + "gh-95", startFileGh);
-    	parse(out, data + File.separator + "lat-en", startFileLat);
+//    	String out = args[0];
+//    	String data = args[1];
+        String out = "C:\\Servidores\\DATA\\COLLECTIONS\\geoclef\\PlaceMaker";
+        String data = "C:\\Servidores\\DATA\\COLLECTIONS\\geoclef\\en";
+
+        String startFileGh = "";
+        String startFileLat = "";
+        if(args.length >= 3)
+            startFileGh = args[2];
+        if(args.length >= 4)
+            startFileLat = args[3];
+        new File(out).mkdir();
+
+        parse(out, data, startFileGh);
+//        parse(out, data + File.separator + "lat-en", startFileLat);
     }
-    
+
     private static void parse(String outputPath, String dataPath, String startFile) throws IOException
     {
-    	DocumentIterator iter = new DocumentIterator(dataPath,startFile);
-    	FileOutputStream fos = null;
-    	GeoClefDocument doc;
-    	String oldFilename = "";
-    	while ((doc = iter.next()) != null)
-    	{
-    		try 
-    		{
-	            
-	    		if(!doc.getFileName().equals(oldFilename))
-	    		{
-	    			if(fos!= null)
-	    			{	
-	    				fos.write("\n</docs>\n".getBytes());
-	    				fos.close();
-	    			}
-	    			oldFilename = doc.getFileName();
-	    			fos = new FileOutputStream(outputPath + File.separator + doc.getFileName() + ".xml");
-	    			fos.write("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n".getBytes());
-	    			fos.write("<docs>\n".getBytes());
-	    		}
-    		
-				Document dom = CallWebServices.callServices(doc.getSgmlWithoutTags(),doc.headline,0,0,0,null,doc.getDocNO());
-				fos.write(("<doc docno=\"" + doc.getDocNO() + "\">\n").getBytes());
-				OutputFormat of = new OutputFormat("XML","UTF-8",true);
+        DocumentIterator iter = new DocumentIterator(dataPath,startFile);
+        FileOutputStream fos = null;
+        GeoClefDocument doc;
+        String oldFilename = "";
+        while ((doc = iter.next()) != null)
+        {
+//            try {
+//                Thread.sleep(Math.round(2000 * Math.random()));
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+//            }
+            try
+            {
+
+                if(!doc.getFileName().equals(oldFilename))
+                {
+                    if(fos!= null)
+                    {
+                        fos.write("\n</docs>\n".getBytes());
+                        fos.close();
+                    }
+                    oldFilename = doc.getFileName();
+                    fos = new FileOutputStream(outputPath + File.separator + doc.getFileName() + ".xml");
+                    fos.write("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n".getBytes());
+                    fos.write("<docs>\n".getBytes());
+                }
+
+                Document dom = CallWebServices.callServices(doc.getSgmlWithoutTags(),doc.headline,0,0,0,null,doc.getDocNO());
+                fos.write(("<doc docno=\"" + doc.getDocNO() + "\">\n").getBytes());
+                OutputFormat of = new OutputFormat("XML","UTF-8",true);
                 of.setIndent(1);
                 of.setOmitXMLDeclaration(true);
                 of.setIndenting(true);
@@ -173,20 +179,20 @@ public class DocumentIterator {
                 serializer.asDOMSerializer();
                 serializer.serialize( dom.getDocumentElement() );
                 fos.write("</doc>\n".getBytes());
-                
-                
+
+
                 fos.flush();
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-    		//System.out.println(doc.getSgml());
-			//System.out.println(doc.getSgmlWithoutTags());
-		}
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            //System.out.println(doc.getSgml());
+            //System.out.println(doc.getSgmlWithoutTags());
+        }
         if(fos != null)
         {
             fos.write("\n</docs>\n".getBytes());
-		    fos.close();
+            fos.close();
         }
     }
 }

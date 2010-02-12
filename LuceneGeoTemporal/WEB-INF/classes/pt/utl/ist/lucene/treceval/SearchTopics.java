@@ -128,6 +128,20 @@ public class SearchTopics implements ISearchCallBack
 
     }
 
+    public static void evaluateMetricsFiles(List<String> outputFiles, String assessementsFile) throws IOException, DocumentException
+    {
+        for (String c : outputFiles)
+        {
+            String[] args = new String[]{c, assessementsFile};
+            PrintStream out = System.out;
+            System.setOut(new PrintStream(new FileOutputStream(c + outputReportSuffix)));
+            ireval.Main.main(args);
+            System.out.close();
+            System.setOut(out);
+        }
+
+    }
+
     /**
      * Static service to search in a list of Configurations
      *
@@ -290,7 +304,7 @@ public class SearchTopics implements ISearchCallBack
     }
 
 
-     /**
+    /**
      * This method will call write for each hit in hits
      *
      * @param format output format class
@@ -410,5 +424,48 @@ public class SearchTopics implements ISearchCallBack
         }
         fw.write("</results>");
         fw.write("</run>");
+    }
+
+    public static void createRunPackage(String toDir, List<String> outputFiles,  Properties queryProperties) throws IOException
+    {
+        try
+        {
+            FileWriter fw = new FileWriter(toDir + File.separator +  "runs.xml");
+            fw.write("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+            fw.write("<?xml-stylesheet type=\"text/xsl\" href=\"runs.xsl\"?>\n");
+            fw.write("<runs>");
+            for (String outputFile : outputFiles) {
+                fw.write("<run id=\"" + XmlUtils.escape(outputFile) + "\">");
+
+                fw.write("<configuration>");
+                fw.write("<base>");
+                writeProps(fw, ConfigProperties.getProperties());
+                fw.write("</base>");
+                fw.write("<override>");
+                writeProps(fw,queryProperties);
+                fw.write("</override>");
+                fw.write("</configuration>");
+                fw.write("<results>");
+                ReportFile rf = new ReportFile(new File(outputFile + outputReportSuffix));
+                ReportResult all = rf.getResult("all");
+                for(int i = 0; i < all.getValues().length; i++)
+                {
+                    fw.write("<result name=\"" + XmlUtils.escape(ReportResult.names[i]) + "\">");
+                    fw.write(XmlUtils.escape(all.getValues()[i]));
+                    fw.write("</result>");
+                }
+                fw.write("</results>");
+                fw.write("</run>");
+            }
+            fw.write("</runs>");
+            fw.flush();
+            fw.close();
+        }catch(Exception e)
+        {
+            logger.error(e,e);
+        }
+
+
+
     }
 }

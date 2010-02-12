@@ -16,11 +16,11 @@ package org.apache.lucene.search;
  * limitations under the License.
  */
 
-import java.io.IOException;
-
-import org.apache.lucene.index.TermDocs;
-import org.apache.lucene.index.Term;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.Term;
+import org.apache.lucene.index.TermDocs;
+
+import java.io.IOException;
 
 final class TermScorerVectorSpace extends LgteFieldedTermScorer {
     private Weight weight;
@@ -99,7 +99,7 @@ final class TermScorerVectorSpace extends LgteFieldedTermScorer {
     }
 
     public Explanation explain(int doc) throws IOException {
-        TermQuery query = (TermQuery)weight.getQuery();
+        TermQueryVectorSpace query = (TermQueryVectorSpace)weight.getQuery();
         Explanation tfExplanation = new Explanation();
         int tf = 0;
         while (pointer < pointerMax) {

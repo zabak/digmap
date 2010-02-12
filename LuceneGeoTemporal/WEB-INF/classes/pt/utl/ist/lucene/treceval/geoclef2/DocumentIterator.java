@@ -123,12 +123,12 @@ public class DocumentIterator {
 
     public static void main(String[] args) throws IOException
     {
-    	String out = args[0];
-    	String data = args[1];
-//        String out = "C:\\Servidores\\DATA\\COLLECTIONS\\geoclef\\PlaceMaker";
-//        String data = "C:\\Servidores\\DATA\\COLLECTIONS\\geoclef\\en";
+//    	String out = args[0];
+//    	String data = args[1];
+        String out = "C:\\Servidores\\DATA\\COLLECTIONS\\geoclef\\PlaceMaker";
+        String data = "C:\\Servidores\\DATA\\COLLECTIONS\\geoclef\\en";
 
-        String startFile = "";
+        String startFile = "la063094.gz";
 
         if(args.length >= 3)
             startFile = args[2];

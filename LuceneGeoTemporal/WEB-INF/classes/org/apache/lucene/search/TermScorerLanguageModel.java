@@ -203,7 +203,7 @@ final class TermScorerLanguageModel extends LgteFieldedTermScorer {
 
         tfExplanation.setValue(simFinal);
         tfExplanation.setDescription(
-                "lm(lambda=" + lambda + " useFieldLens=" + useFieldLengths + " termFreq(" + query.getTerm() + ")=" + tf + " sim=" + sim +" doclen=" + docLen + " collSize=" + collSize + ") ");
+                "lm(doc = " + doc + " + lambda=" + lambda + " useFieldLens=" + useFieldLengths + " termFreq(" + query.getTerm() + ")=" + tf + " sim=" + sim +" doclen=" + docLen + " collSize=" + collSize + ") ");
 
         return tfExplanation;
     }

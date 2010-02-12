@@ -123,21 +123,19 @@ public class DocumentIterator {
 
     public static void main(String[] args) throws IOException
     {
-//    	String out = args[0];
-//    	String data = args[1];
-        String out = "C:\\Servidores\\DATA\\COLLECTIONS\\geoclef\\PlaceMaker";
-        String data = "C:\\Servidores\\DATA\\COLLECTIONS\\geoclef\\en";
+    	String out = args[0];
+    	String data = args[1];
+//        String out = "C:\\Servidores\\DATA\\COLLECTIONS\\geoclef\\PlaceMaker";
+//        String data = "C:\\Servidores\\DATA\\COLLECTIONS\\geoclef\\en";
 
-        String startFileGh = "";
-        String startFileLat = "";
+        String startFile = "";
+
         if(args.length >= 3)
-            startFileGh = args[2];
-        if(args.length >= 4)
-            startFileLat = args[3];
+            startFile = args[2];
+        
         new File(out).mkdir();
 
-        parse(out, data, startFileGh);
-//        parse(out, data + File.separator + "lat-en", startFileLat);
+        parse(out, data, startFile);
     }
 
     private static void parse(String outputPath, String dataPath, String startFile) throws IOException

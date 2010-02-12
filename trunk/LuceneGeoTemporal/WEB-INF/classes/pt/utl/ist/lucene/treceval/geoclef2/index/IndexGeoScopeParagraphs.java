@@ -6,7 +6,6 @@ import pt.utl.ist.lucene.Model;
 import pt.utl.ist.lucene.analyzer.LgteNothingAnalyzer;
 import pt.utl.ist.lucene.treceval.geoclef2.DocumentPlaceMakerParagraphs;
 import pt.utl.ist.lucene.treceval.geoclef2.IntegratedDocPlaceMakerIterator;
-import pt.utl.ist.lucene.treceval.geotime.index.Config;
 import pt.utl.ist.lucene.utils.PlaceMakerParagraph;
 
 import java.io.IOException;
@@ -17,8 +16,9 @@ import java.io.IOException;
  * @time 17:29:40
  * @email machadofisher@gmail.com
  */
-public class IndexGeoScopeParagraphs {
-    public static String indexPath =  pt.utl.ist.lucene.treceval.geotime.index.IndexGeoTime.indexPath + "_sentences";
+public class IndexGeoScopeParagraphs
+{
+    public static String indexPath =  pt.utl.ist.lucene.treceval.geoclef2.index.IndexGeoScope.indexPath + "_sentences";
 
     public static void main(String[] args) throws IOException {
         IntegratedDocPlaceMakerIterator iterator = new IntegratedDocPlaceMakerIterator(Config.documentPath,Config.placemakerPath);

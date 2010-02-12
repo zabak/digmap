@@ -2,13 +2,9 @@ package pt.utl.ist.lucene.treceval.geoclef2;
 
 import org.apache.log4j.Logger;
 import org.dom4j.DocumentException;
-import pt.utl.ist.lucene.treceval.geotime.NyTimesDocument;
-import pt.utl.ist.lucene.utils.PlaceMakerAndTemporalSentence;
 import pt.utl.ist.lucene.utils.PlaceMakerParagraph;
 import pt.utl.ist.lucene.utils.placemaker.PlaceMakerDocument;
-import pt.utl.ist.lucene.utils.temporal.TimeExpression;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

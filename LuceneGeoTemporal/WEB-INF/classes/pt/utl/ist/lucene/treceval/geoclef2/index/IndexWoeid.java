@@ -29,7 +29,7 @@ import java.util.zip.ZipInputStream;
 public class IndexWoeid {
 
 
-    public static String indexPath = pt.utl.ist.lucene.treceval.geotime.index.Config.indexBase + File.separator + "woeid";
+    public static String indexPath = pt.utl.ist.lucene.treceval.geoclef2.index.Config.indexBase + File.separator + "woeid";
 
     private static Map<String,Long[]> openBelongTosWoeid() throws IOException {
         Map<String,Long[]> belongTosMap = new HashMap<String,Long[]>();
@@ -74,7 +74,7 @@ public class IndexWoeid {
     {
         new File(indexPath).mkdir();
 
-        PlaceMakerIterator placeMakerIterator = new PlaceMakerIterator(Config.placemakerPath);
+        PlaceMakerIterator placeMakerIterator = new PlaceMakerIterator(Config.placemakerPath,"//doc/@docno");
 
         PlaceMakerDocument placeMakerDocument;
         Map<String, Analyzer> anaMap = new HashMap<String,Analyzer>();
@@ -87,7 +87,7 @@ public class IndexWoeid {
         while((placeMakerDocument = placeMakerIterator.next())!=null)
         {
 
-            if(previousID.length() > 0 && !previousID.substring(0,14).equals(placeMakerDocument.getDocId().substring(0,14)))
+            if(previousID.length() > 0 && !previousID.substring(0,8).equals(placeMakerDocument.getDocId().substring(0,8)))
                 System.out.println(i + ":" + placeMakerDocument.getDocId());
             previousID = placeMakerDocument.getDocId();
             indexDocument(writer,placeMakerDocument);
@@ -105,16 +105,16 @@ public class IndexWoeid {
         StringBuilder G_PLACE_REF_WOEID = new StringBuilder();
         StringBuilder G_PLACE_BELONG_TOS_WOEID = new StringBuilder();
         StringBuilder G_GEO_PLACE_TYPE = new StringBuilder();
-        if(placeMakerDocument.getAdministrativeWoeid() != null)
-        {
-            G_GEO_ALL_WOEID.append(PlaceNameNormalizer.normalizeWoeid(placeMakerDocument.getAdministrativeWoeid())).append(" ");
-            addBelongTos(placeMakerDocument.getAdministrativeWoeid(),G_PLACE_BELONG_TOS_WOEID,G_GEO_ALL_WOEID);
-        }
-        if(placeMakerDocument.getGeographicWoeid() != null)
-        {
-            G_GEO_ALL_WOEID.append(PlaceNameNormalizer.normalizeWoeid(placeMakerDocument.getGeographicWoeid())).append(" ");
-            addBelongTos(placeMakerDocument.getGeographicWoeid(),G_PLACE_BELONG_TOS_WOEID,G_GEO_ALL_WOEID);
-        }
+//        if(placeMakerDocument.getAdministrativeWoeid() != null)
+//        {
+//            G_GEO_ALL_WOEID.append(PlaceNameNormalizer.normalizeWoeid(placeMakerDocument.getAdministrativeWoeid())).append(" ");
+////            addBelongTos(placeMakerDocument.getAdministrativeWoeid(),G_PLACE_BELONG_TOS_WOEID,G_GEO_ALL_WOEID);
+//        }
+//        if(placeMakerDocument.getGeographicWoeid() != null)
+//        {
+//            G_GEO_ALL_WOEID.append(PlaceNameNormalizer.normalizeWoeid(placeMakerDocument.getGeographicWoeid())).append(" ");
+////            addBelongTos(placeMakerDocument.getGeographicWoeid(),G_PLACE_BELONG_TOS_WOEID,G_GEO_ALL_WOEID);
+//        }
         if(placeMakerDocument.getPlaceDetails() != null && placeMakerDocument.getPlaceDetails().size()>0)
         {
             for(PlaceMakerDocument.PlaceDetails placeDetails: placeMakerDocument.getPlaceDetails())

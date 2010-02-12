@@ -16,7 +16,7 @@ import java.io.IOException;
  * @email machadofisher@gmail.com
  */
 public class IndexGeoScope {
-    public static String indexPath =  pt.utl.ist.lucene.treceval.geotime.index.Config.indexBase + File.separator + "GEO_TEMP_INDEXED";
+    public static String indexPath =  pt.utl.ist.lucene.treceval.geoclef2.index.Config.indexBase + File.separator + "GEO_TEMP_INDEXED";
 
     public static void main(String[] args) throws IOException {
         IntegratedDocPlaceMakerIterator iterator = new IntegratedDocPlaceMakerIterator(Config.documentPath,Config.placemakerPath);

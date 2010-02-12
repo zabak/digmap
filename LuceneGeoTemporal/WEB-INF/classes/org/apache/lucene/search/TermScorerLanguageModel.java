@@ -117,7 +117,7 @@ final class TermScorerLanguageModel extends LgteFieldedTermScorer {
 
     public float score() throws IOException {
 
-        int contextSize = indexReader.getFieldLength(doc, term.field() + "$");
+//        int contextSize = indexReader.getFieldLength(doc, term.field() + "$");
         if (useFieldLengths) {
             docLen = indexReader.getFieldLength(doc, term.field());
         } else {

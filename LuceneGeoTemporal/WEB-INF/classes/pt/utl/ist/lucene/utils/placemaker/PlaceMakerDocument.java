@@ -31,10 +31,10 @@ public class PlaceMakerDocument
         namespaces.put("gml","http://www.opengis.net/gml");
 
     }
-    String docIdXpathStr;
+    String docIdXpathStr = "//doc/@id";
     Document dom;
     String xml;
-    String docId = "//doc/@id";
+    String docId;
 
     String administrativeWoeid;
     String administrativeType;

@@ -1,18 +1,17 @@
 package pt.utl.ist.lucene.treceval.geoclef2.index;
 
-import pt.utl.ist.lucene.config.LocalProperties;
-import pt.utl.ist.lucene.Globals;
-import pt.utl.ist.lucene.LgteIndexSearcherWrapper;
-import pt.utl.ist.lucene.LgteIndexManager;
-import pt.utl.ist.lucene.Model;
-
-import java.util.Properties;
-import java.util.Map;
-import java.util.HashMap;
-import java.io.IOException;
-
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.LgteIsolatedIndexReader;
+import pt.utl.ist.lucene.Globals;
+import pt.utl.ist.lucene.LgteIndexManager;
+import pt.utl.ist.lucene.LgteIndexSearcherWrapper;
+import pt.utl.ist.lucene.Model;
+import pt.utl.ist.lucene.config.LocalProperties;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * @author Jorge Machado
@@ -89,27 +88,27 @@ public class Config {
 
     public static LgteIndexSearcherWrapper openMultiSearcher() throws IOException
     {
-        IndexReader readerContents = LgteIndexManager.openReader(pt.utl.ist.lucene.treceval.geotime.index.IndexContents.indexPath, Model.OkapiBM25Model);
-        IndexReader readerGeoScope = LgteIndexManager.openReader(IndexGeoScope.indexPath, Model.OkapiBM25Model);
-        IndexReader readerWoeid = LgteIndexManager.openReader(IndexWoeid.indexPath, Model.OkapiBM25Model);
+        IndexReader readerContents = LgteIndexManager.openReader(pt.utl.ist.lucene.treceval.geoclef2.index.IndexContents.indexPath, Model.LanguageModel);
+        IndexReader readerGeoScope = LgteIndexManager.openReader(IndexGeoScope.indexPath, Model.LanguageModel);
+        IndexReader readerWoeid = LgteIndexManager.openReader(IndexWoeid.indexPath, Model.LanguageModel);
 
         Map<String,IndexReader> readers = new HashMap<String,IndexReader>();
         readers.put(CONTENTS,readerContents);
         readers.put(ID,readerContents);
         readers.put("regexpr(^S_.*)",readerGeoScope);
         readers.put("regexpr(^g_.*)",readerWoeid);
-        return new LgteIndexSearcherWrapper(Model.OkapiBM25Model,new LgteIsolatedIndexReader(readers));
+        return new LgteIndexSearcherWrapper(Model.LanguageModel,new LgteIsolatedIndexReader(readers));
     }
 
 
     public static LgteIndexSearcherWrapper openMultiSearcherForContentsAndParagraphs() throws IOException
     {
-        IndexReader readerContents = LgteIndexManager.openReader(IndexContents.indexPath, Model.OkapiBM25Model);
-        IndexReader readerGeoScope = LgteIndexManager.openReader(IndexGeoScope.indexPath, Model.OkapiBM25Model);
-        IndexReader readerWoeid = LgteIndexManager.openReader(IndexWoeid.indexPath, Model.OkapiBM25Model);
-        IndexReader readerParagraphs = LgteIndexManager.openReader(IndexParagraphs.indexPath, Model.OkapiBM25Model);
-        IndexReader readerGeoScopeParagraphs = LgteIndexManager.openReader(IndexGeoScopeParagraphs.indexPath, Model.OkapiBM25Model);
-        IndexReader readerWoeidParagraphs = LgteIndexManager.openReader(IndexWoeidParagraphs.indexPath, Model.OkapiBM25Model);
+        IndexReader readerContents = LgteIndexManager.openReader(IndexContents.indexPath, Model.LanguageModel);
+        IndexReader readerGeoScope = LgteIndexManager.openReader(IndexGeoScope.indexPath, Model.LanguageModel);
+        IndexReader readerWoeid = LgteIndexManager.openReader(IndexWoeid.indexPath, Model.LanguageModel);
+        IndexReader readerParagraphs = LgteIndexManager.openReader(IndexParagraphs.indexPath, Model.LanguageModel);
+        IndexReader readerGeoScopeParagraphs = LgteIndexManager.openReader(IndexGeoScopeParagraphs.indexPath, Model.LanguageModel);
+        IndexReader readerWoeidParagraphs = LgteIndexManager.openReader(IndexWoeidParagraphs.indexPath, Model.LanguageModel);
 
         Map<String,IndexReader> readers = new HashMap<String,IndexReader>();
 
@@ -128,14 +127,14 @@ public class Config {
         lgteIsolatedIndexReader.addTreeMapping(readerWoeid,readerWoeidParagraphs,readerContents, DOC_ID);
         lgteIsolatedIndexReader.addTreeMapping(readerGeoScope,readerGeoScopeParagraphs,readerContents, DOC_ID);
 
-        return new LgteIndexSearcherWrapper(Model.OkapiBM25Model,lgteIsolatedIndexReader);
+        return new LgteIndexSearcherWrapper(Model.LanguageModel,lgteIsolatedIndexReader);
     }
 
      public static LgteIndexSearcherWrapper openMultiSearcherParagraphs() throws IOException
     {
-        IndexReader readerParagraphs = LgteIndexManager.openReader(IndexParagraphs.indexPath, Model.OkapiBM25Model);
-        IndexReader readerGeoScopeParagraphs = LgteIndexManager.openReader(IndexGeoScopeParagraphs.indexPath, Model.OkapiBM25Model);
-        IndexReader readerWoeidParagraphs = LgteIndexManager.openReader(IndexWoeidParagraphs.indexPath, Model.OkapiBM25Model);
+        IndexReader readerParagraphs = LgteIndexManager.openReader(IndexParagraphs.indexPath, Model.LanguageModel);
+        IndexReader readerGeoScopeParagraphs = LgteIndexManager.openReader(IndexGeoScopeParagraphs.indexPath, Model.LanguageModel);
+        IndexReader readerWoeidParagraphs = LgteIndexManager.openReader(IndexWoeidParagraphs.indexPath, Model.LanguageModel);
 
         Map<String,IndexReader> readers = new HashMap<String,IndexReader>();
 
@@ -146,7 +145,7 @@ public class Config {
         readers.put("regexpr(^S_.*_sentences)",readerGeoScopeParagraphs);
         readers.put("regexpr(^g_.*_sentences)",readerWoeidParagraphs);
         LgteIsolatedIndexReader lgteIsolatedIndexReader = new LgteIsolatedIndexReader(readers);
-        return new LgteIndexSearcherWrapper(Model.OkapiBM25Model,lgteIsolatedIndexReader);
+        return new LgteIndexSearcherWrapper(Model.LanguageModel,lgteIsolatedIndexReader);
     }
 
     public static void main(String[] args)

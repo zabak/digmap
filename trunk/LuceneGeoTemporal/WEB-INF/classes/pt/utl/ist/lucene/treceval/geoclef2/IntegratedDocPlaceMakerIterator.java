@@ -67,29 +67,30 @@ public class IntegratedDocPlaceMakerIterator {
 
 
                 nowGeoClefDocument = documentIterator.next();
-                try {
-                    PlaceMakerDocument nowPlaceMakerDocument;
-                    if(nowPlaceMakerDocumentWaiting != null)
-                        nowPlaceMakerDocument = this.nowPlaceMakerDocumentWaiting;
-                    else
-                        nowPlaceMakerDocument = placeMakerIterator.next();
+                if(nowGeoClefDocument != null)
+                    try {
+                        PlaceMakerDocument nowPlaceMakerDocument;
+                        if(nowPlaceMakerDocumentWaiting != null)
+                            nowPlaceMakerDocument = this.nowPlaceMakerDocumentWaiting;
+                        else
+                            nowPlaceMakerDocument = placeMakerIterator.next();
 
-                    if(!nowGeoClefDocument.getDocNO().equals(nowPlaceMakerDocument.getDocId()))
-                    {
-                        logger.error("PlaceMaker Document not found for" + nowGeoClefDocument.getDocNO() + " found instead: " + nowPlaceMakerDocument.getDocId());
-                        nowPlaceMakerDocumentWaiting = nowPlaceMakerDocument;
-                        this.nowPlaceMakerDocument = null;
-                    }
-                    else
-                    {
-                        nowPlaceMakerDocumentWaiting = null;
-                        this.nowPlaceMakerDocument = nowPlaceMakerDocument;
-                    }
+                        if(!nowGeoClefDocument.getDocNO().equals(nowPlaceMakerDocument.getDocId()))
+                        {
+                            logger.error("PlaceMaker Document not found for" + nowGeoClefDocument.getDocNO() + " found instead: " + nowPlaceMakerDocument.getDocId());
+                            nowPlaceMakerDocumentWaiting = nowPlaceMakerDocument;
+                            this.nowPlaceMakerDocument = null;
+                        }
+                        else
+                        {
+                            nowPlaceMakerDocumentWaiting = null;
+                            this.nowPlaceMakerDocument = nowPlaceMakerDocument;
+                        }
 
-                } catch (DocumentException e)
-                {
-                    logger.error(e,e);
-                }
+                    } catch (DocumentException e)
+                    {
+                        logger.error(e,e);
+                    }
             } catch (IOException e) {
                 throw e;
             }
@@ -151,7 +152,7 @@ public class IntegratedDocPlaceMakerIterator {
 
     }
 
-    
+
 
 
 }

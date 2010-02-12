@@ -860,10 +860,10 @@
 
 
 
-    <target name="evaluation-metrics-geoclef2" description="Generate trec_eval results">
+    <target name="evaluation-metrics-geoclef2_08" description="Generate trec_eval results">
         <for param="runfile">
             <path>
-                <fileset dir="C:\\Servidores\\DATA\\COLLECTIONS\\geoclef\\runs">
+                <fileset dir="C:\\Servidores\\DATA\\COLLECTIONS\\geoclef\\runs08">
                     <include name="*.txt" />
                     <exclude name="*.xml" />
                     <exclude name="*-treceval-report.txt" />
@@ -879,7 +879,31 @@
                     </classpath>
                     <classpath path="${webapp.path}/WEB-INF/classes" />
                     <arg value="@{runfile}" />
-                    <arg value="C:\\Servidores\\DATA\\COLLECTIONS\\geoclef\\qrels08.txt" />
+                    <arg value="C:\\Servidores\\DATA\\COLLECTIONS\\geoclef\\assessements\\qrels08.txt" />
+                </java>
+            </sequential>
+        </for>
+    </target>
+    <target name="evaluation-metrics-geoclef2_06" description="Generate trec_eval results">
+        <for param="runfile">
+            <path>
+                <fileset dir="C:\\Servidores\\DATA\\COLLECTIONS\\geoclef\\runs08">
+                    <include name="*.txt" />
+                    <exclude name="*.xml" />
+                    <exclude name="*-treceval-report.txt" />
+                    <exclude name="*-significance-report.txt" />
+                </fileset>
+            </path>
+            <sequential>
+                <java fork="true" classname="ireval.Main" output="@{runfile}-treceval-report.txt">
+                    <classpath>
+                        <fileset dir="${base.dir}/lib">
+                            <include name="*.jar" />
+                        </fileset>
+                    </classpath>
+                    <classpath path="${webapp.path}/WEB-INF/classes" />
+                    <arg value="@{runfile}" />
+                    <arg value="C:\\Servidores\\DATA\\COLLECTIONS\\geoclef\\assessements\\qrels06.txt" />
                 </java>
             </sequential>
         </for>

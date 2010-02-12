@@ -38,8 +38,8 @@ public class StrategyRunner {
     static String outputFile06 = Config.geoclefBase +  File.separator + "runs06" + File.separator;
     static String outputFile08 = Config.geoclefBase +  File.separator + "runs08" + File.separator;
 
-    static String topicsFile06 = Config.geoclefBase +  File.separator + "topics" + File.separator + "topics06.xml";
-    static String topicsFile08 = Config.geoclefBase +  File.separator + "topics" + File.separator + "topics08.xml";
+    static String topicsFile06 = Config.geoclefBase +  File.separator + "topics" + File.separator + "topics06Formatted.xml";
+    static String topicsFile08 = Config.geoclefBase +  File.separator + "topics" + File.separator + "topics08Formatted.xml";
 
     public static void main(String[] args) throws DocumentException, IOException, ParseException
     {

@@ -137,9 +137,9 @@ public class StrategyRunner {
         while((queryPackage = iter.next())!=null)
         {
             QueryConfiguration queryConfigurationBase = new QueryConfiguration();
-            queryConfigurationBase.setProperty("bm25.idf.policy","standard");
-            queryConfigurationBase.setProperty("bm25.k1","1.2d");
-            queryConfigurationBase.setProperty("bm25.b","0.75d");
+//            queryConfigurationBase.setProperty("bm25.idf.policy","standard");
+//            queryConfigurationBase.setProperty("bm25.k1","1.2d");
+//            queryConfigurationBase.setProperty("bm25.b","0.75d");
             if(runType == RunType.Comb)
                 queryConfigurationBase.setProperty("index.tree","true");
             logger.info(queryPackage.getTopicId() + "-----------------------------------");

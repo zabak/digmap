@@ -16,18 +16,12 @@ package org.apache.lucene.search;
  * limitations under the License.
  */
 
-import pt.utl.ist.lucene.ModelManager;
-import pt.utl.ist.lucene.QueryConfiguration;
-import pt.utl.ist.lucene.treceval.geotime.runs.BaseLineSentences;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
-
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.LgteIsolatedIndexReader;
 import org.apache.lucene.index.NotImplemented;
+import pt.utl.ist.lucene.treceval.geotime.runs.BaseLineSentences;
+
+import java.io.IOException;
 
 final class BooleanScorer extends Scorer {
     private SubScorer scorers = null;
@@ -100,7 +94,9 @@ final class BooleanScorer extends Scorer {
     private int end;
     private Bucket current;
 
-    public int doc() { return current.doc; }
+    public int doc() {
+        return current.doc;
+    }
 
 
     //    List<>
@@ -127,8 +123,8 @@ final class BooleanScorer extends Scorer {
             for (SubScorer sub = scorers; sub != null; sub = sub.next) {
                 Scorer scorer = sub.scorer;
 
-                int maxSubDoc = scorer.doc();
-                while (!sub.done && maxSubDoc < end)
+                int maxSubDoc;
+                while (!sub.done && (maxSubDoc = scorer.doc()) < end)
                 {
 //                    collect(sub.collector,sub.scorer);
 //                    sub.collector.collect(scorer.doc(), scorer.score());
@@ -186,7 +182,6 @@ final class BooleanScorer extends Scorer {
                     }
 
                     sub.done = !scorer.next();
-                    maxSubDoc = scorer.doc();
                 }
                 if (!sub.done) {
                     more = true;

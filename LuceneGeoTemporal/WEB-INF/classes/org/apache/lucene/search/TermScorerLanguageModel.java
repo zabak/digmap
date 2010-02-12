@@ -16,12 +16,15 @@ package org.apache.lucene.search;
  * limitations under the License.
  */
 
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.LgteIsolatedIndexReader;
+import org.apache.lucene.index.ProbabilisticIndexReader;
+import org.apache.lucene.index.TermDocs;
+import pt.utl.ist.lucene.ModelManager;
+import pt.utl.ist.lucene.QueryConfiguration;
+
 import java.io.IOException;
 import java.util.Properties;
-
-import org.apache.lucene.index.*;
-import pt.utl.ist.lucene.QueryConfiguration;
-import pt.utl.ist.lucene.ModelManager;
 
 final class TermScorerLanguageModel extends LgteFieldedTermScorer {
     private Weight weight;
@@ -154,8 +157,14 @@ final class TermScorerLanguageModel extends LgteFieldedTermScorer {
         return result;
     }
 
-    public Explanation explain(int doc) throws IOException {
-        TermQuery query = (TermQuery) weight.getQuery();
+    public Explanation explain(int doc) throws IOException
+    {
+        if(indexReader instanceof LgteIsolatedIndexReader)
+        {
+            doc = ((LgteIsolatedIndexReader)indexReader).getRealDoc(doc,term.field());
+        }
+        TermQueryProbabilisticModel query = (TermQueryProbabilisticModel) weight.getQuery();
+
         Explanation tfExplanation = new Explanation();
         int tf = 0;
         while (pointer < pointerMax) {
@@ -171,9 +180,30 @@ final class TermScorerLanguageModel extends LgteFieldedTermScorer {
             }
         }
         termDocs.close();
-        tfExplanation.setValue(getSimilarity().tf(tf));
+
+
+
+
+
+
+//        int contextSize = indexReader.getFieldLength(doc, term.field() + "$");
+        if (useFieldLengths) {
+            docLen = indexReader.getFieldLength(doc, term.field());
+        } else {
+            docLen = indexReader.getDocLength(doc);
+        }
+        float sim =
+                (float) Math.log(1.0f + ((lambda * tf * collSize) /  ((1.0f - lambda) * tfCollection * docLen)));
+        sim /= log10;
+
+
+        float simFinal = sim * weightValue;
+
+
+
+        tfExplanation.setValue(simFinal);
         tfExplanation.setDescription(
-                "tf(termFreq(" + query.getTerm() + ")=" + tf + ")");
+                "lm(lambda=" + lambda + " useFieldLens=" + useFieldLengths + " termFreq(" + query.getTerm() + ")=" + tf + " sim=" + sim +" doclen=" + docLen + " collSize=" + collSize + ") ");
 
         return tfExplanation;
     }

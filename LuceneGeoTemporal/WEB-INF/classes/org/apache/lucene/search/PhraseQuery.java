@@ -16,12 +16,12 @@ package org.apache.lucene.search;
  * limitations under the License.
  */
 
-import java.io.IOException;
-import java.util.Vector;
-
+import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.index.TermPositions;
-import org.apache.lucene.index.IndexReader;
+
+import java.io.IOException;
+import java.util.Vector;
 
 /** A Query that matches documents containing a particular sequence of terms.
   This may be combined with other terms with a {@link BooleanQuery}.
@@ -153,76 +153,76 @@ public class PhraseQuery extends Query {
       throws IOException {
 
       Explanation result = new Explanation();
-      result.setDescription("weight("+getQuery()+" in "+doc+"), product of:");
-
-      StringBuffer docFreqs = new StringBuffer();
-      StringBuffer query = new StringBuffer();
-      query.append('\"');
-      for (int i = 0; i < terms.size(); i++) {
-        if (i != 0) {
-          docFreqs.append(" ");
-          query.append(" ");
-        }
-
-        Term term = (Term)terms.elementAt(i);
-
-        docFreqs.append(term.text());
-        docFreqs.append("=");
-        docFreqs.append(searcher.docFreq(term));
-
-        query.append(term.text());
-      }
-      query.append('\"');
-
-      Explanation idfExpl =
-        new Explanation(idf, "idf(" + field + ": " + docFreqs + ")");
-      
-      // explain query weight
-      Explanation queryExpl = new Explanation();
-      queryExpl.setDescription("queryWeight(" + getQuery() + "), product of:");
-
-      Explanation boostExpl = new Explanation(getBoost(), "boost");
-      if (getBoost() != 1.0f)
-        queryExpl.addDetail(boostExpl);
-      queryExpl.addDetail(idfExpl);
-      
-      Explanation queryNormExpl = new Explanation(queryNorm,"queryNorm");
-      queryExpl.addDetail(queryNormExpl);
-      
-      queryExpl.setValue(boostExpl.getValue() *
-                         idfExpl.getValue() *
-                         queryNormExpl.getValue());
-
-      result.addDetail(queryExpl);
-     
-      // explain field weight
-      Explanation fieldExpl = new Explanation();
-      fieldExpl.setDescription("fieldWeight("+field+":"+query+" in "+doc+
-                               "), product of:");
-
-      Explanation tfExpl = scorer(reader).explain(doc);
-      fieldExpl.addDetail(tfExpl);
-      fieldExpl.addDetail(idfExpl);
-
-      Explanation fieldNormExpl = new Explanation();
-      byte[] fieldNorms = reader.norms(field);
-      float fieldNorm =
-        fieldNorms!=null ? Similarity.decodeNorm(fieldNorms[doc]) : 0.0f;
-      fieldNormExpl.setValue(fieldNorm);
-      fieldNormExpl.setDescription("fieldNorm(field="+field+", doc="+doc+")");
-      fieldExpl.addDetail(fieldNormExpl);
-
-      fieldExpl.setValue(tfExpl.getValue() *
-                         idfExpl.getValue() *
-                         fieldNormExpl.getValue());
-      
-      result.addDetail(fieldExpl);
-
-      // combine them
-      result.setValue(queryExpl.getValue() * fieldExpl.getValue());
-
-      if (queryExpl.getValue() == 1.0f)
-        return fieldExpl;
+//      result.setDescription("weight("+getQuery()+" in "+doc+"), product of:");
+//
+//      StringBuffer docFreqs = new StringBuffer();
+//      StringBuffer query = new StringBuffer();
+//      query.append('\"');
+//      for (int i = 0; i < terms.size(); i++) {
+//        if (i != 0) {
+//          docFreqs.append(" ");
+//          query.append(" ");
+//        }
+//
+//        Term term = (Term)terms.elementAt(i);
+//
+//        docFreqs.append(term.text());
+//        docFreqs.append("=");
+//        docFreqs.append(searcher.docFreq(term));
+//
+//        query.append(term.text());
+//      }
+//      query.append('\"');
+//
+//      Explanation idfExpl =
+//        new Explanation(idf, "idf(" + field + ": " + docFreqs + ")");
+//
+//      // explain query weight
+//      Explanation queryExpl = new Explanation();
+//      queryExpl.setDescription("queryWeight(" + getQuery() + "), product of:");
+//
+//      Explanation boostExpl = new Explanation(getBoost(), "boost");
+//      if (getBoost() != 1.0f)
+//        queryExpl.addDetail(boostExpl);
+//      queryExpl.addDetail(idfExpl);
+//
+//      Explanation queryNormExpl = new Explanation(queryNorm,"queryNorm");
+//      queryExpl.addDetail(queryNormExpl);
+//
+//      queryExpl.setValue(boostExpl.getValue() *
+//                         idfExpl.getValue() *
+//                         queryNormExpl.getValue());
+//
+//      result.addDetail(queryExpl);
+//
+//      // explain field weight
+//      Explanation fieldExpl = new Explanation();
+//      fieldExpl.setDescription("fieldWeight("+field+":"+query+" in "+doc+
+//                               "), product of:");
+//
+//      Explanation tfExpl = scorer(reader).explain(doc);
+//      fieldExpl.addDetail(tfExpl);
+//      fieldExpl.addDetail(idfExpl);
+//
+//      Explanation fieldNormExpl = new Explanation();
+//      byte[] fieldNorms = reader.norms(field);
+//      float fieldNorm =
+//        fieldNorms!=null ? Similarity.decodeNorm(fieldNorms[doc]) : 0.0f;
+//      fieldNormExpl.setValue(fieldNorm);
+//      fieldNormExpl.setDescription("fieldNorm(field="+field+", doc="+doc+")");
+//      fieldExpl.addDetail(fieldNormExpl);
+//
+//      fieldExpl.setValue(tfExpl.getValue() *
+//                         idfExpl.getValue() *
+//                         fieldNormExpl.getValue());
+//
+//      result.addDetail(fieldExpl);
+//
+//      // combine them
+//      result.setValue(queryExpl.getValue() * fieldExpl.getValue());
+//
+//      if (queryExpl.getValue() == 1.0f)
+//        return fieldExpl;
 
       return result;
     }

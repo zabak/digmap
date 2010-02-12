@@ -22,8 +22,7 @@ import pt.utl.ist.lucene.treceval.handlers.topics.output.impl.TrecEvalOutputForm
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Jorge Machado
@@ -34,20 +33,39 @@ import java.util.Map;
 public class StrategyRunner {
 
     private static final Logger logger = Logger.getLogger(StrategyRunner.class);
-    
-    static String outputFile06 = Config.geoclefBase +  File.separator + "runs06" + File.separator;
-    static String outputFile08 = Config.geoclefBase +  File.separator + "runs08" + File.separator;
 
-    static String topicsFile06 = Config.geoclefBase +  File.separator + "topics" + File.separator + "topics06Formatted.xml";
-    static String topicsFile08 = Config.geoclefBase +  File.separator + "topics" + File.separator + "topics08Formatted.xml";
+    static String outputFile = Config.geoclefBase +  File.separator + "runs" + File.separator;
+//    static String outputFile06 = Config.geoclefBase +  File.separator + "runs06" + File.separator;
+//    static String outputFile08 = Config.geoclefBase +  File.separator + "runs08" + File.separator;
+
+    static String topicsFile = Config.geoclefBase +  File.separator + "topics" + File.separator + "topicsFormatted.xml";
+//    static String topicsFile06 = Config.geoclefBase +  File.separator + "topics" + File.separator + "topics06Formatted.xml";
+//    static String topicsFile08 = Config.geoclefBase +  File.separator + "topics" + File.separator + "topics08Formatted.xml";
 
     public static void main(String[] args) throws DocumentException, IOException, ParseException
     {
-           go(args, topicsFile06, outputFile06);
-           go(args, topicsFile08, outputFile08);
+        outputs = new ArrayList<String>();
+        go(args, topicsFile, outputFile);
+//        SearchTopics.evaluateMetricsFiles(outputs,Config.geoclefBase +  File.separator + "assessements" + File.separator + "qrels");
+//        SearchTopics.createRunPackage(outputFile,outputs,new Properties());
+
+//        outputs = new ArrayList<String>();
+//        go(args, topicsFile06, outputFile06);
+//        SearchTopics.evaluateMetricsFiles(outputs,Config.geoclefBase +  File.separator + "assessements" + File.separator + "qrels06");
+//        SearchTopics.createRunPackage(outputFile06,outputs,new Properties());
+//
+//        outputs = new ArrayList<String>();
+//        go(args, topicsFile08, outputFile08);
+//        SearchTopics.evaluateMetricsFiles(outputs,Config.geoclefBase +  File.separator + "assessements" + File.separator + "qrels08");
+//        SearchTopics.createRunPackage(outputFile08,outputs,new Properties());
     }
+
+    static List<String> outputs = new ArrayList<String>();
+
     public static void go(String[] args, String topicsFile, String outputFile) throws DocumentException, IOException, ParseException
     {
+
+
         new File(outputFile).mkdir();
         StrategyQueryBuilder strategyQueryBuilderTimeAll = new StrategyQueryBuilder(topicsFile,false);
         int step = 0;
@@ -61,55 +79,65 @@ public class StrategyRunner {
         {
             logger.info("#######base");
             searcher = Config.openMultiSearcher();
-            run(null,outputFile + "base.xml",searcher,strategyQueryBuilderTimeAll.baseSimpleIterator(), null);
+            run(null,outputFile + "base.txt",searcher,strategyQueryBuilderTimeAll.baseSimpleIterator(), null);
             searcher.close();
+
         }
 
         if(step < 2)
         {
             logger.info("#######base_paragraphs");
             searcher = Config.openMultiSearcherParagraphs();
-            run(null,outputFile + "base_paragraphs.xml",searcher,strategyQueryBuilderTimeAll.baseSimpleIterator_sentences(), Config.DOC_ID);
+            run(null,outputFile + "base_paragraphs.txt",searcher,strategyQueryBuilderTimeAll.baseSimpleIterator_sentences(), Config.DOC_ID);
             searcher.close();
         }
 
         if(step < 3)
         {
-            logger.info("#######filtered");
-            searcher = Config.openMultiSearcher();
-            run(RunType.Text,outputFile + "filtered.xml",searcher,strategyQueryBuilderTimeAll.baseFilteredIterator(), null);
+            logger.info("#######base_comb");
+            searcher = Config.openMultiSearcherForContentsAndParagraphs();
+            run(null,outputFile + "base_comb.txt",searcher,strategyQueryBuilderTimeAll.baseCombSimpleIterator(), Config.DOC_ID);
             searcher.close();
         }
 
         if(step < 4)
         {
-            logger.info("#######filtered_paragraphs");
-            searcher = Config.openMultiSearcherParagraphs();
-            run(RunType.Sentences,outputFile + "filtered_paragraphs.xml",searcher,strategyQueryBuilderTimeAll.baseFilteredIterator_sentences(), Config.DOC_ID);
+            logger.info("#######filtered");
+            searcher = Config.openMultiSearcher();
+            run(RunType.Text,outputFile + "filtered.txt",searcher,strategyQueryBuilderTimeAll.filteredIterator(), null);
             searcher.close();
         }
-
 
         if(step < 5)
         {
-            logger.info("#######filtered_extension");
-            searcher = Config.openMultiSearcher();
-            run(RunType.Text,outputFile + "filtered_extension.xml",searcher,strategyQueryBuilderTimeAll.baseFilteredIterator(), null);
+            logger.info("#######filtered_paragraphs");
+            searcher = Config.openMultiSearcherParagraphs();
+            run(RunType.Sentences,outputFile + "filtered_paragraphs.txt",searcher,strategyQueryBuilderTimeAll.filteredIterator_sentences(), Config.DOC_ID);
             searcher.close();
         }
+
 
         if(step < 6)
         {
-            logger.info("#######filtered_extension_paragraphs");
-            searcher = Config.openMultiSearcherParagraphs();
-            run(RunType.Sentences,outputFile + "filtered_extension_paragraphs.xml",searcher,strategyQueryBuilderTimeAll.baseFilteredIterator_sentences(), Config.DOC_ID);
+            logger.info("#######unified");
+            searcher = Config.openMultiSearcher();
+            run(RunType.Text,outputFile + "unified.txt",searcher,strategyQueryBuilderTimeAll.unifiedIterator(), null);
             searcher.close();
         }
 
-        logger.info("#######filtered_extension_comb");
+        if(step < 7)
+        {
+            logger.info("#######unified_paragraphs");
+            searcher = Config.openMultiSearcherParagraphs();
+            run(RunType.Sentences,outputFile + "unified_paragraphs.txt",searcher,strategyQueryBuilderTimeAll.unifiedIterator_sentences(), Config.DOC_ID);
+            searcher.close();
+        }
+
+        logger.info("#######unified_comb");
         searcher = Config.openMultiSearcherForContentsAndParagraphs();
-        run(RunType.Comb, outputFile + "filtered_extension_comb.xml",searcher,strategyQueryBuilderTimeAll.baseFilteredIterator_comb(), Config.DOC_ID);
+        run(RunType.Comb, outputFile + "unified_comb.txt",searcher,strategyQueryBuilderTimeAll.unified_comb(), Config.DOC_ID);
         searcher.close();
+
     }
 
     enum RunType
@@ -122,7 +150,7 @@ public class StrategyRunner {
     public static void run(RunType runType, String outputFile, LgteIndexSearcherWrapper searcher, StrategyQueryBuilder.Iterator iter, String groupField) throws IOException, DocumentException, ParseException
     {
         logger.info("####################################");
-
+        outputs.add(outputFile);
         StrategyQueryBuilder.Iterator.QueryPackage queryPackage;
 
         Map<String, Analyzer> analyzersMap = new HashMap<String, Analyzer>();
@@ -146,25 +174,25 @@ public class StrategyRunner {
             logger.info(queryPackage.filter);
             logger.info(queryPackage.query);
             LgteQuery lgteQuery = new LgteQuery(queryPackage.query,brokerStemAnalyzer,queryConfigurationBase);
-            
+
             Topic t = new SimpleTopic(queryPackage.getTopicId());
             outputFormat.setTopic(t);
             LgteHits hits = searcher.search(lgteQuery,queryPackage.filter);
             try{
-            if(hits.length() > 0)
-                logger.info(searcher.explain(lgteQuery,hits.id(0)));
-            if(hits.length() > 1)
-                logger.info(searcher.explain(lgteQuery,hits.id(1)));
-            if(hits.length() > 2)
-                logger.info(searcher.explain(lgteQuery,hits.id(2)));
-            if(hits.length() > 3)
-                logger.info(searcher.explain(lgteQuery,hits.id(3)));
-            if(hits.length() > 4)
-                logger.info(searcher.explain(lgteQuery,hits.id(4)));
-            if(hits.length() > 5)
-                logger.info(searcher.explain(lgteQuery,hits.id(5)));
-            if(hits.length() > 6)
-                logger.info(searcher.explain(lgteQuery,hits.id(6)));
+                if(hits.length() > 0)
+                    logger.info(searcher.explain(lgteQuery,hits.id(0)));
+                if(hits.length() > 1)
+                    logger.info(searcher.explain(lgteQuery,hits.id(1)));
+                if(hits.length() > 2)
+                    logger.info(searcher.explain(lgteQuery,hits.id(2)));
+                if(hits.length() > 3)
+                    logger.info(searcher.explain(lgteQuery,hits.id(3)));
+                if(hits.length() > 4)
+                    logger.info(searcher.explain(lgteQuery,hits.id(4)));
+                if(hits.length() > 5)
+                    logger.info(searcher.explain(lgteQuery,hits.id(5)));
+                if(hits.length() > 6)
+                    logger.info(searcher.explain(lgteQuery,hits.id(6)));
             }catch(Throwable e)
             {
                 logger.error(e,e);

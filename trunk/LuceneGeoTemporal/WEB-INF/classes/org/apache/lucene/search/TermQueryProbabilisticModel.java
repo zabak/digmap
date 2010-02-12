@@ -1,13 +1,12 @@
 package org.apache.lucene.search;
 
-import org.apache.lucene.index.Term;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.Term;
 import org.apache.lucene.index.TermDocs;
-
-import java.io.IOException;
-
 import pt.utl.ist.lucene.Model;
 import pt.utl.ist.lucene.ModelManager;
+
+import java.io.IOException;
 
 /** A Query that matches documents containing a term.
  This may be combined with other terms with a {@link org.apache.lucene.search.BooleanQuery}.
@@ -84,7 +83,7 @@ public class TermQueryProbabilisticModel extends TermQueryImpl {
                 throws IOException {
 
             Explanation result = new Explanation();
-            result.setDescription("subQuery("+getQuery()+"*" + queryWeight +" in "+doc+"), product of:");
+            result.setDescription("subQuery("+getQuery()+"*" + queryWeight +" in doc "+doc+"), product of:");
 
 
 //

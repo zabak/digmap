@@ -879,7 +879,7 @@
                     </classpath>
                     <classpath path="${webapp.path}/WEB-INF/classes" />
                     <arg value="@{runfile}" />
-                    <arg value="C:\\Servidores\\DATA\\COLLECTIONS\\geoclef\\assessements\\qrels08.txt" />
+                    <arg value="C:\\Servidores\\DATA\\COLLECTIONS\\geoclef\\assessements\\qrels08" />
                 </java>
             </sequential>
         </for>
@@ -887,7 +887,7 @@
     <target name="evaluation-metrics-geoclef2_06" description="Generate trec_eval results">
         <for param="runfile">
             <path>
-                <fileset dir="C:\\Servidores\\DATA\\COLLECTIONS\\geoclef\\runs08">
+                <fileset dir="C:\\Servidores\\DATA\\COLLECTIONS\\geoclef\\runs06">
                     <include name="*.txt" />
                     <exclude name="*.xml" />
                     <exclude name="*-treceval-report.txt" />
@@ -903,7 +903,32 @@
                     </classpath>
                     <classpath path="${webapp.path}/WEB-INF/classes" />
                     <arg value="@{runfile}" />
-                    <arg value="C:\\Servidores\\DATA\\COLLECTIONS\\geoclef\\assessements\\qrels06.txt" />
+                    <arg value="C:\\Servidores\\DATA\\COLLECTIONS\\geoclef\\assessements\\qrels06" />
+                </java>
+            </sequential>
+        </for>
+    </target>
+
+    <target name="evaluation-metrics-geoclef2" description="Generate trec_eval results">
+        <for param="runfile">
+            <path>
+                <fileset dir="C:\\Servidores\\DATA\\COLLECTIONS\\geoclef\\runs">
+                    <include name="*.txt" />
+                    <exclude name="*.xml" />
+                    <exclude name="*-treceval-report.txt" />
+                    <exclude name="*-significance-report.txt" />
+                </fileset>
+            </path>
+            <sequential>
+                <java fork="true" classname="ireval.Main" output="@{runfile}-treceval-report.txt">
+                    <classpath>
+                        <fileset dir="${base.dir}/lib">
+                            <include name="*.jar" />
+                        </fileset>
+                    </classpath>
+                    <classpath path="${webapp.path}/WEB-INF/classes" />
+                    <arg value="@{runfile}" />
+                    <arg value="C:\\Servidores\\DATA\\COLLECTIONS\\geoclef\\assessements\\qrels" />
                 </java>
             </sequential>
         </for>

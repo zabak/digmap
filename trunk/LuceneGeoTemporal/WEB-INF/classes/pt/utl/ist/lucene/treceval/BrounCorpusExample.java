@@ -32,9 +32,9 @@ public class BrounCorpusExample
     public static void main(String [] args) throws DocumentException, IOException
     {
 
-//        args = new String[2];
-//        args[0] = "C:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-index";
-//        args[1] = "C:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-data";
+        args = new String[2];
+        args[0] = "C:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-index";
+        args[1] = "C:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-data";
 
         
         Globals.INDEX_DIR = args[0];
@@ -119,7 +119,7 @@ public class BrounCorpusExample
         configurations.add(LM_BC);
         configurations.add(VS_STEMMER_BC);
         configurations.add(LM_STEMMER_BC);
-        IndexCollections.indexConfiguration(configurations,Globals.DOCUMENT_ID_FIELD);
+//        IndexCollections.indexConfiguration(configurations,Globals.DOCUMENT_ID_FIELD);
 
         /***
          * Search Configurations
@@ -133,25 +133,27 @@ public class BrounCorpusExample
 
         searchConfigurations.add(new SearchConfiguration(queryConfiguration1, VS_BC));
         searchConfigurations.add(new SearchConfiguration(queryConfiguration1, LM_BC));
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, VS_STEMMER_BC));
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, LM_STEMMER_BC));
-
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, VS_BC));
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, LM_BC));
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, VS_STEMMER_BC));
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, LM_STEMMER_BC));
-
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, M3));
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, M4));
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, M5));
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, M6));
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, M7));
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, M8));
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, M9));
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, M10));
-        
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, VS_STEMMER_BC));
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, LM_STEMMER_BC));
+//
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, VS_BC));
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, LM_BC));
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, VS_STEMMER_BC));
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration2, LM_STEMMER_BC));
+//
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, M3));
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, M4));
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, M5));
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, M6));
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, M7));
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, M8));
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, M9));
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, M10));
+//
         //Search Topics Runs to submission
         SearchTopics.search(searchConfigurations);
+
+        SearchTopics.evaluateMetrics(searchConfigurations,"C:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-data\\brauncorpus\\assessements\\qrels.ac-gls.txt");
     }
 
     /*Specific filter for BrounCorpus Resource Collection*/

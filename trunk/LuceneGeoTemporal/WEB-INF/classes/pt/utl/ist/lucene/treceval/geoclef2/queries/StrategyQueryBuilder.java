@@ -86,11 +86,43 @@ public class StrategyQueryBuilder
         };
     }
 
+    public Iterator baseCombSimpleIterator()
+    {
+        return new Iterator(queryProcessors)
+        {
+            public QueryPackage next()
+            {
+                if(!super.queryProcessorIter.hasNext())
+                    return null;
+                QueryProcessor queryProcessor = queryProcessorIter.next();
+
+
+                //CONTENTS QUERIES
+                StringBuilder finalQuery = new StringBuilder();
+                finalQuery.append("(");
+                addTermQueries(queryProcessor,QueryProcessor.QueryTarget.CONTENTS,finalQuery);
+                finalQuery.append(")^").append(Config.combContentsFactor);
+
+
+                //SENTENCES QUERIES
+                StringBuilder finalQuerySentences = new StringBuilder();
+                finalQuerySentences.append("(");
+                addTermQueries(queryProcessor,QueryProcessor.QueryTarget.SENTENCES,finalQuerySentences);
+                finalQuerySentences.append(")^").append(Config.combSentencesFactor);
+
+                return
+                        new QueryPackage(
+                                createBaseFilter(queryProcessor,""),
+                                finalQuerySentences.toString() + " " + finalQuery.toString(),queryProcessor,null);
+            }
+        };
+    }
+
     /*********************
      * Filter Strategies
      * @return
      */
-    public Iterator baseFilteredIterator()
+    public Iterator filteredIterator()
     {
         return new Iterator(queryProcessors)
         {
@@ -121,7 +153,7 @@ public class StrategyQueryBuilder
      * Filter Strategies
      * @return
      */
-    public Iterator baseFilteredIterator_sentences()
+    public Iterator filteredIterator_sentences()
     {
         return new Iterator(queryProcessors)
         {
@@ -149,7 +181,7 @@ public class StrategyQueryBuilder
      * Filter Strategies
      * @return
      */
-    public Iterator baseFilteredExtendedIterator()
+    public Iterator unifiedIterator()
     {
         return new Iterator(queryProcessors)
         {
@@ -158,8 +190,8 @@ public class StrategyQueryBuilder
                 if(!super.queryProcessorIter.hasNext())
                     return null;
                 QueryProcessor queryProcessor = queryProcessorIter.next();
-                Filter queryFilter = queryProcessor.getFilters(QueryProcessor.QueryTarget.CONTENTS);
-                Filter filter = super.addBaseFilter(queryFilter,queryProcessor, "");
+//                Filter queryFilter = queryProcessor.getFilters(QueryProcessor.QueryTarget.CONTENTS);
+//                Filter filter = super.addBaseFilter(queryFilter,queryProcessor, "");
 
 
                 //CONTENTS QUERIES
@@ -170,7 +202,7 @@ public class StrategyQueryBuilder
 
                 return
                         new QueryPackage(
-                                filter,finalQuery.toString(),queryProcessor,queryFilter);
+                                createBaseFilter(queryProcessor, ""),finalQuery.toString(),queryProcessor,null);
             }
         };
     }
@@ -181,7 +213,7 @@ public class StrategyQueryBuilder
      * Filter Strategies
      * @return
      */
-    public Iterator baseFilteredExtendedIterator_sentences()
+    public Iterator unifiedIterator_sentences()
     {
         return new Iterator(queryProcessors)
         {
@@ -190,8 +222,8 @@ public class StrategyQueryBuilder
                 if(!super.queryProcessorIter.hasNext())
                     return null;
                 QueryProcessor queryProcessor = queryProcessorIter.next();
-                Filter queryFilter = queryProcessor.getFilters(QueryProcessor.QueryTarget.SENTENCES);
-                Filter filter = super.addBaseFilter(queryFilter,queryProcessor, Config.SEP + Config.SENTENCES);
+//                Filter queryFilter = queryProcessor.getFilters(QueryProcessor.QueryTarget.SENTENCES);
+//                Filter filter = super.addBaseFilter(queryFilter,queryProcessor, Config.SEP + Config.SENTENCES);
 
                 StringBuilder finalQuery = new StringBuilder();
                 addTermQueries(queryProcessor,QueryProcessor.QueryTarget.SENTENCES,finalQuery);
@@ -199,7 +231,7 @@ public class StrategyQueryBuilder
 
                 return
                         new QueryPackage(
-                                filter,finalQuery.toString(),queryProcessor,queryFilter);
+                                createBaseFilter(queryProcessor, Config.SEP + Config.SENTENCES),finalQuery.toString(),queryProcessor,null);
             }
         };
     }
@@ -208,7 +240,7 @@ public class StrategyQueryBuilder
      * Filter Strategies
      * @return
      */
-    public Iterator baseFilteredIterator_comb()
+    public Iterator unified_comb()
     {
         return new Iterator(queryProcessors)
         {
@@ -217,8 +249,8 @@ public class StrategyQueryBuilder
                 if(!super.queryProcessorIter.hasNext())
                     return null;
                 QueryProcessor queryProcessor = queryProcessorIter.next();
-                Filter queryFilter = queryProcessor.getFilters(QueryProcessor.QueryTarget.CONTENTS);
-                Filter filter = super.addBaseFilter(queryFilter,queryProcessor, "");
+//                Filter queryFilter = queryProcessor.getFilters(QueryProcessor.QueryTarget.CONTENTS);
+//                Filter filter = super.addBaseFilter(queryFilter,queryProcessor, "");
 
                 //CONTENTS QUERIES
                 StringBuilder finalQuery = new StringBuilder();
@@ -237,7 +269,7 @@ public class StrategyQueryBuilder
 
                 return
                         new QueryPackage(
-                                filter,finalQuerySentences.toString() + " " + finalQuery.toString(),queryProcessor,queryFilter);
+                                createBaseFilter(queryProcessor, ""),finalQuerySentences.toString() + " " + finalQuery.toString(),queryProcessor,null);
             }
         };
     }
@@ -320,7 +352,7 @@ public class StrategyQueryBuilder
     public static void main(String [] args) throws IOException, DocumentException, ParseException {
         StrategyQueryBuilder strategyQueryBuilder = new StrategyQueryBuilder(Config.geoclefBase +  File.separator + "topics" + File.separator + "topics08Formatted.xml",false);
         Iterator.QueryPackage lastQ = null;
-        System.out.println("####################################");
+        System.out.println("CONTENTS ####################################");
         Iterator iter = strategyQueryBuilder.baseSimpleIterator();
         Iterator.QueryPackage queryPackage;
         while((queryPackage = iter.next())!=null)
@@ -331,7 +363,7 @@ public class StrategyQueryBuilder
             lastQ = queryPackage;
         }
 
-        System.out.println("####################################");
+        System.out.println("SENTENCES ####################################");
         iter = strategyQueryBuilder.baseSimpleIterator_sentences();
         while((queryPackage = iter.next())!=null)
         {
@@ -341,8 +373,8 @@ public class StrategyQueryBuilder
             lastQ = queryPackage;
         }
 
-        System.out.println("####################################");
-        iter = strategyQueryBuilder.baseFilteredIterator();
+        System.out.println("COMB ####################################");
+        iter = strategyQueryBuilder.baseCombSimpleIterator();
         while((queryPackage = iter.next())!=null)
         {
             System.out.println(queryPackage.getTopicId() + "-----------------------------------");
@@ -351,8 +383,18 @@ public class StrategyQueryBuilder
             lastQ = queryPackage;
         }
 
-        System.out.println("####################################");
-        iter = strategyQueryBuilder.baseFilteredIterator_sentences();
+        System.out.println("FILTER CONTENTS ####################################");
+        iter = strategyQueryBuilder.filteredIterator();
+        while((queryPackage = iter.next())!=null)
+        {
+            System.out.println(queryPackage.getTopicId() + "-----------------------------------");
+            System.out.println(queryPackage.filter);
+            System.out.println(queryPackage.query);
+            lastQ = queryPackage;
+        }
+
+        System.out.println("FILTER PARAGRAPHS ####################################");
+        iter = strategyQueryBuilder.filteredIterator_sentences();
         while((queryPackage = iter.next())!=null)
         {
             System.out.println(queryPackage.getTopicId() + "-----------------------------------");
@@ -362,8 +404,8 @@ public class StrategyQueryBuilder
         }
 
 
-        System.out.println("####################################");
-        iter = strategyQueryBuilder.baseFilteredExtendedIterator();
+        System.out.println("UNIFIED ####################################");
+        iter = strategyQueryBuilder.unifiedIterator();
         while((queryPackage = iter.next())!=null)
         {
             System.out.println(queryPackage.getTopicId() + "-----------------------------------");
@@ -372,8 +414,8 @@ public class StrategyQueryBuilder
             lastQ = queryPackage;
         }
 
-        System.out.println("####################################");
-        iter = strategyQueryBuilder.baseFilteredExtendedIterator_sentences();
+        System.out.println("UNIFIED PARAGRAPHS ####################################");
+        iter = strategyQueryBuilder.unifiedIterator_sentences();
         while((queryPackage = iter.next())!=null)
         {
             System.out.println(queryPackage.getTopicId() + "-----------------------------------");
@@ -399,8 +441,8 @@ public class StrategyQueryBuilder
 
 
 
-        System.out.println("####################################");
-        iter = strategyQueryBuilder.baseFilteredIterator_comb();
+        System.out.println("UNIFIED COMB ####################################");
+        iter = strategyQueryBuilder.unified_comb();
 
         while((queryPackage = iter.next())!=null)
         {

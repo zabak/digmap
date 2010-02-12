@@ -1,27 +1,20 @@
 package pt.utl.ist.lucene.treceval;
 
 import org.apache.log4j.Logger;
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.ngram.EdgeNGramTokenFilter;
 import org.dom4j.DocumentException;
-
-import java.io.IOException;
-import java.io.File;
-import java.util.HashMap;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Map;
-
-import pt.utl.ist.lucene.analyzer.LgteBrokerStemAnalyzer;
+import pt.utl.ist.lucene.Model;
+import pt.utl.ist.lucene.QEEnum;
+import pt.utl.ist.lucene.QueryConfiguration;
 import pt.utl.ist.lucene.treceval.handlers.*;
-import pt.utl.ist.lucene.treceval.handlers.topics.output.impl.TrecEvalOutputFormatFactory;
+import pt.utl.ist.lucene.treceval.handlers.collections.CDirectory;
 import pt.utl.ist.lucene.treceval.handlers.topics.ITopicsPreprocessor;
 import pt.utl.ist.lucene.treceval.handlers.topics.TDirectory;
-import pt.utl.ist.lucene.treceval.handlers.collections.CDirectory;
-import pt.utl.ist.lucene.utils.LgteAnalyzerManager;
-import pt.utl.ist.lucene.Model;
-import pt.utl.ist.lucene.QueryConfiguration;
-import pt.utl.ist.lucene.QEEnum;
+import pt.utl.ist.lucene.treceval.handlers.topics.output.impl.TrecEvalOutputFormatFactory;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Jorge Machado
@@ -39,8 +32,8 @@ public class CranfieldExample
 //        System.setProperty("lgte.score.fields.query.independent","true");
 
         args = new String[2];
-        args[0] = "D:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-index";
-        args[1] = "D:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-data";
+        args[0] = "C:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-index";
+        args[1] = "C:\\Servidores\\workspace\\lgte\\WEB-INF\\build\\webapp\\lgte\\WEB-INF\\test-data";
 
 
         Globals.INDEX_DIR = args[0];
@@ -234,11 +227,11 @@ public class CranfieldExample
 
         List<SearchConfiguration> searchConfigurations = new ArrayList<SearchConfiguration>();
 
-//        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, VS_CRAN));
-//        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, LM_CRAN));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, VS_CRAN));
+        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, LM_CRAN));
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, VS_STEMMER_CRAN));
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, LM_STEMMER_CRAN));
-        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, BM25_STEMMER_CRAN));
+//        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, BM25_STEMMER_CRAN));
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration1, BM25B_STEMMER_CRAN));
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration1_grams, VS_2_6GRAMS_CRAN));
 //        searchConfigurations.add(new SearchConfiguration(queryConfiguration1_grams, LM_2_6GRAMS_CRAN));
@@ -267,7 +260,7 @@ public class CranfieldExample
         SearchTopics.search(searchConfigurations);
 
         SearchTopics.evaluateMetrics(searchConfigurations,assessements);
-        SearchTopics.createRunPackage(searchConfigurations.get(0).getConfiguration().getOutputDir(),searchConfigurations);
+//        SearchTopics.createRunPackage(searchConfigurations.get(0).getConfiguration().getOutputDir(),searchConfigurations);
     }
 
     public static void addFields(List<XmlFieldHandler> xmlFieldHandlers, String field)

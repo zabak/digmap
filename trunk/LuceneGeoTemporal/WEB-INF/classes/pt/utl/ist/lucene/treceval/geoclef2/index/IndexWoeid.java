@@ -9,8 +9,8 @@ import pt.utl.ist.lucene.Model;
 import pt.utl.ist.lucene.analyzer.LgteBrokerStemAnalyzer;
 import pt.utl.ist.lucene.analyzer.LgteNothingAnalyzer;
 import pt.utl.ist.lucene.analyzer.LgteWhiteSpacesAnalyzer;
+import pt.utl.ist.lucene.treceval.geoclef2.IntegratedDocPlaceMakerIterator;
 import pt.utl.ist.lucene.utils.placemaker.PlaceMakerDocument;
-import pt.utl.ist.lucene.utils.placemaker.PlaceMakerIterator;
 import pt.utl.ist.lucene.utils.placemaker.PlaceNameNormalizer;
 
 import java.io.*;
@@ -74,9 +74,11 @@ public class IndexWoeid {
     {
         new File(indexPath).mkdir();
 
-        PlaceMakerIterator placeMakerIterator = new PlaceMakerIterator(Config.placemakerPath,"//doc/@docno");
+        IntegratedDocPlaceMakerIterator placeMakerIterator = new IntegratedDocPlaceMakerIterator(Config.documentPath, Config.placemakerPath);
 
-        PlaceMakerDocument placeMakerDocument;
+
+
+        IntegratedDocPlaceMakerIterator.DocumentWithPlaces placeMakerDocument;
         Map<String, Analyzer> anaMap = new HashMap<String,Analyzer>();
         anaMap.put(Config.ID, new LgteNothingAnalyzer());
         LgteBrokerStemAnalyzer analyzer = new LgteBrokerStemAnalyzer(anaMap,new LgteWhiteSpacesAnalyzer());
@@ -87,19 +89,19 @@ public class IndexWoeid {
         while((placeMakerDocument = placeMakerIterator.next())!=null)
         {
 
-            if(previousID.length() > 0 && !previousID.substring(0,8).equals(placeMakerDocument.getDocId().substring(0,8)))
-                System.out.println(i + ":" + placeMakerDocument.getDocId());
-            previousID = placeMakerDocument.getDocId();
+            if(previousID.length() > 0 && !previousID.substring(0,8).equals(placeMakerDocument.getD().getDocNO().substring(0,8)))
+                System.out.println(i + ":" + placeMakerDocument.getD().getDocNO());
+            previousID = placeMakerDocument.getD().getDocNO();
             indexDocument(writer,placeMakerDocument);
             i++ ;
         }
         writer.close();
     }
 
-    private static void indexDocument(LgteIndexWriter writer, PlaceMakerDocument placeMakerDocument) throws IOException
+    private static void indexDocument(LgteIndexWriter writer, IntegratedDocPlaceMakerIterator.DocumentWithPlaces placeMakerDocument) throws IOException
     {
         LgteDocumentWrapper doc = new LgteDocumentWrapper();
-        doc.indexString(Globals.DOCUMENT_ID_FIELD,placeMakerDocument.getDocId());
+        doc.indexString(Globals.DOCUMENT_ID_FIELD,placeMakerDocument.getD().getDocNO());
 
         StringBuilder G_GEO_ALL_WOEID = new StringBuilder();
         StringBuilder G_PLACE_REF_WOEID = new StringBuilder();
@@ -115,9 +117,9 @@ public class IndexWoeid {
 //            G_GEO_ALL_WOEID.append(PlaceNameNormalizer.normalizeWoeid(placeMakerDocument.getGeographicWoeid())).append(" ");
 ////            addBelongTos(placeMakerDocument.getGeographicWoeid(),G_PLACE_BELONG_TOS_WOEID,G_GEO_ALL_WOEID);
 //        }
-        if(placeMakerDocument.getPlaceDetails() != null && placeMakerDocument.getPlaceDetails().size()>0)
+        if(placeMakerDocument.getPm() != null && placeMakerDocument.getPm().getPlaceDetails() != null && placeMakerDocument.getPm().getPlaceDetails().size()>0)
         {
-            for(PlaceMakerDocument.PlaceDetails placeDetails: placeMakerDocument.getPlaceDetails())
+            for(PlaceMakerDocument.PlaceDetails placeDetails: placeMakerDocument.getPm().getPlaceDetails())
             {
                 for(int i =0; i <  placeDetails.getRefs().size();i++)
                 {

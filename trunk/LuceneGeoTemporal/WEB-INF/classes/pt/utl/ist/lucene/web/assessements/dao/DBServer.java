@@ -2,6 +2,7 @@ package pt.utl.ist.lucene.web.assessements.dao;
 
 import pt.utl.ist.lucene.web.assessements.HistoryEntry;
 import pt.utl.ist.lucene.web.assessements.TopicDoc;
+import pt.utl.ist.lucene.web.assessements.User;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -16,9 +17,9 @@ import java.util.List;
  */
 public class DBServer
 {
-    public static boolean login(String username, String password)
+    public static User login(String username, String password)
     {
-        boolean auth = false;
+        User auth = null;
         try
         {
             Connection conn = DaoServer.getConnection();
@@ -28,7 +29,9 @@ public class DBServer
             ResultSet rs = ps.executeQuery();
             if(rs.next())
             {
-                auth = true;
+                auth = new User();
+                auth.setUsername(username);
+                auth.setAdmin(rs.getBoolean("admin"));
             }
             ps.close();
             rs.close();
@@ -174,6 +177,7 @@ public class DBServer
 
     public static void main(String[] args) throws SQLException {
 
+        System.out.println(login("admin","admin!ntcir2010"));
         addTopicDoc("teste3","123","partially-relevante","admin");
         addRelevanceJudgement("teste3","doc","relevant","jorge");
         List<TopicDoc> topicDocs = getTopicDocs("teste3");

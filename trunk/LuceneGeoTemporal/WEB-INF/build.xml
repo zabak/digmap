@@ -165,6 +165,7 @@
                 <exclude name="${base.dir}/lib/jasper*" />
             </fileset>
         </copy>
+
         <copy todir="${webapp.path}/WEB-INF">
             <fileset dir="${base.dir}">
                 <include name="*.xml" />
@@ -184,6 +185,7 @@
                 <include name="*.js" />
                 <include name="*.txt" />
                 <include name="*.PNG" />
+                <include name="css/**/*" />
             </fileset>
         </copy>
 
@@ -221,6 +223,7 @@
                 <include name="*.jpg" />
                 <include name="*.gif" />
                 <include name="*.PNG" />
+                <include name="css/**/*" />
             </fileset>
         </copy>
 

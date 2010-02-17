@@ -1,0 +1,144 @@
+
+#header{}
+body * {font-size:11px;font-family: Verdana, Helvetica, sans-serif;}
+#search{}
+#searches{padding:3px;}
+#searches a{text-decoration:none}
+#searches td{font-size:11px;font-family: Verdana, Helvetica, sans-serif; border-bottom: 1px solid black;}
+#fields ul{margin:0; padding:5px;border:1px solid black; background-color:#4C6C8F;color:white;}
+#fields ul li{margin:0}
+#fields li{font-size:11px;font-family: Verdana, Helvetica, sans-serif;}
+
+label.PLACE
+{
+	background-color:lightcoral;
+}
+
+.warning
+{
+	background-color:yellow;
+}
+
+label.TIMEX
+{
+	background-color:lightskyblue;
+}
+label.word
+{
+	background-color:yellow;
+}
+#results
+{
+}
+.result {margin-top:10px}
+form
+{
+	margin:0;
+	padding:0;
+}
+.form
+{
+	border: 1px solid black;
+	padding: 3px;
+	background-color: #eeeeee;
+}
+
+
+.searchForm
+{
+	border-top: 1px solid black;
+	border-left: 1px solid black;
+	border-right: 1px solid black;
+	padding-top:10px;
+	padding-bottom:10px;
+	padding-left: 3px;
+	padding-right: 3px;
+	background-color: #eeeeee;
+	border-bottom: 1px solid black;
+
+}
+
+#loginbox
+{
+	background-color: #dddddd;
+	border:1px solid gray;
+}
+
+#adminbox
+{
+	background-color: #dddddd;
+	border:1px solid gray;
+}
+#adminboxContent
+{
+	border-top:1px solid gray;
+	padding-left:3px;
+	padding-right:3px;
+}
+#adminbox .menu td
+{
+	padding:3px;
+	border-left:1px solid gray;
+}
+#adminbox .menu
+{
+
+}
+.result th
+{
+	background-color:#A5B6C6;
+	font-size:11px;font-family: Verdana, Helvetica, sans-serif;
+	text-align:left;
+	font-weight:normal;
+
+
+}
+.result td
+{border-bottom:1px solid black;
+	font-size:11px;font-family: Verdana, Helvetica, sans-serif;
+	text-align:left;
+	font-weight:normal;
+	margin-top:5px;
+}
+
+.popupLink {
+	outline: none
+}
+.closeLink
+{
+	font-size: 22px;
+	font-family: Verdana,Tahoma,Arial;color: black;
+}
+.popup {
+	COLOR:black;
+	BORDER-RIGHT: black 3px solid;
+	PADDING-RIGHT: 3px;
+	BORDER-TOP: black 1px solid;
+	PADDING-LEFT: 3px; Z-INDEX: 10;
+	VISIBILITY: hidden;
+	PADDING-BOTTOM: 3px;
+	BORDER-LEFT: black 1px solid;
+	PADDING-TOP: 3px;
+	BORDER-BOTTOM: black 3px solid;
+	POSITION: absolute;
+	BACKGROUND-COLOR: white;
+
+}
+
+#blanket {
+	background-color:#111;
+	opacity: 0.65;
+	filter:alpha(opacity=65);
+	position:absolute;
+	z-index: 9001;
+	top:0px;
+	left:0px;
+	width:100%;
+}
+.popUpDiv {
+	position:absolute;
+	background-color:#eeeeee;
+	width:300px;
+	height:300px;
+	z-index: 9002;
+}

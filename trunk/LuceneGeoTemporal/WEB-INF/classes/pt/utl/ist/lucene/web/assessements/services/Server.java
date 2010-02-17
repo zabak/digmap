@@ -6,6 +6,8 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import pt.utl.ist.lucene.config.ConfigProperties;
+import pt.utl.ist.lucene.web.assessements.User;
+import pt.utl.ist.lucene.web.assessements.dao.DBServer;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
@@ -26,6 +28,25 @@ import java.util.Map;
 public class Server
 {
 
+    public static User login(HttpServletRequest request)
+    {
+        System.out.println("Aqui1");
+        User auth = (User) request.getSession().getAttribute("ntcir.user");
+        if(auth != null)
+            return auth;
+        System.out.println("Aqui2");
+        if(request.getParameter("password") != null && request.getParameter("username")!= null)
+        {
+            System.out.println("Aqui3");
+            auth = DBServer.login(request.getParameter("username"),request.getParameter("password"));
+            if(auth != null)
+                request.getSession().setAttribute("ntcir.user",auth);
+            System.out.println("Aqui4");
+        }
+        System.out.println("Aqui5");
+        return auth;
+    }
+    
     public static void importPool(HttpServletRequest request)
     {
         if (ServletFileUpload.isMultipartContent(request)) {
@@ -68,10 +89,10 @@ public class Server
 //                        if(type.equals("TITLE"))
 //                            topics.put(docId,text);
 //                         else
-                        if(type.equals("DESC"))
-                            topics.put(docId,text);
-                        else if(type.equals("NARR"))
-                            topicsDesc.put(docId,text);
+//                        if(type.equals("DESC"))
+//                            topics.put(docId,text);
+//                        else if(type.equals("NARR"))
+//                            topicsDesc.put(docId,text);
                     }
                     else
                     {
@@ -82,13 +103,13 @@ public class Server
                         String docid = line.substring(secondSpace,thirdSpace).trim();
                         String relevance = line.substring(thirdSpace).trim();
 
-                        Map<String,String> topicJudgementsAux = relevantTopicDoc.get(topicId);
-                        if(topicJudgementsAux == null)
-                        {
-                            topicJudgementsAux = new HashMap<String,String>();
-                            relevantTopicDoc.put(topicId,topicJudgementsAux);
-                        }
-                        topicJudgementsAux.put(docid,relevance);
+//                        Map<String,String> topicJudgementsAux = relevantTopicDoc.get(topicId);
+//                        if(topicJudgementsAux == null)
+//                        {
+//                            topicJudgementsAux = new HashMap<String,String>();
+//                            relevantTopicDoc.put(topicId,topicJudgementsAux);
+//                        }
+//                        topicJudgementsAux.put(docid,relevance);
                     }
                 }
             }

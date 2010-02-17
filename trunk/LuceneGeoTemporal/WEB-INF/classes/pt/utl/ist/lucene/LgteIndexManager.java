@@ -113,6 +113,25 @@ public class LgteIndexManager {
         }
     }
 
+     public static IndexReader openReader(String f, Model model,boolean loadCaches) throws IOException
+    {
+        if(model.isProbabilistcModel())
+        {
+            LanguageModelIndexReader reader = new LanguageModelIndexReader(IndexReader.open(f));
+            reader.readExtendedData(f,loadCaches);
+            return reader;
+        }
+        else if(model == Model.VectorSpaceModel)
+        {
+            return IndexReader.open(f);
+        }
+        else
+        {
+            System.err.println("Unknown retrieval model: " + model);
+            throw new IllegalArgumentException();
+        }
+    }
+
     private static final Logger logger = Logger.getLogger(LgteIndexManager.class);
 
     public static IndexReader openReader(Directory f, Model model) throws IOException

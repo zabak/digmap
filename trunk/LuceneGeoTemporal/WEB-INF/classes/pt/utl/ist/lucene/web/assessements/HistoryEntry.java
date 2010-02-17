@@ -14,7 +14,21 @@ public class HistoryEntry
     String assessor;
     String relevance;
     Date date;
+    String obs;
 
+    public String getColor()
+    {
+        if(relevance != null)
+        {
+            if(relevance.equals("relevant"))
+                return "green";
+            else if(relevance.equals("partially-relevant"))
+                return "yellow";
+            else if(relevance.equals("irrelevant"))
+                return "red";
+        }
+        return "";
+    }
     public String getAssessor() {
         return assessor;
     }
@@ -39,12 +53,21 @@ public class HistoryEntry
         this.date = date;
     }
 
+    public String getObs() {
+        return obs;
+    }
+
+    public void setObs(String obs) {
+        this.obs = obs;
+    }
+
     @Override
     public String toString() {
         return "HistoryEntry{" +
                 "assessor='" + assessor + '\'' +
                 ", relevance='" + relevance + '\'' +
                 ", date=" + date +
+                ", obs='" + obs + '\'' +
                 '}';
     }
 }

@@ -21,6 +21,9 @@ public class TopicDoc
     Date date;
     String admin;
     String html;
+    String docTitle;
+    double score;
+    int rank;
 
     public String getTopic() {
         return topic;
@@ -78,6 +81,29 @@ public class TopicDoc
         this.historyEntries = historyEntries;
     }
 
+    public String getDocTitle() {
+        return docTitle;
+    }
+
+    public void setDocTitle(String docTitle) {
+        this.docTitle = docTitle;
+    }
+
+    public double getScore() {
+        return score;
+    }
+
+    public void setScore(double score) {
+        this.score = score;
+    }
+
+    public int getRank() {
+        return rank;
+    }
+
+    public void setRank(int rank) {
+        this.rank = rank;
+    }
 
     @Override
     public String toString() {
@@ -89,6 +115,9 @@ public class TopicDoc
                 ", date=" + date +
                 ", admin='" + admin + '\'' +
                 ", html='" + html + '\'' +
+                ", docTitle='" + docTitle + '\'' +
+                ", score=" + score +
+                ", rank=" + rank +
                 '}';
     }
 }

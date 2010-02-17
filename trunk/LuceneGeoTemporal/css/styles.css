@@ -9,6 +9,19 @@ body * {font-size:11px;font-family: Verdana, Helvetica, sans-serif;}
 #fields ul li{margin:0}
 #fields li{font-size:11px;font-family: Verdana, Helvetica, sans-serif;}
 
+.history
+{
+    border:1px solid black;
+}
+.history th
+{
+    background-color:grey;
+    border:1px solid black;
+}
+.history td
+{
+    border:1px solid black;
+}
 label.PLACE
 {
 	background-color:lightcoral;

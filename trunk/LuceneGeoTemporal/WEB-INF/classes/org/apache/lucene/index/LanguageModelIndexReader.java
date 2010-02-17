@@ -27,8 +27,6 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Arrays;
-import java.lang.reflect.Array;
 
 /**  A <code>LanguageModelIndexReader</code> contains another IndexReader, which it
  * uses as its basic source of data, possibly transforming the data along the
@@ -418,6 +416,11 @@ public class LanguageModelIndexReader extends ProbabilisticIndexReader implement
      */
 
     public void readExtendedData(String directory)
+    {
+        cacher.loadFromFiles(directory,permissionToLoadDocIdCacheIfConfigured);
+    }
+
+    public void readExtendedData(String directory, boolean permissionToLoadDocIdCacheIfConfigured)
     {
         cacher.loadFromFiles(directory,permissionToLoadDocIdCacheIfConfigured);
     }

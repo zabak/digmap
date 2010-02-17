@@ -3,13 +3,19 @@
 <%@page import="pt.utl.ist.lucene.web.assessements.*"%>
 <%@page import="pt.utl.ist.lucene.web.assessements.dao.*"%>
 <%@page import="pt.utl.ist.lucene.web.assessements.services.*"%>
+
+
+<%
+    if(Server.operation(request,response))
+    {
+%>
 <html>
 <head>
 <title>NTCIR/GeoTime - Tool fot Relevance Judgements creation with Lucene GeoTemporal Extensions (LGTE) AT GeoTime NTCIR</title>
 <script type="text/javascript" src="<%=request.getContextPath()%>/scripts.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/popup.txt"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/utility.txt"></script>
-<link type="text/css" rel="stylesheet" href="css/styles.css"/> 
+<link type="text/css" rel="stylesheet" href="css/styles.css"/>
 </head>
 <body>
 <jsp:include page="headerNtcir.jsp"/>
@@ -89,3 +95,6 @@
 <jsp:include page="footer.jsp"/>
 </body>
 </html>
+<%
+    }
+%>

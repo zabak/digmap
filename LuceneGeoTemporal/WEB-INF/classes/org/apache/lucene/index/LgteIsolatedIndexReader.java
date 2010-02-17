@@ -1,19 +1,17 @@
 package org.apache.lucene.index;
 
-import pt.utl.ist.lucene.Model;
-import pt.utl.ist.lucene.LgteIndexTreeIdMapper;
-import pt.utl.ist.lucene.Globals;
-import pt.utl.ist.lucene.utils.StringComparator;
-import pt.utl.ist.lucene.utils.IDataCacher;
-
-import java.util.*;
-import java.io.IOException;
-import java.io.File;
-
+import org.apache.log4j.Logger;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.apache.log4j.Logger;
-import org.tiling.didyoumean.Indexer;
+import pt.utl.ist.lucene.Globals;
+import pt.utl.ist.lucene.LgteIndexTreeIdMapper;
+import pt.utl.ist.lucene.Model;
+import pt.utl.ist.lucene.utils.IDataCacher;
+import pt.utl.ist.lucene.utils.StringComparator;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * @author Jorge Machado
@@ -562,6 +560,7 @@ public class LgteIsolatedIndexReader extends ProbabilisticIndexReader
         }
         return null;
     }
+
 
     public boolean hasDeletions() { return false; }
 

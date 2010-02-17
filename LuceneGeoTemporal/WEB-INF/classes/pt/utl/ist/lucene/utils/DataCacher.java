@@ -1,18 +1,19 @@
 package pt.utl.ist.lucene.utils;
 
+import org.apache.log4j.Logger;
 import pt.utl.ist.lucene.config.ConfigProperties;
 
-import java.util.HashMap;
-import java.util.Set;
-import java.util.Iterator;
 import java.io.*;
-
-import org.apache.log4j.Logger;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Set;
 
 /** A simple singleton HashMap. */
 
-public class DataCacher implements IDataCacher {
+public class DataCacher implements IDataCacher
+{
     private HashMap caches;
+
 
     private static final String globalTableName = "global_vars";
 
@@ -48,18 +49,29 @@ public class DataCacher implements IDataCacher {
         return arr[key];
     }
 
+    boolean docidInvertedCache = ConfigProperties.getBooleanProperty("cache.use.docid.inverted.cache");
+
     public Object put(Object table, int key, Object value) {
-        Object[] arr = getTable(table);
-        if (key < 0 || arr == null || key > arr.length - 1) {
-            return null;
+        if(table instanceof String && ((String) table).equals("docid") && docidInvertedCache)
+        {
+            return caches.put(value,key);
         }
-        arr[key] = value;
-        return caches.put(table, arr);
+        else
+        {
+            Object[] arr = getTable(table);
+            if (key < 0 || arr == null || key > arr.length - 1) {
+                return null;
+            }
+            arr[key] = value;
+            return caches.put(table, arr);
+        }
+
     }
 
     public Object get(Object key) {
-        return caches.get(key);
+        return caches.get( key);
     }
+
 
     public Object put(Object key, Object value) {
         return caches.put(key, value);

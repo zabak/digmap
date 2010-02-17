@@ -42,9 +42,9 @@
     </target>
 
     <target name="deployContext" depends="">
-        <echo message="${url} file://${basedir}/build/lgte_war_context.xml"/>
+        <echo message="${url} file://${basedir}\build\lgte_war_context.xml"/>
         <install url="${url}" path="/lgte"
-                        config="file://${basedir}/build/lgte_war_context.xml"
+                        config="file://C:\WORKSPACE_JM\APPS\lgte\WEB-INF\build\lgte_war_context.xml"
                         username="${username}" password="${password}" />
     </target>
 

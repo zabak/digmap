@@ -3,20 +3,43 @@
   <component name="NewModuleRootManager" inherit-compiler-output="false">
     <output url="file://$MODULE_DIR$/build/webapp/lgte/WEB-INF/classes" />
     <output-test url="file://$MODULE_DIR$/build/webapp/lgte/WEB-INF/classes" />
-    <content url="file://$MODULE_DIR$/..">
-      <sourceFolder url="file://$MODULE_DIR$/build/webapp/lgte/WEB-INF/classes" isTestSource="false" />
+    <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/classes" isTestSource="false" />
-      <excludeFolder url="file://$MODULE_DIR$/../.idea" />
-      <excludeFolder url="file://$MODULE_DIR$/../.settings" />
       <excludeFolder url="file://$MODULE_DIR$/build" />
       <excludeFolder url="file://$MODULE_DIR$/lib" />
-      <excludeFolder url="file://$MODULE_DIR$/releaseNotes" />
       <excludeFolder url="file://$MODULE_DIR$/test-data" />
       <excludeFolder url="file://$MODULE_DIR$/test-index" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="lib" level="project" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Programas/Java/jdk1.6.0_18/lib/tools.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../modi_java_installer/lib/ant.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../modi_java_installer/lib/xmltask.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>
 

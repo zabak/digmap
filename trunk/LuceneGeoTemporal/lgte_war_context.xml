@@ -1,4 +1,4 @@
-<Context path="/lgte" docBase="D:\Servidores\workspace\lgte\WEB-INF\build\webapp\lgte\WEB-INF\build\webapp\lgte\"
+<Context path="/lgte" docBase="@home.dir@\build\webapp\lgte"
          debug="0">
     <!-- Link to the user database we will get roles from -->
     <ResourceLink name="users" global="UserDatabase"

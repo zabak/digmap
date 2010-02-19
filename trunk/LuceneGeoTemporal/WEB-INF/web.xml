@@ -1,6 +1,9 @@
 <?xml version="1.0"?>
 <!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
-<web-app>
+    <web-app>
+
+
+
         <display-name>Lucene With Geo-Temporal Extensions</display-name>
 
 
@@ -11,15 +14,15 @@
       <!--<param-value></param-value>-->
     <!--</context-param>-->
 
-    <welcome-file-list>
-        <welcome-file>assessmentsNtcir.jsp</welcome-file>
-    </welcome-file-list>
 
-    <session-config>
-        <session-timeout>120</session-timeout>
-    </session-config>
+        <session-config>
+            <session-timeout>120</session-timeout>
+        </session-config>
 
-    <!-- Define a Security Constraint on this Application -->
+        <welcome-file-list>
+            <welcome-file>assessmentsNtcir.jsp</welcome-file>
+        </welcome-file-list>
+     <!--Define a Security Constraint on this Application -->
     <!--<security-constraint>-->
       <!--<web-resource-collection>-->
         <!--<web-resource-name>NTCIR  GeoTime Relevance Judgements Service powered by LGTE. Please use Username and Password for participants area at GeoTime TestCollection</web-resource-name>-->

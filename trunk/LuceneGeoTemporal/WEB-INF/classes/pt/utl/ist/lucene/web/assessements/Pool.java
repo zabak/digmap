@@ -11,7 +11,7 @@ import java.util.Date;
  */
 public class Pool
 {
-    long id;
+    int id;
     String runId;
     String description;
     String task;
@@ -42,11 +42,11 @@ public class Pool
         this.description = description;
     }
 
-    public long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
 

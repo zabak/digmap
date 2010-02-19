@@ -9,13 +9,34 @@ body * {font-size:11px;font-family: Verdana, Helvetica, sans-serif;}
 #fields ul li{margin:0}
 #fields li{font-size:11px;font-family: Verdana, Helvetica, sans-serif;}
 
+.relevant
+{
+    background-color:green;
+}
+.partiallyRelevantOther
+{
+    background-color:yellow;
+}
+.partiallyRelevantWhere
+{
+    background-color:lightcoral;
+}
+.partiallyRelevantWhen
+{
+    background-color:lightskyblue;
+}
+.irrelevant
+{
+    background-color:red;
+}
 .history
 {
     border:1px solid black;
 }
 .history th
 {
-    background-color:grey;
+	color:white;
+	background-color:grey;
     border:1px solid black;
 }
 .history td
@@ -54,6 +75,43 @@ form
 	border: 1px solid black;
 	padding: 3px;
 	background-color: #eeeeee;
+}
+
+
+
+.data, .dataLine
+{
+	border: 1px solid black;
+	padding: 3px;
+	background-color: #eeeeee;
+	
+}
+.dataLine td
+{
+	
+	text-align:right;
+	border-right: 1px solid black;
+
+}
+.dataLine th
+{
+	text-align:center;
+	vertical-align:top;
+	border-right: 1px solid black;
+}
+
+.data td
+{
+	
+	text-align:right;
+	border-bottom: 1px solid black;
+}
+.data th
+{
+	border-right: 1px solid black;
+	border-bottom: 1px solid black;
+vv	text-align:center;
+	vertical-align:top;
 }
 
 

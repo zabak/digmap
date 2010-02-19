@@ -27,6 +27,162 @@ public class DBServer
         return manager.getConnection();
     }
 
+    public static AssessmentsBoard loadAssessmentsBoard(String task)
+    {
+        try
+        {
+            AssessmentsBoard assessmentsBoard = new AssessmentsBoard();
+            List<Topic> topics = getTopics(task);
+            for (Topic topic : topics)
+            {
+                assessmentsBoard.addTopic(topic.getIdTopic());
+                Connection conn = getConnection();
+                PreparedStatement ps = conn.prepareStatement("select relevance, count(relevance) as c from topic_doc where topic = ? group by relevance");
+                ps.setString(1,topic.getIdTopic());
+                ResultSet rs = ps.executeQuery();
+                while(rs.next())
+                {
+                    assessmentsBoard.addRelevance(topic.getIdTopic(),rs.getString("relevance"),rs.getInt("c"));
+                }
+                ps.close();
+                rs.close();
+            }
+            for (Topic topic : topics)
+            {
+                Connection conn = getConnection();
+                PreparedStatement ps = conn.prepareStatement("select count(*) as c from topic_doc where topic = ?");
+                ps.setString(1,topic.getIdTopic());
+                ResultSet rs = ps.executeQuery();
+                rs.next();
+                assessmentsBoard.addTotals(topic.getIdTopic(),rs.getInt("c"));
+                ps.close();
+                rs.close();
+            }
+            return assessmentsBoard;
+        } catch (SQLException e) {
+            System.out.println(e);
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static AssessmentsBoard loadAssessmentsBoard(String task, int pool)
+    {
+        try
+        {
+            AssessmentsBoard assessmentsBoard = new AssessmentsBoard();
+            List<Topic> topics = getTopics(task);
+            for (Topic topic : topics)
+            {
+                assessmentsBoard.addTopic(topic.getIdTopic());
+                Connection conn = getConnection();
+                PreparedStatement ps = conn.prepareStatement("select relevance, count(relevance) as c from topic_doc where topic = ? and pool = ? group by relevance");
+                ps.setString(1,topic.getIdTopic());
+                ps.setInt(2,pool);
+                ResultSet rs = ps.executeQuery();
+                while(rs.next())
+                {
+                    assessmentsBoard.addRelevance(topic.getIdTopic(),rs.getString("relevance"),rs.getInt("c"));
+                }
+
+                ps.close();
+                rs.close();
+            }
+            for (Topic topic : topics)
+            {
+                Connection conn = getConnection();
+                PreparedStatement ps = conn.prepareStatement("select count(*) as c from topic_doc where topic = ? and pool = ?");
+                ps.setString(1,topic.getIdTopic());
+                ps.setInt(2,pool);
+                ResultSet rs = ps.executeQuery();
+                rs.next();
+                assessmentsBoard.addTotals(topic.getIdTopic(),rs.getInt("c"));
+                ps.close();
+                rs.close();
+            }
+            return assessmentsBoard;
+        } catch (SQLException e) {
+            System.out.println(e);
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static AssessmentsBoard loadAssessmentsBoardOpenPools(String task)
+    {
+        try
+        {
+            AssessmentsBoard assessmentsBoard = new AssessmentsBoard();
+            List<Topic> topics = getTopics(task);
+            for (Topic topic : topics)
+            {
+                assessmentsBoard.addTopic(topic.getIdTopic());
+                Connection conn = getConnection();
+                PreparedStatement ps = conn.prepareStatement("select relevance, count(relevance) as c from topic_doc where topic = ? and closed = false group by relevance");
+                ps.setString(1,topic.getIdTopic());
+                ResultSet rs = ps.executeQuery();
+                while(rs.next())
+                {
+                    assessmentsBoard.addRelevance(topic.getIdTopic(),rs.getString("relevance"),rs.getInt("c"));
+                }
+
+                ps.close();
+                rs.close();
+            }
+            for (Topic topic : topics)
+            {
+                Connection conn = getConnection();
+                PreparedStatement ps = conn.prepareStatement("select count(*) as c from topic_doc where topic = ? and closed = false");
+                ps.setString(1,topic.getIdTopic());
+                ResultSet rs = ps.executeQuery();
+                rs.next();
+                assessmentsBoard.addTotals(topic.getIdTopic(),rs.getInt("c"));
+                ps.close();
+                rs.close();
+            }
+            return assessmentsBoard;
+        } catch (SQLException e) {
+            System.out.println(e);
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static AssessmentsBoard loadAssessmentsBoardOpenPools(String task, String topic)
+    {
+        try
+        {
+            AssessmentsBoard assessmentsBoard = new AssessmentsBoard();
+            assessmentsBoard.addTopic(topic);
+            Connection conn = getConnection();
+            PreparedStatement ps = conn.prepareStatement("select relevance, count(relevance) as c from topic_doc where topic = ? and closed = false group by relevance");
+            ps.setString(1,topic);
+            ResultSet rs = ps.executeQuery();
+            while(rs.next())
+            {
+                assessmentsBoard.addRelevance(topic,rs.getString("relevance"),rs.getInt("c"));
+            }
+
+            ps.close();
+            rs.close();
+
+            ps = conn.prepareStatement("select count(*) as c from topic_doc where topic = ? and closed = false");
+            ps.setString(1,topic);
+            rs = ps.executeQuery();
+            rs.next();
+            assessmentsBoard.addTotals(topic,rs.getInt("c"));
+            ps.close();
+            rs.close();
+
+            return assessmentsBoard;
+        } catch (SQLException e) {
+            System.out.println(e);
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
 
     public static User login(String username, String password)
     {
@@ -144,24 +300,24 @@ public class DBServer
     }
 
     public static void openClosePool(int id) throws SQLException {
-            try
-            {
-                Connection conn = getConnection();
-                PreparedStatement ps = conn.prepareStatement("select closed from pool where id = " + id );
-                ResultSet rs = ps.executeQuery();
-                rs.next();
-                if(rs.getBoolean("closed"))
-                    openPool(id);
-                else
-                    closePool(id);
-                rs.close();
-                ps.close();
-            } catch (SQLException e) {
-                System.out.println(e);
-                e.printStackTrace();
-                throw e;
-            }
+        try
+        {
+            Connection conn = getConnection();
+            PreparedStatement ps = conn.prepareStatement("select closed from pool where id = " + id );
+            ResultSet rs = ps.executeQuery();
+            rs.next();
+            if(rs.getBoolean("closed"))
+                openPool(id);
+            else
+                closePool(id);
+            rs.close();
+            ps.close();
+        } catch (SQLException e) {
+            System.out.println(e);
+            e.printStackTrace();
+            throw e;
         }
+    }
 
 
     public static void closePool(int id) throws SQLException {
@@ -279,7 +435,7 @@ public class DBServer
         }
     }
 
-    
+
 
 
     public static List<Topic> getTopics(String task) throws SQLException

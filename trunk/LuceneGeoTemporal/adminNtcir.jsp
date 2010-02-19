@@ -30,8 +30,8 @@
 </form>
 
  <br>
+    <h2>Document Assessment Pools</h2>
     <table class="form">
-        <tr><th colspan="2">Document Assessment Pools</th></tr>
         <tr>
             <th>LocalID </th>
             <th>RunID</th>
@@ -58,4 +58,79 @@
 %>
     </table>
 
+    <h2>General Assessments Stats</h2>
+    <%
+    AssessmentsBoard aB = DBServer.loadAssessmentsBoard("NtcirGeoTime2010");
+    %>
+     <table class="data">
+        <tr>
+            <th>Topic/relevance</th>
+            <th>relevant</th>
+            <th>partially relevant<br> where</th>
+            <th>partially relevant<br> when</th>
+            <th>partially relevant<br> other</th>
+            <th>irrelevant</th>
+            <th>Assessed/Total</th>
+        </tr>
+     <%
+        List<Topic> topics =   DBServer.getTopics("NtcirGeoTime2010");
+        for(Topic topic: topics)
+        {
+     %>
+             <tr>
+                <td><%=topic.getIdTopic()%></td>
+                <td><%=aB.getCount(topic.getIdTopic(),"relevant")%></td>
+                <td><%=aB.getCount(topic.getIdTopic(),"partially-relevant-where")%></td>
+                <td><%=aB.getCount(topic.getIdTopic(),"partially-relevant-when")%></td>
+                <td><%=aB.getCount(topic.getIdTopic(),"partially-relevant-other")%></td>
+                <td><%=aB.getCount(topic.getIdTopic(),"irrelevant")%></td>
+                <td><%=aB.getTotalsAssessed(topic.getIdTopic())%>/<%=aB.getTotals(topic.getIdTopic())%></td>
+            </tr>
+     <%
+        }
+     %>
+    </table>
     <br>
+    
+    <%
+        
+    for(Pool pool: pools)
+    {
+
+%>
+        <h2>Assessments Stats For Pool: <%=pool.getRunId()%> <%=pool.getDescription()%></h2>
+
+        <%
+            aB = DBServer.loadAssessmentsBoard("NtcirGeoTime2010",pool.getId());
+        %>
+             <table class="data">
+                <tr>
+                    <th>Topic/relevance</th>
+                    <th>relevant</th>
+                    <th>partially relevant<br> where</th>
+                    <th>partially relevant<br> when</th>
+                    <th>partially relevant<br> other</th>
+                    <th>irrelevant</th>
+                    <th>Assessed/Total</th>
+                </tr>
+             <%
+                for(Topic topic: topics)
+                {
+             %>
+                     <tr>
+                        <td><%=topic.getIdTopic()%></td>
+                        <td><%=aB.getCount(topic.getIdTopic(),"relevant")%></td>
+                        <td><%=aB.getCount(topic.getIdTopic(),"partially-relevant-where")%></td>
+                        <td><%=aB.getCount(topic.getIdTopic(),"partially-relevant-when")%></td>
+                        <td><%=aB.getCount(topic.getIdTopic(),"partially-relevant-other")%></td>
+                        <td><%=aB.getCount(topic.getIdTopic(),"irrelevant")%></td>
+                        <td><%=aB.getTotalsAssessed(topic.getIdTopic())%>/<%=aB.getTotals(topic.getIdTopic())%></td>
+                    </tr>
+             <%
+                }
+             %>
+                </table>
+
+    <%
+        }
+    %>

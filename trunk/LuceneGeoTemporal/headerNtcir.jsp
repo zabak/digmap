@@ -5,7 +5,7 @@
                 <a href="http://metadata.berkeley.edu/NTCIR-GeoTime/"><img alt="NTCIR GeoTime" border="0" src="ntcir.gif"><label style="font-size:24px">GeoTime</label></a>  <a href="http://code.google.com/p/digmap/wiki/LuceneGeoTemporal"><img border="0"  height="80" src="lgtesmall.png" alt="LGTE"/></a>
             </td>
             <td align="right">
-                <a href="http://www.inesc-id.pt"><img width="100px" border="0" src="inesc-id.jpg" alt="INESC-ID Lisbon"></a> <a href="http://www.ist.utl.pt"><img width="50px"  border="0" src="ist.jpg" alt="Instituto Superior Técnico"></a> <a href="http://www.estgp.pt"><img width="50px" src="estg-ipp.jpg" border="0" alt="Escola Superior de Tecnologia e Gestão de Portalegre"></a>
+                <a href="http://www.inesc-id.pt"><img border="0" src="inesc-id.jpg" alt="INESC-ID Lisbon"></a> <a href="http://www.ist.utl.pt"><img  border="0" src="ist.jpg" alt="Instituto Superior Técnico"></a> <a href="http://www.estgp.pt"><img  src="estg-ipp.jpg" border="0" alt="Escola Superior de Tecnologia e Gestão de Portalegre"></a>
             </td>
         </tr>
     </table>

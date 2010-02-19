@@ -18,7 +18,7 @@
 		<table width="100%">
 			<tr>
 				<td nowrap="nowrap" colspan="2">
-					Choose a topic to evaluate: ( <a href="javascript:alert('Choose a Topic, and mark the documents as relevant, partially relevant or irrelevant, use the Annotations Link to see the places and the time expressions marked with colors in the document body')">help</a> )
+					Choose a topic to evaluate: ( <a href="javascript:alert('Choose a Topic, and mark the documents as relevant, partially relevant (when, where or other) or irrelevant, use the \"Display Document\" to see the places and the time expressions marked with colors in the document body')">help</a> )
 
 					<select name="id_topic">
 							<option value=""></option>
@@ -76,6 +76,72 @@
     <form action="assessmentsNtcir.jsp?op=addJudgments" method="post">
         <input type="hidden" name="id_topic" value="<%=request.getParameter("id_topic")%>">
         <input style="background-color:yellow;padding:3px;" type="button" onclick="this.form.submit()" value="Click here to confirm your Judgements after you choose the relevance of the documents"/>
+
+        <h2>Assessments Stats for current Pool and current Topic</h2>
+        <%
+        AssessmentsBoard aB = DBServer.loadAssessmentsBoardOpenPools("NtcirGeoTime2010",request.getParameter("id_topic"));
+        %>
+         <table class="dataLine">
+            <tr>
+                <th>Topic/relevance</th>
+                <th>relevant</th>
+                <th>partially relevant<br> where</th>
+                <th>partially relevant<br> when</th>
+                <th>partially relevant<br> other</th>
+                <th>irrelevant</th>
+                <th>Assessed/Total</th>
+            </tr>
+             <tr>
+                <td><%=request.getParameter("id_topic")%></td>
+                <td><%=aB.getCount(request.getParameter("id_topic"),"relevant")%></td>
+                <td><%=aB.getCount(request.getParameter("id_topic"),"partially-relevant-where")%></td>
+                <td><%=aB.getCount(request.getParameter("id_topic"),"partially-relevant-when")%></td>
+                <td><%=aB.getCount(request.getParameter("id_topic"),"partially-relevant-other")%></td>
+                <td><%=aB.getCount(request.getParameter("id_topic"),"irrelevant")%></td>
+                <td><%=aB.getTotalsAssessed(request.getParameter("id_topic"))%>/<%=aB.getTotals(request.getParameter("id_topic"))%></td>
+            </tr>
+        </table>
+
+        <h2><a href="javascript:showOrHideOne('stats')">Show Assessments Stats for all Topics</a></h2>
+        <div id="stats" style="display:none">
+
+        <%
+        aB = DBServer.loadAssessmentsBoardOpenPools("NtcirGeoTime2010");
+        %>
+                 <table class="data">
+                    <tr>
+                        <th>Topic/relevance</th>
+                        <th>relevant</th>
+                        <th>partially relevant<br> where</th>
+                        <th>partially relevant<br> when</th>
+                        <th>partially relevant<br> other</th>
+                        <th>irrelevant</th>
+                        <th>Assessed/Total</th>
+                    </tr>
+                 <%
+                    for(Topic topic: topics)
+                    {
+                 %>
+                         <tr>
+                            <td><%=topic.getIdTopic()%></td>
+                            <td><%=aB.getCount(topic.getIdTopic(),"relevant")%></td>
+                            <td><%=aB.getCount(topic.getIdTopic(),"partially-relevant-where")%></td>
+                            <td><%=aB.getCount(topic.getIdTopic(),"partially-relevant-when")%></td>
+                            <td><%=aB.getCount(topic.getIdTopic(),"partially-relevant-other")%></td>
+                            <td><%=aB.getCount(topic.getIdTopic(),"irrelevant")%></td>
+                            <td><%=aB.getTotalsAssessed(topic.getIdTopic())%>/<%=aB.getTotals(topic.getIdTopic())%></td>
+                        </tr>
+                 <%
+                    }
+                 %>
+            </table>
+
+
+        </div>
+        <br>
+
+
+        <hr>
         <%
             for (TopicDoc topicDoc: topicDocs)
             {
@@ -83,22 +149,34 @@
                     String style = "";
                     String relevance = "";
                     String relevantSelected = "";
-                    String partiallyRelevantSelected = "";
+                    String partiallyRelevantWhenSelected = "";
+                    String partiallyRelevantWhereSelected = "";
+                    String partiallyRelevantOtherSelected = "";
                     String irrelevantSelected = "";
 
                     if(topicDoc.getRelevance().equals("irrelevant"))
                     {
-                            style = "style=\"padding:5px;background-color:red\"";
+                            style = "style=\"padding:5px\" class=\"irrelevant\"";
                             irrelevantSelected = " selected";
                     }
-                    else if(topicDoc.getRelevance().equals("partially-relevant"))
+                    else if(topicDoc.getRelevance().equals("partially-relevant-where"))
                     {
-                            style = "style=\"padding:5px;background-color:yellow\"";
-                            partiallyRelevantSelected = " selected";
+                            style = "style=\"padding:5px\" class=\"partiallyRelevantWhere\"";
+                            partiallyRelevantWhereSelected = " selected";
+                    }
+                    else if(topicDoc.getRelevance().equals("partially-relevant-when"))
+                    {
+                            style = "style=\"padding:5px\" class=\"partiallyRelevantWhen\"";
+                            partiallyRelevantWhenSelected = " selected";
+                    }
+                    else if(topicDoc.getRelevance().equals("partially-relevant-other"))
+                    {
+                            style = "style=\"padding:5px\" class=\"partiallyRelevantOther\"";
+                            partiallyRelevantOtherSelected = " selected";
                     }
                     else if(topicDoc.getRelevance().equals("relevant"))
                     {
-                            style = "style=\"padding:5px;background-color:green\"";
+                            style = "style=\"padding:5px\" class=\"relevant\"";
                             relevantSelected = " selected";
                     }
 
@@ -116,7 +194,7 @@
                         out.print("<h3>" + i + " - (DOCNO: " + docno + ")</h3>\n");
 
                     out.print("<p><b>score</b>: " + topicDoc.getScore() + "</p>\n");
-                    out.print("<p style=\"background-color:white\"><a onclick=\"getObjectById('table" + docno + "').style.backgroundColor='lightgray';return !showPopup('doc" + i + "', event);\" href=\"#\">Show Anotations</a></p>\n");
+                    out.print("<p style=\"background-color:white\"><a onclick=\"getObjectById('table" + docno + "').style.backgroundColor='lightgray';return !showPopup('doc" + i + "', event);\" href=\"#\">Display Document</a></p>\n");
                     out.print("<p style=\"background-color:white\"><a onclick=\"return !showPopup('docInfo" + i + "', event);\" href=\"#\">Show Assessments Info</a></p>\n");
                     out.print("</td>\n");
                     out.print("<td align=\"right\" valign=\"top\">\n");
@@ -125,10 +203,12 @@
                         <tr>
                             <td></td>
                             <td>
-                                <select name="<%=docno%>" onchange="if(this.value == 'relevant'){getObjectById('table<%=docno%>').style.backgroundColor='green';}else if(this.value == 'irrelevant'){getObjectById('table<%=docno%>').style.backgroundColor='red';} else if(this.value == 'partially-relevant'){getObjectById('table<%=docno%>').style.backgroundColor='yellow';}" name="<%=docno%>">
+                                <select name="<%=docno%>" onchange="if(this.value == 'relevant'){getObjectById('table<%=docno%>').style.backgroundColor='green';}else if(this.value == 'irrelevant'){getObjectById('table<%=docno%>').style.backgroundColor='red';} else if(this.value == 'partially-relevant-where'){getObjectById('table<%=docno%>').style.backgroundColor='rgb(249,208,172)';} else if(this.value == 'partially-relevant-when'){getObjectById('table<%=docno%>').style.backgroundColor='lightskyblue';} else if(this.value == 'partially-relevant-other'){getObjectById('table<%=docno%>').style.backgroundColor='yellow';}" name="<%=docno%>">
                                     <option value="">Choose relevance</option>
                                     <option value="relevant" <%=relevantSelected%>>relevant</option>
-                                    <option value="partially-relevant" <%=partiallyRelevantSelected%>>partially relevant</option>
+                                    <option value="partially-relevant-where" <%=partiallyRelevantWhereSelected%>>partially relevant where</option>
+                                    <option value="partially-relevant-when" <%=partiallyRelevantWhenSelected%>>partially relevant when</option>
+                                    <option value="partially-relevant-other" <%=partiallyRelevantOtherSelected%>>partially relevant other</option>
                                     <option value="irrelevant" <%=irrelevantSelected%>>irrelevant</option>
                                 </select>
                             </td>
@@ -149,15 +229,19 @@
             %>
                     <div class="popup" id="doc<%=i%>" onclick="event.cancelBubble = true;">
                         [<A onclick="hideCurrentPopup(); window.location='#<%=docno%>'; return false;" href="#"><font size="4">Close</font></A>]
-                        <input type="button" value="Mark relevant" onclick="this.form['<%=docno%>'].value='relevant';hideCurrentPopup();getObjectById('table<%=docno%>').style.backgroundColor='green';window.location='#<%=docno%>';"/>
-                        <input type="button" value="Mark partially relevant" onclick="this.form['<%=docno%>'].value='partially-relevant';hideCurrentPopup();getObjectById('table<%=docno%>').style.backgroundColor='yellow';window.location='#<%=docno%>';"/>
-                        <input type="button" value="Mark irrelevant" onclick="this.form['<%=docno%>'].value='irrelevant';hideCurrentPopup();getObjectById('table<%=docno%>').style.backgroundColor='red';window.location='#<%=docno%>';"/>
+                        <input type="button" value="relevant" onclick="this.form['<%=docno%>'].value='relevant';hideCurrentPopup();getObjectById('table<%=docno%>').style.backgroundColor='green';window.location='#<%=docno%>';"/>
+                        <input type="button" value="part. relevant where" onclick="this.form['<%=docno%>'].value='partially-relevant-where';hideCurrentPopup();getObjectById('table<%=docno%>').style.backgroundColor='rgb(249,208,172)';window.location='#<%=docno%>';"/>
+                        <input type="button" value="part. relevant when" onclick="this.form['<%=docno%>'].value='partially-relevant-when';hideCurrentPopup();getObjectById('table<%=docno%>').style.backgroundColor='lightskyblue';window.location='#<%=docno%>';"/>
+                        <input type="button" value="part. relevant other" onclick="this.form['<%=docno%>'].value='partially-relevant-other';hideCurrentPopup();getObjectById('table<%=docno%>').style.backgroundColor='yellow';window.location='#<%=docno%>';"/>
+                        <input type="button" value="irrelevant" onclick="this.form['<%=docno%>'].value='irrelevant';hideCurrentPopup();getObjectById('table<%=docno%>').style.backgroundColor='red';window.location='#<%=docno%>';"/>
                         <br>
                         <%=topicDoc.getHtml()%>
                         [<A onclick="hideCurrentPopup(); window.location='#<%=docno%>'; return false;" href="#"><font size="4">Close</font></A>]
-                        <input type="button" value="Mark relevant" onclick="this.form['<%=docno%>'].value='relevant';hideCurrentPopup();getObjectById('table<%=docno%>').style.backgroundColor='green';window.location='#<%=docno%>';"/>
-                        <input type="button" value="Mark partially relevant" onclick="this.form['<%=docno%>'].value='partially-relevant';hideCurrentPopup();getObjectById('table<%=docno%>').style.backgroundColor='yellow';window.location='#<%=docno%>';"/>
-                        <input type="button" value="Mark irrelevant" onclick="this.form['<%=docno%>'].value='irrelevant';hideCurrentPopup();getObjectById('table<%=docno%>').style.backgroundColor='red';window.location='#<%=docno%>';"/>
+                        <input type="button" value="relevant" onclick="this.form['<%=docno%>'].value='relevant';hideCurrentPopup();getObjectById('table<%=docno%>').style.backgroundColor='green';window.location='#<%=docno%>';"/>
+                        <input type="button" value="part. relevant where" onclick="this.form['<%=docno%>'].value='partially-relevant-where';hideCurrentPopup();getObjectById('table<%=docno%>').style.backgroundColor='rgb(249,208,172)';window.location='#<%=docno%>';"/>
+                        <input type="button" value="part. relevant when" onclick="this.form['<%=docno%>'].value='partially-relevant-when';hideCurrentPopup();getObjectById('table<%=docno%>').style.backgroundColor='lightskyblue';window.location='#<%=docno%>';"/>
+                        <input type="button" value="part. relevant other" onclick="this.form['<%=docno%>'].value='partially-relevant-other';hideCurrentPopup();getObjectById('table<%=docno%>').style.backgroundColor='yellow';window.location='#<%=docno%>';"/>
+                        <input type="button" value="irrelevant" onclick="this.form['<%=docno%>'].value='irrelevant';hideCurrentPopup();getObjectById('table<%=docno%>').style.backgroundColor='red';window.location='#<%=docno%>';"/>
                     </div>
                     <div class="popup" id="docInfo<%=i%>" onclick="event.cancelBubble = true;">
                         [<A onclick="hideCurrentPopup(); window.location='#<%=docno%>'; return false;" href="#"><font size="4">Close</font></A>]

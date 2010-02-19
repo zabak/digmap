@@ -19,9 +19,9 @@
     <property name="test.data" value="${build}/test/data" />
 
     <!-- Configure the custom Ant tasks for the Manager application -->
-    <taskdef resource="org/apache/catalina/ant/catalina.tasks" classpathref="deployer.classpath" />
-    <taskdef resource="net/sf/antcontrib/antlib.xml" classpathref="deployer.classpath" />
 
+    <taskdef resource="net/sf/antcontrib/antlib.xml" classpathref="deployer.classpath" />
+    <taskdef resource="org/apache/catalina/ant/catalina.tasks" classpathref="deployer.classpath" />
 
     <target name="deploy" description="Deploy web application">
         <deploy url="${url}" username="${username}" password="${password}" path="${path}" war="${webapp.path}.war" update="true" />
@@ -41,10 +41,15 @@
         <stop url="${url}" username="${username}" password="${password}" path="${path}" />
     </target>
 
-    <target name="deployContext" depends="">
+    <target name="deployContext">
         <echo message="${url} file://${basedir}\build\lgte_war_context.xml"/>
+        <copy file="../lgte_war_context.xml" todir="./build"/>
+        <replace  file="build/lgte_war_context.xml">
+            <replacefilter token="@home.dir@" value="${basedir}"/>
+        </replace>
+
         <install url="${url}" path="/lgte"
-                        config="file://C:\WORKSPACE_JM\APPS\lgte\WEB-INF\build\lgte_war_context.xml"
+                        config="file://${basedir}\build\lgte_war_context.xml"
                         username="${username}" password="${password}" />
     </target>
 

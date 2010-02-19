@@ -22,7 +22,11 @@ public class HistoryEntry
         {
             if(relevance.equals("relevant"))
                 return "green";
-            else if(relevance.equals("partially-relevant"))
+            else if(relevance.equals("partially-relevant-where"))
+                return "rgb(249,208,172)";
+            else if(relevance.equals("partially-relevant-when"))
+                return "lightskyblue";
+            else if(relevance.equals("partially-relevant-other"))
                 return "yellow";
             else if(relevance.equals("irrelevant"))
                 return "red";

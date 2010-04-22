@@ -130,7 +130,7 @@ public class TimexTaggerIterator {
         String data = "C:\\Servidores\\DATA\\COLLECTIONS\\geoclef\\en";
         String url = "http://deptal.estgp.pt:9090/jmachado/TIMEXTAG/index.php";
 
-        String startFile = "la063094.gz";
+        String startFile = "";
 
         if(args.length >= 3)
             startFile = args[2];

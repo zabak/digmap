@@ -138,7 +138,7 @@ public abstract class GeoClefDocument {
 			
 			sgmlClean
 			.append("<DOC docno=\"" + docNO + "\">\n")
-			.append("<DATA_TIME>" + year + "-" + month + "-" + day + "</DATE_TIME>\n")
+			.append("<DATE_TIME>" + year + "-" + month + "-" + day + "</DATE_TIME>\n")
 			.append("<HEADLINE>\n")
 			.append(headline)
 			.append("\n</HEADLINE>\n")

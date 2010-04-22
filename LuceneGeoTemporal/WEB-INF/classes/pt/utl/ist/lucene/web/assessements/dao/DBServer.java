@@ -368,7 +368,7 @@ public class DBServer
             ps.execute();
             ps.close();
             ps = conn.prepareStatement(
-                    "insert into history(assessor, date, relevance, topic, docno,obs) values(?,?,?,?,?,?)");
+                    "insert into history(assessor, date, relevance, topic, docno, obs) values(?,?,?,?,?,?)");
             ps.setString(1,user);
             ps.setTimestamp(2,new Timestamp(new java.util.Date().getTime()));
             ps.setString(3,relevance);
@@ -386,12 +386,24 @@ public class DBServer
 
     public static List<TopicDoc> getTopicDocs(String topic) throws SQLException
     {
+        return getTopicDocs(topic,"0","10000");
+    }
+
+    public static List<TopicDoc> getTopicDocs(String topic,String startAtStr,String maxStr) throws SQLException
+    {
+
+        int startAt = 0, max = 0;
+        if(startAtStr != null && startAtStr.trim().length()>0)
+            startAt = Integer.parseInt(startAtStr);
+        if(maxStr != null && maxStr.trim().length()>0)
+            max = Integer.parseInt(maxStr);
         try
         {
             Connection conn = getConnection();
             PreparedStatement ps = conn.prepareStatement(
-                    "select * from topic_doc where closed = false and topic = ? order by score desc");
+                    "select * from topic_doc where closed = false and topic = ? order by rank asc LIMIT " + startAt + "," + max);
             ps.setString(1,topic);
+
             ResultSet rs = ps.executeQuery();
             List<TopicDoc> topicDocs = new ArrayList<TopicDoc>();
             while (rs.next())
@@ -443,8 +455,8 @@ public class DBServer
         try
         {
             Connection conn = getConnection();
-            PreparedStatement ps = conn.prepareStatement(
-                    "select * from topic where task = ? order by id_topic");
+            PreparedStatement ps = conn.prepareStatement("select topic.*, count(topic_doc.topic) as docs from topic join topic_doc on topic_doc.topic = topic.id_topic  where task = ? group by topic_doc.topic order by id_topic"
+            );
             ps.setString(1,task);
             ResultSet rs = ps.executeQuery();
             List<Topic> topics = new ArrayList<Topic>();
@@ -455,7 +467,8 @@ public class DBServer
                 t.setIdTopic(rs.getString("id_topic"));
                 t.setDescription(rs.getString("description"));
                 t.setNarrative(rs.getString("narrative"));
-                t. setTask(task);
+                t.setTask(task);
+                t.setDocs(rs.getInt("docs"));
             }
             rs.close();
             ps.close();

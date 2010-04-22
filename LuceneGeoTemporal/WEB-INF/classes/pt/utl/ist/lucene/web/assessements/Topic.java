@@ -13,6 +13,7 @@ public class Topic
     String description;
     String narrative;
     String task;
+    int docs;
 
 
     public String getIdTopic() {
@@ -37,6 +38,14 @@ public class Topic
 
     public void setNarrative(String narrative) {
         this.narrative = narrative;
+    }
+
+    public int getDocs() {
+        return docs;
+    }
+
+    public void setDocs(int docs) {
+        this.docs = docs;
     }
 
     public String getTask() {

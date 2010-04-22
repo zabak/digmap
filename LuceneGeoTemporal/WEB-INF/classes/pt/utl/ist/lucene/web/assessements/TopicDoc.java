@@ -1,5 +1,6 @@
 package pt.utl.ist.lucene.web.assessements;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -66,6 +67,28 @@ public class TopicDoc
     }
 
     public String getHtml() {
+        return html;
+    }
+
+    public String getHtml(String keywords) throws IOException
+    {
+        String html = getHtml();
+        if(keywords == null || keywords.trim().length() == 0)
+            return html;
+        org.apache.lucene.analysis.TokenStream stream = pt.utl.ist.lucene.treceval.IndexCollections.en.getAnalyzerWithStemming().tokenStream("",new java.io.StringReader(keywords));
+        org.apache.lucene.analysis.Token t;
+        while((t=stream.next())!=null)
+        {
+            String str = t.termText();
+            String Str = str.substring(0,1).toUpperCase()+str.substring(1);
+            String STR = str.toUpperCase();
+            if(str.trim().length()>1)
+            {
+                html = html.replaceAll(str,"<label class=\"keyword\">"  + str + "</label>");
+                html = html.replaceAll(Str,"<label class=\"keyword\">" + Str + "</label>");
+                html = html.replaceAll(STR,"<label class=\"keyword\">" + STR + "</label>");
+            }
+        }
         return html;
     }
 

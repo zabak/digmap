@@ -375,6 +375,8 @@ public class StrategyQueryBuilder
             System.out.println(queryPackage.getTopicId() + "-----------------------------------");
             System.out.println(queryPackage.filter);
             System.out.println(queryPackage.query);
+            if(queryPackage.queryFilters == null)
+                System.out.println("$$$$$$$$$$$$$$$$$$$$$$$EXPANSION");
             lastQ = queryPackage;
         }
 

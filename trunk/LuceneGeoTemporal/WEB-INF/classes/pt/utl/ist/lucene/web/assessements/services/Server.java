@@ -1,5 +1,6 @@
 package pt.utl.ist.lucene.web.assessements.services;
 
+import org.apache.log4j.Logger;
 import org.apache.lucene.index.LanguageModelIndexReader;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -37,6 +38,7 @@ import java.util.*;
 public class Server
 {
 
+    private static final Logger logger = Logger.getLogger(Server.class);
     public static String getUsername(HttpServletRequest request) throws SQLException
     {
         return ((User) request.getSession().getAttribute("ntcir.user")).getUsername();
@@ -56,9 +58,14 @@ public class Server
             }
             else if(request.getParameter("op").equals("addJudgments"))
             {
-                String topic = request.getParameter("id_topic");
+                String id_topic = request.getParameter("id_topic");
+                if(id_topic!=null && id_topic.indexOf("LIMIT")>0)
+                {
+                    id_topic = id_topic.substring(0,id_topic.indexOf("LIMIT"));
+                }
                 Enumeration params = request.getParameterNames();
                 try{
+                    Throwable error = null;
                     while (params.hasMoreElements())
                     {
                         String param = (String) params.nextElement();
@@ -67,10 +74,21 @@ public class Server
                             String relevance = request.getParameter(param);
                             if (relevance != null && relevance.length() > 0)
                             {
-                                DBServer.addRelevanceJudgement(topic,param,relevance,user.getUsername(),request.getParameter("obs" + param));
+                                System.out.println(new java.util.Date() + " : NTCIR CONFIRM : session[" + request.getSession().getId() + "] ip[" + request.getRemoteAddr() + "] user[" + user.getUsername() + "] judgement[" + id_topic + " " + param + " " + relevance + "]");
+                                try{
+                                    DBServer.addRelevanceJudgement(id_topic,param,relevance,user.getUsername(),request.getParameter("obs" + param));
+                                }catch(Throwable e)
+                                {
+                                    error = e;
+                                    logger.error(e,e);
+                                }
                             }
                         }
                     }
+                    if(error != null && error instanceof SQLException)
+                        throw (SQLException)error;
+                    else if(error instanceof RuntimeException)
+                        throw (RuntimeException) error;
                 }
                 catch(SQLException e)
                 {

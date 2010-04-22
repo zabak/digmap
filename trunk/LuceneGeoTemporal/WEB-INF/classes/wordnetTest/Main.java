@@ -1,15 +1,15 @@
 package wordnetTest;
 
 
-import java.net.URL;
-import java.net.MalformedURLException;
-import java.io.File;
-import java.util.List;
-import java.util.Iterator;
-
-import edu.mit.jwi.IDictionary;
 import edu.mit.jwi.Dictionary;
+import edu.mit.jwi.IDictionary;
 import edu.mit.jwi.item.*;
+
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Iterator;
+import java.util.List;
 
 
 /**
@@ -25,7 +25,7 @@ public class Main {
 
     public static void main(String[] args) throws MalformedURLException {
 
-
+       
         // construct the URL to the Wordnet dictionary directory
         String wnhome = System.getenv("WNHOME");
         String path = "D:\\Jorge\\Documents\\software\\wordnet\\WNdb-3.0" + File.separator + "dict";

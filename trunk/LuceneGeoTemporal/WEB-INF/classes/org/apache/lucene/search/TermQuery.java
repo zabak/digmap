@@ -16,12 +16,12 @@ package org.apache.lucene.search;
  * limitations under the License.
  */
 
-import java.io.IOException;
-
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
 import pt.utl.ist.lucene.Model;
 import pt.utl.ist.lucene.ModelManager;
+
+import java.io.IOException;
 
 /**
  * This is a wrapper for actual term queriy object, which
@@ -70,7 +70,7 @@ public class TermQuery extends Query
 
     public String toString()
     {
-        return "wrapper around: " + termQueryImpl.toString();
+        return termQueryImpl.toString();
     }
 
     /**

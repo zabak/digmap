@@ -45,7 +45,7 @@ public class LgteQuery
     {
         this.query = LuceneVersionFactory.getLuceneVersion().parseQuery(query,Globals.LUCENE_DEFAULT_FIELD,analyzer);
         this.queryParams = queryParams;
-        this.analyzer = analyzer;
+        this.analyzer = analyzer;        
     }
 
     public LgteQuery(String query, QueryParams queryParams, Analyzer analyzer, String defaultField) throws ParseException

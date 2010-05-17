@@ -7,7 +7,12 @@ import pt.utl.ist.lucene.priors.DocumentPriors;
 import pt.utl.ist.lucene.priors.impl.LanguageModelPriors;
 import pt.utl.ist.lucene.priors.impl.DoNothingPriors;
 import pt.utl.ist.lucene.priors.impl.LanguageModelHiemstraPriors;
+import pt.utl.ist.lucene.model.ModelInitBm25Normalized;
 import org.apache.log4j.Logger;
+import org.apache.lucene.index.IndexReader;
+
+import java.util.Map;
+import java.util.HashMap;
 
 /**
  * @author Jorge Machado
@@ -28,8 +33,28 @@ public enum Model
     PL2DFRModel("PL2DFRModel", true,"PL2DFRModel", new DoNothingPriors()),
     BB2DFRModel("BB2DFRModel", true,"BB2DFRModel", new DoNothingPriors()),
     OkapiBM25Model("OkapiBM25Model", true,"bm25", new DoNothingPriors()),
-    BM25b("BM25b", true,"bm25b", new DoNothingPriors());
+    BM25b("BM25b", true,"bm25b", new DoNothingPriors()),
+    BM25NormalizedStep2("BM25NormalizedStep2", true,"BM25NormalizedStep2", new DoNothingPriors()),
+    BM25Normalized("BM25Normalized", true,"BM25Normalized", new DoNothingPriors(),ModelInitBm25Normalized.getInstance(), BM25NormalizedStep2);
 
+
+
+
+    public ModelInit getModelInit() {
+        return modelInit;
+    }
+
+    public static interface ModelInit
+    {
+        public void init();
+    }
+
+    public static class ModelInitNothing implements ModelInit
+    {
+        static  ModelInitNothing instance = new ModelInitNothing();
+        static ModelInitNothing getInstance(){return instance;}
+        public void init() {/*do nothing*/}
+    }
 
 
 
@@ -48,6 +73,8 @@ public enum Model
         }
     }
 
+    ModelInit modelInit = ModelInitNothing.getInstance();
+    private Model cascadeModel = null;
     String name;
     boolean probabilistcModel;
     String shortName;
@@ -59,6 +86,22 @@ public enum Model
         this.probabilistcModel = isProbabilistic;
         this.shortName = shortName;
         this.documentPriors = documentPriors;
+    }
+    private Model(String name, boolean isProbabilistic, String shortName, DocumentPriors documentPriors, ModelInit modelInit)
+    {
+        this(name,isProbabilistic, shortName,documentPriors);
+        this.modelInit = modelInit;
+    }
+
+
+    public Model getCascadeModel() {
+        return cascadeModel;
+    }
+
+    private Model(String name, boolean isProbabilistic, String shortName, DocumentPriors documentPriors, ModelInit modelInit, Model cascadeModel)
+    {
+        this(name,isProbabilistic, shortName,documentPriors,modelInit);
+        this.cascadeModel = cascadeModel;
     }
 
     public static Model parse(String name)

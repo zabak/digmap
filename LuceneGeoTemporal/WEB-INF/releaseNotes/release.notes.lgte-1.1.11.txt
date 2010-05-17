@@ -1,0 +1,12 @@
+LGTE version 1.2.11
+
+Release Notes:
+
+1 - BM25 Normalization Model. The score of a document is the sum of normalized scores in each index. This operation is done by running search queries using a cascade model
+    Two models were created BM25Normalized and BM25NormalizedStep2 The first one cascade the second one. The developer only need to choose BM25Normalized and the system do the rest
+    This upgrade is not memory safe yet, because will create a Map of classes, one for each index used in query, and each object in map has an array of doubles
+    with the size equal to the number of documents in index.
+    JunitTestCreated at pt.utl.ist.lucene.test.models.TestBm25Normalized
+    All other tests pass
+
+    jm

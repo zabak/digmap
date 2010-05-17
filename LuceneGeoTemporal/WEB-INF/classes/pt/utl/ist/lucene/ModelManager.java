@@ -27,6 +27,15 @@ public class ModelManager
     private HashMap<Long,ModelContainer> threadModels = new HashMap<Long,ModelContainer>();
 
 
+    public void setOnlyModel(Model m)
+    {
+        Properties modelProperties = getModelProperties();
+        QueryConfiguration queryConfiguration = getQueryConfiguration();
+        service(ManagerService.setModel,m);
+        service(ManagerService.setQueryConfiguration,queryConfiguration);
+        service(ManagerService.setModelProperties,modelProperties);
+    }
+
     public void setModel(Model m)
     {
         service(ManagerService.setModel,m);
@@ -43,6 +52,14 @@ public class ModelManager
         service(ManagerService.setModel,m);
         service(ManagerService.setQueryConfiguration,queryConfiguration);
     }
+
+    public void setModel(Model m, QueryConfiguration queryConfiguration, Properties modelProperties)
+    {
+        service(ManagerService.setModel,m);
+        service(ManagerService.setQueryConfiguration,queryConfiguration);
+        service(ManagerService.setModelProperties,modelProperties);
+    }
+
 
     public void setQueryConfiguration(QueryConfiguration queryConfiguration)
     {
@@ -78,13 +95,13 @@ public class ModelManager
         return queryConfiguration != null;
     }
 
-     public boolean hasModel()
+    public boolean hasModel()
     {
         Model model = (Model) service(ManagerService.getModel,null);
         return model != null;
     }
 
-     public boolean hasModelProperties()
+    public boolean hasModelProperties()
     {
         Properties modelProperties = (Properties) service(ManagerService.getModelProperties,null);
         return modelProperties != null;
@@ -100,7 +117,7 @@ public class ModelManager
     {
         switch ( service )
         {
-            case setModel: threadModels.put(Thread.currentThread().getId(),new ModelContainer((Model) o)); break;
+            case setModel: threadModels.put(Thread.currentThread().getId(),new ModelContainer((Model) o)); ((Model)o).getModelInit().init(); break;
 
             case setQueryConfiguration:{
                 if(threadModels.get(Thread.currentThread().getId())!=null)

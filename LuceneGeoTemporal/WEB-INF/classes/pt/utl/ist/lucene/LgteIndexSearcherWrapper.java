@@ -6,6 +6,7 @@ import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.search.*;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.document.Document;
 import pt.utl.ist.lucene.sort.LgteSort;
 import pt.utl.ist.lucene.sort.sorters.TimeSpatialTextSorterSource;
 import pt.utl.ist.lucene.config.ConfigProperties;
@@ -96,12 +97,12 @@ public class LgteIndexSearcherWrapper
     public Explanation explain(String query, int doc, Analyzer a) throws java.io.IOException, ParseException
     {
         LgteQuery lgteQuery = LgteQueryParser.parseQuery(query,this,a);
-        return indexSearcher.explain(lgteQuery.getQuery(),doc);
+        return explainCascadeModels(lgteQuery.getQuery(), doc);
     }
 
     public Explanation explain(LgteQuery lgteQuery, int doc) throws java.io.IOException, ParseException
     {
-        return indexSearcher.explain(lgteQuery.getQuery(),doc);
+        return explainCascadeModels(lgteQuery.getQuery(), doc);
     }
 
     public LgteHits search(String query, Analyzer a) throws java.io.IOException, ParseException
@@ -126,8 +127,63 @@ public class LgteIndexSearcherWrapper
         FilterOrchestrator filterOrchestrator = new FilterOrchestrator();
         Filter finalFilter = filterOrchestrator.getFilter(lgteQuery);
         sort.addTimeSpaceDistancesWrapper(filterOrchestrator);
-        Hits hits = indexSearcher.search(lgteQuery.getQuery(),finalFilter,sort);
+        Hits hits = cascadeModels(lgteQuery.getQuery(),finalFilter, sort);
         return new LgteHits(hits,filterOrchestrator.getTimeDistances(),filterOrchestrator.getSpaceDistances(), sort,lgteQuery);
+    }
+
+    private Explanation explainCascadeModels(Query query, int doc) throws IOException {
+        Model model = ModelManager.getInstance().getModel();
+        while(model.getCascadeModel() != null)
+        {
+            indexSearcher.search(query);
+            ModelManager.getInstance().setOnlyModel(model.getCascadeModel());
+            model = model.getCascadeModel();
+        }
+        return indexSearcher.explain(query,doc);
+    }
+
+    private Hits cascadeModels(Query query, Filter filter) throws IOException {
+        Model model = ModelManager.getInstance().getModel();
+        while(model.getCascadeModel() != null)
+        {
+            indexSearcher.search(query,filter);
+            ModelManager.getInstance().setOnlyModel(model.getCascadeModel());
+            model = model.getCascadeModel();
+        }
+        return indexSearcher.search(query,filter);
+    }
+
+    private Hits cascadeModels(Query query, Filter filter, Sort sort) throws IOException {
+        Model model = ModelManager.getInstance().getModel();
+        while(model.getCascadeModel() != null)
+        {
+            indexSearcher.search(query,filter,sort);
+            ModelManager.getInstance().setOnlyModel(model.getCascadeModel());
+            model = model.getCascadeModel();
+        }
+        return indexSearcher.search(query,filter,sort);
+    }
+
+    private TopDocs cascadeModels(Query query, Filter filter, int i) throws IOException {
+        Model model = ModelManager.getInstance().getModel();
+        while(model.getCascadeModel() != null)
+        {
+            indexSearcher.search(query,filter,i);
+            ModelManager.getInstance().setOnlyModel(model.getCascadeModel());
+            model = model.getCascadeModel();
+        }
+        return indexSearcher.search(query,filter,i);
+    }
+
+    private void cascadeModels(HitCollector hitCollector, Query query, Filter filter) throws IOException {
+        Model model = ModelManager.getInstance().getModel();
+        while(model.getCascadeModel() != null)
+        {
+            indexSearcher.search(query,filter);
+            ModelManager.getInstance().setOnlyModel(model.getCascadeModel());
+            model = model.getCascadeModel();
+        }
+        indexSearcher.search(query,filter,hitCollector);
     }
 
 
@@ -138,7 +194,7 @@ public class LgteIndexSearcherWrapper
         FilterOrchestrator filterOrchestrator = new FilterOrchestrator();
         sort.addTimeSpaceDistancesWrapper(filterOrchestrator);
         Filter finalFilter = filterOrchestrator.getFilter(lgteQuery,userFilter);
-        Hits hits = indexSearcher.search(lgteQuery.getQuery(),finalFilter,sort);
+        Hits hits = cascadeModels(lgteQuery.getQuery(),finalFilter, sort);
         return new LgteHits(hits,filterOrchestrator.getTimeDistances(),filterOrchestrator.getSpaceDistances(),sort,lgteQuery);
     }
 
@@ -165,10 +221,12 @@ public class LgteIndexSearcherWrapper
         Hits hits;
         if(sort != null)
         {
-            hits = indexSearcher.search(lgteQuery.getQuery(),finalFilter,sort);
+            hits = cascadeModels(lgteQuery.getQuery(),finalFilter, sort);
         }
         else
-            hits = indexSearcher.search(lgteQuery.getQuery(),finalFilter);
+        {
+            hits = cascadeModels(lgteQuery.getQuery(),finalFilter);
+        }
 
         return new LgteHits(hits,filterOrchestrator.getTimeDistances(),filterOrchestrator.getSpaceDistances(),sort,lgteQuery);
     }
@@ -227,10 +285,12 @@ public class LgteIndexSearcherWrapper
         Hits hits;
         if(sort != null)
         {
-            hits = indexSearcher.search(lgteQuery.getQuery(),finalFilter,sort);
+            hits = cascadeModels(lgteQuery.getQuery(),finalFilter, sort);
         }
         else
-            hits = indexSearcher.search(lgteQuery.getQuery(),finalFilter);
+        {
+            hits = cascadeModels(lgteQuery.getQuery(),finalFilter);
+        }
         return new LgteHits(hits,filterOrchestrator.getTimeDistances(),filterOrchestrator.getSpaceDistances(),sort,lgteQuery);
     }
 
@@ -240,7 +300,7 @@ public class LgteIndexSearcherWrapper
         LgteQuery lgteQuery = LgteQueryParser.parseQuery(query,field, analyzer,this);
         FilterOrchestrator filterOrchestrator = new FilterOrchestrator();
         Filter finalFilter = filterOrchestrator.getFilter(lgteQuery,filter);
-        return indexSearcher.search(lgteQuery.getQuery(),finalFilter,i);
+        return cascadeModels(lgteQuery.getQuery(),finalFilter, i);
     }
 
     public void search(String query, String field, Analyzer analyzer, org.apache.lucene.search.Filter filter, HitCollector hitCollector) throws java.io.IOException, ParseException
@@ -249,7 +309,7 @@ public class LgteIndexSearcherWrapper
         if(lgteQuery.getQueryParams().getModel() != null) ModelManager.getInstance().setModel(lgteQuery.getQueryParams().getModel());
         FilterOrchestrator filterOrchestrator = new FilterOrchestrator();
         Filter finalFilter = filterOrchestrator.getFilter(lgteQuery,filter);
-        indexSearcher.search(lgteQuery.getQuery(),finalFilter,hitCollector);
+        cascadeModels(hitCollector,lgteQuery.getQuery(),finalFilter);
     }
 
     public LgteHits search(Query query) throws java.io.IOException, ParseException {
@@ -296,7 +356,7 @@ public class LgteIndexSearcherWrapper
     {
         FilterOrchestrator filterOrchestrator = new FilterOrchestrator();
         Filter finalFilter = filterOrchestrator.getFilter(lgteQuery);
-        indexSearcher.search(lgteQuery.getQuery(),finalFilter,hitCollector);
+        cascadeModels(hitCollector,lgteQuery.getQuery(),finalFilter);
     }
 
     public LgteHits search(String query, Filter filter) throws java.io.IOException, ParseException

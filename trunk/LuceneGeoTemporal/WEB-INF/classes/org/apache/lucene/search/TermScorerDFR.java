@@ -2,6 +2,8 @@ package org.apache.lucene.search;
 
 import java.io.IOException;
 import java.util.Properties;
+import java.util.Map;
+import java.util.HashMap;
 
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.TermDocs;
@@ -12,6 +14,7 @@ import org.apache.lucene.queryParser.ParseException;
 import org.apache.log4j.Logger;
 import org.omg.SendingContext.RunTime;
 import pt.utl.ist.lucene.*;
+import pt.utl.ist.lucene.model.ModelInitBm25Normalized;
 import pt.utl.ist.lucene.test.hierarchicindexes.TestBm25;
 import pt.utl.ist.lucene.treceval.geotime.index.IndexGeoTime;
 import pt.utl.ist.lucene.treceval.IndexCollections;
@@ -69,10 +72,20 @@ final class TermScorerDFR extends LgteFieldedTermScorer {
         this.indexReader = (ProbabilisticIndexReader) reader;
         this.term = ((TermQueryProbabilisticModel) weight.getQuery()).getTerm();
 
+
+
         queryConfiguration = ModelManager.getInstance().getQueryConfiguration();
         modelProperties = ModelManager.getInstance().getModelProperties();
         if(queryConfiguration == null) queryConfiguration = new QueryConfiguration();
 
+        if(model != Model.BM25Normalized && term.field() != null && queryConfiguration != null)
+        {
+            Float fieldBoost = queryConfiguration.getFloatProperty("model.field.boost." + term.field());
+            if(fieldBoost != null && fieldBoost > 0f)
+            {
+                weightValue = fieldBoost;
+            }
+        }
         // Get data for the collection model
 
         String docLengthType = queryConfiguration.getProperty("LM-lengths",modelProperties);
@@ -109,7 +122,7 @@ final class TermScorerDFR extends LgteFieldedTermScorer {
 
     static double colsize;
     static double avgLen;
-    double numDocs;
+    int numDocs;
 
 
 
@@ -140,6 +153,8 @@ final class TermScorerDFR extends LgteFieldedTermScorer {
         return score(tfDoc,doc);
     }
 
+
+
     private float score(float tfDoc,int doc) throws IOException
     {
         Double avgDocLen;
@@ -149,8 +164,8 @@ final class TermScorerDFR extends LgteFieldedTermScorer {
             try{
 //            System.out.println("Using Fields useFieldLengths = true");
 //                System.out.println("doc - term.field() + \":\" + term.text() = " + doc + " - " + term.field() + ":" + term.text());
-            docLen = indexReader.getFieldLength(doc, term.field());
-            avgDocLen = indexReader.getAvgLenTokenNumber(term.field());
+                docLen = indexReader.getFieldLength(doc, term.field());
+                avgDocLen = indexReader.getAvgLenTokenNumber(term.field());
             }catch(IOException e)
             {
                 logger.error(e.toString() + " : doc " + doc + " term " + term);
@@ -163,48 +178,10 @@ final class TermScorerDFR extends LgteFieldedTermScorer {
             avgDocLen = avgLen;
         }
         double sim = 0;
-        if(model == Model.OkapiBM25Model || model == Model.BM25b)
+        if(model == Model.OkapiBM25Model || model == Model.BM25b || model == Model.BM25Normalized || model == Model.BM25NormalizedStep2)
         {
 
             switch ( model ) {
-                case OkapiBM25Model :
-                {
-                    double epslon = 0.01d;
-                    double k1 = 2.0, b = 0.75;
-
-                    double idf = idf(epslon, docFreq,queryConfiguration);
-                    Double k1Cache = getDoubleCache("bm25.k1", queryConfiguration,k1,BM25_k1_CACHE_INDEX);
-                    Double bCache = getDoubleCache("bm25.b", queryConfiguration,b,BM25_b_CACHE_INDEX);
-
-                    sim = idf *
-                            (
-                                    (tfDoc*(k1Cache + 1))
-                                            /
-                                            ( tfDoc + k1Cache*(1.0 - bCache + bCache*(docLen/avgDocLen)))
-                            );
-
-
-//                    if(TestBm25.debugStopTerm.equals(term.field() + ":" + term.text()))
-//                    {
-//                        System.out.println("TERM:(" + term.field() + ":" + term.text() + ")------");
-//                        System.out.println("doc-Id:" + doc);
-//                        System.out.println("Doc-Len:" + docLen);
-//                        System.out.println("Avg-Doc-Len:" + avgDocLen);
-//                        System.out.println("docFreq:" + docFreq);
-//                        System.out.println("tfDoc:" + tfDoc);
-//                        System.out.println("idf:" + idf);
-//                        System.out.println("BM25 Policy:" + (queryConfiguration.getCacheObject(BM25_POLICY_CACHE_INDEX)));
-//                        System.out.println("BM25 Epslon:" + (queryConfiguration.getCacheObject(BM25_EPSLON_CACHE_INDEX)));
-//                        System.out.println("BM25 K1:" + k1Cache.doubleValue());
-//                        System.out.println("BM25 b:" + bCache.doubleValue());
-//                        System.out.println("BM25 SIM:" + sim);
-//                        System.out.println("weightValue:" + weightValue);
-//                        System.out.println("BM25 SIM WEIGHTED:" + (sim*weightValue));
-//                        System.out.println("-----------------------------------------------------");
-//                    }
-
-                    break;
-                }
                 case BM25b:
                 {
 
@@ -262,6 +239,58 @@ final class TermScorerDFR extends LgteFieldedTermScorer {
                             ((k3Cache+1)*keyFrequency/(k3Cache+keyFrequency));
                     break;
                 }
+                case OkapiBM25Model:
+                case BM25Normalized:
+                case BM25NormalizedStep2:
+                {
+                    double epslon = 0.01d;
+                    double k1 = 2.0, b = 0.75;
+
+                    double idf = idf(epslon, docFreq,queryConfiguration);
+                    Double k1Cache = getDoubleCache("bm25.k1", queryConfiguration,k1,BM25_k1_CACHE_INDEX);
+                    Double bCache = getDoubleCache("bm25.b", queryConfiguration,b,BM25_b_CACHE_INDEX);
+
+                    sim = idf *
+                            (
+                                    (tfDoc*(k1Cache + 1))
+                                            /
+                                            ( tfDoc + k1Cache*(1.0 - bCache + bCache*(docLen/avgDocLen)))
+                            );
+
+                    if(model == Model.BM25Normalized)
+                    {
+                        ModelInitBm25Normalized modelInitBm25Normalized = (ModelInitBm25Normalized) model.getModelInit();
+                        modelInitBm25Normalized.updateMaxs(term.field(),sim,doc,numDocs);
+                    }
+                    else if(model == Model.BM25NormalizedStep2)
+                    {
+                        Double max = ((ModelInitBm25Normalized)Model.BM25Normalized.getModelInit()).getMax(term.field());
+                        sim = sim / max;
+                    }
+
+
+//                    if(TestBm25.debugStopTerm.equals(term.field() + ":" + term.text()))
+//                    {
+//                        System.out.println("TERM:(" + term.field() + ":" + term.text() + ")------");
+//                        System.out.println("doc-Id:" + doc);
+//                        System.out.println("Doc-Len:" + docLen);
+//                        System.out.println("Avg-Doc-Len:" + avgDocLen);
+//                        System.out.println("docFreq:" + docFreq);
+//                        System.out.println("tfDoc:" + tfDoc);
+//                        System.out.println("idf:" + idf);
+//                        System.out.println("BM25 Policy:" + (queryConfiguration.getCacheObject(BM25_POLICY_CACHE_INDEX)));
+//                        System.out.println("BM25 Epslon:" + (queryConfiguration.getCacheObject(BM25_EPSLON_CACHE_INDEX)));
+//                        System.out.println("BM25 K1:" + k1Cache.doubleValue());
+//                        System.out.println("BM25 b:" + bCache.doubleValue());
+//                        System.out.println("BM25 SIM:" + sim);
+//                        System.out.println("weightValue:" + weightValue);
+//                        System.out.println("BM25 SIM WEIGHTED:" + (sim*weightValue));
+//                        System.out.println("-----------------------------------------------------");
+//                    }
+
+                    break;
+                }
+
             }
         }
         else
@@ -285,6 +314,7 @@ final class TermScorerDFR extends LgteFieldedTermScorer {
 
         if(sim < 0 && model != Model.OkapiBM25Model  && model != Model.BM25b )
             System.out.println(">>>>>>>>>>>>>>>>>>>>>>>FATAL  : PLEASE CHECK DFR Formulas similarity come negative for doc:" + doc + " term: " + term.text());
+
         return weightValue * (float)sim;
     }
 
@@ -440,7 +470,7 @@ final class TermScorerDFR extends LgteFieldedTermScorer {
         explanation.setValue(score);
         float thisWeight = weightValue / weight.getQuery().getBoost();
         explanation.setDescription(model.getShortName() + "(" + term + ")^(" + thisWeight + "*" + weight.getQuery().getBoost() + ")=" + score + ")");
-        if(model == Model.OkapiBM25Model)
+        if(model == Model.OkapiBM25Model || model == Model.BM25Normalized || model == Model.BM25NormalizedStep2)
         {
             Explanation explanationBm25 = new Explanation();
 
@@ -483,6 +513,13 @@ final class TermScorerDFR extends LgteFieldedTermScorer {
             details.append(" - Epslon:" + (queryConfiguration.getCacheObject(BM25_EPSLON_CACHE_INDEX)));
             details.append(" - K1:" + k1Cache.doubleValue() );
             details.append(" - b:" + bCache.doubleValue());
+            if(model == Model.BM25NormalizedStep2)
+            {
+                Double max = ((ModelInitBm25Normalized)Model.BM25Normalized.getModelInit()).getMax(term.field());
+                details.append(" - MAX FIELD VALUE (" + term.field() + "):" + max);
+                details.append(" - SIM VALUE:" + sim);
+                sim = sim / max;
+            }
             explanationBm25.setDescription(details.toString());
             explanationBm25.setValue((float) sim);
             explanation.addDetail(explanationBm25);

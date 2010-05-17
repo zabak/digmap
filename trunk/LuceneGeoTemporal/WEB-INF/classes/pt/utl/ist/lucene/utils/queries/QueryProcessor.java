@@ -22,6 +22,7 @@ import java.io.IOException;
  */
 public class QueryProcessor
 {
+    public static boolean DESC_ONLY = true;
     private static final Logger logger = Logger.getLogger(QueryProcessor.class);
 
     Query q;
@@ -59,6 +60,8 @@ public class QueryProcessor
 
     public String getTermsQuery(QueryTarget queryTarget)
     {
+         if(DESC_ONLY)
+            return prepareQueryStringOnlyDesc(queryTarget);
         return prepareQueryString(queryTarget);
     }
 
@@ -200,6 +203,7 @@ public class QueryProcessor
 
     private String prepareQueryString(QueryTarget queryTarget)
     {
+
         if(queryTarget == QueryTarget.CONTENTS)
             return Config.CONTENTS + ":(" + q.getOriginalDescClean() + " " + q.getOriginalDescClean() + " " + q.getOriginalNarrClean() + ")";
         else if(queryTarget == QueryTarget.SENTENCES)
@@ -209,6 +213,20 @@ public class QueryProcessor
             return
                     Config.SENTENCES + ":(" + q.getOriginalDescClean() + " " + q.getOriginalDescClean() + " " + q.getOriginalNarrClean() + ")^" + Config.combSentencesFactor + " " +
                             Config.CONTENTS + ":(" + q.getOriginalDescClean() + " " + q.getOriginalDescClean() + " " + q.getOriginalNarrClean() + ")^" + Config.combContentsFactor;
+        }
+    }
+
+    private String prepareQueryStringOnlyDesc(QueryTarget queryTarget)
+    {
+        if(queryTarget == QueryTarget.CONTENTS)
+            return Config.CONTENTS + ":(" + q.getOriginalDescClean() + ")";
+        else if(queryTarget == QueryTarget.SENTENCES)
+            return Config.SENTENCES + ":(" + q.getOriginalDescClean() + ")";
+        else
+        {
+            return
+                    Config.SENTENCES + ":(" + q.getOriginalDescClean() + ")^" + Config.combSentencesFactor + " " +
+                            Config.CONTENTS + ":(" + q.getOriginalDescClean() + ")^" + Config.combContentsFactor;
         }
     }
 

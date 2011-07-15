@@ -65,4 +65,12 @@ public class Topic
                 ", task='" + task + '\'' +
                 '}';
     }
+
+    public String getDescriptionForCombo() {
+        if(description.length() > 70)
+        {
+            return description.substring(0,70);
+        }
+        return description;
+    }
 }

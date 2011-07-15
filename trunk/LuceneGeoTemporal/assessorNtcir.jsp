@@ -19,7 +19,7 @@
         max = limit.substring(limit.indexOf(",")+1);
     }
 
-    List<Topic> topics = DBServer.getTopics("NtcirGeoTime2010");
+    List<Topic> topics = DBServer.getTopics("NtcirGeoTime2011");
 
 %>
   <br/>
@@ -46,7 +46,7 @@
 						            checked = "selected";
 						        String mm = mDocs <= 100 ? (""+ mDocs): "100";
 						        %>
-								    <option onclick="this.form.submit()" <%=checked%>  value="<%=(topic.getIdTopic() + "LIMIT0,100")%>"> <%=topic.getIdTopic()%> (001-<%=mm%>) - <%=topic.getDescription()%></option>
+								    <option onclick="this.form.submit()" <%=checked%>  value="<%=(topic.getIdTopic() + "LIMIT0,100")%>"> <%=topic.getIdTopic()%> (001-<%=mm%>) - <%=topic.getDescriptionForCombo()%></option>
 								<%
 								    checked="";
 
@@ -56,7 +56,7 @@
 								    if(startAt.equals("100") && id_topic != null && topic.getIdTopic().equals(id_topic))
 								        checked="selected";
 								%>
-								    <option onclick="this.form.submit()" <%=checked%>  value="<%=(topic.getIdTopic() + "LIMIT100,100")%>"> <%=topic.getIdTopic()%> (101-<%=mm%>) - <%=topic.getDescription()%></option>
+								    <option onclick="this.form.submit()" <%=checked%>  value="<%=(topic.getIdTopic() + "LIMIT100,100")%>"> <%=topic.getIdTopic()%> (101-<%=mm%>) - <%=topic.getDescriptionForCombo()%></option>
 								<%
 								  checked="";
 								} if(topic.getDocs() > 200) {
@@ -64,7 +64,7 @@
 								    if(startAt.equals("200") && id_topic != null && topic.getIdTopic().equals(id_topic))
 								      checked="selected";
 								%>
-								    <option onclick="this.form.submit()" <%=checked%>  value="<%=(topic.getIdTopic() + "LIMIT200,100")%>"> <%=topic.getIdTopic()%> (201-<%=mm%>) - <%=topic.getDescription()%></option>
+								    <option onclick="this.form.submit()" <%=checked%>  value="<%=(topic.getIdTopic() + "LIMIT200,100")%>"> <%=topic.getIdTopic()%> (201-<%=mm%>) - <%=topic.getDescriptionForCombo()%></option>
 								<%
 								  checked="";
                                 } if(topic.getDocs() > 300) {
@@ -72,7 +72,7 @@
                                     if(startAt.equals("300") && id_topic != null && topic.getIdTopic().equals(id_topic))
                                       checked="selected";
 								%>
-								    <option onclick="this.form.submit()" <%=checked%>  value="<%=(topic.getIdTopic() + "LIMIT300,100")%>"> <%=topic.getIdTopic()%> (301-<%=mm%>) - <%=topic.getDescription()%></option>
+								    <option onclick="this.form.submit()" <%=checked%>  value="<%=(topic.getIdTopic() + "LIMIT300,100")%>"> <%=topic.getIdTopic()%> (301-<%=mm%>) - <%=topic.getDescriptionForCombo()%></option>
 								<%
 								  checked="";
 								} if(topic.getDocs() > 400) {
@@ -80,7 +80,7 @@
 								    if(startAt.equals("400") && id_topic != null && topic.getIdTopic().equals(id_topic))
 								        checked="selected";
 								%>
-								    <option onclick="this.form.submit()" <%=checked%>  value="<%=(topic.getIdTopic() + "LIMIT400,100")%>"> <%=topic.getIdTopic()%> (401-<%=mm%>) - <%=topic.getDescription()%></option>
+								    <option onclick="this.form.submit()" <%=checked%>  value="<%=(topic.getIdTopic() + "LIMIT400,100")%>"> <%=topic.getIdTopic()%> (401-<%=mm%>) - <%=topic.getDescriptionForCombo()%></option>
 								<%
 								  checked="";
                                 } if(topic.getDocs() > 500) {
@@ -88,7 +88,7 @@
                                     if(startAt.equals("500") && id_topic != null && topic.getIdTopic().equals(id_topic))
                                         checked="selected";
 								%>
-								    <option onclick="this.form.submit()" <%=checked%>  value="<%=(topic.getIdTopic() + "LIMIT500,100")%>"> <%=topic.getIdTopic()%> (501-<%=mm%>) - <%=topic.getDescription()%></option>
+								    <option onclick="this.form.submit()" <%=checked%>  value="<%=(topic.getIdTopic() + "LIMIT500,100")%>"> <%=topic.getIdTopic()%> (501-<%=mm%>) - <%=topic.getDescriptionForCombo()%></option>
 								<%
 								  checked="";
                                 }
@@ -144,7 +144,7 @@
 
         <h2>Assessments Stats for current Pool and current Topic</h2>
         <%
-        AssessmentsBoard aB = DBServer.loadAssessmentsBoardOpenPools("NtcirGeoTime2010",id_topic);
+        AssessmentsBoard aB = DBServer.loadAssessmentsBoardOpenPools("NtcirGeoTime2011",id_topic);
         %>
          <table class="dataLine">
             <tr>
@@ -171,7 +171,7 @@
         <div id="stats" style="display:none">
 
         <%
-        aB = DBServer.loadAssessmentsBoardOpenPools("NtcirGeoTime2010");
+        aB = DBServer.loadAssessmentsBoardOpenPools("NtcirGeoTime2011");
         %>
                  <table class="data">
                     <tr>

@@ -9,6 +9,8 @@ import org.dom4j.XPath;
 import pt.utl.ist.lucene.LgteIndexManager;
 import pt.utl.ist.lucene.Model;
 import pt.utl.ist.lucene.treceval.geotime.EOFException;
+import pt.utl.ist.lucene.treceval.geotime.KoreaTimesDocument;
+import pt.utl.ist.lucene.treceval.geotime.MainichiDailyDocument;
 import pt.utl.ist.lucene.treceval.geotime.NyTimesDocument;
 import pt.utl.ist.lucene.treceval.geotime.index.Config;
 import pt.utl.ist.lucene.utils.Dom4jUtil;
@@ -69,7 +71,7 @@ public class Server
                     while (params.hasMoreElements())
                     {
                         String param = (String) params.nextElement();
-                        if (param.startsWith("NYT_"))
+                        if (param.startsWith("NYT_") || param.startsWith("KT") || param.startsWith("XIE") || param.startsWith("EN"))
                         {
                             String relevance = request.getParameter(param);
                             if (relevance != null && relevance.length() > 0)
@@ -273,10 +275,158 @@ public class Server
 
     public static String getHtml(String docno,String desc, String narr, String sgml, String placeMaker, String timexes) throws DocumentException, EOFException, IOException
     {
+        System.out.println("Trying : " + docno);
+//        System.out.println("SGML:" + sgml);
+        StringBuilder annotatedText = new StringBuilder();
+
+
+
+        String sgmlWithOutTags = sgml.replaceAll("<!\\-[^\\->]+\\->", "TT");
+        sgmlWithOutTags = sgmlWithOutTags.replaceAll("<[^>]+>", "");
+        if(docno.startsWith("KT99"))
+            sgmlWithOutTags = sgmlWithOutTags.replaceFirst("                                   ","");
+//        System.out.println("SGML NO TAGS:" + sgmlWithOutTags);
+        int pos = 0;
+        NyTimesDocument nyt;
+        if(docno.startsWith("KT"))
+            nyt = new KoreaTimesDocument(new BufferedReader(new StringReader(sgml)),"dummy.txt");
+        else if(docno.startsWith("EN"))
+            nyt = new MainichiDailyDocument(new BufferedReader(new StringReader(sgml)),"dummy.txt");
+        else
+            nyt = new NyTimesDocument(new BufferedReader(new StringReader(sgml)),"dummy.txt");
+//        NyTimesDocument nyt = new NyTimesDocument(new BufferedReader(new StringReader(sgml)), "dummy.txt");
+        PlaceMakerDocument placeMakerDocument = null;
+        if (placeMaker != null) {
+            placeMakerDocument = new PlaceMakerDocument(placeMaker);
+        }
+        TimexesDocument timexesDocument = null;
+        if (timexes != null) {
+
+            timexesDocument = new TimexesDocument(timexes);
+//                System.out.println(docno);
+            List<Timex2TimeExpression> timexesList = timexesDocument.getTimex2TimeExpressions();
+            Collections.sort(timexesList, new Comparator<Timex2TimeExpression>() {
+
+                public int compare(Timex2TimeExpression o1, Timex2TimeExpression o2) {
+                    if (o1.getStartOffset() > o2.getStartOffset())
+                        return 1;
+                    else if (o1.getStartOffset() < o2.getStartOffset())
+                        return -1;
+                    else return 0;
+
+                }
+            }
+            );
+        }
+        Iterator<Timex2TimeExpression> timexesIter;
+        if (timexesDocument != null)
+            timexesIter = timexesDocument.getTimex2TimeExpressions().iterator();
+        else
+            timexesIter = new ArrayList<Timex2TimeExpression>().iterator();
+
+        Iterator<PlaceMakerDocument.PlaceRef> placesIter;
+        if (placeMakerDocument != null) {
+            List<PlaceMakerDocument.PlaceRef> refs = placeMakerDocument.getAllRefs();
+            Collections.sort(refs, new Comparator<PlaceMakerDocument.PlaceRef>() {
+
+                public int compare(PlaceMakerDocument.PlaceRef o1, PlaceMakerDocument.PlaceRef o2) {
+                    if (o1.getStartOffset() > o2.getStartOffset())
+                        return 1;
+                    else if (o1.getStartOffset() < o2.getStartOffset())
+                        return -1;
+                    else return 0;
+
+                }
+            }
+            );
+            placesIter = refs.iterator();
+        } else
+            placesIter = new ArrayList<PlaceMakerDocument.PlaceRef>().iterator();
+
+
+        int lastOffset = 0;
+        Timex2TimeExpression nowTimex = null;
+        PlaceMakerDocument.PlaceRef nowPlaceRef = null;
+        while (timexesIter.hasNext() || placesIter.hasNext()) {
+            if (nowPlaceRef == null && placesIter.hasNext())
+                nowPlaceRef = placesIter.next();
+            if (nowTimex == null && timexesIter.hasNext())
+                nowTimex = timexesIter.next();
+
+            int startOffsetPlaceRef = 0;
+            int endOffsetPlaceRef = 0;
+            if (nowPlaceRef != null) {
+                startOffsetPlaceRef = nyt.toStringOffset2txtwithoutTagsOffset(nowPlaceRef.getStartOffset());
+                endOffsetPlaceRef = nyt.toStringOffset2txtwithoutTagsOffset(nowPlaceRef.getEndOffset());
+            }
+            if ((nowTimex != null && nowPlaceRef != null && nowTimex.getStartOffset() < startOffsetPlaceRef) || nowTimex != null && nowPlaceRef == null) {
+                if (lastOffset <= nowTimex.getStartOffset() && nowTimex.getStartOffset() < nowTimex.getEndOffset() && nowTimex.getStartOffset() < sgmlWithOutTags.length() && nowTimex.getEndOffset() < sgmlWithOutTags.length() && nowTimex.getStartOffset() > 0 && nowTimex.getEndOffset() > 0 && nowTimex.getStartOffset() > pos) {
+//                        System.out.println(nowTimex.getStartOffset() + ":" + nowTimex.getEndOffset());
+                    annotatedText.append(sgmlWithOutTags.substring(pos, nowTimex.getStartOffset()));
+                    annotatedText.append("<label class=\"TIMEX\" start=\"" + nowTimex.getStartOffset() + "\">");
+                    annotatedText.append(sgmlWithOutTags.substring(nowTimex.getStartOffset(), nowTimex.getEndOffset() + 1));
+                    annotatedText.append("</label>");
+                    lastOffset = nowTimex.getEndOffset();
+                    pos = nowTimex.getEndOffset() + 1;
+                }
+                nowTimex = null;
+            } else if (nowPlaceRef != null) {
+
+                if (lastOffset <= startOffsetPlaceRef && startOffsetPlaceRef < endOffsetPlaceRef && startOffsetPlaceRef < sgmlWithOutTags.length() && endOffsetPlaceRef < sgmlWithOutTags.length() && startOffsetPlaceRef > 0 && endOffsetPlaceRef > 0 && startOffsetPlaceRef > pos) {
+//                        System.out.println(nowPlaceRef.getStartOffset() + ":" + nowPlaceRef.getEndOffset());
+                    annotatedText.append(sgmlWithOutTags.substring(pos, startOffsetPlaceRef));
+                    annotatedText.append("<label class=\"PLACE\">");
+                    annotatedText.append(sgmlWithOutTags.substring(startOffsetPlaceRef, endOffsetPlaceRef + 1));
+                    annotatedText.append("</label>");
+                    lastOffset = endOffsetPlaceRef;
+                    pos = endOffsetPlaceRef + 1;
+                }
+                nowPlaceRef = null;
+            } else {
+
+            }
+        }
+        if (sgmlWithOutTags.length() > pos + 1)
+            annotatedText.append(sgmlWithOutTags.substring(pos + 1));
+
+        String annotatedTextStr = annotatedText.toString().replace("\n","<br>");
+
+        org.apache.lucene.analysis.TokenStream stream = pt.utl.ist.lucene.treceval.IndexCollections.en.getAnalyzerWithStemming().tokenStream("",new java.io.StringReader(desc + " " + narr));
+        org.apache.lucene.analysis.Token t;
+        while((t=stream.next())!=null)
+        {
+            String str = t.termText();
+            String Str = str.substring(0,1).toUpperCase()+str.substring(1);
+            String STR = str.toUpperCase();
+            if(str.trim().length()>1)
+            {
+                if(!str.equalsIgnoreCase("place") && str.length() > 3)
+                {
+                annotatedTextStr = annotatedTextStr.replaceAll(str,"<label class=\"word\">"  + str + "</label>");
+                annotatedTextStr = annotatedTextStr.replaceAll(Str,"<label class=\"word\">" + Str + "</label>");
+                annotatedTextStr = annotatedTextStr.replaceAll(STR,"<label class=\"word\">" + STR + "</label>");
+                }
+            }
+        }
+
+        return annotatedTextStr;
+    }
+
+
+
+    public static String getHtml2(String docno,String desc, String narr, String sgml, String placeMaker, String timexes) throws DocumentException, EOFException, IOException
+    {
         StringBuilder annotatedText = new StringBuilder();
         String sgmlWithOutTags = sgml.replaceAll("<[^>]+>", "");
         int pos = 0;
-        NyTimesDocument nyt = new NyTimesDocument(new BufferedReader(new StringReader(sgml)), "dummy.txt");
+        NyTimesDocument nyt;
+        if(docno.startsWith("KT_"))
+            nyt = new KoreaTimesDocument(new BufferedReader(new StringReader(sgml)),"dummy.txt");
+        else if(docno.startsWith("EN"))
+            nyt = new MainichiDailyDocument(new BufferedReader(new StringReader(sgml)),"dummy.txt");
+        else
+            nyt = new NyTimesDocument(new BufferedReader(new StringReader(sgml)),"dummy.txt");
+//        NyTimesDocument nyt = new NyTimesDocument(new BufferedReader(new StringReader(sgml)), "dummy.txt");
         PlaceMakerDocument placeMakerDocument = null;
         if (placeMaker != null) {
             placeMakerDocument = new PlaceMakerDocument(placeMaker);
@@ -391,9 +541,13 @@ public class Server
         return annotatedTextStr;
     }
 
+
     public static void main(String[] args) throws IOException, DocumentException, SQLException
     {
 //        args = new String[]{"C:\\Documents and Settings\\jmachado\\Os meus documentos\\Downloads\\ENruns-pd50.xml","NtcirGeoTime2010","C:\\WORKSPACE_JM\\DATA\\INDEXES\\NTCIR\\TEXT_TEMP_GEO_DB","C:\\WORKSPACE_JM\\DATA\\INDEXES\\NTCIR\\contents"};
+
+        args = new String[]{"F:\\COLECCOES\\GeoTime\\ENruns-pd100-50.xml","NtcirGeoTime2011","F:\\COLECCOES\\ntcir\\INDEXES\\TEXT_TEMP_GEO_DB","F:\\COLECCOES\\ntcir\\INDEXES\\contents"};
+
         String file = args[0];
         String task = args[1];
         String index = args[2];

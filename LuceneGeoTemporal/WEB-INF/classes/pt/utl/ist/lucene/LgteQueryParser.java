@@ -116,6 +116,7 @@ public class LgteQueryParser
     public static LgteQuery parseQuery(String query, String field, Analyzer analyzer, LgteIndexSearcherWrapper indexSearcherWrapper, QueryConfiguration queryConfiguration, LgteSort sort, QueryParams queryParams) throws ParseException, IOException
     {
         String queryStr;
+        System.out.println("queryBefore:" + query);
         if(queryParams == null)
         {
             Level1QueryParser parser = new Level1QueryParser();
@@ -148,13 +149,17 @@ public class LgteQueryParser
             if(queryParams.isTime())
                 newQueryBuilder.append(Globals.LUCENE_TIME_DOC_QUERY);
             String finalQuery = newQueryBuilder.toString();
+            System.out.println("Query without LGTE information: " + finalQuery);
             if(finalQuery.length() > 0)
                 returnQuery = luceneVersion.parseQuery(finalQuery,field,new WhitespaceAnalyzer());
             else
                 return null;
         }
         else
+        {
+            System.out.println("Query without LGTE information: " + queryStr);
             returnQuery = luceneVersion.parseQuery(queryStr,field,analyzer);
+        }
         if(queryParams.getQeEnum().isQE() || (queryConfiguration != null && queryConfiguration.getForceQE().isQE()))
         {
             returnQuery = lucQE(returnQuery, queryStr,field, analyzer, indexSearcherWrapper,queryParams, sort);

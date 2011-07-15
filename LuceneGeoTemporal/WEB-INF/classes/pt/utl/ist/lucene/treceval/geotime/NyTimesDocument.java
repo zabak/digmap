@@ -99,6 +99,8 @@ public class NyTimesDocument {
 
         setFSourceFile(fileName);
         int i_ = fileName.lastIndexOf("_")+1;
+
+        //Nao e usado falha no xie   mas nao rebenta
         setFDateYearMonthSort(fileName.substring(i_,fileName.lastIndexOf(".")));
         boolean first = true;
 //        try {
@@ -147,9 +149,11 @@ public class NyTimesDocument {
                 int iid  = line.indexOf("id=\"") + 4;
                 setDId(line.substring(iid,line.indexOf("\"",iid)));
 
+                //Nao e usado falha no Korea e no Mainichi nao rebenta
                 setPArticleNumber(getDId().substring(getDId().lastIndexOf(".")+1));
 
-                int liid_ = getDId().lastIndexOf("_")+1;
+                //int liid_ = getDId().lastIndexOf("_")+1;
+                int liid_ = getDId().lastIndexOf(".")-8;
                 setPDateYearMonthDaySort(getDId().substring(liid_,getDId().lastIndexOf(".")));
 
                 setArticleYear(Integer.parseInt(getPDateYearMonthDaySort().substring(0,4)));
@@ -277,6 +281,7 @@ public class NyTimesDocument {
         toString(); //to fill offsets
     }
 
+    
 
     public String getTimeExpressionDocumentNormalized()
     {
@@ -601,6 +606,10 @@ public class NyTimesDocument {
 
     public int toStringOffset2txtwithoutTagsOffset(int offset)
     {
+        //SO os anotados com o Nytimes é que tem este problema
+        if(!getDId().startsWith("nyt"))
+            return offset;
+
         if(offset >= toStringDateLineStartOffSet && offset <= toStringHeadLineEndOffset)
         {
             int diff = offset - toStringHeadLineStartOffset;
@@ -630,5 +639,20 @@ public class NyTimesDocument {
 
         logger.error("Mapping not found for offset " + offset + " on document " + dId);
         return -1;
+
+
+    }
+
+
+    public int compare(String id)
+    {
+        return getDId().compareTo(id);
+    }
+
+
+    public boolean isBiggerThan(NyTimesDocument anotherDoc)
+    {
+        return
+                compare(anotherDoc.getDId())>0;
     }
 }

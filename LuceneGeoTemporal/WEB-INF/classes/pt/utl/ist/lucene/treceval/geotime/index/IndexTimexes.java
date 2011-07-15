@@ -41,15 +41,19 @@ public class IndexTimexes {
         LgteBrokerStemAnalyzer analyzer = new LgteBrokerStemAnalyzer(anaMap,new LgteNothingAnalyzer());
 
         LgteIndexWriter writer = new LgteIndexWriter(indexPath,analyzer, true, Model.OkapiBM25Model);
-        
+
         int i = 1;
         String previousID = "";
         while((timexesDocument = integratedDocTimexIterator.next())!=null)
         {
-            if(previousID.length() > 0 && !previousID.substring(0,14).equals(timexesDocument.getD().getDId().substring(0,14)))
-            {
-                System.out.println(i + ":" + timexesDocument.getD().getDId());
-            }
+//            //Modification to feet NewYorkTimes and Xinhua Documents
+//            String compareToId = timexesDocument.getD().getDId().substring(0,timexesDocument.getD().getDId().lastIndexOf(".") - 2);
+//            String previousToCompareId = previousID.length() == 0? "":previousID.substring(0,previousID.lastIndexOf(".") - 2);
+////            if(previousID.length() > 0 && !previousID.substring(0,14).equals(timexesDocument.getD().getDId().substring(0,14)))
+//            if(previousID.length() > 0 && !previousToCompareId.equals(compareToId))
+//            {
+//                System.out.println(i + ":" + timexesDocument.getD().getDId());
+//            }
             indexDocument(writer,timexesDocument);
             previousID = timexesDocument.getD().getDId();
             i++ ;
@@ -79,6 +83,9 @@ public class IndexTimexes {
             for(Timex2TimeExpression timex2: timexesDocument.getTd().getTimex2TimeExpressions())
             {
                 doc.indexText(Config.T_TIME_EXPRESSION_TEXT,timex2.getTimex2().getText());
+                String name = timex2.getTimex2().getType().name();
+                doc.indexStringNoStore(Config.T_DURATION_TYPE, name);
+
             }
             for(TimeExpression timeExpression : timexesDocument.getTd().getAllTimeExpressions())
             {
@@ -96,7 +103,7 @@ public class IndexTimexes {
                     leftId = timexesDocument.getD().getDId();
                     doc.indexString(Config.T_LEFT_LIMIT,"true");
                     doc.indexString(Config.T_DURATION_LEFT,timeExpression.getNormalizedExpression());
-                    
+
                     if(timeExpression.getTimex2().getType().isP())
                         doc.indexString(Config.T_DURATION_NORM,timeExpression.getTimex2().getVal() + "-" + timeExpression.getTimex2().getAnchorVal() + "-" + timeExpression.getTimex2().getAnchorDir());
                     if(timeExpression.isWeekDuration())
@@ -128,7 +135,7 @@ public class IndexTimexes {
                 else if(timeExpression.getType() == TimeExpression.Type.YYYYMMDD) doc.indexString(Config.T_YYYYMMDD,timeExpression.getNormalizedExpression());
 
                 if(timeExpression.getTeClass() == TimeExpression.TEClass.Point)
-                {                                                            
+                {
                     if(timeExpression.getTimex2().getPrenorm() != null && timeExpression.getTimex2().getPrenorm().startsWith("|fq|"))
                         doc.indexString(Config.T_POINT_KEY,timeExpression.getNormalizedExpression());
                     else

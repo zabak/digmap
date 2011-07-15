@@ -1,31 +1,28 @@
 package pt.utl.ist.lucene;
 
+import com.pjaol.search.geo.utils.DistanceUtils;
+import com.vividsolutions.jts.geom.Envelope;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.io.gml2.GMLReader;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.solr.util.NumberUtils;
 import org.xml.sax.SAXException;
-import com.pjaol.search.geo.utils.DistanceUtils;
-import com.vividsolutions.jts.io.gml2.GMLReader;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.GeometryFactory;
+import pt.utl.ist.lucene.forms.*;
+import pt.utl.ist.lucene.level1query.QueryParams;
 import pt.utl.ist.lucene.utils.GeoUtils;
 import pt.utl.ist.lucene.utils.MyCalendar;
-import pt.utl.ist.lucene.forms.*;
-import pt.utl.ist.lucene.versioning.LuceneVersionFactory;
 import pt.utl.ist.lucene.versioning.LuceneVersion;
-import pt.utl.ist.lucene.level1query.QueryParams;
+import pt.utl.ist.lucene.versioning.LuceneVersionFactory;
 
 import javax.xml.parsers.ParserConfigurationException;
-import java.util.Date;
-import java.util.List;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.zip.ZipOutputStream;
-import java.util.zip.GZIPOutputStream;
-import java.text.SimpleDateFormat;
-import java.io.IOException;
-import java.io.BufferedOutputStream;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Lucene Extenstion Document
@@ -623,6 +620,7 @@ we     */
         fields.add(getField(Globals.LUCENE_TIMEWIDTH_INDEX, NumberUtils.long2sortableStr(width),false,true,false,true));
         fields.add(getField(Globals.LUCENE_START_TIME_LIMIT_INDEX,NumberUtils.long2sortableStr(left.getTime()),false,true,false,true));
         fields.add(getField(Globals.LUCENE_END_TIME_LIMIT_INDEX,NumberUtils.long2sortableStr(right.getTime()),false,true,false,true));
+        addFields(fields);
     }
 
     /**

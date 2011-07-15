@@ -7,7 +7,26 @@
         <display-name>Lucene With Geo-Temporal Extensions</display-name>
 
 
-    
+    <filter>
+        <filter-name>Set-Character-Encoding</filter-name>
+        <filter-class>jomm.web.filter.SetCharacterEncodingFilter</filter-class>
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>Set-Character-Encoding</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    <servlet>
+        <servlet-name>placemaker</servlet-name>
+        <servlet-class>pt.utl.ist.lucene.treceval.geotime.utiltasks.CallPlaceMaker</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>placemaker</servlet-name>
+        <url-pattern>/placemaker</url-pattern>
+    </servlet-mapping>
 
     <!--<context-param>-->
       <!--<param-name>maxIdleBackup</param-name>-->

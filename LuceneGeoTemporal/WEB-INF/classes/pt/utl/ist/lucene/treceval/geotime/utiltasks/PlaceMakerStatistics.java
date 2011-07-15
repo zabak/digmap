@@ -1,16 +1,15 @@
 package pt.utl.ist.lucene.treceval.geotime.utiltasks;
 
-import pt.utl.ist.lucene.treceval.geotime.index.Config;
-import pt.utl.ist.lucene.utils.placemaker.PlaceMakerIterator;
-import pt.utl.ist.lucene.utils.placemaker.PlaceMakerDocument;
-
-import java.io.IOException;
-import java.io.FileWriter;
-import java.util.Map;
-import java.util.HashMap;
-
 import org.apache.log4j.Logger;
 import org.dom4j.DocumentException;
+import pt.utl.ist.lucene.treceval.geotime.index.Config;
+import pt.utl.ist.lucene.utils.placemaker.PlaceMakerDocument;
+import pt.utl.ist.lucene.utils.placemaker.PlaceMakerIterator;
+
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Jorge Machado
@@ -25,7 +24,11 @@ public class PlaceMakerStatistics
 
 
     public static void main(String[]args) throws IOException, DocumentException {
-        FileWriter fw = new FileWriter("d:\\tmp\\geoStatsTotals.xml",false);
+        String destFile = "statsPlaceMakerTotals.xml";
+        if(args != null && args.length > 0)
+            destFile = args[0];
+
+        FileWriter fw = new FileWriter(destFile,false);
         fw.write("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
         fw.write("<statsNtcirGeographic>\n");
 
@@ -52,23 +55,14 @@ public class PlaceMakerStatistics
 
         while((d = placemakerIterator.next())!=null)
         {
-//            logger.fatal(d.getD().getDId());
-            if(previousID.length() > 0 && !previousID.substring(0,14).equals(d.getDocId().substring(0,14)))
-            {
+            String compareToId = d.getDocId().substring(0,d.getDocId().lastIndexOf(".") - 2);
+            String previousToCompareId = previousID.length() == 0 ? "":previousID.substring(0,previousID.lastIndexOf(".") - 2);
 
-                logger.fatal("###############################################");
-                logger.fatal("# stat: File: " + previousID.substring(0,14));
-                logger.fatal("# stat: docsMonth:" + docsMonth);
-                logger.fatal("# stat: docsWithPlaces:" + docsWithPlacesMonth);
-                logger.fatal("# stat: numberReferences:" + numberRefsMonth);
-                logger.fatal("###############################################");
-                fw.write("<file name=\"" + previousID.substring(0,14) + "\">\n");
-                fw.write("<stat name=\"docs\">" + docsMonth + "</stat>\n");
-                fw.write("<stat name=\"docsWithTimexesMonth\">" + docsWithPlacesMonth + "</stat>\n");
-                fw.write("<stat name=\"numberRefsMonth\">" + numberRefsMonth + "</stat>\n");
-                printTypes(expressionsTypeMonth,fw);
-                fw.write("</file>");
-                fw.flush();
+//            logger.fatal(d.getD().getDId());
+            if(previousID.length() > 0 && !previousToCompareId.equals(compareToId))
+//            if(previousID.length() > 0 && !previousID.substring(0,14).equals(d.getDocId().substring(0,14)))
+            {
+                printStats(fw, expressionsTypeMonth, previousID, docsMonth, docsWithPlacesMonth, numberRefsMonth);
                 docsMonth = 0;
                 docsWithPlacesMonth = 0;
                 numberRefsMonth = 0;
@@ -109,7 +103,7 @@ public class PlaceMakerStatistics
 
                     Integer countCofidence = expressionsTypeMonth.get("confidence-" + placeDetails.getConfidence());
                     if(countCofidence == null)
-                    countCofidence = 0;
+                        countCofidence = 0;
                     expressionsTypeMonth.put("confidence-" + placeDetails.getConfidence(),countCofidence + placeDetails.getRefs().size());
 
                     Integer countCofidenceTotals = expressionsTypeTotals.get("confidence-" + placeDetails.getConfidence());
@@ -143,6 +137,7 @@ public class PlaceMakerStatistics
             }
 
         }
+        printStats(fw, expressionsTypeMonth, previousID, docsMonth, docsWithPlacesMonth, numberRefsMonth);
 
         logger.fatal("###############################################");
         logger.fatal("# stat: docs:" + docs);
@@ -160,6 +155,22 @@ public class PlaceMakerStatistics
         fw.flush();
         fw.close();
 
+    }
+
+    private static void printStats(FileWriter fw, Map<String, Integer> expressionsTypeMonth, String previousID, int docsMonth, int docsWithPlacesMonth, int numberRefsMonth) throws IOException {
+        logger.fatal("###############################################");
+        logger.fatal("# stat: File: " + previousID.substring(0,previousID.lastIndexOf(".") - 2));
+        logger.fatal("# stat: docsMonth:" + docsMonth);
+        logger.fatal("# stat: docsWithPlaces:" + docsWithPlacesMonth);
+        logger.fatal("# stat: numberReferences:" + numberRefsMonth);
+        logger.fatal("###############################################");
+        fw.write("<file name=\"" + previousID.substring(0,previousID.lastIndexOf(".") - 2) + "\">\n");
+        fw.write("<stat name=\"docs\">" + docsMonth + "</stat>\n");
+        fw.write("<stat name=\"docsWithTimexesMonth\">" + docsWithPlacesMonth + "</stat>\n");
+        fw.write("<stat name=\"numberRefsMonth\">" + numberRefsMonth + "</stat>\n");
+        printTypes(expressionsTypeMonth,fw);
+        fw.write("</file>");
+        fw.flush();
     }
 
     private static void printTypes(Map<String,Integer> expressionsMap, FileWriter fw) throws IOException {

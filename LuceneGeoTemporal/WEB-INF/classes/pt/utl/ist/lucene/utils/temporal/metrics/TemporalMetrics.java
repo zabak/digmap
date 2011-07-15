@@ -2,6 +2,7 @@ package pt.utl.ist.lucene.utils.temporal.metrics;
 
 import pt.utl.ist.lucene.utils.temporal.TimeExpression;
 
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Date;
@@ -283,4 +284,110 @@ public class TemporalMetrics
         return new TimeExpression(df.format(d));
     }
 
+
+    /**
+     *
+     * @return A date in miliseconds
+     */
+    public long getMedia()
+    {
+        long sum = 0;
+        for(TimeExpression te : expressions)
+        {
+            sum += te.getC().getTimeInMillis();
+        }
+        return sum / expressions.size();
+    }
+
+    public long getDesvioPadrao()
+    {
+        if(expressions.size() < 2)
+            return 0;
+        long media = getMedia();
+        double sum = 0;
+        for(TimeExpression te : expressions)
+        {
+
+            sum += ((double)((double)media - (double)te.getC().getTimeInMillis())*((double)media - (double)te.getC().getTimeInMillis())/(double)(expressions.size()-1));
+        }
+
+        return (long) Math.sqrt(sum);
+    }
+
+    public GregorianCalendar[] getNormalizedDesvioPadraoStartEndDatesCalendar()
+    {
+        Long[] startEnd = getNormalizedDesvioPadraoStartEndDatesLongs();
+        if(startEnd ==null)
+            return null;
+        long start = startEnd[0];
+        long end = startEnd[1];
+        GregorianCalendar gcStart = new GregorianCalendar();
+        gcStart.setTimeInMillis(start);
+
+        GregorianCalendar gcEnd = new GregorianCalendar();
+        gcEnd.setTimeInMillis(end);
+
+        return new GregorianCalendar[]{gcStart,gcEnd};
+    }
+    public String[] getNormalizedDesvioPadraoStartEndDates()
+    {
+
+        GregorianCalendar[] startEnd = getNormalizedDesvioPadraoStartEndDatesCalendar();
+        if(startEnd ==null)
+            return null;
+
+        GregorianCalendar gcStart = startEnd[0];
+        GregorianCalendar gcEnd = startEnd[1];
+
+        try {
+
+            TimeExpression teStart = new TimeExpression(gcStart.get(GregorianCalendar.YEAR),1+gcStart.get(GregorianCalendar.MONTH),gcStart.get(GregorianCalendar.DAY_OF_MONTH));
+            TimeExpression teEnd = new TimeExpression(gcEnd.get(GregorianCalendar.YEAR),1+gcEnd.get(GregorianCalendar.MONTH),gcEnd.get(GregorianCalendar.DAY_OF_MONTH));
+
+            String[] interval = new String[]{teStart.getNormalizedExpression(),teEnd.getNormalizedExpression()};
+            return interval;
+        } catch (TimeExpression.BadTimeExpression badTimeExpression) {
+            badTimeExpression.printStackTrace();
+        }
+        return null;
+    }
+
+    public Long[] getNormalizedDesvioPadraoStartEndDatesLongs()
+    {
+        if(expressions.size() < 1)
+            return null;
+        double months6 = 60.0 * 1000.0 * 60.0 * 24.0 * 30.0 * 6.0;
+        if(expressions.size() < 1)
+            return null;
+        long start;
+        long end;
+        if(expressions.size() < 2)
+        {
+            start  = expressions.get(0).getC().getTimeInMillis();
+            end  = expressions.get(0).getC().getTimeInMillis();
+        }
+        else
+        {
+            long media = getMedia();
+            long desvio = getDesvioPadrao();
+            start = media - desvio;
+            end = media + desvio;
+        }
+
+        if(start == end)
+        {
+
+            start -= months6;//6 months = 1minute*60*24*30*6
+            end += months6;//6 months = 1minute*60*24*30*6
+        }
+
+        return new Long[]{start,end};
+    }
+
+
+    public static void main(String[] args) throws TimeExpression.BadTimeExpression {
+//        TemporalMetrics te = new TemporalMetrics(new String[]{"19960101","20020101","20040101","20050101","19980102","20050103","20100101","20400105","21000606"});
+        TemporalMetrics te = new TemporalMetrics(new String[]{"19960101"});
+        System.out.println("[" + te.getNormalizedDesvioPadraoStartEndDates()[0] + ";" + te.getNormalizedDesvioPadraoStartEndDates()[1] + "]");
+    }
 }

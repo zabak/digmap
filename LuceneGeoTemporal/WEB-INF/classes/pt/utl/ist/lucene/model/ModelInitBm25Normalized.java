@@ -1,12 +1,10 @@
 package pt.utl.ist.lucene.model;
 
+import org.apache.log4j.Logger;
 import pt.utl.ist.lucene.Model;
 
-import java.util.Map;
 import java.util.HashMap;
-
-import org.apache.log4j.Logger;
-import org.apache.lucene.index.IndexReader;
+import java.util.Map;
 
 /**
  * @author Jorge Machado
@@ -54,7 +52,14 @@ public class ModelInitBm25Normalized  implements Model.ModelInit {
 
     public Double getMax(String field)
     {
-        return maxFieldScore.get(field).max;
+        FieldContainer fieldContainer = maxFieldScore.get(field);
+        if(fieldContainer == null)
+        {
+            System.out.println(fieldContainer + " is null in ModelInitBm25Normalized");
+            return 0.01;
+        }
+        else
+            return maxFieldScore.get(field).max;
     }
 
 

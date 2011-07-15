@@ -42,6 +42,25 @@ public class Config
             keyTimeFactor = props.getProperty("keyTimeFactor");
             relativeTimeFactor = props.getProperty("relativeTimeFactor");
             durationTimeFactor = props.getProperty("durationTimeFactor");
+
+            wikipediaMaxPlaceTerms = Integer.parseInt(props.getProperty("wikipediaMaxPlaceTerms"));
+            wikipediaMaxTimeTerms = Integer.parseInt(props.getProperty("wikipediaMaxTimeTerms"));
+
+            wikipediaMaxDocs = Integer.parseInt(props.getProperty("wikipediaMaxDocs"));
+            wikipediaMaxParagrahps = Integer.parseInt(props.getProperty("wikipediaMaxParagrahps"));
+            wikipediaParagraphThreshold = Float.parseFloat(props.getProperty("wikipediaParagraphThreshold"));
+            wikipediaParagraphDecay = Float.parseFloat(props.getProperty("wikipediaParagraphDecay"));;
+            wikipediaDocDecay = Float.parseFloat(props.getProperty("wikipediaDocDecay"));
+            wikipediaNumberOfWordsThreshold = Float.parseFloat(props.getProperty("wikipediaNumberOfWordsThreshold"));
+
+            //Configurations for Metric GeoTimeQueries
+            wikipediaTermsBoundingBoxGeoMetricFactor = Float.parseFloat(props.getProperty("wikipediaTermsBoundingBoxGeoMetricFactor"));
+            wikipediaTermsBoundingBoxTimeMetricFactor  = Float.parseFloat(props.getProperty("wikipediaTermsBoundingBoxTimeMetricFactor"));
+            wikipediaTermsBoundingBoxTextMetricFactor  = Float.parseFloat(props.getProperty("wikipediaTermsBoundingBoxTextMetricFactor"));
+
+            metricTextFactor = Float.parseFloat(props.getProperty("scorer.default.model.text.factor"));
+            metricGeoFactor = Float.parseFloat(props.getProperty("scorer.default.model.spatial.factor"));
+            metricTimeFactor = Float.parseFloat(props.getProperty("scorer.default.model.time.factor"));
         }
         catch (IOException e)
         {
@@ -63,6 +82,25 @@ public class Config
     public static String keyTimeFactor;
     public static String relativeTimeFactor;
     public static String durationTimeFactor;
+
+    public static int wikipediaMaxPlaceTerms;
+    public static int wikipediaMaxTimeTerms;
+
+    public static int wikipediaMaxDocs;
+    public static int wikipediaMaxParagrahps;
+    public static float wikipediaParagraphThreshold;
+    public static float wikipediaParagraphDecay;
+    public static float wikipediaDocDecay;
+    public static float wikipediaNumberOfWordsThreshold;
+
+    public static float wikipediaTermsBoundingBoxGeoMetricFactor;
+    public static float wikipediaTermsBoundingBoxTimeMetricFactor;
+    public static float wikipediaTermsBoundingBoxTextMetricFactor;
+
+    public static float metricTimeFactor;
+    public static float metricGeoFactor;
+    public static float metricTextFactor;
+
 
     static void init()
     {
@@ -145,6 +183,7 @@ public class Config
     public static String T_DURATION_NORM  = "t_dur_norm";
     public static String T_DURATION_LEFT  = "t_dur_left";
     public static String T_DURATION_RIGHT = "t_dur_right";
+    public static String T_DURATION_TYPE  = "t_dur_type";
 
     public static String T_IS_WEEK  =      "t_is_week";
     public static String T_LEFT_LIMIT  =   "t_is_dur_left";
@@ -168,15 +207,20 @@ public class Config
     public static String METRIC_T_CENTROIDE_REFS = "metric_t_centroide_refs";
 
 
+    
+
+
 
 
 
     public static LgteIndexSearcherWrapper openMultiSearcher() throws IOException
     {
-        IndexReader readerContents = LgteIndexManager.openReader(IndexContents.indexPath, Model.OkapiBM25Model);
-        IndexReader readerGeoTime = LgteIndexManager.openReader(IndexGeoTime.indexPath, Model.OkapiBM25Model);
-        IndexReader readerTimexes = LgteIndexManager.openReader(IndexTimexes.indexPath, Model.OkapiBM25Model);
-        IndexReader readerWoeid = LgteIndexManager.openReader(IndexWoeid.indexPath, Model.OkapiBM25Model);
+        IndexReader readerContents = LgteIndexManager.openReader(IndexContents.indexPath, Model.BM25Normalized);
+        IndexReader readerGeoTime = LgteIndexManager.openReader(IndexGeoTime.indexPath, Model.BM25Normalized);
+        IndexReader readerTimexes = LgteIndexManager.openReader(IndexTimexes.indexPath, Model.BM25Normalized);
+        IndexReader readerWoeid = LgteIndexManager.openReader(IndexWoeid.indexPath, Model.BM25Normalized);
+
+        System.out.println("Using MultiSearcher with model BM25 Normalized");
 
         Map<String,IndexReader> readers = new HashMap<String,IndexReader>();
 
@@ -188,7 +232,30 @@ public class Config
         readers.put("regexpr(^t_.*)",readerTimexes);
         readers.put("regexpr(^g_.*)",readerWoeid);
 
-        return new LgteIndexSearcherWrapper(Model.OkapiBM25Model,new LgteIsolatedIndexReader(readers));
+
+        return new LgteIndexSearcherWrapper(Model.BM25Normalized,new LgteIsolatedIndexReader(readers));
+    }
+
+    public static LgteIndexSearcherWrapper openMultiSearcher2011() throws IOException
+    {
+        IndexReader readerContents = LgteIndexManager.openReader(IndexContents.indexPath, Model.BM25Normalized);
+        IndexReader readerGeoTime = LgteIndexManager.openReader(IndexGeoTime.indexPath, Model.BM25Normalized);
+        IndexReader readerTimexes = LgteIndexManager.openReader(IndexTimexes.indexPath, Model.BM25Normalized);
+        IndexReader readerWoeid = LgteIndexManager.openReader(IndexWoeid.indexPath, Model.BM25Normalized);
+        IndexReader readerMetrics = LgteIndexManager.openReader(IndexMetrics.indexPath, Model.BM25Normalized);
+
+        Map<String,IndexReader> readers = new HashMap<String,IndexReader>();
+
+        readers.put(Config.CONTENTS,readerContents);
+//        readers.put(Config.TITLE,readerContents);
+        readers.put(Config.ID,readerContents);
+
+        readers.put("regexpr(^S_.*)",readerGeoTime);
+        readers.put("regexpr(^t_.*)",readerTimexes);
+        readers.put("regexpr(^g_.*)",readerWoeid);
+        readers.put("regexpr(.*)",readerMetrics);
+
+        return new LgteIndexSearcherWrapper(Model.BM25Normalized,new LgteIsolatedIndexReader(readers));
     }
 
 
@@ -262,4 +329,6 @@ public class Config
         System.out.println(TEMPORAL_DB.matches(".*_DB$"));
         System.out.println("teste_db".matches(".*_DB$"));
     }
+
+
 }

@@ -68,19 +68,34 @@ public class IndexGeoTime
         if(d.hasRelativePointTimeExpressions())
             doc.indexString(Config.S_HAS_TIME_POINTS_RELATIVE, "true");
 
+        /*BUG FOUND GEOTIME*/
+//        if(d.hasYTimeExpressions()) doc.indexStringNoStore(Config.S_HAS_Y,"true");
+//        else if(d.hasYYTimeExpressions()) doc.indexStringNoStore(Config.S_HAS_YY,"true");
+//        else if(d.hasYYYTimeExpressions()) doc.indexStringNoStore(Config.S_HAS_YYY,"true");
+//        else if(d.hasYYYYTimeExpressions()) doc.indexStringNoStore(Config.S_HAS_YYYY,"true");
+//        else if(d.hasYYYYMMTimeExpressions()) doc.indexStringNoStore(Config.S_HAS_YYYYMM,"true");
+//        else if(d.hasYYYYMMDDTimeExpressions()) doc.indexStringNoStore(Config.S_HAS_YYYYMMDD,"true");
+
         if(d.hasYTimeExpressions()) doc.indexStringNoStore(Config.S_HAS_Y,"true");
-        else if(d.hasYYTimeExpressions()) doc.indexStringNoStore(Config.S_HAS_YY,"true");
-        else if(d.hasYYYTimeExpressions()) doc.indexStringNoStore(Config.S_HAS_YYY,"true");
-        else if(d.hasYYYYTimeExpressions()) doc.indexStringNoStore(Config.S_HAS_YYYY,"true");
-        else if(d.hasYYYYMMTimeExpressions()) doc.indexStringNoStore(Config.S_HAS_YYYYMM,"true");
-        else if(d.hasYYYYMMDDTimeExpressions()) doc.indexStringNoStore(Config.S_HAS_YYYYMMDD,"true");
+        if(d.hasYYTimeExpressions()) doc.indexStringNoStore(Config.S_HAS_YY,"true");
+        if(d.hasYYYTimeExpressions()) doc.indexStringNoStore(Config.S_HAS_YYY,"true");
+        if(d.hasYYYYTimeExpressions()) doc.indexStringNoStore(Config.S_HAS_YYYY,"true");
+        if(d.hasYYYYMMTimeExpressions()) doc.indexStringNoStore(Config.S_HAS_YYYYMM,"true");
+        if(d.hasYYYYMMDDTimeExpressions()) doc.indexStringNoStore(Config.S_HAS_YYYYMMDD,"true");
+
+//        if(d.hasKeyTimeExpressions(TimeExpression.Type.Y)) doc.indexStringNoStore(Config.S_HAS_Y_KEY,"true");
+//        else if(d.hasKeyTimeExpressions(TimeExpression.Type.YY)) doc.indexStringNoStore(Config.S_HAS_YY_KEY,"true");
+//        else if(d.hasKeyTimeExpressions(TimeExpression.Type.YYY)) doc.indexStringNoStore(Config.S_HAS_YYY_KEY,"true");
+//        else if(d.hasKeyTimeExpressions(TimeExpression.Type.YYYY)) doc.indexStringNoStore(Config.S_HAS_YYYY_KEY,"true");
+//        else if(d.hasKeyTimeExpressions(TimeExpression.Type.YYYYMM)) doc.indexStringNoStore(Config.S_HAS_YYYYMM_KEY,"true");
+//        else if(d.hasKeyTimeExpressions(TimeExpression.Type.YYYYMMDD)) doc.indexStringNoStore(Config.S_HAS_YYYYMMDD_KEY,"true");
 
         if(d.hasKeyTimeExpressions(TimeExpression.Type.Y)) doc.indexStringNoStore(Config.S_HAS_Y_KEY,"true");
-        else if(d.hasKeyTimeExpressions(TimeExpression.Type.YY)) doc.indexStringNoStore(Config.S_HAS_YY_KEY,"true");
-        else if(d.hasKeyTimeExpressions(TimeExpression.Type.YYY)) doc.indexStringNoStore(Config.S_HAS_YYY_KEY,"true");
-        else if(d.hasKeyTimeExpressions(TimeExpression.Type.YYYY)) doc.indexStringNoStore(Config.S_HAS_YYYY_KEY,"true");
-        else if(d.hasKeyTimeExpressions(TimeExpression.Type.YYYYMM)) doc.indexStringNoStore(Config.S_HAS_YYYYMM_KEY,"true");
-        else if(d.hasKeyTimeExpressions(TimeExpression.Type.YYYYMMDD)) doc.indexStringNoStore(Config.S_HAS_YYYYMMDD_KEY,"true");
+        if(d.hasKeyTimeExpressions(TimeExpression.Type.YY)) doc.indexStringNoStore(Config.S_HAS_YY_KEY,"true");
+        if(d.hasKeyTimeExpressions(TimeExpression.Type.YYY)) doc.indexStringNoStore(Config.S_HAS_YYY_KEY,"true");
+        if(d.hasKeyTimeExpressions(TimeExpression.Type.YYYY)) doc.indexStringNoStore(Config.S_HAS_YYYY_KEY,"true");
+        if(d.hasKeyTimeExpressions(TimeExpression.Type.YYYYMM)) doc.indexStringNoStore(Config.S_HAS_YYYYMM_KEY,"true");
+        if(d.hasKeyTimeExpressions(TimeExpression.Type.YYYYMMDD)) doc.indexStringNoStore(Config.S_HAS_YYYYMMDD_KEY,"true");
 
         writer.addDocument(doc);
     }

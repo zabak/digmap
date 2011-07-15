@@ -2,15 +2,14 @@ package pt.utl.ist.lucene;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.search.*;
 import org.apache.lucene.store.Directory;
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.document.Document;
-import pt.utl.ist.lucene.sort.LgteSort;
-import pt.utl.ist.lucene.sort.sorters.TimeSpatialTextSorterSource;
 import pt.utl.ist.lucene.config.ConfigProperties;
 import pt.utl.ist.lucene.filter.ITimeSpatialDistancesWrapper;
+import pt.utl.ist.lucene.sort.LgteSort;
+import pt.utl.ist.lucene.sort.sorters.TimeSpatialTextSorterSource;
 import pt.utl.ist.lucene.versioning.LuceneVersion;
 import pt.utl.ist.lucene.versioning.LuceneVersionFactory;
 
@@ -144,45 +143,70 @@ public class LgteIndexSearcherWrapper
 
     private Hits cascadeModels(Query query, Filter filter) throws IOException {
         Model model = ModelManager.getInstance().getModel();
+
         while(model.getCascadeModel() != null)
         {
+            System.out.println("LGTE Searching:" + model.getName() + " before cascading : " + model.getCascadeModel().getName());
             indexSearcher.search(query,filter);
+//            indexSearcher.search(query);
             ModelManager.getInstance().setOnlyModel(model.getCascadeModel());
+            System.out.println("Model searched now will cascade to:" + model.getName());
             model = model.getCascadeModel();
         }
+        System.out.println("LGTE Searching Model:" + model.getName());
         return indexSearcher.search(query,filter);
     }
 
     private Hits cascadeModels(Query query, Filter filter, Sort sort) throws IOException {
         Model model = ModelManager.getInstance().getModel();
+
         while(model.getCascadeModel() != null)
         {
-            indexSearcher.search(query,filter,sort);
+            System.out.println("LGTE Searching:" + model.getName() + " before cascading : " + model.getCascadeModel().getName());
+//            indexSearcher.search(query,filter,sort);
+            Hits h = indexSearcher.search(query,filter);
+            System.out.println("In first step : " + h.length() + " results ");
             ModelManager.getInstance().setOnlyModel(model.getCascadeModel());
+            System.out.println("Model searched now will cascade to:" + model.getName());
             model = model.getCascadeModel();
         }
-        return indexSearcher.search(query,filter,sort);
+        System.out.println("LGTE Searching Model:" + model.getName());
+
+        Hits h = indexSearcher.search(query,filter,sort);
+        System.out.println("In second step : " + h.length() + " results ");
+        return h;
+
     }
 
     private TopDocs cascadeModels(Query query, Filter filter, int i) throws IOException {
         Model model = ModelManager.getInstance().getModel();
+
         while(model.getCascadeModel() != null)
         {
+            System.out.println("LGTE Searching:" + model.getName() + " before cascading : " + model.getCascadeModel().getName());
             indexSearcher.search(query,filter,i);
+//            indexSearcher.search(query,null,i);
             ModelManager.getInstance().setOnlyModel(model.getCascadeModel());
+            System.out.println("Model searched now will cascade to:" + model.getName());
             model = model.getCascadeModel();
         }
+        System.out.println("LGTE Searching Model:" + model.getName());
         return indexSearcher.search(query,filter,i);
     }
 
     private void cascadeModels(HitCollector hitCollector, Query query, Filter filter) throws IOException {
         Model model = ModelManager.getInstance().getModel();
+        
         while(model.getCascadeModel() != null)
         {
+            System.out.println("LGTE Searching:" + model.getName() + " before cascading : " + model.getCascadeModel().getName());
             indexSearcher.search(query,filter);
+//            indexSearcher.search(query);
             ModelManager.getInstance().setOnlyModel(model.getCascadeModel());
+            System.out.println("Model searched now will cascade to:" + model.getName());
             model = model.getCascadeModel();
         }
+        System.out.println("LGTE Searching Model:" + model.getName());
         indexSearcher.search(query,filter,hitCollector);
     }
 

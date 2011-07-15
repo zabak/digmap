@@ -56,6 +56,17 @@ public class GeoUtils
         return 1.0 - ((1.0+sign*(1-exp))/2);
     }
 
+    /**
+     * radium = 10
+       alfa = 0.75
+       beta = 3
+     * 1 / (1 + (x/10 * (0.75 * euler))^3)
+     * @param distance
+     * @param radium
+     * @param alfa
+     * @param beta
+     * @return
+     */
     public static double sigmoideDistanceRadium(double distance, double radium, double alfa, double beta)
     {
         double distanceRadium = distance / radium;

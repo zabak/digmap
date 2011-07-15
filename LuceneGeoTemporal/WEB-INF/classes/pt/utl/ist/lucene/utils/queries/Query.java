@@ -18,10 +18,82 @@ public class Query
     String originalDescClean;
     String originalNarrClean;
 
+
     Times times = new Times();
     Places places = new Places();
     Terms terms = new Terms();
+    WikipediaTerms wikipediaTerms = new WikipediaTerms();
+    TemporalQuery temporalQuery = null;
+    GeographicQuery geographicQuery = null;
 
+    public TemporalQuery getTemporalQuery() {
+        return temporalQuery;
+    }
+
+    public void setTemporalQuery(TemporalQuery temporalQuery) {
+        this.temporalQuery = temporalQuery;
+    }
+
+    public GeographicQuery getGeographicQuery() {
+        return geographicQuery;
+    }
+
+    public void setGeographicQuery(GeographicQuery geographicQuery) {
+        this.geographicQuery = geographicQuery;
+    }
+
+    public static class TemporalQuery
+    {
+        String query;
+        boolean wikipedia = false;
+
+        public String getQuery() {
+            return query;
+        }
+
+        public void setQuery(String query) {
+            this.query = query;
+        }
+
+        public boolean isWikipedia() {
+            return wikipedia;
+        }
+
+        public void setWikipedia(boolean wikipedia) {
+            this.wikipedia = wikipedia;
+        }
+    }
+    public static class GeographicQuery
+    {
+
+
+        String query;
+        boolean wikipedia = false;
+
+        public String getQuery() {
+            return query;
+        }
+
+        public void setQuery(String query) {
+            this.query = query;
+        }
+
+        public boolean isWikipedia() {
+            return wikipedia;
+        }
+
+        public void setWikipedia(boolean wikipedia) {
+            this.wikipedia = wikipedia;
+        }
+    }
+
+    public WikipediaTerms getWikipediaTerms() {
+        return wikipediaTerms;
+    }
+
+    public void setWikipediaTerms(WikipediaTerms wikipediaTerms) {
+        this.wikipediaTerms = wikipediaTerms;
+    }
 
     public Query() {
     }
@@ -135,10 +207,18 @@ public class Query
 
             public static class Term extends BooleanTerm
             {
+                boolean duration = false;
                 String field;
                 String value;
                 List<String> woeid = new ArrayList<String>();
 
+                public boolean isDuration() {
+                    return duration;
+                }
+
+                public void setDuration(boolean duration) {
+                    this.duration = duration;
+                }
 
                 private Term() {
 
@@ -173,6 +253,78 @@ public class Query
             {
                 AND,
                 OR
+            }
+        }
+    }
+
+    public static class WikipediaTerms
+    {
+        List<TimeTerm> timeTerms = new ArrayList<TimeTerm>();
+        List<PlaceTerm> placeTerms = new ArrayList<PlaceTerm>();
+
+        public List<TimeTerm> getTimeTerms() {
+            return timeTerms;
+        }
+
+        public void setTimeTerms(List<TimeTerm> timeTerms) {
+            this.timeTerms = timeTerms;
+        }
+
+        public List<PlaceTerm> getPlaceTerms() {
+            return placeTerms;
+        }
+
+        public void setPlaceTerms(List<PlaceTerm> placeTerms) {
+            this.placeTerms = placeTerms;
+        }
+
+        public static class Term
+        {
+            String term;
+            String boost;
+
+
+            public Term() {
+            }
+
+            public String getBoost() {
+                return boost;
+            }
+
+            public void setBoost(String boost) {
+                this.boost = boost;
+            }
+
+            public String getTerm() {
+                return term;
+            }
+
+            public void setTerm(String term) {
+                this.term = term;
+            }
+        }
+        public static class PlaceTerm extends Term
+        {
+            String woeid;
+
+            public String getWoeid() {
+                return woeid;
+            }
+
+            public void setWoeid(String woeid) {
+                this.woeid = woeid;
+            }
+        }
+        public static class TimeTerm extends Term
+        {
+            String time;
+
+            public String getTime() {
+                return time;
+            }
+
+            public void setTime(String time) {
+                this.time = time;
             }
         }
     }

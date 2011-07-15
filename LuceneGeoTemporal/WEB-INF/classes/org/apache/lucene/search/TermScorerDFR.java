@@ -1,24 +1,21 @@
 package org.apache.lucene.search;
 
-import java.io.IOException;
-import java.util.Properties;
-import java.util.Map;
-import java.util.HashMap;
-
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.TermDocs;
-import org.apache.lucene.index.ProbabilisticIndexReader;
-import org.apache.lucene.index.LgteIsolatedIndexReader;
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.queryParser.ParseException;
 import org.apache.log4j.Logger;
-import org.omg.SendingContext.RunTime;
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.LgteIsolatedIndexReader;
+import org.apache.lucene.index.ProbabilisticIndexReader;
+import org.apache.lucene.index.TermDocs;
+import org.apache.lucene.queryParser.ParseException;
 import pt.utl.ist.lucene.*;
+import pt.utl.ist.lucene.config.ConfigProperties;
 import pt.utl.ist.lucene.model.ModelInitBm25Normalized;
 import pt.utl.ist.lucene.test.hierarchicindexes.TestBm25;
-import pt.utl.ist.lucene.treceval.geotime.index.IndexGeoTime;
 import pt.utl.ist.lucene.treceval.IndexCollections;
-import pt.utl.ist.lucene.config.ConfigProperties;
+import pt.utl.ist.lucene.treceval.geotime.index.IndexGeoTime;
+
+import java.io.IOException;
+import java.util.Properties;
 
 /*
  * 
@@ -312,8 +309,11 @@ final class TermScorerDFR extends LgteFieldedTermScorer {
             }
         }
 
-        if(sim < 0 && model != Model.OkapiBM25Model  && model != Model.BM25b )
+        if(sim < 0 && model != Model.OkapiBM25Model  && model != Model.BM25b && model != Model.BM25Normalized && model != Model.BM25NormalizedStep2 )
+        {
             System.out.println(">>>>>>>>>>>>>>>>>>>>>>>FATAL  : PLEASE CHECK DFR Formulas similarity come negative for doc:" + doc + " term: " + term.text());
+            sim = 0;
+        }
 
         return weightValue * (float)sim;
     }

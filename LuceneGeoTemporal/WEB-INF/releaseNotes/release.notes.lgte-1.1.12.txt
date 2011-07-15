@@ -1,0 +1,9 @@
+LGTE version 1.2.12
+
+Release Notes:
+
+1 - New Configuration Feature - Static Boost Factors for Fields.
+    JunitTestCreated at pt.utl.ist.lucene.test.models.TestBm25NormalizedWithBoosts
+    All other tests pass
+
+    jm

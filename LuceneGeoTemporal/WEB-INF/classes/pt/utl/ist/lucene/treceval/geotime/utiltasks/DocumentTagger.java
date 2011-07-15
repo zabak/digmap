@@ -1,26 +1,15 @@
 package pt.utl.ist.lucene.treceval.geotime.utiltasks;
 
-import org.apache.log4j.Logger;
-
-import java.io.*;
-import java.util.zip.ZipOutputStream;
-import java.util.zip.ZipEntry;
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
-
-import pt.utl.ist.lucene.treceval.geotime.NyTimesDocument;
-
-import pt.utl.ist.lucene.treceval.geotime.webservices.CallWebServices;
-import pt.utl.ist.lucene.treceval.geotime.DocumentIterator;
-import pt.utl.ist.lucene.treceval.geotime.IntegratedDocPlaceMakerAndTimexIterator;
-import pt.utl.ist.lucene.utils.DocumentPlaceMakerAndTemporalSentences;
-import pt.utl.ist.lucene.utils.PlaceMakerAndTemporalSentence;
-import pt.utl.ist.lucene.utils.placemaker.PlaceMakerDocument;
-import pt.utl.ist.lucene.utils.temporal.TimeExpression;
 import com.sun.org.apache.xml.internal.serialize.OutputFormat;
 import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
-import jomm.utils.StreamsUtils;
+import org.apache.log4j.Logger;
+import pt.utl.ist.lucene.treceval.geotime.DocumentIterator;
+import pt.utl.ist.lucene.treceval.geotime.NyTimesDocument;
+import pt.utl.ist.lucene.treceval.geotime.webservices.CallWebServices;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 /**
  * @author Jorge Machado
@@ -77,11 +66,15 @@ public class DocumentTagger
             file = path + "_notes01.xml";
         else
             file = path + "/notes01.xml";
-        out = new FileOutputStream(file,false);
+        out = new FileOutputStream(file,startId != null);
 
-        System.out.println("output file: " + file);
-        out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n".getBytes());
-        out.write("<docs>\n".getBytes());
+        if(startId != null)
+            System.out.println("Appending file " + file);
+        else  {
+            System.out.println("output file: " + file);
+            out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n".getBytes());
+            out.write("<docs>\n".getBytes());
+        }
 
         while((d = di.next()) != null)
         {
@@ -96,7 +89,7 @@ public class DocumentTagger
                 if(MultiDocumentTagger.failIds.contains(d.getDId()))
                     go = true;
             }
-            else if( startId==null || d.getDId().compareTo(startId) >= 0)
+            else if( startId==null || d.compare(startId) >= 0)
                 go = true;
 
             if( go )

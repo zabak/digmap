@@ -1,11 +1,8 @@
 package pt.utl.ist.lucene.filter.distancebuilders;
 
-import pt.utl.ist.lucene.utils.Dates;
-import pt.utl.ist.lucene.filter.distancebuilders.TimeDistanceBuilderFilter;
 import pt.utl.ist.lucene.filter.ITimeDistancesWrapper;
 import pt.utl.ist.lucene.filter.SerialChainFilterBuilder;
 
-import java.util.GregorianCalendar;
 import java.util.Map;
 
 /**

@@ -1,16 +1,15 @@
 package pt.utl.ist.lucene.utils.queries;
 
-import org.apache.lucene.search.Filter;
-import org.apache.lucene.search.TermsFilter;
-import org.apache.lucene.search.QueryFilter;
+import com.pjaol.lucene.search.SerialChainFilter;
+import org.apache.log4j.Logger;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryParser.ParseException;
-import org.apache.log4j.Logger;
+import org.apache.lucene.search.Filter;
+import org.apache.lucene.search.QueryFilter;
+import org.apache.lucene.search.TermsFilter;
+import pt.utl.ist.lucene.analyzer.LgteNothingAnalyzer;
 import pt.utl.ist.lucene.treceval.geotime.index.Config;
 import pt.utl.ist.lucene.utils.placemaker.PlaceNameNormalizer;
-import pt.utl.ist.lucene.analyzer.LgteNothingAnalyzer;
-import com.pjaol.lucene.search.SerialChainFilter;
-import pt.utl.ist.lucene.utils.queries.Query;
 
 import java.io.IOException;
 
@@ -24,6 +23,7 @@ public class QueryProcessor
 {
     public static boolean DESC_ONLY = true;
     private static final Logger logger = Logger.getLogger(QueryProcessor.class);
+
 
     Query q;
     boolean time_key = false;
@@ -60,9 +60,39 @@ public class QueryProcessor
 
     public String getTermsQuery(QueryTarget queryTarget)
     {
-         if(DESC_ONLY)
+        if(DESC_ONLY)
             return prepareQueryStringOnlyDesc(queryTarget);
         return prepareQueryString(queryTarget);
+    }
+
+    
+    public String getWikipediaTermsQuery(QueryTarget queryTarget)
+    {
+        Query.WikipediaTerms wikiTerms = q.getWikipediaTerms();
+        StringBuilder wikiTermsQuery = new StringBuilder();
+        if(wantPlaces && wikiTerms.getPlaceTerms().size()>0)
+        {
+
+            int max = 0;
+            for(Query.WikipediaTerms.PlaceTerm pt : wikiTerms.getPlaceTerms())
+            {
+                if(max++ > Config.wikipediaMaxPlaceTerms)
+                    break;
+                wikiTermsQuery.append(" " + Config.G_PLACE_REF_WOEID + ":("  + PlaceNameNormalizer.normalizeWoeid(pt.getWoeid() + ")^" + pt.getBoost()));
+            }
+        }
+        if(wantTimes && wikiTerms.getTimeTerms().size()>0)
+        {
+            int max = 0;
+            for(Query.WikipediaTerms.TimeTerm pt : wikiTerms.getTimeTerms())
+            {
+                if(max++ > Config.wikipediaMaxTimeTerms)
+                    break;
+                wikiTermsQuery.append(" " + Config.T_POINT + ":(" + pt.getTime().trim() + "*)^" + pt.getBoost());
+            }
+        }
+
+        return wikiTermsQuery.toString().trim();
     }
 
     public String getPlacesQuery(QueryTarget queryTarget)
@@ -260,7 +290,16 @@ public class QueryProcessor
             StringBuilder times = new StringBuilder();
             for(Query.Times.Term time: q.getTimes().getTerms())
             {
-                if(!time.getTime().equals("?"))
+
+                if(time.getTime().equals("timeDuration"))
+                {
+
+                }
+                else if(time.getTime().equals("lastTime"))
+                {
+
+                }
+                else if(!time.getTime().equals("?"))
                 {
                     times.append(time.getTime()).append("* ");
                 }
@@ -287,6 +326,39 @@ public class QueryProcessor
     public Filter getFilters(QueryTarget queryTarget)
     {
         return prepareFilters(queryTarget);
+    }
+
+
+    public Filter getWikipediaFilters(QueryTarget queryTarget)
+    {
+        int maxPlaceFilters = q.getWikipediaTerms().getPlaceTerms().size() < Config.wikipediaMaxPlaceTerms ? q.getWikipediaTerms().getPlaceTerms().size() : Config.wikipediaMaxPlaceTerms;
+        int maxTimeFilters = q.getWikipediaTerms().getTimeTerms().size() < Config.wikipediaMaxTimeTerms ? q.getWikipediaTerms().getTimeTerms().size() : Config.wikipediaMaxTimeTerms;
+        int[] actionType = new int[maxPlaceFilters + maxTimeFilters];
+        Filter[] filter = new Filter[maxPlaceFilters + maxTimeFilters];
+        int j = 0;
+        for(int i=0; i < maxPlaceFilters;i++)
+        {
+            TermsFilter termsFilter = new TermsFilter();
+            termsFilter.addTerm(new Term(Config.G_GEO_ALL_WOEID, PlaceNameNormalizer.normalizeWoeid(q.getWikipediaTerms().getPlaceTerms().get(i).getWoeid())));
+            filter[j] = termsFilter;
+            actionType[j] = SerialChainFilter.OR;
+            j++;
+        }
+        for(int i=0; i < maxTimeFilters;i++)
+        {
+            try {
+                filter[j] = new QueryFilter(org.apache.lucene.queryParser.QueryParser.parse(q.getWikipediaTerms().getTimeTerms().get(i).getTime() + "*",Config.T_ALL_EXPRESSIONS_AND_TIME_DOC , new LgteNothingAnalyzer()));
+            } catch (ParseException e) {
+                logger.error(e,e);
+            } catch (IOException e) {
+                logger.error(e,e);
+            }
+            actionType[j] = SerialChainFilter.OR;
+            j++;
+        }
+        return new SerialChainFilter(filter, actionType);
+
+
     }
 
 
@@ -523,7 +595,8 @@ public class QueryProcessor
     {
         if(booleanTerm instanceof Query.FilterChain.BooleanClause.Term && ((Query.FilterChain.BooleanClause.Term)booleanTerm).getField().equals("time"))
         {
-            query.append(" ").append(((Query.FilterChain.BooleanClause.Term)booleanTerm).getValue() + "*");
+            if(!((Query.FilterChain.BooleanClause.Term)booleanTerm).isDuration())
+                query.append(" ").append(((Query.FilterChain.BooleanClause.Term)booleanTerm).getValue() + "*");
         }
         else if(booleanTerm instanceof Query.FilterChain.BooleanClause)
         {
@@ -579,20 +652,34 @@ public class QueryProcessor
             {
                 if(key)
                 {
-                    query.append(" ").append(Config.S_HAS_YYYY_KEY).append(suffix).append(":").append("true").append("");
-                    if(!value.equals("year"))
-                        query.append(" ").append(Config.S_HAS_YYYYMM_KEY).append(suffix).append(":").append("true").append("");
-                    if(!value.equals("year-month"))
-                        query.append(" ").append(Config.S_HAS_YYYYMMDD_KEY).append(suffix).append(":").append("true").append("");
+                    if(value.equals("timeDuration"))
+                    {
+                        query.append(" ").append(Config.T_DURATION_TYPE).append(suffix).append(":").append("P*").append("");
+                    }
+                    else
+                    {
+                        query.append(" ").append(Config.S_HAS_YYYY_KEY).append(suffix).append(":").append("true").append("");
+                        if(!value.equals("year"))
+                            query.append(" ").append(Config.S_HAS_YYYYMM_KEY).append(suffix).append(":").append("true").append("");
+                        if(!value.equals("year-month"))
+                            query.append(" ").append(Config.S_HAS_YYYYMMDD_KEY).append(suffix).append(":").append("true").append("");
+                    }
                 }
                 else
                 {
 
-                    query.append(" ").append(Config.S_HAS_YYYY).append(suffix).append(":").append("true").append("");
-                    if(!value.equals("year"))
-                        query.append(" ").append(Config.S_HAS_YYYYMM).append(suffix).append(":").append("true").append("");
-                    if(!value.equals("year-month"))
-                        query.append(" ").append(Config.S_HAS_YYYYMMDD).append(suffix).append(":").append("true").append("");
+                    if(value.equals("timeDuration"))
+                    {
+                        query.append(" ").append(Config.T_DURATION_TYPE).append(suffix).append(":").append("P*").append("");
+                    }
+                    else
+                    {
+                        query.append(" ").append(Config.S_HAS_YYYY).append(suffix).append(":").append("true").append("");
+                        if(!value.equals("year"))
+                            query.append(" ").append(Config.S_HAS_YYYYMM).append(suffix).append(":").append("true").append("");
+                        if(!value.equals("year-month"))
+                            query.append(" ").append(Config.S_HAS_YYYYMMDD).append(suffix).append(":").append("true").append("");
+                    }
                 }
             }
         }
@@ -713,6 +800,23 @@ public class QueryProcessor
                 termsFilterYYYYMMDD.addTerm(new Term(Config.S_HAS_YYYYMMDD + suffix,"true"));
             filter = termsFilterYYYYMMDD;
         }
+        else if(term.getValue().equals("timeDuration"))
+        {
+
+            QueryFilter termsFilterTimeDuration = null;
+            try {
+                org.apache.lucene.queryParser.QueryParser queryParser = new org.apache.lucene.queryParser.QueryParser(Config.T_DURATION_TYPE , new LgteNothingAnalyzer());
+                queryParser.setLowercaseWildcardTerms(false);
+                termsFilterTimeDuration = new QueryFilter(queryParser.parse("P*"));
+            } catch (ParseException e) {
+                logger.error(e,e);
+            } catch (IOException e) {
+                logger.error(e,e);
+            }
+
+
+            filter = termsFilterTimeDuration;
+        }
         else if(term.getValue().equals("any"))
         {
             TermsFilter termsFilter = new TermsFilter();
@@ -756,15 +860,26 @@ public class QueryProcessor
 
     private String[] mapPlaceType(String type)
     {
-        final String[] state = { "State","Estate","HistoricalState","County","HistoricalCounty","Province","Zone","Island"};
-        final String[] city = { "City","Town","Suburb","HistoricalTown","Zone"};
+        final String[] state = { "State","Estate","HistoricalState"};
+        final String[] city = { "City","Town","HistoricalTown"};
         final String[] country = { "Country"};
+        final String[] ocean = { "Ocean"};
+        final String[] sea = { "Sea"};
+        final String[] airtport = { "Airport"};
         if(type.equalsIgnoreCase("province") || type.equalsIgnoreCase("state"))
             return state;
         else if(type.equalsIgnoreCase("city"))
             return city;
         else if(type.equalsIgnoreCase("country"))
             return country;
+        else if(type.equalsIgnoreCase("town"))
+            return city;
+        else if(type.equalsIgnoreCase("ocean"))
+            return ocean;
+        else if(type.equalsIgnoreCase("sea"))
+            return sea;
+        else if(type.equalsIgnoreCase("airport"))
+            return airtport;
         else
             logger.error("ATENTION UNESPECTED PLACE TYPE: " + type);
         return null;

@@ -55,26 +55,58 @@ public class IntegratedDocPlaceMakerIterator {
 
     }
 
+    public static int i = 0;
+    public static int j = 0;
+    public static int w = 0;
+    public static int z = 0;
+
     public IntegratedDocPlaceMakerIterator.DocumentWithPlaces next() throws IOException {
+        IntegratedDocPlaceMakerIterator.DocumentWithPlaces documentWithPlaces = null;
+        i++;
         if(hasNext())
         {
-            IntegratedDocPlaceMakerIterator.DocumentWithPlaces documentWithPlaces;
+            j++;
 
-            documentWithPlaces = new IntegratedDocPlaceMakerIterator.DocumentWithPlaces(nowNyTimesDocument,nowPlaceMakerDocument);
-            try {
-                nowNyTimesDocument = documentIterator.next();
-                try {
-                    nowPlaceMakerDocument = placeMakerIterator.next();
-                } catch (DocumentException e)
-                {
-                    logger.error(e,e);
-                }
-            } catch (IOException e) {
-                throw e;
+            System.out.println("DOC:" + nowNyTimesDocument.getDId() + ", G:" + nowPlaceMakerDocument.getDocId());
+            if(nowPlaceMakerDocument.getDocId().compareTo(nowNyTimesDocument.getDId()) < 0)
+            {
+                logger.fatal("PlaceMaker doc id is smaller than the now document id, probably places are not sorted as documents : PlaceMaker:" + nowPlaceMakerDocument.getDocId() + " Document:" + nowNyTimesDocument.getDId());
+                return null;
             }
-            return documentWithPlaces;
+            if(nowPlaceMakerDocument.getDocId().equals(nowNyTimesDocument.getDId()))
+            {
+                w++;
+                documentWithPlaces = new IntegratedDocPlaceMakerIterator.DocumentWithPlaces(nowNyTimesDocument,nowPlaceMakerDocument);
+                try {
+                    nowNyTimesDocument = documentIterator.next();
+                    try {
+                        nowPlaceMakerDocument = placeMakerIterator.next();
+                    } catch (DocumentException e)
+                    {
+                        logger.error(e,e);
+                    }
+                } catch (IOException e) {
+                    throw e;
+                }
+
+            }
+            else
+            {
+                z++;
+                documentWithPlaces = new DocumentWithPlaces(nowNyTimesDocument);
+                System.out.println("Document: " + nowNyTimesDocument.getDId() + " has no PlaceMakerDocument ");
+                try
+                {
+                    nowNyTimesDocument = documentIterator.next();
+                }
+                catch (IOException e)
+                {
+                    throw e;
+                }
+            }
         }
-        return null;
+
+        return documentWithPlaces;
     }
 
     public void remove() {
@@ -87,6 +119,12 @@ public class IntegratedDocPlaceMakerIterator {
         PlaceMakerDocument pm = null;
 
         public DocumentWithPlaces(NyTimesDocument d, PlaceMakerDocument pm)
+        {
+            this.d = d;
+            this.pm = pm;
+        }
+
+        public DocumentWithPlaces(NyTimesDocument d)
         {
             this.d = d;
             this.pm = pm;
@@ -130,5 +168,16 @@ public class IntegratedDocPlaceMakerIterator {
 
     }
 
+
+    public static void main(String[] args) throws IOException
+    {
+
+        IntegratedDocPlaceMakerIterator iterator = new IntegratedDocPlaceMakerIterator("D:\\Servidores\\DATA\\ntcir\\TESTES\\docs","D:\\Servidores\\DATA\\ntcir\\TESTES\\placemaker");
+        while(iterator.hasNext())
+        {
+            DocumentWithPlaces dc = iterator.next();
+            System.out.println(dc.getD().getDId());
+        }
+    }
 
 }

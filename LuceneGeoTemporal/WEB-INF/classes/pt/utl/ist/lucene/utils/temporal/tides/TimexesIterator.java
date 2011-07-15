@@ -125,10 +125,14 @@ public class TimexesIterator
         else
         {
             if(nowDocument != null)
-                while(nowDocument != null && nowDocument.getId().compareTo(lastDoc) <= 0)//While is before lets go to get a future document
+                while(nowDocument != null && nowDocument.getId().compareTo(lastDoc) <= 0
+                        /*Nova clausula para coleccoes com IDs nao formatados*/
+                        && nowDocument.getId().length() == lastDoc.length())//While is before lets go to get a future document
                     readOne();
             if(secondaryDocument != null)
-                while(secondaryDocument != null && secondaryDocument.getId().compareTo(lastDoc) <= 0)//While is before lets go to get a future document
+                while(secondaryDocument != null && secondaryDocument.getId().compareTo(lastDoc) <= 0
+                        /*Nova clausula para coleccoes com IDs nao formatados*/
+                         && nowDocument.getId().length() == lastDoc.length())//While is before lets go to get a future document
                     secondaryDocument = secondaryIterator.next();
             //Now that both iterators bypass the last document lets keep going
             if(secondaryDocument == null && nowDocument == null)
@@ -199,17 +203,20 @@ public class TimexesIterator
         {
             index++;
             prepareRead();
-            readOne();
+       //     readOne();
         }
     }
 
     public static void main(String[]args) throws IOException
     {
-        TimexesIterator timexesIterator = new TimexesIterator("D:\\Servidores\\DATA\\ntcir\\TEMPORAL\\testeIterator");
+        TimexesIterator timexesIterator = new TimexesIterator("D:\\Servidores\\DATA\\ntcir\\TIMEXTAG");
         TimexesDocument timexes;
+        String last = "";
         while((timexes = timexesIterator.next())!=null)
         {
-            System.out.println(timexes);
+            if(timexes.getId().length() == last.length() && timexes.getId().compareTo(last) <= 0 )
+                System.out.println("last:" + last + " now: " + timexes.getId());
+            last = timexes.getId();
         }
 
     }

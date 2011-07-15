@@ -1,18 +1,19 @@
 package pt.utl.ist.lucene.treceval.geotime.index;
 
-import pt.utl.ist.lucene.treceval.geotime.IntegratedDocPlaceMakerAndTimexIterator;
+import org.apache.solr.util.NumberUtils;
+import pt.utl.ist.lucene.LgteDocumentWrapper;
 import pt.utl.ist.lucene.LgteIndexWriter;
 import pt.utl.ist.lucene.Model;
-import pt.utl.ist.lucene.LgteDocumentWrapper;
+import pt.utl.ist.lucene.analyzer.LgteNothingAnalyzer;
+import pt.utl.ist.lucene.treceval.geotime.IntegratedDocPlaceMakerAndTimexIterator;
 import pt.utl.ist.lucene.utils.temporal.TimeExpression;
 import pt.utl.ist.lucene.utils.temporal.metrics.TemporalMetrics;
-import pt.utl.ist.lucene.analyzer.LgteNothingAnalyzer;
 
-import java.io.IOException;
 import java.io.File;
+import java.io.IOException;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
-
-import org.apache.solr.util.NumberUtils;
 
 /**
  * @author Jorge Machado
@@ -59,11 +60,16 @@ public class IndexMetrics {
         if(d.hasTimexes())
         {
             List<TimeExpression> metricTimeExpressions = d.getTd().getAllIndexableTimeExpressions();
+
             if(metricTimeExpressions.size() > 0)
             {
                 try {
                     TemporalMetrics temporalMetrics = new TemporalMetrics(metricTimeExpressions);
-                    doc.addTimeBoxFields(d.getTd().getMin().getC().getTime(),d.getTd().getMax().getC().getTime(),temporalMetrics.getTemporalIntervalPointsCentroide2());
+//                    doc.addTimeBoxFields(d.getTd().getMin().getC().getTime(),d.getTd().getMax().getC().getTime(),temporalMetrics.getTemporalIntervalPointsCentroide2());
+                    GregorianCalendar[] startEnd = temporalMetrics.getNormalizedDesvioPadraoStartEndDatesCalendar();
+                    
+                    doc.addTimeBoxFields(startEnd[0].getTime(),startEnd[1].getTime(),new Date(temporalMetrics.getMedia()));
+
                     doc.addField(Config.METRIC_T_CENTROIDE_1, NumberUtils.long2sortableStr(temporalMetrics.getTemporalCentroide().getTime()),false,true,false,true);
                     doc.addField(Config.METRIC_T_CENTROIDE_2, NumberUtils.long2sortableStr(temporalMetrics.getTemporalIntervalPointsCentroide().getTime()),false,true,false,true);
                     doc.addField(Config.METRIC_T_CENTROIDE_3, NumberUtils.long2sortableStr(temporalMetrics.getLeftLimitsCentroideTimeExpression().getC().getTimeInMillis()),false,true,false,true);

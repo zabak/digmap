@@ -271,7 +271,7 @@ public class Server
     }
 
 
-    private static String getHtml(String docno,String desc, String narr, String sgml, String placeMaker, String timexes) throws DocumentException, EOFException, IOException
+    public static String getHtml(String docno,String desc, String narr, String sgml, String placeMaker, String timexes) throws DocumentException, EOFException, IOException
     {
         StringBuilder annotatedText = new StringBuilder();
         String sgmlWithOutTags = sgml.replaceAll("<[^>]+>", "");
@@ -357,9 +357,9 @@ public class Server
                 if (lastOffset <= startOffsetPlaceRef && startOffsetPlaceRef < endOffsetPlaceRef && startOffsetPlaceRef < sgmlWithOutTags.length() && endOffsetPlaceRef < sgmlWithOutTags.length() && startOffsetPlaceRef > 0 && endOffsetPlaceRef > 0 && startOffsetPlaceRef > pos) {
 //                        System.out.println(nowPlaceRef.getStartOffset() + ":" + nowPlaceRef.getEndOffset());
                     annotatedText.append(sgmlWithOutTags.substring(pos, startOffsetPlaceRef));
-                    annotatedText.append("<label class=\"PLACE\">");
+                    annotatedText.append("<label class=\"PLACE\"><a href=\"javascript:abreMapa(" + nowPlaceRef.getPlaceDetails().getCentroide().getLat() + "," +nowPlaceRef.getPlaceDetails().getCentroide().getLng() + ")\">");
                     annotatedText.append(sgmlWithOutTags.substring(startOffsetPlaceRef, endOffsetPlaceRef + 1));
-                    annotatedText.append("</label>");
+                    annotatedText.append("</a></label>");
                     lastOffset = endOffsetPlaceRef;
                     pos = endOffsetPlaceRef + 1;
                 }

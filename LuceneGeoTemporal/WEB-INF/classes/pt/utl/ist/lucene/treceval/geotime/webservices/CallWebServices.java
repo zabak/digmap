@@ -101,6 +101,9 @@ public class CallWebServices {
     }
 
     public static org.w3c.dom.Document callServices ( String data, String title, int year, int month, int day ,String file, String id) throws Exception {
+        return callServices(data,title,year,month,day,file,id,"en-EN");
+    }
+    public static org.w3c.dom.Document callServices ( String data, String title, int year, int month, int day ,String file, String id,String language) throws Exception {
         if(proxyHost != null && !proxyHost.equals("proxy.host"))
         {
             System.getProperties().setProperty("http.proxyHost",proxyHost);
@@ -130,7 +133,7 @@ public class CallWebServices {
             post.addParameter("documentContent",data );
             if(title != null)
                 post.addParameter("documentTitle", LgteDiacriticFilter.clean(title));
-            post.addParameter("inputLanguage", "en-EN");
+            post.addParameter("inputLanguage", language);
             post.setDoAuthentication( false );
             client.executeMethod( post );
             String response = post.getResponseBodyAsString();
@@ -229,7 +232,9 @@ public class CallWebServices {
                 logger.error("PlaceMaker geometry did not bring Geometry >>>>>>");
                 logger.error(geo);
             }
-            elmDest.appendChild(box);
+            if(elmDest != null)
+                elmDest.appendChild(box);
+
 //            try{
 //                url = "http://gplsi.dlsi.ua.es/~stela/TERSEO/";
 //                GetMethod get = new GetMethod(url);
@@ -339,6 +344,11 @@ public class CallWebServices {
 
 
     public static org.w3c.dom.Document callTimextag(String url, String xml, String title, int year, int month, int day ,String file, String id) throws Exception {
+
+
+        if(xml.indexOf("-------------------------------")>=0)
+            xml.replaceAll("-------------------------------","                               ");
+
         if(proxyHost != null && !proxyHost.equals("proxy.host"))
         {
             System.getProperties().setProperty("http.proxyHost",proxyHost);
@@ -364,6 +374,8 @@ public class CallWebServices {
             post.addParameter("t", "1");
             post.addParameter("input", xml);
             post.setDoAuthentication( false );
+            client.setTimeout(20000);
+
             client.executeMethod( post );
             String response = post.getResponseBodyAsString();
             Document document;
@@ -381,7 +393,7 @@ public class CallWebServices {
 //            String geo = getGeometryString(document);
 
 
-            logger.info(xml);
+//            logger.info(xml);
 
 
 //            Document docGmlBox = loader.parse(new ByteArrayInputStream(xml.getBytes()));
@@ -540,7 +552,7 @@ public class CallWebServices {
     }
 
     public static void main ( String args[] ) throws Exception {
-        String data = "John Doe lives in the city of Lisbon, in Portugal. John Doe visited France, during the month of December 2004";
+        String data = "When and where were the Washington beltway snipers arrested";
         String title = "Test title";
         Document doc = callServices( data, title, 2009,11,11,"test","test");
         serializeDoc(System.out,doc);

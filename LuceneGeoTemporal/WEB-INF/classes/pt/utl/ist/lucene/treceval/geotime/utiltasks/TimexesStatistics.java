@@ -25,7 +25,10 @@ public class TimexesStatistics {
 
     public static void main(String[]args) throws IOException
     {
-        FileWriter fw = new FileWriter("d:\\tmp\\statsTotals.xml",false);
+        String destFile = "statsTimexesTotals.xml";
+        if(args != null && args.length > 0)
+             destFile = args[0];
+        FileWriter fw = new FileWriter(destFile,false);
         fw.write("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
         fw.write("<statsNtcirTemporal>\n");
 
@@ -52,29 +55,18 @@ public class TimexesStatistics {
         int numberTemporalExprsMonth = 0;
         int invalidExpressionsMonth = 0;
 
+        String previousFile = "";
         while((d = documentTimexesIterator.next())!=null)
         {
+            String nowfile = d.getD().getFSourceFile();//getD().getDId().substring(0,d.getD().getDId().lastIndexOf(".") - 2);
+
+            if(previousID.length() > 0 && !nowfile.equals(previousFile))
+                        
 //            logger.fatal(d.getD().getDId());
-            if(previousID.length() > 0 && !previousID.substring(0,14).equals(d.getD().getDId().substring(0,14)))
+           // if(previousID.length() > 0 && !previousID.substring(0,14).equals(d.getD().getDId().substring(0,14)))
             {
 
-                logger.fatal("###############################################");
-                logger.fatal("# stat: File: " + previousID.substring(0,14));
-                logger.fatal("# stat: docsMonth:" + docsMonth);
-                logger.fatal("# stat: docsWithTimexes:" + docsWithTimexesMonth);
-                logger.fatal("# stat: numberTimexes:" + numberTimexesMonth);
-                logger.fatal("# stat: numberTemporalExprs:" + numberTemporalExprsMonth);
-                logger.fatal("# stat: invalidExpressions:" + invalidExpressionsMonth);
-                logger.fatal("###############################################");
-                fw.write("<file name=\"" + previousID.substring(0,14) + "\">\n");
-                fw.write("<stat name=\"docs\">" + docsMonth + "</stat>\n");
-                fw.write("<stat name=\"docsWithTimexesMonth\">" + docsWithTimexesMonth + "</stat>\n");
-                fw.write("<stat name=\"numberTimexesMonth\">" + numberTimexesMonth + "</stat>\n");
-                fw.write("<stat name=\"numberTemporalExprsMonth\">" + numberTemporalExprsMonth + "</stat>\n");
-                fw.write("<stat name=\"invalidExpressionsMonth\">" + invalidExpressionsMonth + "</stat>\n");
-                printTimexes(expressionsTypeMonth,fw);
-                fw.write("</file>");
-                fw.flush();
+                printStats(previousFile, fw, expressionsTypeMonth, previousID, docsMonth, docsWithTimexesMonth, numberTimexesMonth, numberTemporalExprsMonth, invalidExpressionsMonth);
                 docsMonth = 0;
                 docsWithTimexesMonth = 0;
                 numberTimexesMonth = 0;
@@ -83,6 +75,7 @@ public class TimexesStatistics {
                 expressionsTypeMonth.clear();
             }
             previousID = d.getD().getDId();
+            previousFile = nowfile;
             docs++;
             docsMonth++;
             if(d.hasTimexes())
@@ -161,7 +154,8 @@ public class TimexesStatistics {
             }
 
         }
-
+        printStats(previousFile,fw, expressionsTypeMonth, previousID, docsMonth, docsWithTimexesMonth, numberTimexesMonth, numberTemporalExprsMonth, invalidExpressionsMonth);
+        
         logger.fatal("###############################################");
         logger.fatal("# stat: docs:" + docs);
         logger.fatal("# stat: docsWithTimexes:" + docsWithTimexes);
@@ -182,6 +176,26 @@ public class TimexesStatistics {
         fw.flush();
         fw.close();
 
+    }
+
+    private static void printStats(String file, FileWriter fw, Map<String, Integer> expressionsTypeMonth, String previousID, int docsMonth, int docsWithTimexesMonth, int numberTimexesMonth, int numberTemporalExprsMonth, int invalidExpressionsMonth) throws IOException {
+        logger.fatal("###############################################");
+        logger.fatal("# stat: File: " + file) ;
+        logger.fatal("# stat: docsMonth:" + docsMonth);
+        logger.fatal("# stat: docsWithTimexes:" + docsWithTimexesMonth);
+        logger.fatal("# stat: numberTimexes:" + numberTimexesMonth);
+        logger.fatal("# stat: numberTemporalExprs:" + numberTemporalExprsMonth);
+        logger.fatal("# stat: invalidExpressions:" + invalidExpressionsMonth);
+        logger.fatal("###############################################");
+        fw.write("<file name=\"" + file + "\">\n");
+        fw.write("<stat name=\"docs\">" + docsMonth + "</stat>\n");
+        fw.write("<stat name=\"docsWithTimexesMonth\">" + docsWithTimexesMonth + "</stat>\n");
+        fw.write("<stat name=\"numberTimexesMonth\">" + numberTimexesMonth + "</stat>\n");
+        fw.write("<stat name=\"numberTemporalExprsMonth\">" + numberTemporalExprsMonth + "</stat>\n");
+        fw.write("<stat name=\"invalidExpressionsMonth\">" + invalidExpressionsMonth + "</stat>\n");
+        printTimexes(expressionsTypeMonth,fw);
+        fw.write("</file>");
+        fw.flush();
     }
 
     private static void printTimexes(Map<String,Integer> expressionsMap, FileWriter fw) throws IOException {

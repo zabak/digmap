@@ -48,6 +48,7 @@ public class IntegratedDocTimexIterator {
     public DocumentWithTimexes next() throws IOException {
         if(hasNext())
         {
+            System.out.println("DOC:" + nowNyTimesDocument.getDId() + ", G:" + ", T:" + nowTimexesDocument.getId());
             DocumentWithTimexes documentWithTimexes;
             if(nowTimexesDocument.getId().compareTo(nowNyTimesDocument.getDId()) < 0)
             {

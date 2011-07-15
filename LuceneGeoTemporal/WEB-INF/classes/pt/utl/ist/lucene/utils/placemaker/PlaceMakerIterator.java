@@ -3,13 +3,13 @@ package pt.utl.ist.lucene.utils.placemaker;
 import org.apache.log4j.Logger;
 import org.dom4j.DocumentException;
 
-import java.util.zip.ZipInputStream;
-import java.util.zip.ZipEntry;
-import java.util.List;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.io.*;
+import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 /**
  * @author Jorge Machado
@@ -135,6 +135,19 @@ public class PlaceMakerIterator {
     }
 
 
+
+    public static void main(String[]args) throws IOException, DocumentException {
+        PlaceMakerIterator iterator = new PlaceMakerIterator("D:\\Servidores\\DATA\\ntcir\\PlaceMaker");
+        PlaceMakerDocument places;
+        String last = "";
+        while((places = iterator.next())!=null)
+        {
+            if(places.getDocId().length() == last.length() && places.getDocId().compareTo(last) <= 0 )
+                System.out.println("last:" + last + " now: " + places.getDocId());
+            last = places.getDocId();
+        }
+
+    }
 
     
 

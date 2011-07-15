@@ -1,16 +1,15 @@
 package pt.utl.ist.lucene.treceval.geotime.utiltasks;
 
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.TermEnum;
 import pt.utl.ist.lucene.treceval.geotime.index.Config;
 import pt.utl.ist.lucene.treceval.geotime.index.IndexWoeid;
 import pt.utl.ist.lucene.treceval.geotime.webservices.CallWebServices;
 import pt.utl.ist.lucene.utils.placemaker.BelongTosDocument;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.FileWriter;
-
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.TermEnum;
+import java.io.IOException;
 
 /**
  * @author Jorge Machado
@@ -30,6 +29,7 @@ public class BelongTosPlaceNamesTagger
         IndexReader reader = IndexReader.open(IndexWoeid.indexPath);
 //        TermEnum termEnum = reader.terms(new Term(Config.G_GEO_ALL_WOEID,"WOEID-0"));
         TermEnum termEnum = reader.terms();
+        
 //        termEnum.next();//skipping 0
         int i =0;
         while(termEnum.next())

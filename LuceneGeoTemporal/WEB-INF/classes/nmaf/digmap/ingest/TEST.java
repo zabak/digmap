@@ -1,6 +1,6 @@
 package nmaf.digmap.ingest;
 
-public class TEST {
+public class Test {
 	public static void main(String[] args) throws Exception{
 //
 //		String outDir="C:\\Desktop\\Projectos\\Digmap\\registos DIGMAP\\out-test";

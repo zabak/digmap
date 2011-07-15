@@ -1,15 +1,14 @@
 package pt.utl.ist.lucene.utils.nlp;
 
+import com.aliasi.sentences.MedlineSentenceModel;
+import com.aliasi.sentences.SentenceModel;
+import com.aliasi.tokenizer.IndoEuropeanTokenizerFactory;
 import com.aliasi.tokenizer.Tokenizer;
 import com.aliasi.tokenizer.TokenizerFactory;
-import com.aliasi.tokenizer.IndoEuropeanTokenizerFactory;
-import com.aliasi.sentences.SentenceModel;
-import com.aliasi.sentences.MedlineSentenceModel;
-
-import java.util.List;
-import java.util.ArrayList;
-
 import org.apache.log4j.Logger;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Jorge Machado
@@ -55,12 +54,14 @@ public class SentenceSpliter
                 sentenceText.append(fragment);
                 endOffset += fragment.length();
             }
-            if(!sentenceText.toString().trim().equals(text.substring(startOffset, endOffset).trim()))
-            {
-                logger.error("Validation check fail Sentence is not equal to the substring extracted from original text between startOffset and endOffset");
-                logger.error("->Sentence->:" + sentenceText.toString());
-                logger.error("->text.substring(startOffset,endOffset)->:" + text.substring(startOffset, endOffset));
-            }
+
+
+//            if(!sentenceText.toString().trim().equals(text.substring(startOffset, endOffset).trim()))
+//            {
+//                logger.error("Validation check fail Sentence is not equal to the substring extracted from original text between startOffset and endOffset");
+//                logger.error("->Sentence->:" + sentenceText.toString());
+//                logger.error("->text.substring(startOffset,endOffset)->:" + text.substring(startOffset, endOffset));
+//            }
             logger.debug(startOffset + "-" + endOffset + ":" + text.substring(startOffset, endOffset));
 
             Sentence sentence;

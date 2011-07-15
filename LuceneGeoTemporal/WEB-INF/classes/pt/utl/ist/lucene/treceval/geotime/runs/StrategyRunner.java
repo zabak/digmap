@@ -31,10 +31,13 @@ import java.util.Map;
  */
 public class StrategyRunner {
 
+    //PARA VERIFICAR SE ESTA A USAR A DESCRICAO ONLY VERIFICAR
+    //esta conf no file pt.utl.ist.lucene.utils.queries.QueryProcessor
+    // public static boolean DESC_ONLY = false;
     private static final Logger logger = Logger.getLogger(StrategyRunner.class);
     static String outputFile =    Config.ntcirBase +  File.separator + "runs2" + File.separator;
     static String topicsFile =    Config.ntcirBase +  File.separator + "topics" + File.separator + "topics.xml";
-    
+
 
 
     static String run1 = "DOC Granularity BM25 with BaseFilters to exclude documents without time or geographic references";
@@ -57,23 +60,23 @@ public class StrategyRunner {
         }
         LgteIndexSearcherWrapper searcher;
 
-        if(step < 1)
-        {
-            logger.info("#######base");
-            searcher = Config.openMultiSearcher();
-//            runBase(run1,null,outputFile + "base_t_keys.xml",searcher,strategyQueryBuilderTimeKeys.baseSimpleIterator(),true,null,false);
-            runBase(run1,null,outputFile + "base_t_all.xml",searcher,strategyQueryBuilderTimeAll.baseSimpleIterator(),false,null,false);
-            searcher.close();
-        }
-
-        if(step < 2)
-        {
-            logger.info("#######base_sentences");
-            searcher = Config.openMultiSearcherSentences();
-//            runBase(run2,null,outputFile + "base_sentences_t_keys.xml",searcher,strategyQueryBuilderTimeKeys.baseSimpleIterator_sentences(),true,Config.DOC_ID,false);
-            runBase(run2,null,outputFile + "base_sentences_t_all.xml",searcher,strategyQueryBuilderTimeAll.baseSimpleIterator_sentences(),false,Config.DOC_ID,false);
-            searcher.close();
-        }
+//        if(step < 1)
+//        {
+//            logger.info("#######base");
+//            searcher = Config.openMultiSearcher();
+////            runBase(run1,null,outputFile + "base_t_keys.xml",searcher,strategyQueryBuilderTimeKeys.baseSimpleIterator(),true,null,false);
+//            runBase(run1,null,outputFile + "base_t_all.xml",searcher,strategyQueryBuilderTimeAll.baseSimpleIterator(),false,null,false);
+//            searcher.close();
+//        }
+//
+//        if(step < 2)
+//        {
+//            logger.info("#######base_sentences");
+//            searcher = Config.openMultiSearcherSentences();
+////            runBase(run2,null,outputFile + "base_sentences_t_keys.xml",searcher,strategyQueryBuilderTimeKeys.baseSimpleIterator_sentences(),true,Config.DOC_ID,false);
+//            runBase(run2,null,outputFile + "base_sentences_t_all.xml",searcher,strategyQueryBuilderTimeAll.baseSimpleIterator_sentences(),false,Config.DOC_ID,false);
+//            searcher.close();
+//        }
 
         if(step < 3)
         {
@@ -83,24 +86,24 @@ public class StrategyRunner {
             runBase(run3,RunType.Text,outputFile + "filtered_qe_t_all.xml",searcher,strategyQueryBuilderTimeAll.baseFilteredIterator(),false,null,true);
             searcher.close();
         }
-
-        if(step < 4)
-        {
-            logger.info("#######filtered_qe_sentences");
-            searcher = Config.openMultiSearcherSentences();
-//            runBase(run4,RunType.Sentences,outputFile + "filtered_qe_sentences_t_keys.xml",searcher,strategyQueryBuilderTimeKeys.baseFilteredIterator_sentences(),true,Config.DOC_ID,true);
-            runBase(run4,RunType.Sentences,outputFile + "filtered_qe_sentences_t_all.xml",searcher,strategyQueryBuilderTimeAll.baseFilteredIterator_sentences(),false,Config.DOC_ID,true);
-            searcher.close();
-        }
-
-        if(step < 5)
-        {
-            logger.info("#######filtered_qe_comb");
-            searcher = Config.openMultiSearcherForContentsAndSentences();
-//            runBase(run5,RunType.Comb, outputFile + "filtered_qe_comb_t_keys.xml",searcher,strategyQueryBuilderTimeKeys.baseFilteredIterator_comb(),true,Config.DOC_ID,true);
-            runBase(run5,RunType.Comb, outputFile + "filtered_qe_comb_t_all.xml",searcher,strategyQueryBuilderTimeAll.baseFilteredIterator_comb(),false,Config.DOC_ID,true);
-            searcher.close();
-        }
+//
+//        if(step < 4)
+//        {
+//            logger.info("#######filtered_qe_sentences");
+//            searcher = Config.openMultiSearcherSentences();
+////            runBase(run4,RunType.Sentences,outputFile + "filtered_qe_sentences_t_keys.xml",searcher,strategyQueryBuilderTimeKeys.baseFilteredIterator_sentences(),true,Config.DOC_ID,true);
+//            runBase(run4,RunType.Sentences,outputFile + "filtered_qe_sentences_t_all.xml",searcher,strategyQueryBuilderTimeAll.baseFilteredIterator_sentences(),false,Config.DOC_ID,true);
+//            searcher.close();
+//        }
+//
+//        if(step < 5)
+//        {
+//            logger.info("#######filtered_qe_comb");
+//            searcher = Config.openMultiSearcherForContentsAndSentences();
+////            runBase(run5,RunType.Comb, outputFile + "filtered_qe_comb_t_keys.xml",searcher,strategyQueryBuilderTimeKeys.baseFilteredIterator_comb(),true,Config.DOC_ID,true);
+//            runBase(run5,RunType.Comb, outputFile + "filtered_qe_comb_t_all.xml",searcher,strategyQueryBuilderTimeAll.baseFilteredIterator_comb(),false,Config.DOC_ID,true);
+//            searcher.close();
+//        }
 
 
     }
@@ -129,6 +132,7 @@ public class StrategyRunner {
         outputFormat.init("id","id");
         outputFormat.setMaxDocsToFlush(100);
 
+        int i = 1;
         while((queryPackage = iter.next())!=null)
         {
             QueryConfiguration queryConfigurationBase = new QueryConfiguration();
@@ -188,25 +192,26 @@ public class StrategyRunner {
             outputFormat.setTopic(t);
             LgteHits hits = searcher.search(lgteQuery,queryPackage.filter);
             try{
-            if(hits.length() > 0)
-                logger.info(searcher.explain(lgteQuery,hits.id(0)));
-            if(hits.length() > 1)
-                logger.info(searcher.explain(lgteQuery,hits.id(1)));
-            if(hits.length() > 2)
-                logger.info(searcher.explain(lgteQuery,hits.id(2)));
-            if(hits.length() > 3)
-                logger.info(searcher.explain(lgteQuery,hits.id(3)));
-            if(hits.length() > 4)
-                logger.info(searcher.explain(lgteQuery,hits.id(4)));
-            if(hits.length() > 5)
-                logger.info(searcher.explain(lgteQuery,hits.id(5)));
-            if(hits.length() > 6)
-                logger.info(searcher.explain(lgteQuery,hits.id(6)));
+                if(hits.length() > 0)
+                    logger.info(searcher.explain(lgteQuery,hits.id(0)));
+                if(hits.length() > 1)
+                    logger.info(searcher.explain(lgteQuery,hits.id(1)));
+                if(hits.length() > 2)
+                    logger.info(searcher.explain(lgteQuery,hits.id(2)));
+                if(hits.length() > 3)
+                    logger.info(searcher.explain(lgteQuery,hits.id(3)));
+                if(hits.length() > 4)
+                    logger.info(searcher.explain(lgteQuery,hits.id(4)));
+                if(hits.length() > 5)
+                    logger.info(searcher.explain(lgteQuery,hits.id(5)));
+                if(hits.length() > 6)
+                    logger.info(searcher.explain(lgteQuery,hits.id(6)));
             }catch(Throwable e)
             {
                 logger.error(e,e);
             }
             SearchTopics.writeSearch(outputFormat,hits,groupField,outputFile.substring(outputFile.lastIndexOf(File.separator)+1,outputFile.lastIndexOf(".")),Config.outputDocs,null);
+
         }
         outputFormat.close();
     }

@@ -50,4 +50,12 @@ public class BooleanClause implements java.io.Serializable {
     return query.hashCode() ^ (this.required?1:0) ^ (this.prohibited?2:0);
   }
 
+    @Override
+    public String toString() {
+        return "BooleanClause{" +
+                "query=" + query +
+                ", required=" + required +
+                ", prohibited=" + prohibited +
+                '}';
+    }
 }

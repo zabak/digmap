@@ -88,8 +88,14 @@ public class DefaultModelSortDocComparator implements ModelSortDocComparator
     }
 
 
+    boolean first = false;
     public float getTextScore(ScoreDoc scoreDoc)
     {
+        if(first == false)
+        {
+            first = true;
+            System.out.println("A primeira vez que o DefaultScoreComparator e chamado");
+        }
         //we need a cache for Text because text score it is the real lucene returned score, and that value will change after ranking to a normalized real value
         Float scoreCache = textScoresCache.get(scoreDoc.doc);
         if(scoreCache != null)

@@ -4,11 +4,10 @@ import com.pjaol.search.geo.utils.BoundaryBoxFilter;
 import com.pjaol.search.geo.utils.DistanceFilter;
 import com.pjaol.search.geo.utils.DistanceUtils;
 import org.apache.solr.util.NumberUtils;
+import pt.utl.ist.lucene.filter.distancebuilders.GetAllDocumentsFilter;
 
 import java.awt.geom.Rectangle2D;
 import java.util.Map;
-
-import pt.utl.ist.lucene.filter.distancebuilders.GetAllDocumentsFilter;
 
 /**
  * @author Jorge Machado

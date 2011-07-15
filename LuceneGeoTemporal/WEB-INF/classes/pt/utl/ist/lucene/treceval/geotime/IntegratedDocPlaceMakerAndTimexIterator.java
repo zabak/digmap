@@ -2,16 +2,14 @@ package pt.utl.ist.lucene.treceval.geotime;
 
 import org.apache.log4j.Logger;
 import org.dom4j.DocumentException;
-import pt.utl.ist.lucene.utils.temporal.tides.TimexesIterator;
-import pt.utl.ist.lucene.utils.temporal.tides.TimexesDocument;
-import pt.utl.ist.lucene.utils.temporal.TimeExpression;
-import pt.utl.ist.lucene.utils.placemaker.PlaceMakerIterator;
-import pt.utl.ist.lucene.utils.placemaker.PlaceMakerDocument;
 import pt.utl.ist.lucene.exceptions.NotImplementedException;
+import pt.utl.ist.lucene.utils.placemaker.PlaceMakerDocument;
+import pt.utl.ist.lucene.utils.placemaker.PlaceMakerIterator;
+import pt.utl.ist.lucene.utils.temporal.TimeExpression;
+import pt.utl.ist.lucene.utils.temporal.tides.TimexesDocument;
+import pt.utl.ist.lucene.utils.temporal.tides.TimexesIterator;
 
 import java.io.IOException;
-import java.util.Map;
-import java.util.HashMap;
 
 /**
  * @author Jorge Machado
@@ -69,43 +67,59 @@ public class IntegratedDocPlaceMakerAndTimexIterator {
     public IntegratedDocPlaceMakerAndTimexIterator.DocumentWithPlacesAndTimexes next() throws IOException {
         if(hasNext())
         {
+
             IntegratedDocPlaceMakerAndTimexIterator.DocumentWithPlacesAndTimexes documentWithTimexes;
             if(nowTimexesDocument.getId().compareTo(nowNyTimesDocument.getDId()) < 0)
             {
-                logger.fatal("Timex id is smaller than the now document id, probably timexes are not sorted as documents");
+                logger.fatal("Timex id is smaller than the now document id, probably timexes are not sorted as documents: timexes:"  + nowTimexesDocument.getId() + " Document:" + nowNyTimesDocument.getDId());
                 return null;
             }
+
+            if(nowPlaceMakerDocument.getDocId().compareTo(nowNyTimesDocument.getDId()) < 0)
+            {
+                logger.fatal("PlaceMaker id is smaller than the now document id, probably PlaceMaker are not sorted as documents : PlaceMaker:" + nowPlaceMakerDocument.getDocId() + " Document:" + nowNyTimesDocument.getDId());
+                return null;
+            }
+
+            System.out.println("DOC:" + nowNyTimesDocument.getDId() + ", G:" + nowPlaceMakerDocument.getDocId() + ", T:" + nowTimexesDocument.getId());
+
+            NyTimesDocument dToAdd = nowNyTimesDocument;
+            PlaceMakerDocument pmToAdd = null;
+            TimexesDocument tmToAdd = null;
+
+            //Exists allays is the reference collection
+
+
             if(nowTimexesDocument.getId().equals(nowNyTimesDocument.getDId()))
             {
-                documentWithTimexes = new IntegratedDocPlaceMakerAndTimexIterator.DocumentWithPlacesAndTimexes(nowNyTimesDocument,nowTimexesDocument,nowPlaceMakerDocument);
-                try {
-                    nowNyTimesDocument = documentIterator.next();
+                try
+                {
+                    tmToAdd = nowTimexesDocument;
                     nowTimexesDocument = timexesIterator.next();
-                    try {
-                        nowPlaceMakerDocument = placeMakerIterator.next();
-                    } catch (DocumentException e)
-                    {
-                        logger.error(e,e);
-                    }
-                } catch (IOException e) {
+                }
+                catch (IOException e) {
                     throw e;
                 }
             }
-            else
+            else{
+                System.out.println("Document" + dToAdd.getDId() + " ID NOT SINCRONIZED has no timexesDocument: " + nowTimexesDocument.getId());}
+
+            if(nowPlaceMakerDocument.getDocId().equals(nowNyTimesDocument.getDId()))
             {
-                documentWithTimexes = new IntegratedDocPlaceMakerAndTimexIterator.DocumentWithPlacesAndTimexes(nowNyTimesDocument,nowPlaceMakerDocument);
                 try {
-                    nowNyTimesDocument = documentIterator.next();
-                    try {
-                        nowPlaceMakerDocument = placeMakerIterator.next();
-                    } catch (DocumentException e)
-                    {
-                        logger.error(e,e);
-                    }
-                } catch (IOException e) {
-                    throw e;
+                    pmToAdd = nowPlaceMakerDocument;
+                    nowPlaceMakerDocument = placeMakerIterator.next();
+                } catch (DocumentException e)
+                {
+                    logger.error(e,e);
                 }
             }
+            else{
+                System.out.println("Document" + dToAdd.getDId() + " has o placesDocument");}
+
+            nowNyTimesDocument = documentIterator.next();
+            documentWithTimexes = new IntegratedDocPlaceMakerAndTimexIterator.DocumentWithPlacesAndTimexes(dToAdd,tmToAdd,pmToAdd);
+
             return documentWithTimexes;
         }
         return null;
@@ -281,5 +295,20 @@ public class IntegratedDocPlaceMakerAndTimexIterator {
         }
     }
 
-    
+
+    public static void main(String[]args) throws IOException
+    {
+        IntegratedDocPlaceMakerAndTimexIterator iterator = new IntegratedDocPlaceMakerAndTimexIterator("D:\\Servidores\\DATA\\ntcir\\data","D:\\Servidores\\DATA\\ntcir\\TIMEXTAG","D:\\Servidores\\DATA\\ntcir\\PlaceMaker");
+        DocumentWithPlacesAndTimexes documentWithPlacesAndTimexes;
+        String last = "";
+        while((documentWithPlacesAndTimexes = iterator.next())!=null)
+        {
+                        System.out.println("DOC:" + documentWithPlacesAndTimexes.getD().getDId() + ", G:" + documentWithPlacesAndTimexes.getPm().getDocId() + ", T:" + documentWithPlacesAndTimexes.getTd().getId());
+              if(documentWithPlacesAndTimexes.getPm() == null)
+                  System.out.println("PM = null " + documentWithPlacesAndTimexes.getD().getDId());
+            if(documentWithPlacesAndTimexes.getTd() == null)
+                  System.out.println("TD = null " + documentWithPlacesAndTimexes.getD().getDId());
+        }
+
+    }
 }

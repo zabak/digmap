@@ -57,23 +57,31 @@ public class RunIdOutputFormat implements OutputFormat {
         }
     }
 
-    public void setOutputStream(OutputStream outputStream)
+    public void setOutputStream(OutputStream outputStream, boolean append)
     {
         try
         {
             writer = new OutputStreamWriter(outputStream, "UTF-8");
-            writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-            writer.write("<TOPIC_SET>\n");
-            writer.write("  <METADATA>\n" +
-                    "    <RUNID>" + runId  + "</RUNID>\n" +
-                    "    <DESCRIPTION>" + desc + "</DESCRIPTION>\n" +
-                    "    <RUN_TYPE>Automatic</RUN_TYPE>\n" +
-                    "  </METADATA>\n");
+            if(!append)
+            {
+                writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+                writer.write("<TOPIC_SET>\n");
+                writer.write("  <METADATA>\n" +
+                        "    <RUNID>" + runId  + "</RUNID>\n" +
+                        "    <DESCRIPTION>" + desc + "</DESCRIPTION>\n" +
+                        "    <RUN_TYPE>Automatic</RUN_TYPE>\n" +
+                        "  </METADATA>\n");
+            }
         }
         catch (IOException e)
         {
             logger.error(e, e);
         }
+    }
+
+    public void setOutputStream(OutputStream outputStream)
+    {
+        setOutputStream(outputStream,false);
     }
 
 

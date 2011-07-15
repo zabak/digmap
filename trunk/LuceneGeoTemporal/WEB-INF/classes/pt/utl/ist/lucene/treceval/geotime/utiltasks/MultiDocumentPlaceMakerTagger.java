@@ -2,13 +2,10 @@ package pt.utl.ist.lucene.treceval.geotime.utiltasks;
 
 import org.apache.log4j.Logger;
 
-import java.io.IOException;
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.List;
-
-import pt.utl.ist.lucene.treceval.geotime.index.Config;
 
 /**
  * @author Jorge Machado
@@ -61,9 +58,54 @@ public class MultiDocumentPlaceMakerTagger implements Runnable{
 //        args[2] = "NYT_ENG_20050105.0263";
 
 
+//        String path = "F:\\coleccoesIR\\ntcir\\data";
+        String url = "http://deptal.estgp.pt:9090/jmachado/TIMEXTAG/index.php";
+//        String url = "http://192.168.1.66/jmachado/TIMEXTAG/index.php";
+
+
+
+//
+//        String path = "D:\\Servidores\\DATA\\collections_ir\\placemaker\\P0";
+//        args = new String[] {path,"xie200105.gz","XIE20010514.0282"};
+
+//
+//        String path = "D:\\Servidores\\DATA\\collections_ir\\placemaker\\P1";
+//        args = new String[] {path,"xie200107.gz","XIE20010729.0127"};
+
+
+//        String path = "D:\\Servidores\\DATA\\ntcir\\mainichidaly";
+//        args = new String[] {path};
+
+           /****/
+
+
+//        String path = "D:\\Servidores\\DATA\\collections_ir\\placemaker\\P4";
+//        args = new String[] {path,"xie200109.gz","XIE20010927.0162"};
+
+//        String path = "D:\\Servidores\\DATA\\collections_ir\\placemaker\\P5";
+//        args = new String[] {path,"xie200102.gz","XIE20010222.0064"};
+
+                 /**********/
+//        String path = "D:\\Servidores\\DATA\\collections_ir\\placemaker\\P6";
+//        args = new String[] {path,"xie199907.gz","XIE19990731.0041"};
+
+//        String path = "D:\\Servidores\\DATA\\collections_ir\\placemaker\\P7";
+//        args = new String[] {path,"xie199901.gz","XIE19990122.0269"};
+
+//        String path = "D:\\Servidores\\DATA\\collections_ir\\placemaker\\P8";
+//        args = new String[] {path,"xie200010.gz","XIE20001016.0397"};
+
+//        args = new String[] {path,url};
+//        String path = null;
         String startFile = null;
-        String path;
+//        String path;
+//        String url;
         String startDocument = null;
+
+
+//        String startFile = null;
+        String path;
+//        String startDocument = null;
         if(args!=null)
         {
             path = args[0];

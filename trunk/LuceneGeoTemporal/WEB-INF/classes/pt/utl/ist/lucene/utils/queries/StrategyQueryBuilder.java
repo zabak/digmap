@@ -1,25 +1,22 @@
 package pt.utl.ist.lucene.utils.queries;
 
-import org.dom4j.Element;
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.XPath;
-import org.apache.lucene.search.Filter;
-import org.apache.lucene.search.TermsFilter;
+import com.pjaol.lucene.search.SerialChainFilter;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryParser.ParseException;
-import pt.utl.ist.lucene.utils.Dom4jUtil;
+import org.apache.lucene.search.Filter;
+import org.apache.lucene.search.TermsFilter;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.Element;
+import org.dom4j.XPath;
 import pt.utl.ist.lucene.treceval.geotime.index.Config;
+import pt.utl.ist.lucene.utils.Dom4jUtil;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.util.List;
 import java.util.ArrayList;
-
-import com.pjaol.lucene.search.SerialChainFilter;
-import pt.utl.ist.lucene.utils.queries.QueryParser;
-import pt.utl.ist.lucene.utils.queries.QueryProcessor;
+import java.util.List;
 
 /**
  * @author Jorge Machado
@@ -31,6 +28,9 @@ public class StrategyQueryBuilder
 {
     Document topics;
     List<QueryProcessor> queryProcessors;
+
+    boolean usePlaceRefsTypesFiltersInQuery = false;
+    boolean usePlaceRefsBelongTosFiltersInQuery = false;
 
 
 
@@ -46,6 +46,23 @@ public class StrategyQueryBuilder
             QueryProcessor queryProcessor = new QueryProcessor(queryParser.getQuery(),timesKey);
             queryProcessors.add(queryProcessor);
         }
+    }
+
+    public Iterator baseOriginalBaseIterator()
+    {
+        return new Iterator(queryProcessors)
+        {
+            public QueryPackage next()
+            {
+                if(!super.queryProcessorIter.hasNext())
+                    return null;
+                QueryProcessor queryProcessor = queryProcessorIter.next();
+                return
+                        new QueryPackage(
+                                null,
+                                queryProcessor.getTermsQuery(QueryProcessor.QueryTarget.CONTENTS),queryProcessor,null);
+            }
+        };
     }
 
     /**
@@ -66,6 +83,22 @@ public class StrategyQueryBuilder
                         new QueryPackage(
                                 createBaseFilter(queryProcessor, ""),
                                 queryProcessor.getTermsQuery(QueryProcessor.QueryTarget.CONTENTS),queryProcessor,null);
+            }
+        };
+    }
+
+    public Iterator originalTermsIterator()
+    {
+        return new Iterator(queryProcessors)
+        {
+            public QueryPackage next()
+            {
+                if(!super.queryProcessorIter.hasNext())
+                    return null;
+                QueryProcessor queryProcessor = queryProcessorIter.next();
+                return
+                        new QueryPackage(null,
+                                queryProcessor.getQ().getOriginalDescClean(),queryProcessor,null);
             }
         };
     }
@@ -107,6 +140,7 @@ public class StrategyQueryBuilder
                 //CONTENTS QUERIES
                 StringBuilder finalQuery = new StringBuilder();
                 addTermQueries(queryProcessor,QueryProcessor.QueryTarget.CONTENTS,finalQuery);
+
                 addFilterQueries(queryProcessor, QueryProcessor.QueryTarget.CONTENTS,finalQuery);
 
 
@@ -115,6 +149,147 @@ public class StrategyQueryBuilder
                                 filter,finalQuery.toString(),queryProcessor,queryFilter);
             }
         };
+    }
+
+
+
+    /*********************
+     * Filter Strategies
+     * @return
+     */
+    public Iterator baseWikipediaIterator()
+    {
+        return new Iterator(queryProcessors)
+        {
+            public QueryPackage next()
+            {
+                if(!super.queryProcessorIter.hasNext())
+                    return null;
+                QueryProcessor queryProcessor = queryProcessorIter.next();
+//                Filter queryFilter = queryProcessor.getFilters(QueryProcessor.QueryTarget.CONTENTS);
+//                Filter filter = super.addBaseFilter(queryFilter,queryProcessor, "");
+
+
+                //CONTENTS QUERIES
+                StringBuilder finalQuery = new StringBuilder();
+                addTermQueries(queryProcessor,QueryProcessor.QueryTarget.CONTENTS,finalQuery);
+                addWikipediaTermQueries(queryProcessor,QueryProcessor.QueryTarget.CONTENTS,finalQuery);
+
+
+                //addFilterQueries(queryProcessor, QueryProcessor.QueryTarget.CONTENTS,finalQuery);
+
+
+                return
+                        new QueryPackage(
+                                createBaseFilter(queryProcessor, ""),finalQuery.toString(),queryProcessor,null);
+            }
+        };
+    }
+
+
+    public Iterator baseMetricsIterator()
+    {
+        return new Iterator(queryProcessors)
+        {
+            public QueryPackage next()
+            {
+                if(!super.queryProcessorIter.hasNext())
+                    return null;
+                QueryProcessor queryProcessor = queryProcessorIter.next();
+//                Filter queryFilter = queryProcessor.getFilters(QueryProcessor.QueryTarget.CONTENTS);
+//                Filter filter = super.addBaseFilter(queryFilter,queryProcessor, "");
+
+
+                //CONTENTS QUERIES
+                StringBuilder finalQuery = new StringBuilder();
+                addTermQueries(queryProcessor,QueryProcessor.QueryTarget.CONTENTS,finalQuery);
+                addGeoTemporalQueries(queryProcessor,QueryProcessor.QueryTarget.CONTENTS,finalQuery);
+
+
+                //addFilterQueries(queryProcessor, QueryProcessor.QueryTarget.CONTENTS,finalQuery);
+
+
+                return
+                        new QueryPackage(
+                                null,finalQuery.toString(),queryProcessor,null);
+            }
+        };
+    }
+
+
+
+    /*********************
+     * Filter Strategies
+     * @return
+     */
+    public Iterator baseWikipediaFilterIterator()
+    {
+        return new Iterator(queryProcessors)
+        {
+            public QueryPackage next()
+            {
+                if(!super.queryProcessorIter.hasNext())
+                    return null;
+                QueryProcessor queryProcessor = queryProcessorIter.next();
+//                Filter queryFilter = queryProcessor.getFilters(QueryProcessor.QueryTarget.CONTENTS);
+
+                Filter queryFilter = queryProcessor.getWikipediaFilters(QueryProcessor.QueryTarget.CONTENTS);
+                Filter filter = super.addBaseFilter(queryFilter,queryProcessor, "");
+
+                //CONTENTS QUERIES
+                StringBuilder finalQuery = new StringBuilder();
+                addTermQueries(queryProcessor,QueryProcessor.QueryTarget.CONTENTS,finalQuery);
+                addWikipediaTermQueries(queryProcessor,QueryProcessor.QueryTarget.CONTENTS,finalQuery);
+
+
+                //addFilterQueries(queryProcessor, QueryProcessor.QueryTarget.CONTENTS,finalQuery);
+
+
+                return
+                        new QueryPackage(
+                                filter,finalQuery.toString(),queryProcessor,queryFilter);
+            }
+        };
+    }
+
+
+
+    private void addWikipediaTermQueries(QueryProcessor queryProcessor, QueryProcessor.QueryTarget queryTarget, StringBuilder  finalQuery)
+    {
+        String queryTermsWikipedia = queryProcessor.getWikipediaTermsQuery(queryTarget);
+        finalQuery.append(" " + queryTermsWikipedia + " ");
+    }
+
+
+    private void addGeoTemporalQueries(QueryProcessor queryProcessor, QueryProcessor.QueryTarget queryTarget, StringBuilder  finalQuery)
+    {
+        Query.GeographicQuery gq = queryProcessor.getQ().getGeographicQuery();
+
+        boolean wantLastTime = false;
+        if(queryProcessor.getQ().getTimes() != null)
+        {
+            for(Query.Times.Term time: queryProcessor.getQ().getTimes().getTerms())
+            {
+                if(time.getTime().equals("lastTime"))
+                {
+                    wantLastTime = true;
+                    break;
+                }
+            }
+        }
+
+        Query.TemporalQuery tq = queryProcessor.getQ().getTemporalQuery();
+
+        if(gq != null && gq.getQuery() != null)
+            finalQuery.append(" " + gq.getQuery() + " ");
+
+        if(wantLastTime)
+            finalQuery.append(" time:2005 radiumYears:10 ");
+        else if(tq != null && tq.getQuery() != null)
+            finalQuery.append(" " + tq.getQuery() + " ");
+
+        if((gq != null && gq.getQuery() != null) || (tq != null && tq.getQuery() != null))
+            finalQuery.append(" filter: no ");
     }
 
 
@@ -198,7 +373,7 @@ public class StrategyQueryBuilder
         {
             queryTimesKeys = queryProcessor.getTimesQueryKeyTimeExpressions(queryTarget, Config.keyTimeFactor);
             queryTimesRelative = queryProcessor.getTimesQueryRelativeTimeExpressions(queryTarget, Config.relativeTimeFactor);
-            queryTimesDuration = queryProcessor.getTimesQueryDurationsTimeExpressions(queryTarget, Config.durationTimeFactor);
+//            queryTimesDuration = queryProcessor.getTimesQueryDurationsTimeExpressions(queryTarget, Config.durationTimeFactor);
         }
 
         finalQuery.append(queryTermsSentences);
@@ -217,6 +392,7 @@ public class StrategyQueryBuilder
     private void addFilterQueries(QueryProcessor queryProcessor, QueryProcessor.QueryTarget queryTarget, StringBuilder  finalQuery)
     {
         String queryPlaceRefsFilters = queryProcessor.getPlaceRefsFiltersAsQueries(queryTarget, Config.placeRefFactor);
+
         String queryPlaceBelongTosFilters = queryProcessor.getPlaceFiltersAsQueriesBelongTos(queryTarget, Config.belongTosFactor);
         String queryPlaceTypeFilters = queryProcessor.getPlaceTypeFiltersAsQueries(queryTarget);
 
@@ -233,16 +409,16 @@ public class StrategyQueryBuilder
         {
             queryTimeFiltersKeys = queryProcessor.getTimeKeyPointsFiltersAsQueries(queryTarget, Config.keyTimeFactor);
             queryTimeFiltersRelative = queryProcessor.getTimeRelativePointsFiltersAsQueries(queryTarget, Config.relativeTimeFactor);
-            queryTimeFiltersDuration = queryProcessor.getTimeDurationPointsFiltersAsQueries(queryTarget, Config.durationTimeFactor);
+//            queryTimeFiltersDuration = queryProcessor.getTimeDurationPointsFiltersAsQueries(queryTarget, Config.durationTimeFactor);
 
             queryTimeTypeFilters = queryProcessor.getTimeTypeFiltersAsQueries(queryTarget);
         }
         //append FILTER QUERIES
         if(queryPlaceRefsFilters != null && queryPlaceRefsFilters.trim().length()>0)
             finalQuery.append(" ").append(queryPlaceRefsFilters);
-        if(queryPlaceBelongTosFilters != null && queryPlaceBelongTosFilters.trim().length()>0)
+        if(usePlaceRefsBelongTosFiltersInQuery && queryPlaceBelongTosFilters != null && queryPlaceBelongTosFilters.trim().length()>0)
             finalQuery.append(" ").append(queryPlaceBelongTosFilters);
-        if(queryPlaceTypeFilters != null && queryPlaceTypeFilters.trim().length()>0)
+        if(usePlaceRefsTypesFiltersInQuery && queryPlaceTypeFilters != null && queryPlaceTypeFilters.trim().length()>0)
             finalQuery.append(" ").append(queryPlaceTypeFilters);
         if(queryTimeFiltersKeys != null && queryTimeFiltersKeys.trim().length()>0)
             finalQuery.append(" ").append(queryTimeFiltersKeys);

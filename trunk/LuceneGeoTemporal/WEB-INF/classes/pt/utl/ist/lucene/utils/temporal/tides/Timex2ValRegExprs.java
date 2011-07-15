@@ -49,6 +49,11 @@ public enum Timex2ValRegExprs {
     PmonthsM("P[0-9]{1,10}M"),
     PdaysD("P[0-9]{1,10}D"),
     PweeksW("P[0-9]{1,10}W"),
+    //NOVO
+    PcenturiesCE("P[0-9]{1,10}CE"),
+    PdecadesDE("P[0-9]{1,10}DE"),
+    PThoursH("PT[0-9]{1,10}H"),
+    PTminutesM("PT[0-9]{1,10}M"),
 
     UNKNOWN("");
 
@@ -60,7 +65,8 @@ public enum Timex2ValRegExprs {
 
     public boolean isP()
     {
-        return this == PyearsY || this == PmonthsM || this == PdaysD || this == PweeksW;
+        return this == PyearsY || this == PmonthsM || this == PdaysD || this == PweeksW
+                || this == PdecadesDE || this == PcenturiesCE || this == PThoursH || this == PTminutesM;
     }
 
     public boolean match(String str)
@@ -88,7 +94,7 @@ public enum Timex2ValRegExprs {
 
     public static void main(String[]args)
     {
-        System.out.println(getType("19").name());
+        System.out.println(getType("PT4H"));
     }
 
 }

@@ -32,9 +32,14 @@ public class RunIdOutputFormatFactory implements OutputFormatFactory {
 
     public OutputFormat createNew(OutputStream outputStream)
     {
+        return createNew(outputStream,false);
+    }
+
+    public OutputFormat createNew(OutputStream outputStream,boolean append)
+    {
         RunIdOutputFormat runIdOutputFormat = new RunIdOutputFormat(runId,desc);
         runIdOutputFormat.init(luceneDocumentIdField1,luceneDocumentIdField2);
-        runIdOutputFormat.setOutputStream(outputStream);
+        runIdOutputFormat.setOutputStream(outputStream,append);
         runIdOutputFormat.setMaxDocsToFlush(1000);
         return runIdOutputFormat;
     }

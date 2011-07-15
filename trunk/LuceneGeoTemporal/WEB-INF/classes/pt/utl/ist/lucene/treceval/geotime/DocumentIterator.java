@@ -93,7 +93,12 @@ public class DocumentIterator
         String fileName = files.get(index).getName();
         try
         {
-            return new NyTimesDocument(reader,fileName);
+            if(fileName.startsWith("KT_"))
+                return new KoreaTimesDocument(reader,fileName);
+            else if(fileName.startsWith("mai"))
+                return new MainichiDailyDocument(reader,fileName);
+            else
+                return new NyTimesDocument(reader,fileName);
         }
         catch (EOFException e)
         {
@@ -105,6 +110,37 @@ public class DocumentIterator
             }
             else
                 return null;
+        }
+    }
+
+    public static void main(String [] args) throws IOException
+    {
+        DocumentIterator di = new DocumentIterator("D:\\Servidores\\DATA\\ntcir\\NOVAS\\mainichidaly");
+        NyTimesDocument d;
+        Map<String,Integer> mapa = new HashMap<String,Integer>();
+
+        int i = 0;
+        String file = "";
+        NyTimesDocument last = null;
+        while((d = di.next()) != null)
+        {
+
+//            if(!d.getFSourceFile().equals(file) && file.length() > 0)
+//                break;
+            file = d.getFSourceFile();
+            i++;
+            Integer contador = mapa.get(d.getDType());
+            contador = contador == null ? 1: contador+1;
+            mapa.put(d.getDType(),contador);
+//            System.out.println(d.getDId());
+            if(last != null && !d.isBiggerThan(last))
+                System.out.println("Fail on" + last + " -> " + d.getDId());
+            last = d;
+        }
+        di.close();
+        for(Map.Entry<String,Integer> e: mapa.entrySet())
+        {
+            System.out.println(e.getKey() + ": " + e.getValue());
         }
     }
 }

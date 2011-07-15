@@ -10,14 +10,17 @@ import pt.utl.ist.lucene.analyzer.LgteBrokerStemAnalyzer;
 import pt.utl.ist.lucene.analyzer.LgteNothingAnalyzer;
 import pt.utl.ist.lucene.analyzer.LgteWhiteSpacesAnalyzer;
 import pt.utl.ist.lucene.treceval.IndexCollections;
-import pt.utl.ist.lucene.treceval.geotime.utiltasks.BelongTosTagger;
+import pt.utl.ist.lucene.treceval.geotime.IntegratedDocPlaceMakerIterator;
 import pt.utl.ist.lucene.treceval.geotime.utiltasks.BelongTosPlaceNamesTagger;
+import pt.utl.ist.lucene.treceval.geotime.utiltasks.BelongTosTagger;
 import pt.utl.ist.lucene.utils.placemaker.PlaceMakerDocument;
-import pt.utl.ist.lucene.utils.placemaker.PlaceMakerIterator;
 import pt.utl.ist.lucene.utils.placemaker.PlaceNameNormalizer;
 
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.zip.ZipInputStream;
 
 /**
@@ -105,9 +108,9 @@ public class IndexWoeid {
 
         new File(indexPath).mkdir();
 
-        PlaceMakerIterator placeMakerIterator = new PlaceMakerIterator(Config.placemakerPath);
+        IntegratedDocPlaceMakerIterator placeMakerIterator = new IntegratedDocPlaceMakerIterator(Config.documentPath,Config.placemakerPath);
 
-        PlaceMakerDocument placeMakerDocument;
+        IntegratedDocPlaceMakerIterator.DocumentWithPlaces pmd;
         Map<String, Analyzer> anaMap = new HashMap<String,Analyzer>();
         anaMap.put(Config.ID, new LgteNothingAnalyzer());
         anaMap.put(Config.G_ALL_TEXT, IndexCollections.en.getAnalyzerNoStemming());
@@ -118,69 +121,82 @@ public class IndexWoeid {
         LgteIndexWriter writer = new LgteIndexWriter(indexPath,analyzer, true, Model.OkapiBM25Model);
         int i = 1;
         String previousID = "";
-        while((placeMakerDocument = placeMakerIterator.next())!=null)
+        while((pmd = placeMakerIterator.next())!=null)
         {
-
-            if(previousID.length() > 0 && !previousID.substring(0,14).equals(placeMakerDocument.getDocId().substring(0,14)))
-                System.out.println(i + ":" + placeMakerDocument.getDocId());
-            previousID = placeMakerDocument.getDocId();
-            indexDocument(writer,placeMakerDocument);
+           
+//            String compareToId = pmd.getD().getDId().substring(0,pmd.getD().getDId().lastIndexOf(".") - 2);
+//            String previousToCompareId = previousID.length() == 0? "":previousID.substring(0,previousID.lastIndexOf(".") - 2);
+////            if(previousID.length() > 0 && !previousID.substring(0,14).equals(timexesDocument.getD().getDId().substring(0,14)))
+//
+////            if(previousID.length() > 0 && !previousID.substring(0,14).equals(placeMakerDocument.getDocId().substring(0,14)))
+//            if(previousID.length() > 0 && !previousToCompareId.equals(compareToId))
+//            {
+//                System.out.println(i + ":" + pmd.getD().getDId());
+//                System.out.println("i,j,w,z = " + IntegratedDocPlaceMakerIterator.i  +";" + IntegratedDocPlaceMakerIterator.j + ";" + IntegratedDocPlaceMakerIterator.w + ";"+IntegratedDocPlaceMakerIterator.z);
+//            }
+            previousID = pmd.getD().getDId();
+            indexDocument(writer,pmd);
             i++ ;
         }
+
         writer.close();
     }
 
-    private static void indexDocument(LgteIndexWriter writer, PlaceMakerDocument placeMakerDocument) throws IOException
+    private static void indexDocument(LgteIndexWriter writer, IntegratedDocPlaceMakerIterator.DocumentWithPlaces pmd) throws IOException
     {
         LgteDocumentWrapper doc = new LgteDocumentWrapper();
-        doc.indexString(Globals.DOCUMENT_ID_FIELD,placeMakerDocument.getDocId());
+        doc.indexString(Globals.DOCUMENT_ID_FIELD,pmd.getD().getDId());
 
-        StringBuilder G_GEO_ALL_WOEID = new StringBuilder();
-        StringBuilder G_PLACE_NAME_TEXT = new StringBuilder();
-        StringBuilder G_ALL_TEXT = new StringBuilder();
-        StringBuilder G_PLACE_REF_WOEID = new StringBuilder();
-        StringBuilder G_PLACE_BELONG_TOS_TEXT = new StringBuilder();
-        StringBuilder G_PLACE_BELONG_TOS_WOEID = new StringBuilder();
-        StringBuilder G_GEO_PLACE_TYPE = new StringBuilder();
-        if(placeMakerDocument.getAdministrativeWoeid() != null)
+        if(pmd.getPm() != null)
         {
-            doc.indexString(Config.G_ADMIN_SCOPE_WOEID, PlaceNameNormalizer.normalizeWoeid(placeMakerDocument.getAdministrativeWoeid()));
-            G_GEO_ALL_WOEID.append(PlaceNameNormalizer.normalizeWoeid(placeMakerDocument.getAdministrativeWoeid())).append(" ");
-            G_PLACE_NAME_TEXT.append(placeMakerDocument.getAdministrativeName()).append(" ");
-            G_ALL_TEXT.append(placeMakerDocument.getAdministrativeName()).append(" ");
-            addBelongTos(placeMakerDocument.getAdministrativeWoeid(),G_PLACE_BELONG_TOS_TEXT,G_PLACE_BELONG_TOS_WOEID,G_ALL_TEXT,G_GEO_ALL_WOEID);
-        }
-        if(placeMakerDocument.getGeographicWoeid() != null)
-        {
-            doc.indexString(Config.G_GEO_SCOPE_WOEID, PlaceNameNormalizer.normalizeWoeid(placeMakerDocument.getGeographicWoeid()));
-            G_GEO_ALL_WOEID.append(PlaceNameNormalizer.normalizeWoeid(placeMakerDocument.getGeographicWoeid())).append(" ");
-            G_PLACE_NAME_TEXT.append(placeMakerDocument.getGeographicName()).append(" ");
-            G_ALL_TEXT.append(placeMakerDocument.getGeographicName()).append(" ");
-            addBelongTos(placeMakerDocument.getGeographicWoeid(),G_PLACE_BELONG_TOS_TEXT,G_PLACE_BELONG_TOS_WOEID,G_ALL_TEXT,G_GEO_ALL_WOEID);
-        }
-        if(placeMakerDocument.getPlaceDetails() != null && placeMakerDocument.getPlaceDetails().size()>0)
-        {
-            for(PlaceMakerDocument.PlaceDetails placeDetails: placeMakerDocument.getPlaceDetails())
+            PlaceMakerDocument placeMakerDocument = pmd.getPm();
+            StringBuilder G_GEO_ALL_WOEID = new StringBuilder();
+            StringBuilder G_PLACE_NAME_TEXT = new StringBuilder();
+            StringBuilder G_ALL_TEXT = new StringBuilder();
+            StringBuilder G_PLACE_REF_WOEID = new StringBuilder();
+            StringBuilder G_PLACE_BELONG_TOS_TEXT = new StringBuilder();
+            StringBuilder G_PLACE_BELONG_TOS_WOEID = new StringBuilder();
+            StringBuilder G_GEO_PLACE_TYPE = new StringBuilder();
+            if(placeMakerDocument.getAdministrativeWoeid() != null)
             {
-                for(int i =0; i <  placeDetails.getRefs().size();i++)
+                doc.indexString(Config.G_ADMIN_SCOPE_WOEID, PlaceNameNormalizer.normalizeWoeid(placeMakerDocument.getAdministrativeWoeid()));
+                G_GEO_ALL_WOEID.append(PlaceNameNormalizer.normalizeWoeid(placeMakerDocument.getAdministrativeWoeid())).append(" ");
+                G_PLACE_NAME_TEXT.append(placeMakerDocument.getAdministrativeName()).append(" ");
+                G_ALL_TEXT.append(placeMakerDocument.getAdministrativeName()).append(" ");
+                addBelongTos(placeMakerDocument.getAdministrativeWoeid(),G_PLACE_BELONG_TOS_TEXT,G_PLACE_BELONG_TOS_WOEID,G_ALL_TEXT,G_GEO_ALL_WOEID);
+            }
+            if(placeMakerDocument.getGeographicWoeid() != null)
+            {
+                doc.indexString(Config.G_GEO_SCOPE_WOEID, PlaceNameNormalizer.normalizeWoeid(placeMakerDocument.getGeographicWoeid()));
+                G_GEO_ALL_WOEID.append(PlaceNameNormalizer.normalizeWoeid(placeMakerDocument.getGeographicWoeid())).append(" ");
+                G_PLACE_NAME_TEXT.append(placeMakerDocument.getGeographicName()).append(" ");
+                G_ALL_TEXT.append(placeMakerDocument.getGeographicName()).append(" ");
+                addBelongTos(placeMakerDocument.getGeographicWoeid(),G_PLACE_BELONG_TOS_TEXT,G_PLACE_BELONG_TOS_WOEID,G_ALL_TEXT,G_GEO_ALL_WOEID);
+            }
+            if(placeMakerDocument.getPlaceDetails() != null && placeMakerDocument.getPlaceDetails().size()>0)
+            {
+                for(PlaceMakerDocument.PlaceDetails placeDetails: placeMakerDocument.getPlaceDetails())
                 {
-                    G_PLACE_REF_WOEID.append(PlaceNameNormalizer.normalizeWoeid(placeDetails.getWoeId())).append(" ");
-                    G_GEO_ALL_WOEID.append(PlaceNameNormalizer.normalizeWoeid(placeDetails.getWoeId())).append(" ");
-                    G_PLACE_NAME_TEXT.append(placeDetails.getName()).append(" ");
-                    G_ALL_TEXT.append(placeDetails.getName()).append(" ");
-                    G_GEO_PLACE_TYPE.append(placeDetails.getType()).append(" ");
-                    addBelongTos(placeDetails.getWoeId(),G_PLACE_BELONG_TOS_TEXT,G_PLACE_BELONG_TOS_WOEID,G_ALL_TEXT,G_GEO_ALL_WOEID);
-                    //todo erro detectado deveria ter indexado woeid-belongTo@type e belongto e type
+                    for(int i =0; i <  placeDetails.getRefs().size();i++)
+                    {
+                        G_PLACE_REF_WOEID.append(PlaceNameNormalizer.normalizeWoeid(placeDetails.getWoeId())).append(" ");
+                        G_GEO_ALL_WOEID.append(PlaceNameNormalizer.normalizeWoeid(placeDetails.getWoeId())).append(" ");
+                        G_PLACE_NAME_TEXT.append(placeDetails.getName()).append(" ");
+                        G_ALL_TEXT.append(placeDetails.getName()).append(" ");
+                        G_GEO_PLACE_TYPE.append(placeDetails.getType()).append(" ");
+                        addBelongTos(placeDetails.getWoeId(),G_PLACE_BELONG_TOS_TEXT,G_PLACE_BELONG_TOS_WOEID,G_ALL_TEXT,G_GEO_ALL_WOEID);
+                        //todo erro detectado deveria ter indexado woeid-belongTo@type e belongto e type
+                    }
                 }
             }
+            doc.indexTextNoStore(Config.G_GEO_ALL_WOEID,G_GEO_ALL_WOEID.toString());
+            doc.indexTextNoStore(Config.G_PLACE_NAME_TEXT,G_PLACE_NAME_TEXT.toString());
+            doc.indexTextNoStore(Config.G_ALL_TEXT,G_ALL_TEXT.toString());
+            doc.indexText(Config.G_PLACE_REF_WOEID,G_PLACE_REF_WOEID.toString());
+            doc.indexTextNoStore(Config.G_PLACE_BELONG_TOS_TEXT,G_PLACE_BELONG_TOS_TEXT.toString());
+            doc.indexText(Config.G_PLACE_BELONG_TOS_WOEID,G_PLACE_BELONG_TOS_WOEID.toString());
+            doc.indexTextNoStore(Config.G_GEO_PLACE_TYPE,G_GEO_PLACE_TYPE.toString());
         }
-        doc.indexTextNoStore(Config.G_GEO_ALL_WOEID,G_GEO_ALL_WOEID.toString());       
-        doc.indexTextNoStore(Config.G_PLACE_NAME_TEXT,G_PLACE_NAME_TEXT.toString());
-        doc.indexTextNoStore(Config.G_ALL_TEXT,G_ALL_TEXT.toString());
-        doc.indexText(Config.G_PLACE_REF_WOEID,G_PLACE_REF_WOEID.toString());
-        doc.indexTextNoStore(Config.G_PLACE_BELONG_TOS_TEXT,G_PLACE_BELONG_TOS_TEXT.toString());
-        doc.indexText(Config.G_PLACE_BELONG_TOS_WOEID,G_PLACE_BELONG_TOS_WOEID.toString());
-        doc.indexTextNoStore(Config.G_GEO_PLACE_TYPE,G_GEO_PLACE_TYPE.toString());
         writer.addDocument(doc);
     }
 

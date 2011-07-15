@@ -1,17 +1,16 @@
 package pt.utl.ist.lucene.filter.distancebuilders;
 
-import org.apache.lucene.search.FieldCache;
-import org.apache.lucene.index.IndexReader;
+import com.pjaol.lucene.search.ISerialChainFilter;
 import org.apache.log4j.Logger;
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.search.FieldCache;
 import org.apache.solr.util.NumberUtils;
+import pt.utl.ist.lucene.filter.ITimeDistancesWrapper;
 
+import java.io.IOException;
 import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Map;
-import java.io.IOException;
-
-import com.pjaol.lucene.search.ISerialChainFilter;
-import pt.utl.ist.lucene.filter.ITimeDistancesWrapper;
 
 /**
  * @author Jorge Machado
@@ -169,4 +168,6 @@ public class TimeDistanceBuilderFilter extends ISerialChainFilter implements ITi
             return null;
         return timeDistances.get(doc);
     }
+
+    
 }

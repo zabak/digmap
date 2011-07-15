@@ -1,6 +1,9 @@
 package pt.utl.ist.lucene.test.advancedtests;
 
+import com.pjaol.search.geo.utils.InvalidGeoException;
 import junit.framework.TestCase;
+import org.apache.lucene.queryParser.ParseException;
+import org.apache.lucene.search.SortField;
 import pt.utl.ist.lucene.*;
 import pt.utl.ist.lucene.sort.LgteSort;
 import pt.utl.ist.lucene.sort.sorters.TimeDistanceSortSource;
@@ -9,10 +12,6 @@ import pt.utl.ist.lucene.utils.MyCalendar;
 
 import java.io.IOException;
 import java.util.Date;
-
-import com.pjaol.search.geo.utils.InvalidGeoException;
-import org.apache.lucene.search.SortField;
-import org.apache.lucene.queryParser.ParseException;
 
 /**
  *
@@ -88,7 +87,7 @@ public class TestTimeBoxIndexingWithLgte extends TestCase
         LgteHits lgteHits;
         try
         {
-            lgteHits = searcher.search(query, sort);
+            lgteHits = searcher.search(query);
             assertTrue(lgteHits.length() == 2);
 
             //doc 0

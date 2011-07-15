@@ -1,10 +1,9 @@
 package pt.utl.ist.lucene.filter.distancebuilders;
 
-import java.util.Map;
-
-import pt.utl.ist.lucene.filter.distancebuilders.SpaceDistanceBuilderFilter;
 import pt.utl.ist.lucene.filter.ISpatialDistancesWrapper;
 import pt.utl.ist.lucene.filter.SerialChainFilterBuilder;
+
+import java.util.Map;
 
 /**
  * @author Jorge Machado

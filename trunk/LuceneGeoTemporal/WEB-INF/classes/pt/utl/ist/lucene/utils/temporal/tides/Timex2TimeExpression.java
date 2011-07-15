@@ -1,13 +1,11 @@
 package pt.utl.ist.lucene.utils.temporal.tides;
 
 import org.apache.log4j.Logger;
+import pt.utl.ist.lucene.utils.temporal.DocumentTemporalSentences;
+import pt.utl.ist.lucene.utils.temporal.TimeExpression;
+import pt.utl.ist.lucene.utils.temporal.TimeExpressionUnkown;
 
 import java.util.*;
-
-import pt.utl.ist.lucene.utils.temporal.tides.Timex2;
-import pt.utl.ist.lucene.utils.temporal.TimeExpression;
-import pt.utl.ist.lucene.utils.temporal.DocumentTemporalSentences;
-import pt.utl.ist.lucene.utils.temporal.TimeExpressionUnkown;
 
 /**
  * @author Jorge Machado
@@ -102,7 +100,7 @@ public class Timex2TimeExpression
                     return cleanExpression(Timex2ValRegExprs.PmonthsM,"P" + months + "M");
                 }
             }
-            else
+            else if(type == Timex2ValRegExprs.PweeksW)
             {   //Weeks
                 int x = Integer.MAX_VALUE;
                 try{

@@ -806,10 +806,29 @@
     </target>
 
 
+
+    <target name="significance-tests-GEOTIME" description="GEOTIME SIGNI">
+        <java fork="true" classname="ireval.Main" output="d:\\Servidores\\DATA\\ntcir\\runs\\GeoTime-05-03-significance-report.txt">
+            <classpath>
+                <fileset dir="${base.dir}/lib">
+                    <include name="**.jar" />
+                </fileset>
+                <fileset dir="${base.dir}/lib">
+                    <include name="*.jar" />
+                </fileset>
+            </classpath>
+            <classpath path="${webapp.path}/WEB-INF/classes" />
+            <arg value="d:\\Servidores\\DATA\\ntcir\\runs\\base_t_all.xml.txt" />
+            <arg value="d:\\Servidores\\DATA\\ntcir\\runs\\filtered_qe_t_all_2.xml.txt" />
+            <arg value="D:\\Servidores\\DATA\\ntcir\\GEOTIMEEN_qrels\\GEOTIME-EN.qrels" />
+        </java>
+    </target>
+
+
     <target name="evaluation-metrics-geotime" description="Generate trec_eval results">
         <for param="runfile">
             <path>
-                <fileset dir="d:\\Servidores\\DATA\\ntcir\\runs">
+                <fileset dir="d:\\Servidores\\DATA\\ntcir\\runs2">
                     <include name="*.xml" />
                 </fileset>
             </path>
@@ -852,7 +871,59 @@
                     </classpath>
                     <classpath path="${webapp.path}/WEB-INF/classes" />
                     <arg value="@{runfile}" />
-                    <arg value="d:\\Servidores\\DATA\\ntcir\\qrels.txt" />
+                    <arg value="D:\Servidores\DATA\ntcir\GEOTIMEEN_qrels\\GEOTIME-EN.qrels" />
+                </java>
+            </sequential>
+        </for>
+    </target>
+
+     <target name="evaluation-metrics-geotime1-qrels" description="Generate trec_eval results">
+
+        <for param="runfile">
+            <path>
+                <fileset dir="d:\\Servidores\\DATA\\ntcir\\runs">
+                    <include name="*.txt" />
+                    <exclude name="*.xml" />
+                    <exclude name="*-treceval-report.txt" />
+                    <exclude name="*-significance-report.txt" />
+                </fileset>
+            </path>
+            <sequential>
+                <java fork="true" classname="ireval.Main" output="@{runfile}-treceval-report.txt">
+                    <classpath>
+                        <fileset dir="${base.dir}/lib">
+                            <include name="*.jar" />
+                        </fileset>
+                    </classpath>
+                    <classpath path="${webapp.path}/WEB-INF/classes" />
+                    <arg value="@{runfile}" />
+                    <arg value="D:\Servidores\DATA\ntcir\GEOTIMEEN_qrels\\GEOTIME-EN.qrels" />
+                </java>
+            </sequential>
+        </for>
+    </target>
+
+   <target name="evaluation-metrics-geotime2-qrels" description="Generate trec_eval results">
+
+        <for param="runfile">
+            <path>
+                <fileset dir="d:\\Servidores\\DATA\\ntcir\\runs2">
+                    <include name="*.txt" />
+                    <exclude name="*.xml" />
+                    <exclude name="*-treceval-report.txt" />
+                    <exclude name="*-significance-report.txt" />
+                </fileset>
+            </path>
+            <sequential>
+                <java fork="true" classname="ireval.Main" output="@{runfile}-treceval-report.txt">
+                    <classpath>
+                        <fileset dir="${base.dir}/lib">
+                            <include name="*.jar" />
+                        </fileset>
+                    </classpath>
+                    <classpath path="${webapp.path}/WEB-INF/classes" />
+                    <arg value="@{runfile}" />
+                    <arg value="D:\Servidores\DATA\ntcir\GEOTIMEEN_qrels\\GEOTIME-EN.qrels" />
                 </java>
             </sequential>
         </for>

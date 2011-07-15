@@ -596,6 +596,8 @@ public class LgteIsolatedIndexReader extends ProbabilisticIndexReader
     }
 
     public TermEnum terms(Term t) throws IOException {
+        if(readers.getReader(t.field())==null)
+            System.out.println("NULL:" + t.field());
         return readers.getReader(t.field()).terms(t);
     }
 

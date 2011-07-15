@@ -16,11 +16,10 @@ package org.apache.lucene.search;
  * limitations under the License.
  */
 
+import org.apache.lucene.index.IndexReader;
+
 import java.io.IOException;
 import java.util.Vector;
-import org.apache.lucene.index.IndexReader;
-import pt.utl.ist.lucene.Model;
-import pt.utl.ist.lucene.ModelManager;
 
 /** A Query that matches documents matching boolean combinations of other
   queries, typically {@link TermQuery}s or {@link PhraseQuery}s.
@@ -33,7 +32,7 @@ public class BooleanQuery extends Query {
    */
   public static int maxClauseCount =
     Integer.parseInt(System.getProperty("org.apache.lucene.maxClauseCount",
-      "1024"));
+      "15000"));
 
   /** Thrown when an attempt is made to add more than {
    * @link
@@ -79,9 +78,15 @@ public class BooleanQuery extends Query {
     * @see #getMaxClauseCount()
    */
   public void add(BooleanClause clause) {
-    if (clauses.size() >= maxClauseCount)
-      throw new TooManyClauses();
 
+    if (clauses.size() >= maxClauseCount)
+    {
+
+//        System.out.println("CLAUSES(" + clauses.size() + "): " + clauses.size() + " max: " + maxClauseCount);
+      throw new TooManyClauses();
+    }
+      if(clauses.size() > 5000)
+        System.out.println("CLAUSE(" + clauses.size() + "):" + clause.toString());
     clauses.addElement(clause);
   }
 

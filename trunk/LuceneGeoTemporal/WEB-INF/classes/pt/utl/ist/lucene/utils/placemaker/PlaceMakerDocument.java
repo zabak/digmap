@@ -1,17 +1,18 @@
 package pt.utl.ist.lucene.utils.placemaker;
 
-import org.dom4j.*;
+import nmaf.util.DomUtil;
 import org.apache.log4j.Logger;
-import pt.utl.ist.lucene.utils.Dom4jUtil;
+import org.dom4j.*;
 import pt.utl.ist.lucene.forms.GeoPoint;
+import pt.utl.ist.lucene.treceval.geotime.webservices.CallWebServices;
+import pt.utl.ist.lucene.utils.Dom4jUtil;
 
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
-import java.util.ArrayList;
 
 /**
  * @author Jorge Machado
@@ -61,6 +62,13 @@ public class PlaceMakerDocument
         this.xml = xml;
         dom = Dom4jUtil.parse(xml);
         init(docIdXpath);
+    }
+
+    public static PlaceMakerDocument loadDocument(String data, String title, String id) throws Exception
+    {
+        org.w3c.dom.Document dom = CallWebServices.callServices(data.replaceAll("<[^>]+>",""),title.replaceAll("<[^>]+>",""),0,0,0,"temp",id,"en-EN");
+        DomUtil.domToString(dom,false);
+        return new PlaceMakerDocument("<doc id=\"" + id + "\">\n" + DomUtil.domToString(dom,false) + "</doc>");
     }
 
     public PlaceMakerDocument(org.w3c.dom.Document dom,String docIdXpath) throws DocumentException 
@@ -138,8 +146,8 @@ public class PlaceMakerDocument
             geographicType = geographicTypeXPath.selectSingleNode(dom).getText().trim();
             geographicName = geographicNameXPath.selectSingleNode(dom).getText().trim();
             geographicCentroide = new GeoPoint(Double.parseDouble(geographicCentroideLatitudeXPath.selectSingleNode(dom).getText()),Double.parseDouble(geographicCentroideLongitudeXPath.selectSingleNode(dom).getText()));
-            boundingBoxPoint1 = new GeoPoint(Double.parseDouble(boundingBoxPointX0XPath.selectSingleNode(dom).getText()),Double.parseDouble(boundingBoxPointY0XPath.selectSingleNode(dom).getText()));
-            boundingBoxPoint2 = new GeoPoint(Double.parseDouble(boundingBoxPointX1XPath.selectSingleNode(dom).getText()),Double.parseDouble(boundingBoxPointY1XPath.selectSingleNode(dom).getText()));
+            boundingBoxPoint1 = new GeoPoint(Double.parseDouble(boundingBoxPointY0XPath.selectSingleNode(dom).getText()),Double.parseDouble(boundingBoxPointX0XPath.selectSingleNode(dom).getText()));
+            boundingBoxPoint2 = new GeoPoint(Double.parseDouble(boundingBoxPointY1XPath.selectSingleNode(dom).getText()),Double.parseDouble(boundingBoxPointX1XPath.selectSingleNode(dom).getText()));
         }
 
 
@@ -263,6 +271,20 @@ public class PlaceMakerDocument
 
     public GeoPoint getGeographicCentroide() {
         return geographicCentroide;
+    }
+
+    public double getNorthLimit() {
+        return boundingBoxPoint2.getLat();
+    }
+    public double getSouthLimit() {
+        return boundingBoxPoint1.getLat();
+    }
+
+    public double getEastLimit() {
+        return boundingBoxPoint2.getLng();
+    }
+    public double getWestLimit() {
+        return boundingBoxPoint1.getLng();
     }
 
     public GeoPoint getBoundingBoxPoint1() {
@@ -418,6 +440,23 @@ public class PlaceMakerDocument
         public void setEndOffset(int endOffset) {
             this.endOffset = endOffset;
         }
+    }
+
+    public String toString()
+    {
+        return xml;
+//        if(dom != null)
+//        {
+//
+//            StringWriter sw = new StringWriter();
+//            try {
+//                Dom4jUtil.write(dom.getRootElement(),sw);
+//                return sw.toString();
+//            } catch (IOException e) {
+//                logger.error(e,e);
+//            }
+//        }
+//        return null;
     }
 
 

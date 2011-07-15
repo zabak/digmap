@@ -170,13 +170,20 @@ public class SigmoidTimeScoreDocComparator implements TimeDistancesScoreDocCompa
         Long timewidth = timewidthCache[scoreDoc.doc];
         if (timewidth != null)
         {
+//            System.out.println("TIMEWODTH: " + timewidth + " distance:" + distance + " radium " + radium );
             float intervalScore =  ((Double) GeoUtils.distancePointAreaMapExpDDmbr(distance, timewidth)).floatValue();
             float sigmoideScore = ((Double) GeoUtils.sigmoideDistanceRadium(distance, radium, alfa, beta)).floatValue();
             return intervalScore > sigmoideScore? intervalScore : sigmoideScore;
         }
+        else if(distance != null && radium != null)
+        {
+//            System.out.println("distance:" + distance + " radium " + radium);
+            return ((Double) GeoUtils.sigmoideDistanceRadium(distance, radium, alfa, beta)).floatValue();
+        }
         else
         {
-            return ((Double) GeoUtils.sigmoideDistanceRadium(distance, radium, alfa, beta)).floatValue();
+//            System.out.println("#####NULLL  distance:" + distance + " radium " + radium);
+            return 0.0f;
         }
     }
 

@@ -1,12 +1,10 @@
 package pt.utl.ist.lucene.utils.queries;
 
-import org.dom4j.*;
 import org.apache.log4j.Logger;
+import org.dom4j.*;
+import pt.utl.ist.lucene.utils.Dom4jUtil;
 
 import java.util.List;
-
-import pt.utl.ist.lucene.utils.Dom4jUtil;
-import pt.utl.ist.lucene.utils.queries.Query;
 
 /**
  * @author Jorge Machado
@@ -42,12 +40,16 @@ public class QueryParser
 
     private void parse()
     {
+
         q = new Query();
         q.setId(topic.attribute("id").getValue());
+        System.out.println("Processing topic " + q.getId());
         readOrignal();
         readTerms();
         readPlaces();
         readTimes();
+        readWikipediaTerms();
+        readGeoTemporalQueries();
         readFilters();
     }
 
@@ -84,6 +86,83 @@ public class QueryParser
             q.getPlaces().getTerms().add(term);
         }
     }
+
+    private void readWikipediaTerms()
+    {
+        XPath xPathWikiPlaces = topic.createXPath("//wikpedia[@type='place' and ../@id='" + q.getId() + "']");
+        List<Element> termPlacesElem = xPathWikiPlaces.selectNodes(topic.getDocument());
+        for(Element termElem: termPlacesElem)
+        {
+            Query.WikipediaTerms.PlaceTerm term = new Query.WikipediaTerms.PlaceTerm();
+            term.setTerm(termElem.attribute("term").getValue());
+            term.setWoeid(termElem.attribute("woeid").getValue());
+            term.setBoost(termElem.attribute("boost").getValue());
+
+            q.getWikipediaTerms().getPlaceTerms().add(term);
+        }
+
+        XPath xPathWikiTimes = topic.createXPath("//wikpedia[@type='time' and ../@id='" + q.getId() + "']");
+        List<Element> termsTimesElem = xPathWikiTimes.selectNodes(topic.getDocument());
+        for(Element termElem: termsTimesElem)
+        {
+            Query.WikipediaTerms.TimeTerm term = new Query.WikipediaTerms.TimeTerm();
+            term.setTerm(termElem.attribute("term").getValue());
+            term.setTime(termElem.attribute("time").getValue());
+            term.setBoost(termElem.attribute("boost").getValue());
+
+            q.getWikipediaTerms().getTimeTerms().add(term);
+        }
+    }
+
+    private void readGeoTemporalQueries()
+    {
+        XPath xPathTimeMetric = topic.createXPath("//time_metric_query[../@id='" + q.getId() + "']");
+        List<Element> timeMetricElems = xPathTimeMetric.selectNodes(topic.getDocument());
+        if(timeMetricElems.size() > 0)
+        {
+            Element timeMetricElem   = timeMetricElems.get(0);
+            Query.TemporalQuery temporalQuery = new Query.TemporalQuery();
+            temporalQuery.setQuery(timeMetricElem.getTextTrim());
+            if(timeMetricElem.attribute("wikipedia") != null && timeMetricElem.attribute("wikipedia").getValue().equals("true"))
+                temporalQuery.setWikipedia(true);
+            else
+                temporalQuery.setWikipedia(false);
+            q.setTemporalQuery(temporalQuery);
+        }
+        else
+            q.setTemporalQuery(null);
+
+        XPath xPathGeoMetric = topic.createXPath("//geo_metric_query[../@id='" + q.getId() + "']");
+        List<Element> geoMetricElems = xPathGeoMetric.selectNodes(topic.getDocument());
+        if(geoMetricElems.size() > 0)
+        {
+            Element geoMetricElem   = geoMetricElems.get(0);
+            Query.GeographicQuery geographicQuery = new Query.GeographicQuery();
+            geographicQuery.setQuery(geoMetricElem.getTextTrim());
+            if(geoMetricElem.attribute("wikipedia") != null && geoMetricElem.attribute("wikipedia").getValue().equals("true"))
+                geographicQuery.setWikipedia(true);
+            else
+                geographicQuery.setWikipedia(false);
+            q.setGeographicQuery(geographicQuery);
+        }
+        else
+            q.setGeographicQuery(null);
+
+
+
+//        XPath xPathWikiTimes = topic.createXPath("//wikpedia[@type='time' and ../@id='" + q.getId() + "']");
+//        List<Element> termsTimesElem = xPathWikiTimes.selectNodes(topic.getDocument());
+//        for(Element termElem: termsTimesElem)
+//        {
+//            Query.WikipediaTerms.TimeTerm term = new Query.WikipediaTerms.TimeTerm();
+//            term.setTerm(termElem.attribute("term").getValue());
+//            term.setTime(termElem.attribute("time").getValue());
+//            term.setBoost(termElem.attribute("boost").getValue());
+//
+//            q.getWikipediaTerms().getTimeTerms().add(term);
+//        }
+    }
+
     private void readTimes()
     {
         XPath xPathPlaces = topic.createXPath("./times/term");
@@ -145,8 +224,15 @@ public class QueryParser
 
     private void loadBooleanTermTerm(Element booleanTermElem, Query.FilterChain.BooleanClause.Term term)
     {
+
         XPath fieldX = booleanTermElem.createXPath("./field");
         XPath valueX = booleanTermElem.createXPath("./value");
+        Attribute attr = booleanTermElem.attribute("type");
+        if(attr != null && attr.getValue().equals("duration"))
+            term.setDuration(true);
+        else
+            term.setDuration(false);
+
         term.setField(((Element)fieldX.selectSingleNode(booleanTermElem)).getTextTrim());
         List<Element> valueElems = valueX.selectNodes(booleanTermElem);
         term.setValue(valueElems.get(0).getTextTrim());

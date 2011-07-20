@@ -14,16 +14,23 @@
 
 package cc.mallet.classify.tests;
 
-import junit.framework.*;
-import java.net.URI;
-import java.io.File;
-
-import cc.mallet.classify.*;
+import cc.mallet.classify.Classification;
+import cc.mallet.classify.Classifier;
+import cc.mallet.classify.NaiveBayes;
+import cc.mallet.classify.NaiveBayesTrainer;
 import cc.mallet.pipe.*;
 import cc.mallet.pipe.iterator.ArrayIterator;
 import cc.mallet.pipe.iterator.FileIterator;
 import cc.mallet.types.*;
-import cc.mallet.util.*;
+import cc.mallet.util.Randoms;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 
 public class TestNaiveBayes extends TestCase
 {
@@ -251,8 +258,8 @@ public class TestNaiveBayes extends TestCase
 	{
 		System.out.println("testEmptyStringBug");
 		String[]    args = new String[] {
-				"src/cc/mallet/classify/tests/NaiveBayesData/learn/a",
-				"src/cc/mallet/classify/tests/NaiveBayesData/learn/b"
+				"cc/mallet/classify/tests/NaiveBayesData/learn/a",
+				"cc/mallet/classify/tests/NaiveBayesData/learn/b"
 		};
 
 		File[] directories = new File[args.length];
@@ -283,15 +290,20 @@ public class TestNaiveBayes extends TestCase
 		Classification initialClassification = classifier.classify("Hello Everybody");
 		Classification initial2Classification = classifier.classify("Goodbye now");
 		System.out.println("Initial Classification = ");
-		initialClassification.print();
-		initial2Classification.print();
+        try {
+            initialClassification.print(new PrintWriter(new OutputStreamWriter(System.out)));
+            initial2Classification.print(new PrintWriter(new OutputStreamWriter(System.out)));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+
 		System.out.println("data alphabet " + classifier.getAlphabet());
 		System.out.println("label alphabet " + classifier.getLabelAlphabet());
 
 
 		// test
 		String[] t2directories = {
-				"src/cc/mallet/classify/tests/NaiveBayesData/learn/b"
+				"cc/mallet/classify/tests/NaiveBayesData/learn/b"
 		};
 
 		System.out.println("data alphabet size " + instList.getDataAlphabet().size());

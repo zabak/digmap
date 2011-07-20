@@ -607,7 +607,7 @@ public class NyTimesDocument {
     public int toStringOffset2txtwithoutTagsOffset(int offset)
     {
         //SO os anotados com o Nytimes é que tem este problema
-        if(!getDId().startsWith("nyt"))
+        if(!getDId().toLowerCase().startsWith("nyt"))
             return offset;
 
         if(offset >= toStringDateLineStartOffSet && offset <= toStringHeadLineEndOffset)

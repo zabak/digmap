@@ -16,7 +16,7 @@
 <br>
 <a href="assessmentsNtcir.jsp?op=logout">Logout <%=Server.getUsername(request)%></a> 
 <form class="form" action="assessmentsNtcir.jsp" method="post" enctype="multipart/form-data">
-    <input type="hidden" name="task" value="NtcirGeoTime2010">
+    <input type="hidden" name="task" value="NtcirGeoTime2011">
     <input type="hidden" name="indexLocation" value="C:/WORKSPACE_JM/DATA/INDEXES/NTCIR/TEXT_TEMP_GEO_DB">
     <input type="hidden" name="indexTitleLocation" value="C:/WORKSPACE_JM/DATA/INDEXES/NTCIR/contents">
     <table>
@@ -40,7 +40,7 @@
             <th>Closed</th>
         </tr>
 <%
-        List<Pool> pools = DBServer.getPools("NtcirGeoTime2010");
+        List<Pool> pools = DBServer.getPools("NtcirGeoTime2011");
         for(Pool pool: pools)
         {
 %>
@@ -60,7 +60,7 @@
 
     <h2>General Assessments Stats</h2>
     <%
-    AssessmentsBoard aB = DBServer.loadAssessmentsBoard("NtcirGeoTime2010");
+    AssessmentsBoard aB = DBServer.loadAssessmentsBoard("NtcirGeoTime2011");
     %>
      <table class="data">
         <tr>
@@ -73,7 +73,7 @@
             <th>Assessed/Total</th>
         </tr>
      <%
-        List<Topic> topics =   DBServer.getTopics("NtcirGeoTime2010");
+        List<Topic> topics =   DBServer.getTopics("NtcirGeoTime2011");
         for(Topic topic: topics)
         {
      %>
@@ -101,7 +101,7 @@
         <h2>Assessments Stats For Pool: <%=pool.getRunId()%> <%=pool.getDescription()%></h2>
 
         <%
-            aB = DBServer.loadAssessmentsBoard("NtcirGeoTime2010",pool.getId());
+            aB = DBServer.loadAssessmentsBoard("NtcirGeoTime2011",pool.getId());
         %>
              <table class="data">
                 <tr>

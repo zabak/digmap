@@ -405,9 +405,9 @@ public class Server
             {
                 if(!str.equalsIgnoreCase("place") && str.length() > 3)
                 {
-                annotatedTextStr = annotatedTextStr.replaceAll(str,"<label class=\"word\">"  + str + "</label>");
-                annotatedTextStr = annotatedTextStr.replaceAll(Str,"<label class=\"word\">" + Str + "</label>");
-                annotatedTextStr = annotatedTextStr.replaceAll(STR,"<label class=\"word\">" + STR + "</label>");
+                    annotatedTextStr = annotatedTextStr.replaceAll(str,"<label class=\"word\">"  + str + "</label>");
+                    annotatedTextStr = annotatedTextStr.replaceAll(Str,"<label class=\"word\">" + Str + "</label>");
+                    annotatedTextStr = annotatedTextStr.replaceAll(STR,"<label class=\"word\">" + STR + "</label>");
                 }
             }
         }
@@ -549,12 +549,17 @@ public class Server
     {
 //        args = new String[]{"C:\\Documents and Settings\\jmachado\\Os meus documentos\\Downloads\\ENruns-pd50.xml","NtcirGeoTime2010","C:\\WORKSPACE_JM\\DATA\\INDEXES\\NTCIR\\TEXT_TEMP_GEO_DB","C:\\WORKSPACE_JM\\DATA\\INDEXES\\NTCIR\\contents"};
 
-        args = new String[]{"F:\\COLECCOES\\GeoTime\\ENruns-pd100-50.xml","NtcirGeoTime2011","F:\\COLECCOES\\ntcir\\INDEXES\\TEXT_TEMP_GEO_DB","F:\\COLECCOES\\ntcir\\INDEXES\\contents"};
+//        args = new String[]{"F:\\COLECCOES\\GeoTime\\ENruns-pd100-50.xml","NtcirGeoTime2011","F:\\COLECCOES\\ntcir\\INDEXES\\TEXT_TEMP_GEO_DB","F:\\COLECCOES\\ntcir\\INDEXES\\contents"};
 
-        String file = args[0];
-        String task = args[1];
-        String index = args[2];
-        String indexTitle = args[3];
-        importPool(file,task,index,indexTitle);
+        System.out.println("usage:");
+        System.out.println("java -classpath <jars and classes folder> pt.utl.ist.lucene.web.assessements.services.Server POOLfile NtcirGeoTime2011 TEXT_TEMP_GEO_DB_path contents_path ");
+        if(args.length>0)
+        {
+            String file = args[0];
+            String task = args[1];
+            String index = args[2];
+            String indexTitle = args[3];
+            importPool(file,task,index,indexTitle);
+        }
     }
 }

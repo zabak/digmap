@@ -60,6 +60,7 @@ public class Server
             }
             else if(request.getParameter("op").equals("addJudgments"))
             {
+                request.setAttribute("docno","FAIL;none");
                 String id_topic = request.getParameter("id_topic");
                 if(id_topic!=null && id_topic.indexOf("LIMIT")>0)
                 {
@@ -79,10 +80,12 @@ public class Server
                                 System.out.println(new java.util.Date() + " : NTCIR CONFIRM : session[" + request.getSession().getId() + "] ip[" + request.getRemoteAddr() + "] user[" + user.getUsername() + "] judgement[" + id_topic + " " + param + " " + relevance + "]");
                                 try{
                                     DBServer.addRelevanceJudgement(id_topic,param,relevance,user.getUsername(),request.getParameter("obs" + param));
+                                    request.setAttribute("docno","OK;"+param);
                                 }catch(Throwable e)
                                 {
                                     error = e;
                                     logger.error(e,e);
+                                    request.setAttribute("docno","FAIL;"+param);
                                 }
                             }
                         }

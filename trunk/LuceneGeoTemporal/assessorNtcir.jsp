@@ -106,7 +106,7 @@
 									for(Topic topic : topics)
 							        {
 								%>
-										if(topicId == '<%=topic.getIdTopic()%>')
+										if(topicId.indexOf('<%=topic.getIdTopic()%>')>=0)
 										{
 											alert("TOPIC: <%=topic.getIdTopic()%> \n\nDESC: <%=topic.getDescription()%> \n\nNARR: <%=topic.getNarrative()%> \n");
 										}
@@ -116,7 +116,7 @@
 							}
 						-->
 					</script>
-					<input type="button" value="see topic info" onclick="showTopicNarr(this.form.id_topic.value);"><br/>
+					<input type="button" value="see topic info" onclick="showTopicNarr(this.form.id_topic[0].value);"><br/>
 					<input type="submit" value="Change topic without save"><br/>
 				</td>
 			</tr>

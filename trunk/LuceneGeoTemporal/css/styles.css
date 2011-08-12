@@ -1,4 +1,13 @@
 
+
+.keyword, .keywords
+{
+        background-color:green;
+        color:white;
+}
+
+
+
 #header{}
 body * {font-size:11px;font-family: Verdana, Helvetica, sans-serif;}
 #search{}
